@@ -176,6 +176,18 @@ describe('OpenYida skill contracts', () => {
     expect(canvas).not.toContain('脚手架');
   });
 
+  test('Canvas authoring and publish skills share the public compile entrypoint', () => {
+    const canvas = readSkill('yida-skills/skills/yida-canvas-custom-page/SKILL.md');
+    const publish = readSkill('yida-skills/skills/yida-publish-page/SKILL.md');
+
+    for (const skill of [canvas, publish]) {
+      expect(skill).toMatch(/openyida compile [^\n]+ --json/);
+    }
+    expect(publish).toContain('不要改用 `node -e`、`compileCanvasLocal` 或 `run_workspace_script` 绕行');
+    expect(publish).not.toContain('不走 `openyida check-page` / `openyida compile`');
+    expect(publish).not.toContain('不使用 `openyida check-page` / `openyida compile` 作为预检');
+  });
+
   test('root skill uses compact agent-capabilities for default preflight', () => {
     const skill = readSkill('yida-skills/SKILL.md');
 
