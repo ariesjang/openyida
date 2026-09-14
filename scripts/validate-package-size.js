@@ -10,13 +10,10 @@ const path = require('path');
 // Budgets are ratchets that track legitimate content growth (12 locale packs,
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
-// Node 20 / npm 10 produces 1860021 bytes for the same 503 files;
-// compressed sizes vary by Node/npm/zlib. Round up to the next 16 KiB boundary.
+// Includes the latest main assets/process support and CodeBundle download/publish.
+// Node 20/24 package measurements are rounded up to the next 16 KiB boundary.
 const MAX_TARBALL_BYTES = 1824 * 1024;
-// Includes Canvas theme Provider, navigation content sample, design guidance,
-// ImageField attachment delivery and process append/forward compiler, help
-// and skills are included; round up to the next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 6224 * 1024;
+const MAX_UNPACKED_BYTES = 6240 * 1024;
 // Includes both asset delivery files and process action files.
 const MAX_ENTRY_COUNT = 503;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
