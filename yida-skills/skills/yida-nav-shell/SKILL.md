@@ -1,13 +1,13 @@
 ---
 name: yida-nav-shell
-description: 自定义页明确要自绘应用级导航时使用；先隐藏应用导航 hideAppNav。页面级 isRenderNav=false 不等于应用导航隐藏。
+description: 需求规划采用自定义应用导航或用户明确要求自绘时使用；先隐藏应用导航 hideAppNav。页面级 isRenderNav=false 不等于应用导航隐藏。
 ---
 
 # yida-nav-shell
 
 ## 先判断
 
-默认不用本技能。宜搭应用的页面切换优先交给平台导航和 `yida-nav-group`。
+按 brief/PRD 的导航决策路由：采用自定义应用导航时使用本技能；采用宜搭原生导航时使用 `yida-nav-group`。导航方式由 [需求分析](../yida-requirement-analysis/workflow/prepare-brief.md#导航设计) 判断，用户明确要求优先。
 
 | 用户需求 | 怎么处理 |
 | --- | --- |
@@ -26,7 +26,7 @@ description: 自定义页明确要自绘应用级导航时使用；先隐藏应�
 
 ## 必做配置
 
-用户确认自定义导航后，就将应用导航隐藏纳入应用基础设置更新：新建应用时，等 `app-theme.css` 生成后，将 `--hide-app-nav` 与主题、Logo、布局等设置合并到同一次 `update-app`，按 [应用设置同步](../yida-app/workflow/step-3-create-or-reuse-app.md) 执行并回读。已有应用只需切换导航时执行：
+需求规划采用自定义导航后，就将应用导航隐藏纳入应用基础设置更新：新建应用时，等 `app-theme.css` 生成后，将 `--hide-app-nav` 与主题、Logo、布局等设置合并到同一次 `update-app`，按 [应用设置同步](../yida-app/workflow/step-3-create-or-reuse-app.md) 执行并回读。已有应用只需切换导航时执行：
 
 ```bash
 openyida update-app <appType> --hide-app-nav
@@ -50,7 +50,7 @@ openyida get-form-config <appType> <formUuid> --json
 - **画布与浮导间距**：平台宿主继续消费 `--pod-page-bg-color`；自绘导航页的内部画布由 `design.md` 定义，可采用浅灰、浅彩、渐变或局部纹理，不强制跟随白色平台底色。浅色非白画布上，顶部浮导默认白色或近白半透明，卡片默认白色无框；品牌色集中于选中态和主操作，深色方案单独设计。只作用于当前页面选择器，不修改应用全局变量。根节点使用 `display:flow-root` 或 flex/grid，让浮导上边距留在根节点内。
 
 - **先选形态，再写 UI**：根据已确认的 PRD、`design.md` 和用户参考确定布局。模块多用侧栏，模块少且内容需要宽度用顶部，两级业务用顶部＋侧边，沉浸展示可用悬浮 Dock，同模块视图用标签。已确认的选择直接沿用，不重新提问。
-- 自定义顶部导航默认推荐浮导，可按内容宽度设计为紧凑胶囊或悬浮栏；“顶部导航”不等于贴边通栏。位置、比例、留白、材质和选中态根据业务与设计实现，不由现成组件决定。此推荐只针对顶部样式，“平台导航 / 自定义导航”选项保持中性。
+- 自定义顶部导航默认推荐浮导，可按内容宽度设计为紧凑胶囊或悬浮栏；“顶部导航”不等于贴边通栏。位置、比例、留白、材质和选中态根据业务与设计实现，不由现成组件决定。此推荐只针对顶部样式，不改变已确定的导航方式。
 - 需要布局方向和小段代码时读 [导航壳形态目录](references/nav-shell-patterns.md)。按场景设计和手写实现，不强制复制任何导航组件。已有导航符合设计时直接复用，只补缺失功能；不能仅因存在新示例而替换现有外观。
 - 自定义侧边导航（含顶部＋侧边）的 PC 端必须支持折叠/展开和拖拽调宽；展开恢复折叠前宽度，宽度变化时内容区同步调整。移动端改为可展开/收起的菜单，详见 [侧栏交互](references/nav-shell-patterns.md#侧栏交互)。
 - 菜单数量、名称、顺序、分组和入口用途来自 PRD，通常工作台在首位；用当前访问者的 `getAccessableNavs.json` 过滤可见范围，详见 [导航数据来源](references/nav-shell-patterns.md#导航数据来源)。数据逻辑可直接复用，不要求采用同一套 UI。

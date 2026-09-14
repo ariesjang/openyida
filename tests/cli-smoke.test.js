@@ -2415,25 +2415,27 @@ test('Plan and navigation commands are discoverable with their existing permissi
   expect(summary.full_app_artifact_route.navigation_policy.toLowerCase()).toContain('before prd planning');
 });
 
-test('command and agent navigation choices stay aligned with the two-option Skill intake', () => {
+test('command and agent navigation policies align with AI intake decisions', () => {
   const manifest = JSON.parse(runOk(['commands', '--json']));
   const summary = JSON.parse(runOk(['agent-capabilities', '--summary-json']));
   const capabilities = JSON.parse(runOk(['agent-capabilities', '--json']));
   const brief = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-requirement-analysis/workflow/prepare-brief.md'), 'utf8');
-  const optionSection = brief.split('### 导航选项说明')[1].split('### 根据场景确定导航布局')[0];
-  const options = [...optionSection.matchAll(/^\| ([^|]+) \| ([^|]+) \|$/gm)]
-    .map(match => ({ label: match[1].trim(), description: match[2].trim() }))
-    .filter(option => option.label !== '导航选项' && !/^[-:]+$/.test(option.label));
-  expect(options.map(option => option.label)).toEqual(['宜搭原生导航', '自定义导航']);
+  expect(brief).toContain('### 导航设计');
+  expect(brief).not.toContain('| 导航归属 |');
+  expect(brief).not.toContain('你希望应用使用哪种导航菜单');
+  expect(brief).toContain('`ai_default`');
+  expect(brief).toContain('`user_selected`');
 
   const workflow = manifest.summary.core_workflows.full_app_build;
   for (const route of [workflow, summary.full_app_artifact_route, capabilities.commands.core_workflows.full_app_build]) {
     expect(route.navigation_policy).toBe(workflow.navigation_policy);
-    expect([...route.navigation_policy.matchAll(/"([^"]+)"/g)].map(match => match[1]))
-      .toEqual(options.map(option => option.label));
-    for (const option of options) {expect(route.navigation_policy).toContain(option.description);}
+    expect(route.navigation_policy).toContain('Before PRD planning in Fast and Plan, the agent determines navigation ownership and layout from business context');
+    expect(route.navigation_policy).toContain('Preserve explicit user requirements and existing navigation');
+    expect(route.navigation_policy).toContain('ai_default for agent ownership decisions');
+    expect(route.navigation_policy).toContain('Include navigation in the overall Plan confirmation');
+    expect(route.navigation_policy).not.toContain('offer exactly two');
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
-    expect(route.design_mode_policy).not.toContain('Confirm unresolved navigation, custom navigation layout');
+    expect(route.design_mode_policy).not.toContain('Confirm unresolved navigation');
   }
 });
 
