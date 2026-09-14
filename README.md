@@ -174,6 +174,8 @@ openyida update-app APP_XXX --theme-file .cache/openyida/crm/app-theme.css --nav
 openyida corp-efficiency
 openyida create-form create APP_XXX "Customer" .cache/openyida/forms/customer-fields.json
 openyida create-form update APP_XXX FORM_XXX .cache/openyida/forms/customer-changes.json
+openyida create-form update APP_XXX FORM_XXX --data-file .cache/openyida/forms/customer-changes.json
+openyida create-form resume APP_XXX FORM_XXX .cache/openyida/forms/customer-fields.json --json
 openyida sample openyida-page-template form-fields --output .cache/openyida/forms/customer-fields.json
 openyida sample openyida-page-template canvas-form-drawer --output project/pages/src/customer-entry.canvas.jsx --var APP_TYPE=APP_XXX --var FORM_UUID=FORM_XXX
 openyida get-schema APP_XXX FORM_XXX
@@ -207,6 +209,8 @@ openyida data query form APP_XXX FORM_XXX --dynamic-order '{"dateField_xxx":"-"}
 openyida data create form APP_XXX FORM_XXX --expect-form-name 客户 --expect-form-type receipt --data-file .cache/openyida/data-import/record.json
 openyida get-permission APP_XXX FORM_XXX
 ```
+
+Append and forward permissions are configured in the process definition through `nodes[].actions.normalActions/appendActions`. Both `create-process` and `configure-process` compile these settings into matching designer and runtime properties. See [approval action configuration](yida-skills/skills/yida-process-rule/references/approval-actions.md) for the JSON example, defaults, and verification limits.
 
 `configure-process` 的流程 JSON 中，审批人可配置为发起人、指定成员、指定角色、部门主管或直属主管，例如：
 
@@ -413,7 +417,8 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida create-form create <appType> "<formTitle>" <fieldsJsonFile> [--icon auto\|<iconName>] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Create a form page |
 | `openyida create-form icons [--json]` | List available form navigation icons |
 | `openyida create-form validate-fields <fieldsJsonOrFile> [--json]` | Validate form field JSON locally |
-| `openyida create-form update <appType> ... [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Update a form page |
+| `openyida create-form update <appType> <formUuid> (<changesJsonOrFile> \| --data-file <changesJsonOrFile>) [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Update a form page |
+| `openyida create-form resume <appType> <formUuid> <fieldsJsonOrFile> [--json]` | Update a form page |
 | `openyida create-form patch <appType> <formUuid> <patchJsonOrFile> [--open\|--no-open]` | Update a form page |
 | `openyida create-form rule <appType> <formUuid> <rulesJsonOrFile> [--open\|--no-open]` | Update a form page |
 | `openyida create-form validation <appType> <formUuid> <validationsJsonOrFile> [--open\|--no-open]` | Update a form page |
@@ -428,7 +433,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida create-page <appType> "<name>" [--mode dashboard] [--hide-nav] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Create a custom display page |
 | `openyida build-page <sourceFile> [--output file\|--write]` | Build Yida-compatible page source |
 | `openyida check-page <src> [--compat]` | Check custom page standards |
-| `openyida compile <src>` | Compile custom page locally |
+| `openyida compile <src> [--canvas] [--json]` | Compile custom page locally |
 | `openyida publish <src> <appType> <formUuid> [--health-check] [--force] [--canvas] [--auto-nav-order] [--open\|--no-open]` | Compile and publish custom page |
 | `openyida update-form-config <appType> <formUuid> <true\|false\|keep> "<title>" [--locale zh_CN\|en_US\|ja_JP]` | Update form configuration |
 | `openyida get-form-config <appType> <formUuid> [--json]` | Query form configuration |
@@ -451,8 +456,8 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 
 | Command | Description |
 |---------|-------------|
-| `openyida configure-process <appType> <formUuid> <definition> [processCode] [--replace]` | Configure and publish process rules |
-| `openyida create-process <appType> ... [--replace]` | Create process form (all-in-one) |
+| `openyida configure-process <appType> <formUuid> <definition> [processCode] [--replace]` | Configure and publish process rules; Supports append/forward via JSON nodes[].actions.normalActions/appendActions |
+| `openyida create-process <appType> ... [--replace]` | Create process form (all-in-one); Supports append/forward via JSON nodes[].actions.normalActions/appendActions |
 | `openyida ai-form-setting <get\|fields\|models\|enable\|disable\|save> <appType> ...` | Manage process form AI approval prompts |
 | `openyida process preview <appType> ...` | Preview process instance (visual flowchart) |
 
@@ -526,7 +531,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida batch <file>\|--commands "cmd1 ; cmd2" [--stop-on-error] [--json]` | Run OpenYida commands in batch |
 | `openyida flash-to-prd --file <path> --name "<project>"` | Convert flash notes or meeting notes to a PRD prompt |
 | `openyida ai <text\|image> [options]` | Call Yida AI text and image recognition APIs |
-| `openyida asset <status\|resolve\|generate> [options]` | Detect asset capability / resolve materials |
+| `openyida asset <status\|resolve\|sources> [options]` | Detect asset capability / resolve materials |
 | `openyida cdn-config [options]` | Configure CDN / OSS upload |
 | `openyida cdn-upload <image-path>` | Upload image to CDN |
 | `openyida cdn-refresh [options]` | Refresh CDN cache |
@@ -557,7 +562,7 @@ The runner rejects public generic echo services such as httpbin and example.com.
 
 The opt-in `node scripts/e2e-real/connector/action-update-runner.js` regression uses the owner-confirmed login-free `www.aliwork.com` fixture and a single owned NONE-auth connector containing a target action plus one preservation sentinel. Enable it with `OPENYIDA_E2E=1 OPENYIDA_E2E_CONNECTOR_ACTION_UPDATE=1`. It verifies isolated `currentPage`, `pageSize`, `userLanguage`, `searchFieldJson`, and dynamic `_stamp` edits, restores each field and the final baseline, and persists only response structure, data count, and SHA-256. It never stores response row values or auth/profile/corp identifiers, never retries unknown writes, and intentionally leaves the owned connector as a `cleanup_blocked` residual because no proven delete API exists.
 
-`openyida asset resolve --hero <path-or-url> --product <path-or-url> --require-hero --upload-assets --json` is the preferred preflight for homepage visuals. It handles local files and external image references in one flow, uploads or mirrors them when CDN is configured, and returns `materialStatus: final|draft|none` so agents do not claim an unfinished visual page is final.
+`openyida asset resolve --input manifest-draft.json --manifest asset-manifest.json --json` validates every image slot and writes a traceable manifest. Search assets only accept Unsplash/Pexels; draft results exit with code 2. Use `--offline` to block URL checks and uploads.
 
 #### Environment and Localization
 

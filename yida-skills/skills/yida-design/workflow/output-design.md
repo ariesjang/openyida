@@ -17,6 +17,10 @@
 
 `sceneKey` 必须直接取自 `requirement-brief.json` 的对应 `pageScenes`：对象项使用其 `key`，字符串项原样使用；`yida-prd` 和 `yida-design` 不得各自改写、翻译或重新生成。`componentName` 和 `stateName` 必须与本文件 frontmatter 中的实际 key 完全一致。一致性校验只检查这些稳定标识，不使用标题文本或自然语言近似匹配。
 
+## 图片素材交接
+
+`assetStrategy.pages[]` 记录页面等级和图片槽位。槽位包含用途、数量、比例、尺寸、焦点、填充方式和生成许可。需要图片时交给 `yida-image-assets`；无图片需求时写 `imageNeed: none`。在 frontmatter 中用单行 JSON 写出完整 `assetStrategy`，不能只保留槽位数量。`--design design.md` 会读取该字段核对素材。格式见 [素材清单契约](../../yida-image-assets/references/manifest-contract.md)。
+
 ## 应用主题 CSS 的职责
 
 `app-theme.css` 是当前应用的主题资源产物，承载品牌色阶、语义色、字体、间距、圆角、阴影，以及 Shell、导航、页面、表单、表格和浮层的主题 token 与必要样式覆盖。`app_theme.css` 等其他 `.css` 文件名同样可用；CLI 根据 `--theme-file` 路径读取内容，不靠固定文件名识别用途。Plan 使用 `outputs.theme`，其他流程使用已记录的产物路径，避免生成多份后上传错文件。
@@ -29,7 +33,7 @@
 
 主题准备与表单、页面开发按 [并行依赖](../../yida-app/workflow/parallel-work.md#主题与业务资源的依赖) 调度：计划或主题确认后即生成 CSS，不依赖表单或页面实现；appType 与 CSS 就绪便立即同步应用基础设置。页面先按已确认 token 开发，视觉验收再核对主题加载结果。
 
-页面背景必须按已确认导航归属生成：无平台应用导航时，`--oyd-page-background` 默认 `transparent`，也可按明确设计关联 `--color-brand1-3` 等品牌 token；使用平台导航时默认关联 `--pod-page-bg-color`（回退白色），已确认的深色或自定义背景优先。不要沿用风格参考中的固定浅灰作为所有应用的默认画布。Plan 自动派生默认值，`visualStyle.tokens` 显式覆盖优先；Fast 将同样结果写进 design.md 的 tokens 并生成应用 CSS。Canvas 宿主和页面根使用同一别名，具体消费见 [背景与导航的关联](../../yida-canvas-custom-page/references/canvas-style-implementation-guide.md#背景与导航的关联)。
+页面背景统一使用 `--pod-page-bg-color`，卡片和面板使用 `--pod-card-bg-color`，默认回退 `--color-white`。导航归属不改变页面底色，隐藏导航不自动透明；深色或明确的应用背景通过同一平台 token 配置。Plan 和 Fast 将设计值写入 design.md 并生成 app-theme.css，Canvas 宿主、页面根和 antd 统一消费；渐变、纹理和素材作为页面局部装饰层。
 
 ## CLI token 契约（Fast / Plan 共用）
 

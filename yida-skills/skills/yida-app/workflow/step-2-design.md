@@ -8,9 +8,11 @@
 
 ## 2.0 先分析并确认需求
 
-调用 `yida-requirement-analysis`，按 [需求分析与首次搭建确认](../../yida-requirement-analysis/workflow/prepare-brief.md) 整理来源、复用资源及用户已有计划，在同一轮一次性确认尚未明确的 Fast / Plan、业务模块、页面与表单、导航归属与布局及风格。导航选择直接包含平台或自定义及具体布局，并按 [导航选项说明](../../yida-requirement-analysis/workflow/prepare-brief.md#导航选项说明) 备注平台原生布局与自定义页面实现的区别，“自定义导航”大类不标记“推荐”；已选自定义顶部时，呈现样式默认推荐浮导，用户明确的其他样式优先；后续阶段复用答案。首次搭建在必要回答写回、`intake.confirmed=true` 后继续。
+调用 `yida-requirement-analysis`，按 [需求分析与首次搭建确认](../../yida-requirement-analysis/workflow/prepare-brief.md) 整理来源、复用资源及用户已有计划，在同一轮一次性确认尚未明确的 Fast / Plan、业务模块、页面与表单、导航归属及风格。导航 `ask_human` 仅提供“宜搭原生导航”和“自定义导航”两个选项，原生导航就是平台导航，并按 [导航选项说明](../../yida-requirement-analysis/workflow/prepare-brief.md#导航选项说明) 备注实现方式，不标记“推荐”。顶部、侧边、L 型等布局在用户所选归属内根据场景确定，不询问布局或样式；用户已明确的要求优先，后续阶段复用归属选择和布局依据。首次搭建在必要回答写回、`intake.confirmed=true` 后继续。
 
 回答齐全后直接保存内部需求记录并进入 2.1；不把“生成需求简报”列为独立任务，不再扩写或展示简报请用户确认。已有确认记录且需求未变化时直接复用。记录粒度、保存和校验规则统一遵守上述需求分析流程。
+
+显式搭建方式属于本次任务的粘性输入。若用户在首次消息已选择 Plan，澄清业务模块、页面、导航或风格时不得再次询问模式，也不得在合并回答后改写为 Fast；进入 2.1 前必须以用户最后一次明确选择校验 `intake.designMode`。Fast 同理。
 
 执行规划前读取 `constraints.prohibitedActions`。PRD 与 design 必须把禁止项写成实现门禁：`theme-file` 禁止时沿用现有平台主题且不安排主题文件任务；`page-source` 禁止时只允许只读核查与非源码配置；`publish` 禁止时把发布明确标记为跳过。不得为了满足默认九步流程静默删除这些约束。
 
@@ -20,6 +22,8 @@
 
 - Fast：继续 2.2–2.3；已有详细需求直接作为规划基础。
 - Plan：执行 [Plan 编排](plan/workflow.md)，用户确认当前方案后完成主题交接并进入 Step 3。
+
+Plan 分支从已加载 `yida-app` 的 Available Files 读取精确路径 `workflow/plan/workflow.md`；不要把当前文件名当目录拼成 `workflow/step-2-design/plan/workflow.md`，也不要用 Glob 猜路径。
 
 共享需求只整理一次。创建出的资源 ID 写入执行上下文；用户需求或范围实质变化时再更新需求与相关规划。需求文件与实施文档供内部执行，Plan 的 HTML 用于用户查看和确认方案。
 
@@ -45,6 +49,16 @@
 - 冲突时业务范围交给 `yida-prd` 修正，视觉规则交给 `yida-design` 修正，不由 `yida-app` 猜测覆盖。
 
 校验未通过时 Step 2 未完成，不得进入资源创建。校验通过后，后续页面实现以 `prd.md` 和 `design.md` 为准；`page-spec.json` 只用于把要求传给页面实现阶段。
+
+## 2.4 条件式素材分支
+
+`design.md.assetStrategy` 按页面分级：
+
+- 商品目录、品牌、营销和媒体展示页通常为 `required`；
+- 门户、工作台、档案、知识库和引导页有图片槽位时为 `beneficial`；
+- 表单、审批、台账、设置和库存流水默认 `none`。
+
+存在 `required` 或带槽位的 `beneficial` 时启动 `yida-image-assets`，先选图并保存 `prd/<项目名>/manifest-draft.json`。宜搭附件上传需要真实 `appType`；已有应用可直接上传，否则等 Step 3 创建应用后再落地，不因缺少 appType 阻塞应用创建。素材只阻塞使用它的页面；Step 7 通过 `--design design.md --app-type <真实appType>` 上传并校验，以输出清单的页面级状态判断能否继续。
 
 ## 主题文件实现指令
 

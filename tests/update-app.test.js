@@ -1,5 +1,7 @@
 'use strict';
 
+const querystring = require('querystring');
+
 const {
   assertPresetThemeKey,
   assertAppThemeKey,
@@ -89,6 +91,56 @@ describe('update-app helpers', () => {
       appType: 'APP_1',
       hideAppNav: 'n',
     });
+  });
+
+  test.each(['top', 'side', 'l_shape'])('platform %s reaches the request body and restores hidden navigation', (layout) => {
+    const params = parseArgs(['APP_1', '--layout', layout, '--show-app-nav']);
+    params.layoutDirection = normalizeLayoutDirection(params.layoutDirection);
+    const payload = buildUpdateAppPostData(params, {
+      layoutDirection: layout === 'side' ? 'top' : 'side',
+      hideAppNav: 'y',
+      navType: 'top_side',
+      config: { LAY_OUT_DIRECTION: 'side', HIDE_APP_NAV: 'y' },
+    }, { csrfToken: 'csrf' });
+    const body = querystring.parse(querystring.stringify(payload));
+    expect(body).toMatchObject({ layoutDirection: layout, hideAppNav: 'n', navType: 'top_side' });
+  });
+
+  // Application normalization from yc-utils trunk-master-gray b21b02d7.
+  // Shell page overrides (top_fold/none) are not application-save rules.
+  test.each([
+    ['top', 'top_side', 'top'],
+    ['side', 'top_fold', 'side'],
+    ['l_shape', 'side_only', 'l_shape'],
+    ['hoz', 'top_side', 'l_shape'],
+    ['hoz', 'top_fold', 'top'],
+    ['ver', 'top_side', 'side'],
+    ['slide', undefined, 'side'],
+    ['slide', 'top_side', 'l_shape'],
+    [undefined, 'top_side', 'l_shape'],
+    [undefined, 'top_fold', 'top'],
+    [undefined, 'side_only', 'side'],
+    [undefined, 'none', 'side'],
+    [undefined, undefined, 'side'],
+  ])('updating color preserves app layout %s / legacy navType %s as %s', (layoutDirection, navType, expected) => {
+    for (const current of [
+      { layoutDirection, navType },
+      { config: { LAY_OUT_DIRECTION: layoutDirection, NAVTYPE: navType } },
+    ]) {
+      const body = querystring.parse(querystring.stringify(buildUpdateAppPostData(
+        parseArgs(['APP_1', '--nav-theme', 'dark']), current, { csrfToken: 'csrf' }
+      )));
+      expect(body.layoutDirection).toBe(expected);
+      if (navType) {expect(body.navType).toBe(navType);}
+      else {expect(body).not.toHaveProperty('navType');}
+    }
+  });
+
+  test('an explicit layout overrides legacy app data without rewriting navType', () => {
+    const body = buildUpdateAppPostData(parseArgs(['APP_1', '--layout', 'side', '--show-app-nav']), {
+      layoutDirection: 'hoz', navType: 'top_side', hideAppNav: 'y',
+    }, {});
+    expect(body).toMatchObject({ layoutDirection: 'side', navType: 'top_side', hideAppNav: 'n' });
   });
 
   test('theme presets list documents the only values accepted by --theme', () => {
@@ -194,6 +246,43 @@ describe('update-app helpers', () => {
     expect(JSON.parse(payload.appName)).toMatchObject({
       zh_CN: 'OpenYida官方Samples展示0716',
     });
+  });
+
+  test('buildUpdateAppPostData preserves security settings without inventing defaults', () => {
+    const params = parseArgs(['APP_1', '--nav-theme', 'light']);
+    const currentApp = {
+      appName: { zh_CN: '应用' },
+      description: { zh_CN: '描述' },
+      mode: 'normal',
+      type: 'single',
+    };
+
+    const empty = buildUpdateAppPostData(
+      params,
+      { ...currentApp, addWaterMark: '', sentryMode: '' },
+      { csrfToken: 'csrf' }
+    );
+    expect(empty).toMatchObject({ addWaterMark: '', sentryMode: '' });
+    expect(querystring.stringify(empty)).toContain('addWaterMark=&sentryMode=');
+
+    const explicit = buildUpdateAppPostData(
+      params,
+      { ...currentApp, addWaterMark: 'n', sentryMode: 'y' },
+      { csrfToken: 'csrf' }
+    );
+    expect(explicit).toMatchObject({ addWaterMark: 'n', sentryMode: 'y' });
+
+    const configFallback = buildUpdateAppPostData(
+      params,
+      { ...currentApp, config: { ADDWATERMARK: 'y', SENTRY_MODE: 'n' } },
+      { csrfToken: 'csrf' }
+    );
+    expect(configFallback).toMatchObject({ addWaterMark: 'y', sentryMode: 'n' });
+
+    const absent = buildUpdateAppPostData(params, currentApp, { csrfToken: 'csrf' });
+    expect(absent).not.toHaveProperty('addWaterMark');
+    expect(absent).not.toHaveProperty('sentryMode');
+    expect(querystring.stringify(absent)).not.toMatch(/addWaterMark|sentryMode/);
   });
 
   test('buildUpdateAppPostData writes hideAppNav as y/n only when requested', () => {

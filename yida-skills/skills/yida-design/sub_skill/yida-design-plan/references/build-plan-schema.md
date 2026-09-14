@@ -142,7 +142,7 @@
 
 约束：
 
-- 计划生成前先确定应用范围与导航类型，再选择视觉方向。范围和导航不明时可合并询问，回答后生成遵守导航决策的视觉候选；每个问题必须有 `interactionId` 和 `writeBackPath`。
+- 计划生成前先确定应用范围与导航类型，再选择视觉方向。范围和导航归属不明时可合并询问，导航选项仅为“宜搭原生导航”和“自定义导航”；原生导航即平台导航，顶部、侧边、L 型等布局由 Agent 按场景确定，不进入 `ask_human`。回答后生成遵守导航决策的视觉候选；每个问题必须有 `interactionId` 和 `writeBackPath`。
 - `questionType` 只取 `single_choice`、`multi_choice`、`free_text` 或最终计划使用的 `confirm`，不设置 AI 代填项中间确认类型。
 - 只有宽泛应用名称且缺少模块、场景、任务、流程和可读需求时才问应用范围。
 - 审批、角色权限、字段、首页、看板、页面和常规流程细节不进入 `ask_human`；用户已提供时承接，未提供时基于业务推断并在最终计划统一呈现。
@@ -390,10 +390,27 @@
     "iconSummary": "使用统一线性图标体系，具体图标在开发阶段映射。",
     "assetStrategy": {
       "materialStatus": "final | draft | none",
-      "heroImage": "官网或品牌页需要；内部管理应用可为空",
-      "productImages": [],
+      "pages": [
+        {
+          "pageId": "page-home",
+          "imageNeed": "required | beneficial | none",
+          "reason": "<图片用途>",
+          "slots": [
+            {
+              "slotId": "home.hero",
+              "usage": "hero | background | product | scene | cover | empty-state",
+              "count": 1,
+              "aspectRatio": "16:9",
+              "minSize": "1600x900",
+              "focus": "主体靠右",
+              "objectFit": "cover | contain",
+              "generationAllowed": true
+            }
+          ]
+        }
+      ],
       "missingAssets": [],
-      "notes": "不得编造图片 URL；素材缺失时标记草稿"
+      "notes": "素材交给 yida-image-assets；缺口保持草稿"
     },
     "designMdReady": "已同步生成 design.md，后续 AI 开发读取完整设计契约。"
   },

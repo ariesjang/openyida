@@ -206,9 +206,11 @@ openyida configure-process APP_XXX FORM_XXX .cache/openyida/process/process.json
 openyida process preview APP_XXX PROC_INST_XXX --output .cache/openyida/process/process.html
 ```
 
+加签、转交通过流程定义的 `nodes[].actions.normalActions/appendActions` 配置，`create-process` 和 `configure-process` 共用编译器，生成一致的设计器和运行配置。完整 JSON 示例、默认值及验收边界见 [操作权限配置](yida-skills/skills/yida-process-rule/references/approval-actions.md)。
+
 `configure-process` 在发现已有已发布流程或已保存草稿时要求显式传入 `--replace`；如果无法证明目标流程属于指定表单，则不会执行任何写入。草稿创建、保存和发布均按 one-shot 执行，认证或网络异常导致结果未知时不会自动重试。
 
-发布成功后，CLI 会精确回读 `PUBLISHED` 版本及 `getProcessById` 的平台可见视图，校验节点、组件、名称、顺序和审批模式。只有完整通过才返回 `PLATFORM_VIEW_VERIFIED`；无法完整验证时返回 `PUBLISHED_UNVERIFIED`，不得把本地 `processJson` 当作平台已验证结果。
+发布成功后，CLI 会精确回读 `PUBLISHED` 版本及 `getProcessById` 的平台可见视图，校验节点、组件、名称、顺序、审批模式及按钮权限和加签参数。只有完整通过才返回 `PLATFORM_VIEW_VERIFIED`；无法完整验证时返回 `PUBLISHED_UNVERIFIED`，不得把本地 `processJson` 当作平台已验证结果。
 
 ### 数据管理
 
@@ -294,7 +296,8 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida create-form create <appType> "<formTitle>" <fieldsJsonFile> [--icon auto\|<iconName>] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | 创建表单页面 |
 | `openyida create-form icons [--json]` | 列出可用的表单导航图标 |
 | `openyida create-form validate-fields <fieldsJsonOrFile> [--json]` | 本地校验表单字段 JSON |
-| `openyida create-form update <appType> ... [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | 更新表单页面 |
+| `openyida create-form update <appType> <formUuid> (<changesJsonOrFile> \| --data-file <changesJsonOrFile>) [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | 更新表单页面 |
+| `openyida create-form resume <appType> <formUuid> <fieldsJsonOrFile> [--json]` | 更新表单页面 |
 | `openyida create-form patch <appType> <formUuid> <patchJsonOrFile> [--open\|--no-open]` | 更新表单页面 |
 | `openyida create-form rule <appType> <formUuid> <rulesJsonOrFile> [--open\|--no-open]` | 更新表单页面 |
 | `openyida create-form validation <appType> <formUuid> <validationsJsonOrFile> [--open\|--no-open]` | 更新表单页面 |
@@ -309,7 +312,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida create-page <appType> "<name>" [--mode dashboard] [--hide-nav] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | 创建自定义展示页面 |
 | `openyida build-page <sourceFile> [--output file\|--write]` | 构建宜搭兼容页面源码 |
 | `openyida check-page <src> [--compat]` | 检查自定义页面规范 |
-| `openyida compile <src>` | 本地编译自定义页面 |
+| `openyida compile <src> [--canvas] [--json]` | 本地编译自定义页面 |
 | `openyida publish <src> <appType> <formUuid> [--health-check] [--force] [--canvas] [--auto-nav-order] [--open\|--no-open]` | 编译并发布自定义页面 |
 | `openyida update-form-config <appType> <formUuid> <true\|false\|keep> "<title>" [--locale zh_CN\|en_US\|ja_JP]` | 更新表单配置 |
 | `openyida get-form-config <appType> <formUuid> [--json]` | 查询表单配置 |
@@ -332,8 +335,8 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 
 | 命令 | 说明 |
 |------|------|
-| `openyida configure-process <appType> <formUuid> <definition> [processCode] [--replace]` | 配置并发布流程规则 |
-| `openyida create-process <appType> ... [--replace]` | 创建流程表单（一体化） |
+| `openyida configure-process <appType> <formUuid> <definition> [processCode] [--replace]` | 配置并发布流程规则; 支持加签/转交，配置位于 JSON nodes[].actions.normalActions/appendActions |
+| `openyida create-process <appType> ... [--replace]` | 创建流程表单（一体化）; 支持加签/转交，配置位于 JSON nodes[].actions.normalActions/appendActions |
 | `openyida ai-form-setting <get\|fields\|models\|enable\|disable\|save> <appType> ...` | 管理流程表单 AI 审批提示 |
 | `openyida process preview <appType> ...` | 预览流程实例（可视化流程图） |
 
@@ -407,7 +410,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida batch <file>\|--commands "cmd1 ; cmd2" [--stop-on-error] [--json]` | 批量执行 OpenYida 命令 |
 | `openyida flash-to-prd --file <path> --name "<project>"` | 闪记 / 会议纪要转 PRD prompt |
 | `openyida ai <text\|image> [options]` | 调用 AI 文生文和识图能力 |
-| `openyida asset <status\|resolve\|generate> [options]` | 检测素材能力 / 解析回填素材 |
+| `openyida asset <status\|resolve\|sources> [options]` | 检测素材能力 / 解析回填素材 |
 | `openyida cdn-config [options]` | 配置 CDN / OSS 上传 |
 | `openyida cdn-upload <image-path>` | 上传图片到 CDN |
 | `openyida cdn-refresh [options]` | 刷新 CDN 缓存 |
