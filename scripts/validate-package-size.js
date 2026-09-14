@@ -10,10 +10,10 @@ const path = require('path');
 // Budgets are ratchets that track legitimate content growth (12 locale packs,
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
-// Includes the latest main assets/process support and CodeBundle download/publish.
+// Includes phase-eight bounded form recovery and terminal delivery guidance.
 // Node 20/24 package measurements are rounded up to the next 16 KiB boundary.
-const MAX_TARBALL_BYTES = 1824 * 1024;
-const MAX_UNPACKED_BYTES = 6240 * 1024;
+const MAX_TARBALL_BYTES = 1840 * 1024;
+const MAX_UNPACKED_BYTES = 6256 * 1024;
 // Includes both asset delivery files and process action files.
 const MAX_ENTRY_COUNT = 503;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;

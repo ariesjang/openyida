@@ -227,10 +227,31 @@ describe('dependency-aware form batches', () => {
     expect(retry).toMatchObject({
       success: false,
       errorCode: 'FORM_BATCH_PARTIAL_FAILURE',
+      recoveryAction: 'rerun_unchanged_plan',
     });
-    expect(retry.nextAction).toContain('Do not fall back to create-form create');
+    expect(retry.nextAction).toBe(retry.recoveryAction);
     expect(execute.mock.calls.some(([args]) => args[1] === 'create')).toBe(false);
     expect(execute.mock.calls.some(([args]) => args[1] === 'resume' && args[3] === 'FORM-a')).toBe(true);
+  });
+
+  test('unknown write outcomes require inspection instead of unchanged-plan retry', async () => {
+    write([form('a')]);
+    const execute = jest.fn(async args => {
+      if (args[0] === 'login' || args[1] === 'validate-fields') { return { success: true }; }
+      if (args[1] === 'create') { throw new Error('connection closed before a resource ID was returned'); }
+      throw new Error('unexpected command');
+    });
+
+    const output = await run(['APP_X', file], { execute });
+
+    expect(output).toMatchObject({
+      success: false,
+      errorCode: 'FORM_BATCH_PARTIAL_FAILURE',
+      recoveryAction: 'inspect_unknown_write_then_reconcile',
+      results: { a: { status: 'failed' } },
+    });
+    expect(output.results.a).not.toHaveProperty('formUuid');
+    expect(output.nextAction).toBe(output.recoveryAction);
   });
 
   test('a post-create failure with a known ID resumes the same form inside the batch', async () => {

@@ -110,7 +110,7 @@ description: 表单页面创建与更新；支持 19 种业务字段和 Divider�
 
 关联字段必须把引用放在 `associationForm` 内。推荐使用紧凑写法 `"associationForm": { "$form": "customer", "field": "客户名称" }`；batch 会将其规范化为 `associationForm.formUuid` 和 `associationForm.mainFieldId`。完整写法则分别在 `formUuid` 使用 `{ "$form": "customer" }`、在 `mainFieldId` 使用 `{ "$form": "customer", "field": "客户名称" }`。不要把 `$form` 放在 `AssociationFormField` 顶层，也不要用 `batch --help`、空参数或临时计划探索格式；技能中的结构就是正式契约。
 
-批量命令超过前台时限进入后台属于正常行为。此时必须保留原任务和 `<forms.json>.state.json`，等待运行时自动回传结果；禁止调用 `ToolStop`，禁止删除 `.state.json`/`.lock`，禁止改变参数再次调用 batch。若最终返回 `FORM_BATCH_PARTIAL_FAILURE`，在本轮原样保留结构化错误并停止；禁止模型侧再调用 `create-form create`、`update` 或 `resume` 补洞。CLI 会在同一次 batch 内对已取得真实 `formUuid` 的空壳表单执行一次保守恢复。
+批量命令超过前台时限进入后台属于正常行为。此时必须保留原任务和 `<forms.json>.state.json`，等待运行时自动回传结果；禁止调用 `ToolStop`，禁止删除 `.state.json`/`.lock`，禁止改变参数再次调用 batch。若最终返回 `FORM_BATCH_PARTIAL_FAILURE`，在本轮原样保留结构化错误并停止；禁止模型侧再调用 `create-form create`、`update` 或 `resume` 补洞。CLI 会在同一次 batch 内对已取得真实 `formUuid` 的空壳表单执行一次保守恢复。后续明确进入恢复时，只在结果为 `recoveryAction=rerun_unchanged_plan` 时重新执行完全相同的 batch 命令；原任务文件内容和 batch 参数必须逐字保持不变，不得把 `.state.json` 中的 ID 回填到任务文件。若返回 `recoveryAction=inspect_unknown_write_then_reconcile`，先核对远端资源并准备新的 reconcile 任务，不得重跑或编辑当前指纹计划。
 
 ## 官方表单示例范式
 
@@ -220,6 +220,8 @@ openyida create-form resume <appType> <formUuid> <fieldsJsonOrFile> --json
 
 该命令先回读目标表单并核对字段，只添加可唯一判定的缺失字段，保存后再次回读；同名异类型、重复
 目标字段、归属不匹配或回读不确定时均停止且不写入。它不会新建替代表单，也不会覆盖已有字段。
+
+`resume` 对明确的保存端 HTTP 5xx 只做安全恢复：先精确回读；若目标字段已存在则直接收口，若仍缺失且无冲突则绑定最新服务端 revision 至多重试一次。成功 JSON 已包含真实 `formUuid` 和 `url` 时，立即进入终态交付并停止，不再追加 Write、重复 `get-schema` 或过程性说明。用户明确要求资源 ID 时，把已验证 `formUuid` 写进终态 artifact 的可见 `description`，不能只放在 metadata。
 
 输出：
 
