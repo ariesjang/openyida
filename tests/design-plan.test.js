@@ -852,6 +852,60 @@ describe('Plan contract and file consistency', () => {
     expect(workflow).toContain('严禁用它替代 `ask_human`');
   });
 
+  test('plan final confirmation uses the callable single-select ask_human schema only', () => {
+    const interactionContract = fs.readFileSync(
+      path.join(
+        ROOT,
+        'yida-skills/skills/yida-design/references/ask-human-interaction-contract.md',
+      ),
+      'utf8',
+    );
+    const workflow = fs.readFileSync(
+      path.join(
+        ROOT,
+        'yida-skills/skills/yida-app/workflow/plan/step-4-deliver.md',
+      ),
+      'utf8',
+    );
+    const example = interactionContract.match(
+      /#### 实际 `ask_human` 调用参数[\s\S]*?```json\n([\s\S]*?)\n```/,
+    );
+
+    expect(example).not.toBeNull();
+    const payload = JSON.parse(example[1]);
+    expect(Object.keys(payload).sort()).toEqual([
+      'attachments',
+      'options',
+      'question',
+      'revision',
+      'submitLabel',
+      'title',
+    ]);
+    expect(payload.question).toBe('是否按当前这版方案开始搭建？');
+    expect(payload.options.map(option => option.value)).toEqual([
+      'confirm_build',
+      'continue_editing',
+    ]);
+    expect(payload.options).toHaveLength(2);
+    expect(payload.attachments).toEqual([
+      {
+        name: 'build-plan.html',
+        path: 'prd/<项目名>/build-plan.html',
+      },
+    ]);
+    expect(payload.revision).toBe('{revision}');
+    expect(payload.submitLabel).toBeTruthy();
+    expect(JSON.stringify(payload)).not.toMatch(
+      /"(?:fields|text|textarea)"\s*:|调整说明/,
+    );
+
+    for (const content of [interactionContract, workflow]) {
+      expect(content).toContain('恰好两个顶层 `options`');
+      expect(content).toContain('禁止使用 `fields`、`text`、`textarea`');
+      expect(content).toContain('下一轮');
+    }
+  });
+
   test('staging failure changes no source or artifact', () => {
     materialize(input);
     const files = ['build-plan.json', 'prd.md', 'design.md', 'build-plan.html'].map(name => path.join(dir, name));
