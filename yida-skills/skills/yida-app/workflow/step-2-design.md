@@ -8,11 +8,11 @@
 
 ## 2.0 先分析并确认需求
 
-调用 `yida-requirement-analysis`，按 [需求分析与首次搭建确认](../../yida-requirement-analysis/workflow/prepare-brief.md) 整理来源、复用资源及用户已有计划，在同一轮一次性确认尚未明确的 Fast / Plan、业务模块、页面与表单、导航归属及风格。导航 `ask_human` 仅提供“宜搭原生导航”和“自定义导航”两个选项，原生导航就是平台导航，并按 [导航选项说明](../../yida-requirement-analysis/workflow/prepare-brief.md#导航选项说明) 备注实现方式，不标记“推荐”。顶部、侧边、L 型等布局在用户所选归属内根据场景确定，不询问布局或样式；用户已明确的要求优先，后续阶段复用归属选择和布局依据。首次搭建在必要回答写回、`intake.confirmed=true` 后继续。
+调用 `yida-requirement-analysis`，按 [需求分析与首次搭建确认](../../yida-requirement-analysis/workflow/prepare-brief.md) 整理来源、复用资源及用户已有计划，在同一轮一次性确认尚未明确的 Fast / Plan、业务模块、页面与表单及风格。导航方式与布局按 [导航设计](../../yida-requirement-analysis/workflow/prepare-brief.md#导航设计) 确定；用户已明确要求优先，后续阶段复用判断和依据。首次搭建在必要回答与导航判断写回、`intake.confirmed=true` 后继续。
 
 回答齐全后直接保存内部需求记录并进入 2.1；不把“生成需求简报”列为独立任务，不再扩写或展示简报请用户确认。已有确认记录且需求未变化时直接复用。记录粒度、保存和校验规则统一遵守上述需求分析流程。
 
-显式搭建方式属于本次任务的粘性输入。若用户在首次消息已选择 Plan，澄清业务模块、页面、导航或风格时不得再次询问模式，也不得在合并回答后改写为 Fast；进入 2.1 前必须以用户最后一次明确选择校验 `intake.designMode`。Fast 同理。
+显式搭建方式属于本次任务的粘性输入。若用户在首次消息已选择 Plan，澄清业务模块、页面或风格时不得再次询问模式，也不得在合并回答后改写为 Fast；进入 2.1 前必须以用户最后一次明确选择校验 `intake.designMode`。Fast 同理。
 
 执行规划前读取 `constraints.prohibitedActions`。PRD 与 design 必须把禁止项写成实现门禁：`theme-file` 禁止时沿用现有平台主题且不安排主题文件任务；`page-source` 禁止时只允许只读核查与非源码配置；`publish` 禁止时把发布明确标记为跳过。不得为了满足默认九步流程静默删除这些约束。
 

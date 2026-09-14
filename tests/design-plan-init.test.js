@@ -121,6 +121,21 @@ test('infers a complete form-only scope and drops an unconfirmed custom page inv
   }).success).toBe(true);
 });
 
+test.each([
+  { type: 'platform-side', source: 'ai_default', reason: '以原生审批和台账为主，采用平台侧栏' },
+  { type: 'custom', variant: 'top', source: 'ai_default', reason: '需要保留品牌菜单与内容状态，采用自定义顶部导航' },
+  { type: 'custom', variant: 'side', source: 'user_selected', reason: '用户明确要求自定义侧栏' },
+])('initializes Plan and preserves resolved navigation facts: %j', navigation => {
+  brief.navigation = navigation;
+  save();
+  const result = init();
+  const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+  expect(plan.execution.appConfig.navigationType).toBe(navigation.type);
+  expect(plan.execution.explicitScope.navigation).toEqual(navigation);
+  expect(plan.meta.status).toBe('draft');
+  expect(JSON.parse(fs.readFileSync(briefPath, 'utf8')).navigation).toEqual(navigation);
+});
+
 test('normalizes equivalent role, sample-record and navigation authoring shapes before validation', () => {
   const plan = fixture();
   plan.schemaVersion = '2.0';
