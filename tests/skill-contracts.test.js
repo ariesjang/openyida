@@ -1456,6 +1456,7 @@ describe('OpenYida skill contracts', () => {
   test('custom pages do not build page-level navigation by default', () => {
     const pageUiux = readSkill('yida-skills/skills/yida-design/SKILL.md');
     const navStep = readSkill('yida-skills/skills/yida-prd/workflow/step-2-information-architecture.md');
+    const navigationDesign = readSkill('yida-skills/skills/yida-requirement-analysis/workflow/prepare-brief.md');
     const pageGeneration = readSkill('yida-skills/skills/yida-canvas-custom-page/references/page-generation-guide.md');
     const navPatterns = readSkill('yida-skills/skills/yida-design/references/app/navigation-patterns.md');
     const navGuide = readSkill('yida-skills/skills/yida-canvas-custom-page/references/navigation-and-entry-guide.md');
@@ -1466,7 +1467,10 @@ describe('OpenYida skill contracts', () => {
     expect(pageUiux).toContain('普通自定义页、页面内 tab、分段、筛选和快捷入口都不触发 `yida-nav-shell`');
     expect(pageUiux).toContain("写 `appBlueprint.hideAppNav: 'y'` 并交给 `yida-nav-shell`");
     expect(pageUiux).toContain('同应用页面优先放入平台导航或导航分组');
-    expect(navStep).toContain('默认保留平台应用导航。');
+    expect(navStep).toContain('沿用 brief 的导航决策');
+    expect(navStep).toContain('../../yida-requirement-analysis/workflow/prepare-brief.md#导航设计');
+    expect(navigationDesign).toContain('信息不足以支持自绘时采用宜搭原生导航');
+    expect(navigationDesign).toContain('用户已明确要求宜搭原生导航、自定义导航或具体布局时优先沿用');
     expect(navStep).toContain('页面内 tab、分段、筛选、卡片切换只是当前页内容结构。');
     expect(navStep).toContain('先分清两件事');
     expect(navStep).toContain('自绘应用级顶部/侧边/导航壳，或明确隐藏应用导航');
