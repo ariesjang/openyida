@@ -487,24 +487,25 @@ describe('design-plan materialize', () => {
     delete plan.visualStyle.forUser.themeProfile;
     plan.visualStyle.forUser.selectedTheme = { themeId: 'mist-layered-signal', templatePath: 'templates/design-themes/mist-layered-signal.md' };
     plan.visualStyle.forUser.colorStrategy = { primaryColor: '#2F9E63', primaryColorName: '自然绿意', surfaceTone: 'brand-tinted' };
+    plan.visualStyle.forUser.navigationStyle.tone = 'light';
     const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-design');
     const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
     const design = renderDesign(plan);
     const green = readDesignTokens(design);
-    expect(green['--pod-shell-bg-color-light']).toBe('#F3F9F6');
+    expect(green['--pod-shell-theme-bg-color']).toBe('var(--color-brand1-3)');
     expect(green['--pod-page-bg-color']).toBe('var(--color-white, #fff)');
     expect(green['--pod-card-bg-color']).toBe('var(--color-white, #fff)');
-    expect(green['--pod-card-border']).toBe('1px solid var(--color-line1-1)');
+    expect(green['--pod-card-border']).toBeUndefined();
     expect(green['--color-line1-2']).toBe('#CDE8DA');
     expect(green['--color-text1-4']).toBe('#171717');
     expect(green['--color-text1-10']).toBe('#5F5F5F');
     expect(green['--color-text1-3']).toBe('#929292');
     expect(design.indexOf('## 项目配色适配')).toBeLessThan(design.indexOf('## 设计总览'));
-    expect(applyDesignTokens(template, design)).toContain('--pod-shell-bg-color-light: #F3F9F6;');
+    expect(applyDesignTokens(template, design)).toContain('--pod-shell-theme-bg-color: var(--color-brand1-3);');
     expect(applyDesignTokens(template, design)).toContain('--pod-page-bg-color: var(--color-white, #fff);');
     plan.visualStyle.forUser.colorStrategy.primaryColor = '#6F4E37';
     const brown = readDesignTokens(renderDesign(plan));
-    for (const token of ['--pod-shell-bg-color-light', '--color-line1-2', '--color-fill1-2']) {
+    for (const token of ['--color-brand1-3', '--color-line1-2', '--color-fill1-2']) {
       expect(brown[token]).not.toBe(green[token]);
     }
     expect(brown['--color-text1-4']).toBe(green['--color-text1-4']);
@@ -519,17 +520,18 @@ describe('design-plan materialize', () => {
       const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
       plan.execution = { ...plan.execution, appConfig: { navigationType } };
       plan.visualStyle.forUser.colorStrategy = { primaryColor: '#2F9E63', surfaceTone: 'brand-tinted' };
+      plan.visualStyle.forUser.navigationStyle.tone = 'light';
       plan.visualStyle.tokens = {};
       const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-design');
       const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
       const design = renderDesign(plan);
       const tokens = readDesignTokens(design);
-      expect(tokens['--pod-shell-bg-color-light']).toBe('#F3F9F6');
+      expect(tokens['--pod-shell-theme-bg-color']).toBe('var(--color-brand1-3)');
       expect(tokens['--pod-page-bg-color']).toBe('var(--color-white, #fff)');
       expect(applyDesignTokens(template, design)).toContain('--pod-page-bg-color: var(--color-white, #fff);');
       plan.visualStyle.tokens = {
         '--pod-page-bg-color': '#FFF8ED',
-        '--pod-shell-bg-color-light': '#FAF0E6',
+        '--pod-shell-theme-bg-color': '#FAF0E6',
       };
       const explicit = readDesignTokens(renderDesign(plan));
       for (const [token, value] of Object.entries(plan.visualStyle.tokens)) {
@@ -537,6 +539,29 @@ describe('design-plan materialize', () => {
       }
     }
   );
+
+  test.each(['light', 'dark'])('platform navigation modes stay independent of the %s root shell', tone => {
+    const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
+    plan.visualStyle.forUser.navigationStyle.tone = tone;
+    plan.visualStyle.tokens = {};
+    const { applyDesignTokens } = require('../lib/app/theme-from-design');
+    const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
+    const design = renderDesign(plan);
+    const css = applyDesignTokens(template, design);
+    const expected = { light: 'var(--color-brand1-3)', dark: 'var(--color-brand1-5)', white: '#fff', gray: '#f0f2f5' };
+    for (const [mode, background] of Object.entries(expected)) {
+      const scoped = css.match(new RegExp(`\\.pod-premium\\.nav-${mode}\\s*\\{([^}]+)\\}`))[1];
+      expect(scoped).toContain(`--pod-shell-theme-bg-color: ${background};`);
+      expect(scoped).toContain(`--pod-page-header-bg-color: ${background};`);
+    }
+    // Changing only brand values keeps the scoped bindings and existing unrelated CSS.
+    plan.visualStyle.forUser.colorStrategy.primaryColor = '#1677FF';
+    const changed = applyDesignTokens(css + '\n.local-detail { padding: 7px; }\n', renderDesign(plan), design);
+    expect(changed).toContain('--color-brand1-6: #1677FF;');
+    expect(changed).toContain('--pod-shell-theme-bg-color: var(--color-brand1-5);');
+    expect(changed).toContain('.local-detail { padding: 7px; }');
+    expect(applyDesignTokens(changed, renderDesign(plan), renderDesign(plan))).toBe(changed);
+  });
 
   test('brand atmosphere preserves dark surfaces and rejects unsupported modes', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
@@ -578,37 +603,20 @@ describe('design-plan materialize', () => {
       if (theme.themeId === 'airy-media-grid') {
         expect(design).toContain('"--color-brand1-1": "#836753"');
       }
-      if (theme.themeId === 'dark-focus-layered') {
-        expect(design).toContain('"--oyd-stage-bottom": "#2C231C"');
-      }
-      if (theme.themeId === 'hairline-runway-clarity') {
-        expect(design).toContain('"--color-brand1-1": "#F1EDEB"');
-      }
-      if (theme.themeId === 'high-contrast-modular') {
-        expect(design).toContain('"--pod-page-bg-color": "var(--color-white, #fff)"');
-        expect(design).toContain('"--oyd-surface-soft": "#EBE9E8"');
-        expect(design).toContain('"--oyd-accent-deep": "#44352A"');
-      }
-      if (theme.themeId === 'interlocked-vivid-modules') {
-        expect(design).toContain('"--pod-page-bg-color": "var(--color-white, #fff)"');
-      }
-      if (theme.themeId === 'media-rail-inspector') {
-        expect(design).toContain('"--oyd-media-surface": "#F2F0EF"');
-        expect(design).toContain('"--oyd-tag-surface": "#E8E5E3"');
-        expect(design).toContain('"--oyd-action-deep": "#221D1A"');
-      }
-      if (theme.themeId === 'mono-grid-signal') {
-        expect(design).toContain('"--oyd-pattern-surface": "#E8E6E4"');
-      }
-      if (theme.themeId === 'status-framed-media-grid') {
-        expect(design).toContain('"--oyd-brand-focus-soft": "#F3F1EF"');
-      }
-      if (theme.themeId === 'dark-luminous-modular') {
-        expect(design).toContain('"--color-brand1-2": "#2D251F"');
-        expect(design).toContain('"--color-brand1-3": "#1A1614"');
-        expect(design).toContain('"--oyd-brand-glow-soft": "rgba(111, 78, 55, 0.18)"');
-        expect(design).toContain('"--oyd-brand-chart-strong": "#785943"');
-      }
+      const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-design');
+      const contract = require('../yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/design-themes/basic-tokens.json');
+      const tokens = readDesignTokens(design);
+      expect(Object.keys(tokens).sort()).toEqual(Object.values(contract.groups).flat().sort());
+      expect(tokens['--font-size-subhead']).toBe('18px');
+      expect(tokens['--font-size-table']).toBe('13px');
+      expect(tokens['--s-10']).toBe('40px');
+      expect(tokens['--color-fill1-10']).toBe('#2E3033');
+      expect(tokens['--color-text1-5']).toBe('#FFFFFF');
+      expect(design).not.toMatch(/--oyd-|--font-(size|weight|lineheight)-metric/);
+      const css = applyDesignTokens(fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8'), design);
+      expect(css).toContain('--font-size-subhead: 18px;');
+      expect(css).toContain('--pod-app-root-bg-color: var(--pod-page-bg-color);');
+      expect(css).not.toMatch(/--oyd-/);
     }
   });
 

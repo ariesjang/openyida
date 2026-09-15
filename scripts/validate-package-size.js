@@ -14,8 +14,8 @@ const path = require('path');
 // Node 20/24 package measurements are rounded up to the next 16 KiB boundary.
 const MAX_TARBALL_BYTES = 1824 * 1024;
 const MAX_UNPACKED_BYTES = 6256 * 1024;
-// Three new references separate intake handoff, entry relationships and navigation.
-const MAX_ENTRY_COUNT = 506;
+// Intake references and the shared basic-theme-token contract are packaged.
+const MAX_ENTRY_COUNT = 507;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -36,6 +36,7 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-requirement-analysis/references/experience-groups.md',
   'yida-skills/skills/yida-requirement-analysis/references/handoff.md',
   'yida-skills/skills/yida-design/references/navigation-decision.md',
+  'yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/design-themes/basic-tokens.json',
   'lib/samples/openyida-scaffold/canvas-dialog.canvas.jsx',
   ...['shared', 'sidebar', 'side', 'top', 'mixed', 'dock', 'tabs', 'data', 'content'].map(name => `lib/samples/openyida-scaffold/canvas-nav/${name}.jsx`),
   'yida-skills/skills/yida-canvas-custom-page/references/dialog-guide.md',

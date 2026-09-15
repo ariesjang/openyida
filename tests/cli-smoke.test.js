@@ -2438,6 +2438,8 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.navigation_policy).not.toContain('offer exactly two');
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
     expect(route.design_mode_policy).not.toContain('Confirm unresolved navigation');
+    expect(route.product_design_policy).toBe(workflow.product_design_policy);
+    expect(route.product_design_policy).toContain('Theme templates use only basic-tokens.json variables');
   }
   expect(workflow.default_nav_order_policy).toContain('preserve platform ordering for the workspace');
   expect(workflow.completion_contract).toContain('frontend-only delivery includes only its verified frontend entry');
@@ -2478,10 +2480,23 @@ test('Plan CLI and design-file sample work locally without a login', () => {
     const check = JSON.parse(runOk(['design-plan', 'materialize', input, '--check', '--json']));
     expect(check.checked).toBe(true);
     expect(fs.existsSync(path.join(dir, 'design.md'))).toBe(false);
+    runOk(['design-plan', 'materialize', input, '--json']);
+    const { readDesignTokens } = require('../lib/app/theme-from-design');
+    const contract = require('../yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/design-themes/basic-tokens.json');
+    const tokens = readDesignTokens(fs.readFileSync(path.join(dir, 'design.md'), 'utf8'));
+    expect(Object.keys(tokens).sort()).toEqual(Object.values(contract.groups).flat().sort());
+    for (const [name, value] of Object.entries(contract.fixedValues)) {
+      expect(tokens[name]).toBe(value);
+    }
     const result = JSON.parse(runOk(['design-plan', 'patch', input, '--set', 'execution.appConfig.navigationType=custom', '--set', 'visualStyle.tokens.--pod-card-border-radius=16px', '--materialize', '--output-dir', dir, '--json']));
     expect(result.changed).toBe(true);
     const cssPath = path.join(dir, 'app-theme.css');
     runOk(['sample', 'yida-design', 'app-theme', '--design-file', path.join(dir, 'design.md'), '--output', cssPath]);
-    expect(fs.readFileSync(cssPath, 'utf8')).toContain('--pod-card-border-radius: 16px');
+    const css = fs.readFileSync(cssPath, 'utf8');
+    expect(css).toContain('--pod-card-border-radius: 16px');
+    for (const [tone, background] of Object.entries({ light: 'var(--color-brand1-3)', dark: 'var(--color-brand1-5)', white: '#fff', gray: '#f0f2f5' })) {
+      const block = css.match(new RegExp(`\\.pod-premium\\.nav-${tone}\\s*\\{([^}]+)\\}`))[1];
+      expect(block).toContain(`--pod-shell-theme-bg-color: ${background};`);
+    }
   } finally {fs.rmSync(dir, { recursive: true, force: true });}
 });
