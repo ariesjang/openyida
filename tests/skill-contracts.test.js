@@ -1479,7 +1479,7 @@ describe('OpenYida skill contracts', () => {
     const navStep = readSkill('yida-skills/skills/yida-prd/workflow/step-2-information-architecture.md');
     const navigationDesign = readSkill('yida-skills/skills/yida-design/references/navigation-decision.md');
     const pageGeneration = readSkill('yida-skills/skills/yida-canvas-custom-page/references/page-generation-guide.md');
-    const navPatterns = readSkill('yida-skills/skills/yida-design/references/app/navigation-patterns.md');
+    const navPatterns = readSkill('yida-skills/skills/yida-prd/references/app/navigation-patterns.md');
     const navGuide = readSkill('yida-skills/skills/yida-canvas-custom-page/references/navigation-and-entry-guide.md');
     const createPage = readSkill('yida-skills/skills/yida-create-page/SKILL.md');
     const navShell = readSkill('yida-skills/skills/yida-nav-shell/SKILL.md');
@@ -1577,7 +1577,7 @@ describe('OpenYida skill contracts', () => {
     const pageDesign = readSkill('yida-skills/skills/yida-design/sub_skill/page-design/SKILL.md');
     const step3 = readSkill('yida-skills/skills/yida-prd/workflow/step-2-information-architecture.md');
     const output = readSkill('yida-skills/skills/yida-prd/workflow/output-prd.md');
-    const blueprint = readSkill('yida-skills/skills/yida-design/references/app/blueprint.md');
+    const blueprint = readSkill('yida-skills/skills/yida-prd/references/app/blueprint.md');
 
     expect(design).toContain('[page-design](sub_skill/page-design/SKILL.md)');
     expect(pageDesign).toContain('先确认当前应用主题');
@@ -1585,7 +1585,8 @@ describe('OpenYida skill contracts', () => {
     expect(step3).toContain('`display-page`');
     expect(step3).toContain('`normal-form`');
     expect(step3).toContain('`process-form`');
-    expect(readSkill('yida-skills/skills/yida-design/workflow/output-prd.md')).toContain('../../yida-prd/workflow/output-prd.md');
+    expect(design).toContain('use_skill("yida-prd")');
+    expect(design).toContain('[应用结构参考](../yida-prd/references/app/blueprint.md)');
     expect(output).toContain('## 7. 资源蓝图');
     expect(output).toContain('process-form');
     expect(output).toContain('## 8. 资源创建顺序');
