@@ -69,14 +69,14 @@
 
 - 准备 2-3 句业务交付总结，并给一个名为“应用访问入口”的入口组。
 - `notify_human` 是终态交付动作，调用后不要再发送独立正文或继续调用工具。把业务总结、readback 支撑的事实和必要上下文写进终态 artifact 的可见 `description`；用户明确要求记录数、资源 ID、发布状态或核验结果时，也必须写进该 `description`，不能只放在 metadata 或依赖卡片标题表达。
-- 一次完整应用搭建只产生这一组用户可见交付，不把表单、流程、报表、页面、资源清单或内部文件分别登记为附件、链接卡或下载卡。
+- 一次 run 最多交付这一组用户可见的“应用访问入口”，不把表单、流程、报表、页面、资源清单或内部文件分别登记为附件、链接卡或下载卡。同一应用在后续 run 中被用户再次请求时，复用已有资源和已验证 URL，并在当前 run 重新交付一组入口；不得为了重新展示入口而重建、更新或重新发布资源。
 - 业务资源只在总结中按能力或数量概述是默认规则，例如“已完成 4 张业务表单、1 条审批流程和 1 个经营看板”；不默认输出资源 ID 表格、资源清单、长列表、appType、formUuid、pageId、reportId。
 - 用户或调用方明确要求资源清单、资源 UUID/ID、发布状态或测试数据摘要时，终态 artifact 的 `description` 必须包含一个简洁的“交付清单”。清单只列本轮已通过真实返回值或只读 readback 核验的资源名称、类型和 ID，并同时写明主页面发布状态及 seed records 写入/抽查摘要；不得遗漏已创建或发布的资源，也不得编造未知 ID。
 - 即使用户没有要求技术清单，业务总结中的资源数量、seed records 数量以及“已写入/已验证/已就绪”等完成状态也必须逐资源来自真实返回值或只读 readback。证据不完整时缩小表述范围并明确未核验项，禁止为了让总结完整而补齐推测数字。
 - 新增、修改或发布单个具体页面时，仍只交付当前页面，不扩展成完整应用入口组。
 - 完整应用的入口组始终包含“应用工作台” `{base_url}/{appType}/workbench`。
 - 主页面在 PRD 中为 `entryMode=standalone`，且 Step 8 回读确认 `isRenderNav=false` 时，入口组额外包含“独立业务入口” `{base_url}/{appType}/custom/{formUuid}`；否则不得输出。
-- 先读取 `openyida agent-capabilities --summary-json` 的 `application_entry_policy.entries.admin`：值为 `include` 时，入口组额外包含“应用开发后台” `{base_url}/{appType}/admin`；值为 `omit` 时不得输出。不要根据 Agent 名称或自然语言猜测云端/非云端。
+- 先读取 `openyida agent-capabilities --summary-json` 的 `application_entry_policy.entries.admin`：值为 `include` 时，入口组额外包含“应用开发后台” `{base_url}/{appType}/admin`；值为 `omit` 时不得输出。该值仅由 `builder_path.auth.auth_runtime=env_token_bootstrap` 且 `can_auto_use=true` 的已注入可用鉴权事实决定；不要根据 Agent 名称、宿主类型、`web_sandbox`/`mulerun` 或自然语言猜测。
 - 三个入口属于同一个应用入口组，不得各自连同业务资源再生成多组交付。
 - 不把 `g.alicdn.com` 的 `index.css`、`index.js`、`index.html`、`locales/*.json`、构建产物 URL、CDN 资源 URL 或中间文件链接当成最终结果展示。
 - 调用方或评测要求结构化结果时，额外输出顶层 `skillsUsed`，只填写本轮实际读取并使用的 `yida-*` 子技能名；不得把计划使用或未加载的技能写入。

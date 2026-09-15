@@ -29,7 +29,7 @@
 
 ### 2.3 应用入口
 
-一次完整应用搭建只产生一组名为“应用访问入口”的用户可见交付。宿主提供 artifact 或交付工具时，也只在 final 调用一次并承载整组入口。
+一次 run 最多交付一组名为“应用访问入口”的用户可见交付。宿主提供 artifact 或交付工具时，在当前 run 只调用一次并承载整组入口。同一应用在后续 run 中被用户再次请求时，应复用已有资源和已验证 URL，并在当前 run 重新交付一组入口；不得为了重新展示入口而重建、更新或重新发布资源。
 
 ## 3. 入口矩阵
 
@@ -48,10 +48,10 @@ URL：
 应用开发后台：{base_url}/{appType}/admin
 ```
 
-运行环境不得通过 Agent 名称或自然语言猜测。以 `openyida agent-capabilities --summary-json` 返回的 `application_entry_policy` 为准：
+入口策略不得通过 Agent 名称、宿主类型、`web_sandbox`/`mulerun` 等运行时标记或自然语言猜测。以 `openyida agent-capabilities --summary-json` 返回的 `builder_path.auth` 事实和 `application_entry_policy` 为准：
 
-- `entries.admin=omit`：云端 Agent，不输出 `/admin`；
-- `entries.admin=include`：非云端 Agent，输出 `/admin`。
+- `auth_runtime=env_token_bootstrap` 且 `can_auto_use=true`：`entries.admin=omit`，不输出 `/admin`；
+- 其他情况（包括 OAuth session、注入 token 不可用或鉴权事实缺失）：`entries.admin=include`，输出 `/admin`。
 
 ## 4. 独立业务入口判定
 
@@ -110,6 +110,7 @@ entryMode: platform-shell | standalone
 6. `/admin` 只在 `application_entry_policy.entries.admin=include` 时存在。
 7. 云端和非云端、`platform-shell` 和 `standalone` 的四种组合均有契约测试。
 8. 单页创建/修改/发布仍只交付当前页面，不被完整应用入口矩阵扩张。
+9. 同一验证 URL 在一次交付调用内去重；用户在后续 run 再次要求入口时可重新交付，且平台 mutation 为 0。
 
 ## 8. 非目标
 

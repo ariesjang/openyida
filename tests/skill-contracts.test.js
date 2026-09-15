@@ -654,7 +654,12 @@ describe('OpenYida skill contracts', () => {
     expect(root).toContain('不得把需求信息文件、PRD、视觉设计、build manifest、资源清单');
     expect(app).toContain('宿主支持交付工具时，final 只交付一次“应用访问入口”组');
     expect(step2).toContain('需求文件与实施文档供内部执行，Plan 的 HTML 用于用户查看和确认方案');
-    expect(step9).toContain('一次完整应用搭建只产生这一组用户可见交付');
+    expect(step9).toContain('一次 run 最多交付这一组用户可见的“应用访问入口”');
+    expect(step9).toContain('同一应用在后续 run 中被用户再次请求时');
+    expect(step9).toContain('不得为了重新展示入口而重建、更新或重新发布资源');
+    expect(step9).toContain('builder_path.auth.auth_runtime=env_token_bootstrap');
+    expect(step9).toContain('can_auto_use=true');
+    expect(feature).toContain('应复用已有资源和已验证 URL');
     expect(step9).toContain('业务资源只在总结中按能力或数量概述');
     expect(outputPrd).toContain('入口模式：<`platform-shell` / `standalone`');
     expect(outputPrd).toContain('entryMode：<platform-shell / standalone>');

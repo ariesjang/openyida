@@ -57,31 +57,38 @@ describe('agent-capabilities summary', () => {
     });
   });
 
-  test('delivery runtime detector keeps local Codex non-cloud and honors managed cloud signals', () => {
+  test('application entry policy follows usable injected auth rather than host signals', () => {
     const { buildApplicationEntryPolicy } = require('../lib/core/agent-capabilities');
 
     expect(buildApplicationEntryPolicy({
-      auth: { auth_runtime: 'env_token_bootstrap' },
+      auth: { auth_runtime: 'env_token_bootstrap', can_auto_use: true },
       runtime: { runtime: 'desktop_shell' },
     }, { CODEX_SHELL: '1', CODEX_CI: '1' })).toMatchObject({
+      environment: 'managed_cloud_agent',
+      entries: { admin: 'omit' },
+    });
+
+    expect(buildApplicationEntryPolicy({
+      auth: { auth_runtime: 'token_oauth_session', can_auto_use: true },
+      runtime: { runtime: 'web_sandbox', tool: 'mulerun' },
+    }, { OPENYIDA_MANAGED_RUNTIME: 'cloud' })).toMatchObject({
       environment: 'non_cloud_agent',
       entries: { admin: 'include' },
     });
 
     expect(buildApplicationEntryPolicy({
-      auth: { auth_runtime: 'token_oauth_session' },
-      runtime: { runtime: 'unknown' },
-    }, { OPENYIDA_MANAGED_RUNTIME: 'cloud' })).toMatchObject({
-      environment: 'managed_cloud_agent',
-      entries: { admin: 'omit' },
+      auth: { auth_runtime: 'env_token_bootstrap', can_auto_use: false },
+      runtime: { runtime: 'web_sandbox', tool: 'mulerun' },
+    }, {})).toMatchObject({
+      environment: 'non_cloud_agent',
+      entries: { admin: 'include' },
     });
 
     expect(buildApplicationEntryPolicy({
-      auth: { auth_runtime: 'token_oauth_session' },
-      runtime: { runtime: 'web_sandbox', tool: 'qwenwork' },
-    }, {})).toMatchObject({
-      environment: 'managed_cloud_agent',
-      entries: { admin: 'omit' },
+      runtime: { runtime: 'web_sandbox', tool: 'mulerun' },
+    }, { OPENYIDA_MANAGED_RUNTIME: 'cloud' })).toMatchObject({
+      environment: 'non_cloud_agent',
+      entries: { admin: 'include' },
     });
   });
 
