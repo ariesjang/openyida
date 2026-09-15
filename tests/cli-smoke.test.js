@@ -2441,6 +2441,8 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.application_entry_policy).toEqual(workflow.application_entry_policy);
     expect(route.default_nav_order_policy).toBe(workflow.default_nav_order_policy);
     expect(route.final_link_policy).toBe(workflow.final_link_policy);
+    expect(route.final_link_policy).toContain('terminal delivery artifact description');
+    expect(route.final_link_policy).toContain('when no delivery tool is available');
     expect(route.navigation_policy).toContain('Before PRD planning in Fast and Plan, the agent determines navigation ownership and layout from business context');
     expect(route.navigation_policy).toContain('Preserve explicit user requirements and existing navigation');
     expect(route.navigation_policy).toContain('ai_default for agent ownership decisions');
@@ -2564,4 +2566,16 @@ test('Plan CLI and design-file sample work locally without a login', () => {
       expect(block).toContain(`--pod-shell-theme-bg-color: ${background};`);
     }
   } finally {fs.rmSync(dir, { recursive: true, force: true });}
+});
+
+
+test('form recovery command contracts expose bounded recovery and compatible URLs', () => {
+  const manifest = JSON.parse(runOk(['commands', '--json']));
+  const batch = manifest.commands.find(item => item.id === 'create-form.batch');
+  const resume = manifest.commands.find(item => item.id === 'create-form.resume');
+  expect(batch.notes.join(' ')).toContain('rerun_unchanged_plan');
+  expect(batch.notes.join(' ')).toContain('inspect_unknown_write_then_reconcile');
+  expect(batch.notes.join(' ')).toContain('url remains the compatible form entry');
+  expect(resume.notes.join(' ')).toContain('retry missing compatible fields once');
+  expect(resume.usage).toContain('create-form resume <appType> <formUuid> <fieldsJsonOrFile> [--json]');
 });

@@ -10,13 +10,10 @@ const path = require('path');
 // Budgets are ratchets that track legitimate content growth (12 locale packs,
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
-// Includes assets/process support, CodeBundle, intake references and per-entry navigation.
-// Access-entry planning/runtime grants + shared contract add two packaged files.
-// 2026-09-15 npm pack: ~6.15 MiB unpacked; keep the next 16 KiB boundary.
-// Node 20/24 package measurements are rounded up to the next 16 KiB boundary.
-// Slot-level material task handoff and early asset validation: next 16 KiB boundary.
+// Includes scoped navigation, parallel asset tasks and bounded form recovery.
+// Merged package: 6,455,693 unpacked bytes; rounded to the next 16 KiB boundary.
 const MAX_TARBALL_BYTES = 1840 * 1024;
-const MAX_UNPACKED_BYTES = 6304 * 1024;
+const MAX_UNPACKED_BYTES = 6320 * 1024;
 // Intake references and the shared basic-theme-token contract are packaged.
 const MAX_ENTRY_COUNT = 509;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;

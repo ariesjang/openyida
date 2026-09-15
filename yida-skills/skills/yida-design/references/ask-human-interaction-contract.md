@@ -80,7 +80,8 @@
 4. `title` 只写确认主题，`prompt` 只写用户当前需要回答的问题；搭建模式保持中性，不在引导或描述中偏向某一模式；选项顺序、推荐标记及预选能力遵守宿主规则，UI 默认状态不视为用户答案。导航方式、布局和呈现样式由 AI 根据场景确定，用户明确要求优先。其他问题存在合理默认值时可标记。只有某个选择会产生重要且难以撤销的影响时，才在对应选项的 `description` 中说明影响。
 5. 用户已经提供的信息直接写入内部事实，不重复总结成“缺口分析”或再次追问。
 6. PRD 的业务说明、HTML、进度消息和交付总结使用功能、体验和验收结果描述配置。接口参数、配置键值、内部 ID 和 CLI 选项保留在 Agent 实施交接中；访问链接使用业务名称，链接目标保留必需参数。用户明确询问实现细节时，再解释对应技术内容。
-7. 规划写预期行为，进度写正在进行的动作，完成总结依据实际验证结果。导航方案写“采用自定义导航，支持各业务页面间切换”；完成配置并验证跳转后写“已启用自定义导航，可在各业务页面间切换”。
+7. 交付卡片的 `description` 写已验证的业务能力、核验结果和剩余事项；宿主没有交付工具时，在最终回复中给出相同内容与入口。
+8. 规划写预期行为，进度写正在进行的动作，完成总结依据实际验证结果。导航方案写“采用自定义导航，支持各业务页面间切换”；完成配置并验证跳转后写“已启用自定义导航，可在各业务页面间切换”。
 
 内部表达按下表转换为用户可见表达：
 
@@ -159,41 +160,9 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 
 `build-plan.html` 不承载对话控件或确认按钮；用户在会话中完成确认。
 
-最终确认是一个 `single_select` 语义问题：只使用一个顶层 `question` 和恰好两个顶层 `options`，附件与版本必须放在同一次调用中。下面先记录内部逻辑身份；`interactionId`、`questionType`、`prompt`、`allowCustom` 和 `writeBackPath` 只用于状态理解，不是可传给工具的参数：
+最终确认是一个 `single_select` 语义问题。它只有下面这一份可调用 schema；顶层字段集合固定为 `question`、`title`、`options`、`attachments`、`revision`、`submitLabel`。将路径和 `{revision}` 替换为本次 materialize 返回的真实值：
 
-```json
-{
-  "interactionId": "plan_confirm_r{revision}",
-  "questionType": "confirm",
-  "title": "确认整体方案",
-  "prompt": "是否按当前这版方案开始搭建？",
-  "options": [
-    {
-      "value": "confirm_build",
-      "label": "确认并开始搭建",
-      "description": "按当前方案创建应用、表单、流程和页面。"
-    },
-    {
-      "value": "continue_editing",
-      "label": "继续调整",
-      "description": "继续完善当前方案，确认后再开始搭建。"
-    }
-  ],
-  "allowCustom": false,
-  "writeBackPath": "meta.planState",
-  "attachments": [
-    {
-      "name": "当前搭建方案",
-      "path": "prd/<项目名>/build-plan.html"
-    }
-  ],
-  "revision": "{revision}"
-}
-```
-
-#### 实际 `ask_human` 调用参数
-
-模型必须直接复制下面的可调用结构，并将路径、`{revision}` 替换为本次 materialize 返回的真实值：
+#### 最终确认 `ask_human` payload
 
 ```json
 {
@@ -222,9 +191,7 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 }
 ```
 
-最终确认 payload 禁止使用 `fields`、`text`、`textarea`，也禁止增加“调整说明”或其他条件式补充问题；`options` 的 value 集合必须恰好为 `confirm_build`、`continue_editing`。确认与调整内容不能合并收集。
-
-用户选择 `continue_editing` 后保持在 Plan Design，本次确认恢复不创建任何应用资源；在下一轮用新的问题单独收集要修改的内容，完成 patch/materialize、生成新 revision 后，再展示同样结构的最终确认。用户选择 `confirm_build` 且回传 revision 匹配时，才进入资源实施。
+`options` 固定为 `confirm_build`、`continue_editing` 两项。最终确认只收集当前 revision 的去向；调整内容在下一次交互中收集。内部交互身份使用 `plan_confirm_r{revision}`，回答写入 `meta.planState`。
 
 ## 版本与确认状态
 
@@ -244,11 +211,11 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 }
 ```
 
-状态更新规则：
+状态转换规则：
 
 1. 首次生成计划时创建 `meta.revision`，设置 `meta.status=draft`、`meta.planState.planConfirmed=false`。
 2. 业务方案或视觉方案变化时生成新的 `meta.revision`，并清空旧确认信息。素材采集后的进度同步保留版本与已有确认，直接继续搭建。
 3. 计划展示完成后设置 `meta.status=awaiting_confirmation` 和 `presentedRevision=meta.revision`。
-4. 用户在最终确认交互中选择“确认并开始搭建”时，设置 `meta.status=confirmed`、`planConfirmed=true`、`confirmedRevision=meta.revision`，同时记录交互 ID 和确认时间。
+4. 用户在最终确认交互中选择 `confirm_build`（确认并开始搭建）且回传 revision 等于展示 revision 时，设置 `meta.status=confirmed`、`planConfirmed=true`、`confirmedRevision=meta.revision`，同时记录交互 ID 和确认时间。
 5. 只有 `meta.status=confirmed`、`planConfirmed=true` 且 `meta.revision=presentedRevision=confirmedRevision` 时，Plan Design 才能返回 `yida-app` Step 3。
 6. 用户选择“继续调整”时保持在 Plan Design，本轮不创建应用资源；下一轮单独收集调整内容，生成新 revision 并重新确认。用户取消或关闭交互时停止执行，不创建应用资源。

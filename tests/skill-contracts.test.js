@@ -85,7 +85,7 @@ describe('OpenYida skill contracts', () => {
     expect(requirement).toContain('`allowInferredResources:false`');
     expect(prepareBrief).toContain('仅交付命名资源时，围绕该资源补齐关键缺失');
     expect(app).toContain('即使需求背景使用“应用/系统”');
-    expect(app).toContain('窄范围停止点');
+    expect(app).toContain('范围完成点');
     expect(planWorkflow).toContain('命令第一次就传入 `visualSelection.themeId`');
     expect(planWorkflow).toContain('不再额外读取 `step-1-understand.md` 或 `step-2-confirm.md`');
     expect(planWorkflow).toContain('读取该文件及 `context` 中的类型示例');
@@ -102,8 +102,11 @@ describe('OpenYida skill contracts', () => {
     expect(planBusiness).toContain('普通表单的 sampleDataPlan 用 skipReason');
     expect(compactSchema).toContain('避免用多轮 materialize 探测必填字段');
     expect(app).toContain('禁止用 Glob 查找 Plan 文件');
-    expect(app).toContain('不要再调用 `get-schema`、`list-forms`');
-    expect(formsStep).toContain('成功结果已包含真实 formUuid/链接时，直接交付并停止');
+    expect(app).toContain('资源保存成功且证据齐全后完成当前范围');
+    expect(formsStep).toContain('将该表单标记为已完成并计算 `remainingScope`');
+    expect(formsStep).toContain('普通表单保存成功后进入可用状态');
+    expect(formsStep).toContain('`url`/`formUrl` 是表单入口，`appUrl` 是应用工作台入口');
+    expect(app).toContain('完整应用默认完成条件只在 `allowInferredResources=true` 时生效');
     expect(readSkill('yida-skills/skills/yida-requirement-analysis/references/handoff.md')).toContain('Plan 在 `design-plan init` 前必须补齐');
   });
 
@@ -541,21 +544,21 @@ describe('OpenYida skill contracts', () => {
     expect(skill).toContain('页面数据桥或 `window.__OPENYIDA_YIDA_API__.searchFormDatas(params)`');
     expect(skill).toContain('发布输出出现 `No custom page data sources to preserve`');
     expect(skill).toContain('use_skill("yida-data-source-connectors")');
-    expect(step9).toContain('先写 2-3 句业务交付总结，再给一个名为“应用访问入口”的入口组');
-    expect(step9).toContain('新增、修改或发布单个具体页面时，仍只交付当前页面');
+    expect(step9).toContain('准备 2-3 句业务交付总结，并给一个名为“应用访问入口”的入口组');
+    expect(step9).toContain('新增、修改或发布单个具体页面时，交付当前页面并保持单页范围');
     expect(step9).toContain('统一工作区或前后台双入口包含经验证的“业务管理入口”');
-    expect(step9).toContain('不把表单、流程、报表、页面、资源清单或内部文件分别登记为附件');
+    expect(step9).toContain('一次完整应用 run 交付一组用户可见的“应用访问入口”');
     expect(step9).toContain('用户或调用方明确要求资源清单、资源 UUID/ID、发布状态或测试数据摘要时');
-    expect(step9).toContain('不得用链接卡代替正文清单');
-    expect(step9).toContain('调用 `notify_human` 前必须先输出上述正文总结');
-    expect(step9).toContain('链接卡或平台产物卡不能替代正文总结');
+    expect(step9).toContain('终态 artifact 的 `description` 包含简洁的“交付清单”');
+    expect(step9).toContain('`notify_human` 是终态交付动作');
+    expect(step9).toContain('终态 artifact 的可见 `description` 是本轮业务总结');
     expect(step9).toContain('每个被 final 声称“已写入”“已验证”或给出记录数的表单/流程');
     expect(step9).toContain('不得把一张表单的 3 条记录复制成其他表单也有 3 条');
     expect(step9).toContain('每个资源数量和数据完成声明都有对应资源自己的成功返回值/readback');
     expect(step9).toContain('已完成订单、客户和商品等核心业务表单');
     expect(step9).toContain('应用工作台：`{base_url}/{appType}/workbench`');
     expect(step9).toContain('独立业务入口：`{base_url}/{appType}/custom/{formUuid}`');
-    expect(step9).toContain('`application_entry_policy.entries.admin`');
+    expect(step9).toContain('`application_entry_policy.entries.admin=include`');
     expect(step9).toContain('不把 `g.alicdn.com` 的 `index.css`、`index.js`、`index.html`、`locales/*.json`');
     expect(step9).toContain('顶层 `skillsUsed`');
     expect(step9).toContain('实际读取并使用');
@@ -626,7 +629,7 @@ describe('OpenYida skill contracts', () => {
     expect(manifest).toContain("mode: 'parallel'");
     expect(manifest).toContain('final_link_policy');
     expect(manifest).toContain('Return exactly one user-visible application entry group');
-    expect(manifest).toContain('include one concise verified delivery manifest in the final prose');
+    expect(manifest).toContain('include one concise verified delivery manifest in that description');
     expect(manifest).toContain('every resource count, seed-record count, and completed/verified claim');
     expect(manifest).toContain('never one artifact or link card per form, process, report');
     expect(manifest).toContain('when PRD entryMode=standalone');
@@ -666,9 +669,19 @@ describe('OpenYida skill contracts', () => {
 
     expect(root).toContain('不得把需求信息文件、PRD、视觉设计、build manifest、资源清单');
     expect(app).toContain('宿主支持交付工具时，final 只交付一次“应用访问入口”组');
+    expect(app).toContain('`url` 是兼容字段，与 `formUrl` 表示同一表单入口');
+    const formPage = readSkill('yida-skills/skills/yida-create-form-page/SKILL.md');
+    expect(formPage).toContain('应用级使用 `appUrl`、`app_home`、`appType`');
+    expect(formPage).toContain('表单级使用 `formUrl`、`form`、`formUuid`');
+    expect(formPage).toContain('`url` 继续兼容表单入口');
     expect(step2).toContain('需求文件与实施文档供内部执行，Plan 的 HTML 用于用户查看和确认方案');
-    expect(step9).toContain('一次完整应用搭建只产生这一组用户可见交付');
-    expect(step9).toContain('业务资源只在总结中按能力或数量概述');
+    expect(step9).toContain('一次完整应用 run 交付一组用户可见的“应用访问入口”');
+    expect(step9).toContain('同一应用的后续交付从已有资源和已验证 URL 生成当前 run 的入口组');
+    expect(step9).toContain('资源变更由用户本轮明确要求的变更范围驱动');
+    expect(feature).toContain('builder_path.auth.auth_runtime=env_token_bootstrap');
+    expect(feature).toContain('can_auto_use=true');
+    expect(feature).toContain('应复用已有资源和已验证 URL');
+    expect(step9).toContain('业务资源在总结中按能力或数量概述');
     expect(outputPrd).toContain('入口模式：<`platform-shell` / `standalone`');
     expect(outputPrd).toContain('entryMode：<platform-shell / standalone>');
     expect(blueprint).toContain('`entryMode` 只允许 `platform-shell` 或 `standalone`');
@@ -676,8 +689,10 @@ describe('OpenYida skill contracts', () => {
     expect(step8).toContain('openyida get-form-config <appType> <displayPageFormUuid> --json');
     expect(step8).toContain('只有回读明确为 `isRenderNav=false`');
     expect(pageConfig).toContain('PRD 已把主页面明确标记为 `entryMode=standalone`');
-    expect(feature).toContain('云端 Agent，`platform-shell`');
-    expect(feature).toContain('非云端 Agent，已验证 `standalone`');
+    expect(feature).toContain('| 仅前台 | 已验证的独立业务入口 |');
+    expect(feature).toContain('| 前后台双入口 | 独立业务入口和业务管理入口 |');
+    expect(root).toContain('交付卡片的 `description` 写 2-3 句业务交付总结');
+    expect(step9).toContain('宿主没有交付工具时');
   });
 
   test('yida-app validates independently generated PRD and visual design without losing current design contracts', () => {
@@ -753,7 +768,9 @@ describe('OpenYida skill contracts', () => {
     expect(requirementBrief).toContain('`intake.designMode` 保留用户最后一次明确选择');
     expect(requirementBrief).toContain('yida-design/references/design-mode.md');
     expect(appStep2).toContain('沿用用户最后一次明确选择');
-    expect(designMode).toContain('回答未重复提到模式不代表改选');
+    expect(designMode).toContain('其他回答只更新各自声明的字段');
+    expect(skill).toContain('与当前 revision 匹配的 `confirm_build`');
+    expect(skill).toContain('素材进度同步保留已有确认');
     expect(prd).toContain('生成 `prd/<项目名>/prd.md`');
     expect(prd).toContain('基于输入事实');
     expect(design).toContain('输出 `design.md`');
@@ -1636,12 +1653,17 @@ describe('OpenYida skill contracts', () => {
     expect(formStep).not.toContain('关联表单等待前置表单完成');
     expect(formSkill).toContain('<workspace>/project/.cache/openyida/<项目名>/forms.json');
     expect(formSkill).toContain('先用 Read 确认任务文件存在');
-    expect(formSkill).toContain('batch 返回 background pending 时等待运行时投递完成结果');
+    expect(formSkill).toContain('保持当前执行单元，后续只接收该任务的最终结果');
     expect(formSkill).toContain('不要再调用 `create-form batch --help`、`create-form batch --check`');
     expect(formSkill).toContain('执行普通批量创建无需再查 help、sample 或 CLI 源码');
     expect(formSkill).toContain('确认 `projectRoot` → Write 一个任务文件 → Read 确认文件 → 唯一一次真实 batch');
     expect(formSkill).toContain('"formUuid": { "$form": "customer" }');
-    expect(batchForms).toContain('pending 不是失败，也不是重试信号');
+    expect(formSkill).toContain('`FORM_BATCH_PARTIAL_FAILURE` + `rerun_unchanged_plan`');
+    expect(formSkill).toContain('恢复动作由结果中的 `recoveryAction` 唯一决定');
+    expect(formSkill).toContain('每个结果状态只沿表中对应的下一动作推进');
+    expect(batchForms).toContain('background pending 表示原 batch 仍在执行');
+    expect(batchForms).toContain('CLI 从 state 读取已知 ID 并复用成功表单');
+    expect(batchForms).not.toContain('修正输入或为已知资源补入 `formUuid` 后');
     expect(finishStep).toContain('CLI 成功结果返回的 `appUrl`、`workbenchUrl` 或 `url`');
     expect(finishStep).toContain('不得由模型根据 `appType` 自行拼接');
   });
