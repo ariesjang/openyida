@@ -9,6 +9,10 @@ description: 宜搭完整应用开发编排技能。对普通 OpenYida 应用做
 
 ## 模式入口（先按这里路由）
 
+`intake.designMode` 是整轮搭建工作流的模式状态，随 intake、需求记录、PRD/视觉设计、方案确认和实施阶段持续传递。它的初始值来自用户的明确选择，后续也只由用户新的明确模式选择更新；其余未决 intake 字段按当前模式的稳定默认策略补齐。Plan 依次产出需求事实、`build-plan.html` / `build-plan.json` 和带 revision 的最终确认；与当前 revision 匹配的 `confirm_build` 是进入真实资源实施阶段的状态转换。在此转换发生前，工作范围保持在需求、设计、方案产物和只读资源检查。
+
+`continue_editing` 使当前计划沿既有 lineage 继续演进。根据变更粒度使用 `design-plan patch`，或编辑当前计划源后 materialize，产出单调递增的新 revision 并再次展示最终确认卡。最近一次获确认的 revision 是后续实施阶段的唯一方案输入。
+
 Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-design.md` 和精确路径 `workflow/plan/workflow.md`；后者已经包含完整 Plan 入口。禁止用 Glob 查找 Plan 文件，也不要额外读取 `workflow/plan/step-1-understand.md` 或 `workflow/plan/step-2-confirm.md`。Plan 确认恢复后，若 `explicitScope.allowInferredResources=false`，直接读取 `workflow/step-4-forms-processes.md` 实施范围内资源，不再重读 Step 1、调用 list-forms 或做应用设置预检。
 
 ## 执行步骤（进行时展示给用户）
@@ -44,7 +48,7 @@ Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-de
 
 用户明确把本轮交付限定为一个或若干具体表单、流程、报表或页面时，按 `explicitScope` 只保留达到该交付所需的步骤；即使需求背景使用“应用/系统”，也不自动补示例数据、自定义工作台、主题设置、导航排序或其他资源。Plan 模式仍生成并确认方案，但确认后只执行该窄范围。
 
-若窄范围只要求创建一个普通表单并交付链接，成功的 `create-form create` 结果就是本轮资源回读证据。结果中的 `url` 表示表单入口，`appUrl` 表示应用工作台入口；按用户要求的入口层级交付对应字段。交付后即完成当前窄范围；仅在结果缺少明确验收所需的 ID 或链接时追加一次针对性只读回查。
+若窄范围只要求创建一个普通表单并交付链接，成功的 `create-form create` 结果就是本轮资源回读证据。`url` 是兼容字段，与 `formUrl` 表示同一表单入口；`appUrl` 表示应用工作台入口。按用户要求的入口层级选择权威字段，资源保存成功且证据齐全后完成当前范围；证据缺失时执行一次针对性只读回查。普通表单保存成功后进入可用状态，自定义展示页遵循页面发布生命周期。
 
 禁区：待办标题、说明和进度不出现技能名、命令、文件路径、登录账号、内部资源 ID；这些留在工具调用里。用户明确询问技术细节时再解释。
 

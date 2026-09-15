@@ -2098,6 +2098,8 @@ describe('create-form create recovery guardrails', () => {
         'verify_final_schema',
       ],
       url: 'https://example.test/APP_TEST/workbench/FORM_HALF_CREATED',
+      formUrl: 'https://example.test/APP_TEST/workbench/FORM_HALF_CREATED',
+      appUrl: 'https://example.test/APP_TEST/workbench',
     });
     expect(mockHttpGet).toHaveBeenCalledTimes(2);
     expect(mockHttpPost.mock.calls.filter((call) => call[1].includes('/saveFormSchema.json'))).toHaveLength(1);
@@ -3886,6 +3888,7 @@ describe('legacy create-form compatibility', () => {
       icon: 'name-card',
       iconSource: 'auto',
       url: 'https://example.test/APP_XXX/workbench/FORM_TEST',
+      formUrl: 'https://example.test/APP_XXX/workbench/FORM_TEST',
       appUrl: 'https://example.test/APP_XXX/workbench',
     });
 

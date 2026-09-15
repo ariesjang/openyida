@@ -110,7 +110,15 @@ description: 表单页面创建与更新；支持 19 种业务字段和 Divider�
 
 关联字段必须把引用放在 `associationForm` 内。推荐使用紧凑写法 `"associationForm": { "$form": "customer", "field": "客户名称" }`；batch 会将其规范化为 `associationForm.formUuid` 和 `associationForm.mainFieldId`。完整写法则分别在 `formUuid` 使用 `{ "$form": "customer" }`、在 `mainFieldId` 使用 `{ "$form": "customer", "field": "客户名称" }`。不要把 `$form` 放在 `AssociationFormField` 顶层，也不要用 `batch --help`、空参数或临时计划探索格式；技能中的结构就是正式契约。
 
-批量创建以“原始 `forms.json` + 相邻 `.state.json` + fingerprint”为一个可恢复执行单元。进入后台时保留该执行单元并等待运行时回传最终结果。CLI 在批次内部识别已取得真实 `formUuid` 的空壳表单并执行一次保守恢复；模型始终以 batch 结果作为批次真相源。`FORM_BATCH_PARTIAL_FAILURE` 的 `recoveryAction` 决定下一步：`rerun_unchanged_plan` 使用原文件和原参数恢复同一执行单元，CLI 从 state 复用已知 ID；`inspect_unknown_write_then_reconcile` 先回读远端事实，再用已确认 ID 准备新的 reconcile 执行单元。
+Batch 以任务文件指纹和 `<forms.json>.state.json` 共同标识一次批量操作，恢复动作由结果中的 `recoveryAction` 唯一决定：
+
+| 当前结果 | 状态事实 | 下一动作 |
+| --- | --- | --- |
+| background pending | 原任务仍在执行，task/state/lock 保持为同一操作 | 保持当前执行单元，后续只接收该任务的最终结果 |
+| `FORM_BATCH_PARTIAL_FAILURE` + `rerun_unchanged_plan` | 已知 `formUuid` 已记录在 state，原任务指纹可安全恢复 | 后续使用原任务文件和原参数重新执行同一 batch，由 CLI 从 state 复用已知资源 |
+| `FORM_BATCH_PARTIAL_FAILURE` + `inspect_unknown_write_then_reconcile` | 至少一个远端写结果缺少资源 ID，当前指纹进入待核对状态 | 先回读远端资源；核对完成后建立新的 reconcile 任务，用已确认 `formUuid` 表示已有表单，仅保留确定尚未创建的任务 |
+
+CLI 在同一次 batch 内对已取得真实 `formUuid` 的空壳表单执行一次保守恢复。每个结果状态只沿表中对应的下一动作推进。
 
 ## 官方表单示例范式
 
@@ -179,10 +187,10 @@ openyida create-form create <appType> <formTitle> <fieldsJsonOrFile> [--layout d
 输出：
 
 ```json
-{"success":true,"formUuid":"FORM-XXX","formTitle":"用户信息表","appType":"APP_xxx","fieldCount":4,"icon":"name-card","iconSource":"auto","url":"{base_url}/APP_xxx/workbench/FORM-XXX","appUrl":"{base_url}/APP_xxx/workbench"}
+{"success":true,"formUuid":"FORM-XXX","formTitle":"用户信息表","appType":"APP_xxx","fieldCount":4,"icon":"name-card","iconSource":"auto","url":"{base_url}/APP_xxx/workbench/FORM-XXX","formUrl":"{base_url}/APP_xxx/workbench/FORM-XXX","appUrl":"{base_url}/APP_xxx/workbench"}
 ```
 
-成功结果同时提供两个明确层级的入口。终态交付按用户目标选择对应资源：用户要应用访问入口时，使用 `appUrl`，并将 artifact 标记为 `resourceType=app_home`、`resourceId=appType`；用户要当前表单入口时，使用 `url`，并标记为 `resourceType=form`、`resourceId=formUuid`。artifact 的 `url` 始终写入所选层级的权威入口。
+`url` 是兼容字段，与 `formUrl` 表示同一表单入口；`appUrl` 表示应用工作台入口。普通表单保存成功后进入可用状态，自定义展示页使用 `publish-page` 生命周期。终态交付按用户请求的层级选择对应权威入口和 `resourceType`/`resourceId`：应用级使用 `appUrl`、`app_home`、`appType`，表单级使用 `formUrl`、`form`、`formUuid`。
 
 完整应用模式下的下一步：
 
@@ -223,15 +231,15 @@ openyida create-form resume <appType> <formUuid> <fieldsJsonOrFile> --json
 该命令先回读目标表单并核对字段，只添加可唯一判定的缺失字段，保存后再次回读；同名异类型、重复
 目标字段、归属不匹配或回读不确定时均停止且不写入。它不会新建替代表单，也不会覆盖已有字段。
 
-`resume` 对明确的保存端 HTTP 5xx 采用“精确回读 → 判断是否已完成 → 对仍缺失且无冲突的字段绑定最新服务端 revision 重试一次”的恢复流程。成功 JSON 提供真实 `formUuid`、表单入口 `url` 和应用工作台入口 `appUrl`，据此完成终态交付；用户要求资源 ID 时，将已验证的 `formUuid` 写入终态 artifact 的可见 `description`。
+`resume` 的保存端 HTTP 5xx 恢复流程固定为：精确回读目标表单；目标字段已存在时收口为成功，目标字段缺失且无冲突时绑定最新服务端 revision 执行一次保存，再做最终回读。成功 JSON 提供真实 `formUuid`、表单入口 `url`/`formUrl` 和应用工作台入口 `appUrl`，据此完成终态交付；用户要求资源 ID 时，将已验证的 `formUuid` 写入终态 artifact 的可见 `description`。
 
 输出：
 
 ```json
-{"success":true,"formUuid":"FORM-YYY","appType":"APP_XXX","changesApplied":1,"changes":[{"action":"update","label":"备注","changedProps":"required","resolved":{"label":"备注","fieldId":"textField_xxx","componentName":"TextField"},"updatedProps":{"required":true}}],"url":"{base_url}/APP_XXX/workbench/FORM-YYY","appUrl":"{base_url}/APP_XXX/workbench"}
+{"success":true,"formUuid":"FORM-YYY","appType":"APP_XXX","changesApplied":1,"changes":[{"action":"update","label":"备注","changedProps":"required","resolved":{"label":"备注","fieldId":"textField_xxx","componentName":"TextField"},"updatedProps":{"required":true}}],"url":"{base_url}/APP_XXX/workbench/FORM-YYY","formUrl":"{base_url}/APP_XXX/workbench/FORM-YYY","appUrl":"{base_url}/APP_XXX/workbench"}
 ```
 
-`resume` 的终态交付沿用相同入口映射：应用级交付选择 `appUrl` / `app_home`，表单级交付选择 `url` / `form`。
+`resume` 的终态交付沿用相同入口映射：应用级交付选择 `appUrl` / `app_home`，表单级交付选择 `formUrl` / `form`；`url` 继续兼容表单入口。
 
 常见 compact changes：
 

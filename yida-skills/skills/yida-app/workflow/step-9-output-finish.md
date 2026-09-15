@@ -72,16 +72,16 @@
 ## 结果输出格式
 
 - 准备 2-3 句业务交付总结，并给一个名为“应用访问入口”的入口组。
-- `notify_human` 是终态交付动作。调用时把业务总结、readback 支撑的事实和必要上下文写入 artifact 的可见 `description`；用户明确要求记录数、资源 ID、发布状态或核验结果时，同样写入该 `description`。调用成功即完成本轮交付。
-- 一次 run 交付一组用户可见的“应用访问入口”，业务资源与内部文件在组内总结而不拆分成多张卡。同一应用在后续 run 中被再次请求时，复用已有资源和已验证 URL，重新交付当前入口组。
-- 业务资源只在总结中按能力或数量概述是默认规则，例如“已完成 4 张业务表单、1 条审批流程和 1 个经营看板”；不默认输出资源 ID 表格、资源清单、长列表、appType、formUuid、pageId、reportId。
-- 用户或调用方明确要求资源清单、资源 UUID/ID、发布状态或测试数据摘要时，终态 artifact 的 `description` 包含一个简洁的“交付清单”。清单覆盖本轮由真实返回值或只读 readback 核验的资源名称、类型和 ID，并写明主页面发布状态及 seed records 写入/抽查摘要；未知信息保持未核验状态。
-- 即使用户没有要求技术清单，业务总结中的资源数量、seed records 数量以及“已写入/已验证/已就绪”等完成状态也必须逐资源来自真实返回值或只读 readback。证据不完整时缩小表述范围并明确未核验项，禁止为了让总结完整而补齐推测数字。
-- 新增、修改或发布单个具体页面时，仍只交付当前页面，不扩展成完整应用入口组。
-- 完整应用的入口组始终包含“应用工作台” `{base_url}/{appType}/workbench`。
-- 主页面在 PRD 中为 `entryMode=standalone`，且 Step 8 回读确认 `isRenderNav=false` 时，入口组额外包含“独立业务入口” `{base_url}/{appType}/custom/{formUuid}`；否则不得输出。
-- 先读取 `openyida agent-capabilities --summary-json` 的 `application_entry_policy.entries.admin`：`include` 为入口组增加“应用开发后台” `{base_url}/{appType}/admin`，`omit` 则保留其他允许入口。该策略只使用 `builder_path.auth.auth_runtime=env_token_bootstrap` 且 `can_auto_use=true` 的已注入可用鉴权事实。
-- 三个入口属于同一个应用入口组，不得各自连同业务资源再生成多组交付。
+- `notify_human` 是终态交付动作，其终态 artifact 的可见 `description` 是本轮业务总结、readback 事实和必要上下文的统一载体；用户要求的记录数、资源 ID、发布状态或核验结果也写入这里。调用成功即完成本轮交付。
+- 一次完整应用 run 交付一组用户可见的“应用访问入口”。同一应用的后续交付从已有资源和已验证 URL 生成当前 run 的入口组；资源变更由用户本轮明确要求的变更范围驱动。
+- 业务资源在总结中按能力或数量概述，例如“已完成 4 张业务表单、1 条审批流程和 1 个经营看板”。
+- 用户或调用方明确要求资源清单、资源 UUID/ID、发布状态或测试数据摘要时，终态 artifact 的 `description` 包含简洁的“交付清单”。清单是本轮真实返回值和只读 readback 的投影，覆盖已创建或发布资源的名称、类型、ID、主页面发布状态及 seed records 写入/抽查摘要；未知信息标记为未核验。
+- 业务总结中的资源数量、seed records 数量和完成状态与逐资源真实返回值/readback 一一对应；证据不完整的资源标记为未核验。
+- 新增、修改或发布单个具体页面时，交付当前页面并保持单页范围。
+- 完整应用的入口组包含“应用工作台” `{base_url}/{appType}/workbench`。
+- 主页面在 PRD 中为 `entryMode=standalone`，且 Step 8 回读确认 `isRenderNav=false` 时，入口组包含“独立业务入口” `{base_url}/{appType}/custom/{formUuid}`。
+- “应用开发后台”的入口谓词是 `application_entry_policy.entries.admin=include`；命中时加入 `{base_url}/{appType}/admin`，值为 `omit` 时入口组保持已有入口。该策略的事实源是 `openyida agent-capabilities --summary-json`，其中 include 由已注入可用鉴权 `builder_path.auth.auth_runtime=env_token_bootstrap && can_auto_use=true` 推导。
+- 工作台、符合条件的独立业务入口和开发后台共同组成同一个应用入口组。
 - 不把 `g.alicdn.com` 的 `index.css`、`index.js`、`index.html`、`locales/*.json`、构建产物 URL、CDN 资源 URL 或中间文件链接当成最终结果展示。
 - 调用方或评测要求结构化结果时，额外输出顶层 `skillsUsed`，只填写本轮实际读取并使用的 `yida-*` 子技能名；不得把计划使用或未加载的技能写入。
 

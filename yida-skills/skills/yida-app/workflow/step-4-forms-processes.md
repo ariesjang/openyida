@@ -2,7 +2,7 @@
 
 按 PRD 的依赖创建或复用表单和流程。同一轮需要新建两个及以上普通表单时，把独立表单和关联表单写入同一个 `forms.json`，通过 `dependsOn` / `$form` 表达依赖，并且只调用一次 `openyida create-form batch`；由 CLI 内部完成分组、真实 ID 回读和依赖调度，不逐个 create，也不由模型拆成多次 batch。调用前确认实际项目根，让 Write 的绝对路径与 Bash 从项目根使用的 `.cache/openyida/<项目名>/forms.json` 指向同一个物理文件，并用 Read 确认任务文件存在；不要用 batch 探测路径，收到 background pending 后也不要重试 batch。某页所需表单、流程就绪后即可接入该页；不要因其他页面的资源未完成而阻塞无依赖页面开发。
 
-`explicitScope.allowInferredResources=false` 且本轮只有一个普通表单时走最短路径：Write 一份字段文件后调用一次 `openyida create-form create`。Write 直接创建所需父目录。成功结果同时给出真实 `formUuid`、表单入口 `url` 与应用工作台入口 `appUrl`。将该表单标记为已完成并计算 `remainingScope`；当它为空时，直接按用户要求交付对应层级的真实链接，进入本轮完成态。仅在结果缺少本次明确验收所需字段时做一次针对性只读回读。
+`explicitScope.allowInferredResources=false` 且本轮只有一个普通表单时走最短路径：以 Write 创建字段文件及其父目录，随后调用一次 `openyida create-form create`。成功结果中的 `url`/`formUrl` 是表单入口，`appUrl` 是应用工作台入口。将该表单标记为已完成并计算 `remainingScope`；为空时按用户要求的入口层级交付并完成本轮范围。普通表单保存成功后进入可用状态，自定义展示页遵循页面发布生命周期；验收证据缺失时执行一次针对性只读回查。
 
 拿到真实 `appType` 和已确认的业务契约即可开始本步骤，不等待主题 CSS 上传或应用主题设置回读。主题分支与本步骤并行，按 [主题与业务资源的依赖](parallel-work.md#主题与业务资源的依赖) 汇合。
 

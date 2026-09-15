@@ -140,41 +140,9 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 
 `build-plan.html` 不承载对话控件或确认按钮；用户在会话中完成确认。
 
-最终确认是一个 `single_select` 语义问题：只使用一个顶层 `question` 和恰好两个顶层 `options`，附件与版本必须放在同一次调用中。下面先记录内部逻辑身份；`interactionId`、`questionType`、`prompt`、`allowCustom` 和 `writeBackPath` 只用于状态理解，不是可传给工具的参数：
+最终确认是一个 `single_select` 语义问题。它只有下面这一份可调用 schema；顶层字段集合固定为 `question`、`title`、`options`、`attachments`、`revision`、`submitLabel`。将路径和 `{revision}` 替换为本次 materialize 返回的真实值：
 
-```json
-{
-  "interactionId": "plan_confirm_r{revision}",
-  "questionType": "confirm",
-  "title": "确认整体方案",
-  "prompt": "是否按当前这版方案开始搭建？",
-  "options": [
-    {
-      "value": "confirm_build",
-      "label": "确认并开始搭建",
-      "description": "按当前方案创建应用、表单、流程和页面。"
-    },
-    {
-      "value": "continue_editing",
-      "label": "继续调整",
-      "description": "继续完善当前方案，确认后再开始搭建。"
-    }
-  ],
-  "allowCustom": false,
-  "writeBackPath": "meta.planState",
-  "attachments": [
-    {
-      "name": "当前搭建方案",
-      "path": "prd/<项目名>/build-plan.html"
-    }
-  ],
-  "revision": "{revision}"
-}
-```
-
-#### 实际 `ask_human` 调用参数
-
-模型必须直接复制下面的可调用结构，并将路径、`{revision}` 替换为本次 materialize 返回的真实值：
+#### 最终确认 `ask_human` payload
 
 ```json
 {
@@ -203,9 +171,7 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 }
 ```
 
-最终确认 payload 禁止使用 `fields`、`text`、`textarea`，也禁止增加“调整说明”或其他条件式补充问题；`options` 的 value 集合必须恰好为 `confirm_build`、`continue_editing`。确认与调整内容不能合并收集。
-
-用户选择 `continue_editing` 后保持在 Plan Design，本次确认恢复不创建任何应用资源；在下一轮用新的问题单独收集要修改的内容，完成 patch/materialize、生成新 revision 后，再展示同样结构的最终确认。用户选择 `confirm_build` 且回传 revision 匹配时，才进入资源实施。
+`options` 固定为 `confirm_build`、`continue_editing` 两项。最终确认只收集当前 revision 的去向；调整内容由进入 editing 状态后的下一次交互收集。内部交互身份使用 `plan_confirm_r{revision}`，回答写入 `meta.planState`。
 
 ## 版本与确认状态
 
@@ -225,11 +191,14 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 }
 ```
 
-状态更新规则：
+状态转换规则：
 
-1. 首次生成计划时创建 `meta.revision`，设置 `meta.status=draft`、`meta.planState.planConfirmed=false`。
-2. 每次修改影响搭建计划事实时生成新的 `meta.revision`，并清空旧确认信息。
-3. 计划展示完成后设置 `meta.status=awaiting_confirmation` 和 `presentedRevision=meta.revision`。
-4. 用户在最终确认交互中选择“确认并开始搭建”时，设置 `meta.status=confirmed`、`planConfirmed=true`、`confirmedRevision=meta.revision`，同时记录交互 ID 和确认时间。
-5. 只有 `meta.status=confirmed`、`planConfirmed=true` 且 `meta.revision=presentedRevision=confirmedRevision` 时，Plan Design 才能返回 `yida-app` Step 3。
-6. 用户选择“继续调整”时保持在 Plan Design，本轮不创建应用资源；下一轮单独收集调整内容，生成新 revision 并重新确认。用户取消或关闭交互时停止执行，不创建应用资源。
+| 当前状态 | 事件 | 下一状态与产出 |
+| --- | --- | --- |
+| 初始 | 首次生成计划 | 创建 `meta.revision`，进入 `draft` |
+| `draft` / `editing` | materialize 成功并展示计划 | 进入 `awaiting_confirmation`，`presentedRevision=meta.revision` |
+| `awaiting_confirmation` | `confirm_build` 且回传 revision 匹配 | 进入 `confirmed`，记录 `planConfirmed=true`、`confirmedRevision`、交互 ID 和确认时间，并以该 revision 进入资源实施 |
+| `awaiting_confirmation` | `continue_editing` | 进入 `editing`；下一次交互收集变更，生成新 revision 后重新 materialize 和确认 |
+| 任意非终态 | 用户取消或关闭交互 | 进入 `stopped`，保留当前计划产物 |
+
+资源实施的进入条件是 `meta.status=confirmed`、`planConfirmed=true` 且 `meta.revision=presentedRevision=confirmedRevision`。
