@@ -11,11 +11,13 @@ const path = require('path');
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
 // Includes assets/process support, CodeBundle, intake references and per-entry navigation.
+// Access-entry planning/runtime grants + shared contract add two packaged files.
+// 2026-09-15 npm pack: ~6.15 MiB unpacked; keep the next 16 KiB boundary.
 // Node 20/24 package measurements are rounded up to the next 16 KiB boundary.
 const MAX_TARBALL_BYTES = 1824 * 1024;
-const MAX_UNPACKED_BYTES = 6256 * 1024;
+const MAX_UNPACKED_BYTES = 6304 * 1024;
 // Intake references and the shared basic-theme-token contract are packaged.
-const MAX_ENTRY_COUNT = 507;
+const MAX_ENTRY_COUNT = 509;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -23,6 +25,8 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/app/create-form/batch.js',
   'lib/app/inline-css-guard.js',
   'lib/design-plan/preview.js',
+  'lib/design-plan/entry-navigation.js',
+  'yida-skills/skills/yida-app/references/entry-navigation.md',
   'yida-skills/skills/yida-app/workflow/incremental-preview.md',
   'yida-skills/skills/yida-create-form-page/references/batch-forms.md',
   'lib/core/utils.js',

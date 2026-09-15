@@ -115,7 +115,8 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 | `resourceBlueprint` | `{name,type,purpose,pageId?}` 数组；type 为 normal-form/process-form/display-page/report，名称与模型、页面对应且唯一 |
 | `resourceCreationOrder` | 覆盖全部资源的有序名称数组，先应用，再被依赖模型，最后依赖它们的页面 |
 | `pageImplementationOrder` | 覆盖全部页面的 pageId 或名称数组 |
-| `navigationOrder/navigationFallback` | 已确认的菜单顺序，或明确的排序策略；权限接口决定可见性 |
+| `entryRecommendation` | 保留 brief 入口建议，按 [访问态入口契约](../../../../yida-app/references/entry-navigation.md) 补齐各入口 role/menu/defaultMenuKey/access；两端均为访问态，管理端无需首页 |
+| `navigationOrder/navigationFallback` | 旧计划的菜单顺序或排序策略；提供 entryRecommendation 时从管理菜单派生，不混入前台菜单，重复声明必须一致 |
 | `sampleDataPlan` | `{form,records}` 或 `{form,skipReason}` 数组，覆盖全部普通表单 |
 | `interactionStates` | 对象，键为 empty/loading/error/formEntry/detail，值为非空业务说明；例如 `{"empty":"展示空态和新建入口","error":"保留输入并提示失败原因"}` |
 | `acceptanceCriteria` | 非空业务验收标准数组 |

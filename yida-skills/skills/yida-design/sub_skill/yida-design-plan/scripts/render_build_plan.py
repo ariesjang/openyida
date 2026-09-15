@@ -970,6 +970,20 @@ def render_execution(data: dict[str, Any]) -> str:
     hidden_pages = execution.get("pageNavigation") or []
     if hidden_pages:
         parts += ["<h3>页面导航</h3>", table(["页面", "平台页面导航"], [[item.get("name"), "隐藏" if item.get("isRenderNav") is False else "显示"] for item in hidden_pages])]
+    for entry in (execution.get("entryRecommendation") or {}).get("entries", []):
+        rows = []
+
+        def entry_rows(items):
+            for item in items:
+                if item.get("children"):
+                    entry_rows(item["children"])
+                    continue
+                rows.append([item.get("label"), item.get("resource"),
+                             "默认进入" if item.get("key") == entry.get("defaultMenuKey") else "",
+                             "；".join(f'{access.get("resource", "")}：{access.get("dataScope", "")}' for access in item.get("access", []))])
+
+        entry_rows(entry.get("menu") or [])
+        parts += [f'<h3>{esc(entry.get("name", "业务入口"))}</h3>', table(["任务菜单", "业务资源", "默认落点", "数据范围"], rows)]
     if execution.get("explicitScope"):
         parts += ["<h3>本轮明确范围</h3>", f'<p>{esc(display_value(execution["explicitScope"]))}</p>']
     for key, title in [("resourceCreationOrder", "搭建顺序"), ("pageImplementationOrder", "页面交付顺序"), ("navigationOrder", "导航顺序"), ("acceptanceCriteria", "验收标准")]:

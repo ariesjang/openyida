@@ -598,7 +598,7 @@ describe('CLI offline smoke', () => {
     expect(parsed.summary.core_workflows.full_app_build.page_skill_policy)
       .not.toContain('deep field two-way binding');
     expect(parsed.summary.core_workflows.full_app_build.ui_guidance_policy).toContain('prd.md + design.md');
-    expect(parsed.summary.core_workflows.full_app_build.default_nav_order_policy).toContain('portal/home/workbench entry > business handling > data management > business analytics > system configuration');
+    expect(parsed.summary.core_workflows.full_app_build.default_nav_order_policy).toContain('without creating a homepage or putting a frontend page first');
     expect(parsed.summary.core_workflows.full_app_build.do_not_default_skill_ids).not.toContain('yida-design');
     expect(parsed.summary.core_workflows.full_app_build.do_not_default_skill_ids).not.toContain('yida-data-management');
     expect(parsed.summary.core_workflows.full_app_build.ui_guidance_policy).toContain('Core normal forms default to 1-3 business sample records');
@@ -1640,7 +1640,7 @@ describe('CLI offline smoke', () => {
     expect(parsed.commands.core_workflows.full_app_build.page_skill_policy)
       .not.toContain('deep field two-way binding');
     expect(parsed.commands.core_workflows.full_app_build.ui_guidance_policy).toContain('prd.md + design.md');
-    expect(parsed.commands.core_workflows.full_app_build.default_nav_order_policy).toContain('portal/home/workbench entry > business handling > data management > business analytics > system configuration');
+    expect(parsed.commands.core_workflows.full_app_build.default_nav_order_policy).toContain('without creating a homepage or putting a frontend page first');
     expect(parsed.commands.core_workflows.full_app_build.do_not_default_skill_ids).not.toContain('yida-design');
     expect(parsed.commands.core_workflows.full_app_build.do_not_default_skill_ids).not.toContain('yida-data-management');
     expect(parsed.commands.core_workflows.full_app_build.ui_guidance_policy).toContain('Core normal forms default to 1-3 business sample records');
@@ -1652,7 +1652,13 @@ describe('CLI offline smoke', () => {
     expect(parsed.recommended.default_full_app_workflow.completion_contract).toContain('one named application entry group');
     expect(parsed.recommended.default_full_app_workflow.application_entry_policy).toEqual({
       delivery_unit: 'single_application_entry_group',
-      workbench: { include: 'when_workspace_in_scope', url: '{base_url}/{appType}/workbench' },
+      workbench: {
+        include: 'when_workspace_in_scope',
+        url: '{base_url}/{appType}/workbench',
+        task_url: '{base_url}/{appType}/workbench/{formUuid}',
+        view_parameter: 'viewUuid',
+        selection: 'one verified planned management default; use real resource/view IDs; no homepage required',
+      },
       custom: {
         include: 'when_entry_mode_standalone_and_is_render_nav_false_readback',
         url: '{base_url}/{appType}/custom/{formUuid}',
@@ -2431,6 +2437,10 @@ test('command and agent navigation policies align with AI intake decisions', () 
   const workflow = manifest.summary.core_workflows.full_app_build;
   for (const route of [workflow, summary.full_app_artifact_route, capabilities.commands.core_workflows.full_app_build]) {
     expect(route.navigation_policy).toBe(workflow.navigation_policy);
+    expect(route.entry_navigation_contract).toEqual(workflow.entry_navigation_contract);
+    expect(route.application_entry_policy).toEqual(workflow.application_entry_policy);
+    expect(route.default_nav_order_policy).toBe(workflow.default_nav_order_policy);
+    expect(route.final_link_policy).toBe(workflow.final_link_policy);
     expect(route.navigation_policy).toContain('Before PRD planning in Fast and Plan, the agent determines navigation ownership and layout from business context');
     expect(route.navigation_policy).toContain('Preserve explicit user requirements and existing navigation');
     expect(route.navigation_policy).toContain('ai_default for agent ownership decisions');
@@ -2443,7 +2453,15 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.product_design_policy).toBe(workflow.product_design_policy);
     expect(route.product_design_policy).toContain('Theme templates use only basic-tokens.json variables');
   }
-  expect(workflow.default_nav_order_policy).toContain('preserve platform ordering for the workspace');
+  expect(workflow.default_nav_order_policy).toContain('preserves platform navigation for the management workspace');
+  expect(workflow.entry_navigation_contract).toMatchObject({
+    plan_path: 'execution.entryRecommendation',
+    modes: ['unified', 'service-management', 'frontend-only'],
+    runtime: { default_mode: 'platform', builtin_permission_adapter: false },
+  });
+  expect(workflow.application_entry_policy.workbench).toMatchObject({
+    task_url: '{base_url}/{appType}/workbench/{formUuid}', view_parameter: 'viewUuid',
+  });
   expect(workflow.completion_contract).toContain('frontend-only delivery includes only its verified frontend entry');
   expect(capabilities.recommended.default_full_app_workflow.completion_contract).toBe(workflow.completion_contract);
 });

@@ -24,6 +24,8 @@
 
 执行规划前读取 `constraints.prohibitedActions`。PRD 与 design 必须把禁止项写成实现门禁：`theme-file` 禁止时沿用现有平台主题且不安排主题文件任务；`page-source` 禁止时只允许只读核查与非源码配置；`publish` 禁止时把发布明确标记为跳过。不得为了满足默认九步流程静默删除这些约束。
 
+按 [访问态入口契约](../references/entry-navigation.md) 为每个入口补齐角色、默认任务、菜单、资源/视图/操作权限。Fast PRD 与 Plan execution.entryRecommendation 共用契约；管理端无概览需求时不创建首页。
+
 ## 2.1 按已确认方式推进
 
 按 [模式路由](../../yida-design/references/design-mode.md) 读取本次选择：

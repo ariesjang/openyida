@@ -1,13 +1,13 @@
 ---
 name: yida-nav-shell
-description: 规划需要自定义应用导航或独立前台菜单时使用。先区分应用级与页面级作用范围；独立前台不隐藏后台应用导航。
+description: 为应用或独立前台页面制作自己的导航菜单时使用。只做前台菜单时，保留管理端的宜搭导航；整个应用都使用自定义菜单时，再隐藏应用导航。
 ---
 
 # yida-nav-shell
 
 ## 先判断
 
-按 brief/PRD 的导航决策路由：采用自定义应用导航或独立前台菜单时使用本技能；应用工作区采用宜搭原生导航时仍用 `yida-nav-group`，可与独立前台菜单共存。导航方式由规划阶段的 AI 按 [导航决策](../yida-design/references/navigation-decision.md) 判断，用户明确要求优先。
+先看需求和方案：是要制作自己的菜单，还是只整理宜搭已有的菜单？前者使用本技能，后者使用 `yida-nav-group`。同一个应用可以让前台使用自己的菜单、管理端继续使用宜搭菜单。用户已有明确要求时直接沿用；尚未确定时按 [导航决策](../yida-design/references/navigation-decision.md) 选择。
 
 | 用户需求 | 怎么处理 |
 | --- | --- |
@@ -50,6 +50,12 @@ openyida get-form-config <appType> <formUuid> --json
 
 每页回读 `isRenderNav=false` 才完成；失败时修复该页配置并重读。表单及自定义页面在创建或复用并取得真实 `formUuid` 后立即配置，可与页面代码开发并行，不等待页面发布。发布后只回读核对；若发布改变了配置才补写修复，最终按 PRD 清单逐项核对。`create-page --hide-nav` 可用于新建页初始配置，仍需回读；URL 参数不能代替持久化设置。
 
+## 访问态入口与权限
+
+前台和管理端可以使用不同的菜单，管理端也可以直接打开业务列表，无需首页。菜单显示什么与用户能操作什么要分别处理：平台隐藏的菜单项，仍可能是前台需要的任务；能看到一个页面，也不代表能提交或修改数据。
+
+沿用平台菜单范围时使用 `platform` 模式；前台独立组织菜单时使用 `independent` 模式，并查询当前用户的真实权限。权限查询尚未接通时，不放行相关菜单，明确记录未完成项。字段和步骤见 [前台与管理端的菜单规则](../yida-app/references/entry-navigation.md)。
+
 ## 实现要点
 
 本节的 iframe 与原生表单打开规则用于计划选择复用原生页面的工作区。全码前台默认在同一页面切换业务视图、完成填写与结果展示，连接真实数据；不把默认 iframe 当作全码前台。菜单只包含该入口的有效任务，不能把后台菜单自动带入前台。
@@ -64,7 +70,7 @@ openyida get-form-config <appType> <formUuid> --json
 - 自定义顶部导航默认推荐浮导，可按内容宽度设计为紧凑胶囊或悬浮栏；“顶部导航”不等于贴边通栏。位置、比例、留白、材质和选中态根据业务与设计实现，不由现成组件决定。此推荐只针对顶部样式，不改变已确定的导航方式。
 - 需要布局方向和小段代码时读 [导航壳形态目录](references/nav-shell-patterns.md)。按场景设计和手写实现，不强制复制任何导航组件。已有导航符合设计时直接复用，只补缺失功能；不能仅因存在新示例而替换现有外观。
 - 自定义侧边导航（含顶部＋侧边）的 PC 端必须支持折叠/展开和拖拽调宽；展开恢复折叠前宽度，宽度变化时内容区同步调整。移动端改为可展开/收起的菜单，详见 [侧栏交互](references/nav-shell-patterns.md#侧栏交互)。
-- 菜单数量、名称、顺序、分组和入口用途来自 PRD，通常工作台在首位；用当前访问者的 `getAccessableNavs.json` 过滤可见范围，详见 [导航数据来源](references/nav-shell-patterns.md#导航数据来源)。数据逻辑可直接复用，不要求采用同一套 UI。
+- 菜单数量、名称、顺序、分组和入口用途来自 PRD，默认落点按当前入口任务确定；平台模式用当前访问者的 `getAccessableNavs.json` 过滤展示，独立前台必须接入真实权限适配，详见 [导航数据来源](references/nav-shell-patterns.md#导航数据来源)。数据逻辑可直接复用，不要求采用同一套 UI。
 - 只在当前页切视图时用 React 状态；需要分享、刷新恢复、前进后退时同步 URL hash。跨真实页面时沿用应用路由与数据桥，详见 [菜单契约](references/nav-shell-patterns.md#菜单契约)。`hashchange`、`matchMedia` 等监听必须 cleanup。
 - **满足导航壳保留条件后的跨页跳转，避免重复应用前缀**：完整的 `/APP_xxx/workbench/FORM_xxx` 地址通过数据桥调用 `router.push(href, params, false, true)`，第三参 `false` 表示不新开标签，第四参 `true` 表示 URL 模式。数据桥已修复省略第四参时的自动识别，但不会覆盖显式传入的 `false`；生成代码仍须明确传 `true`，详见 [路由模式与数据桥兜底](references/nav-shell-patterns.md#路由模式与数据桥兜底)。
 - 导航项保存真实资源 ID、入口用途和 `params`；办理任务、数据管理与页面内新增/详情按钮按 [入口用途与嵌入页面](references/nav-shell-patterns.md#入口用途与嵌入页面) 分别处理。用 `URL` / `URLSearchParams` 保留 `corpid`、`locale` 和业务参数。

@@ -53,6 +53,8 @@ PRD 将 userTasks 与入口建议转为页面的访问路径、任务和权限�
 
 例如：报修前台为 standalone + custom，维修工作区为根级 platform-side。Plan 初始化保留 pageSpecHandoff，PRD、design 和计划分别展示各入口方案。导航执行和验证按 [导航壳配置](../../yida-nav-shell/SKILL.md#必做配置) 完成；页面访问范围和数据权限按用户要求独立配置。
 
+规划阶段按 [访问态入口契约](../../yida-app/references/entry-navigation.md) 补齐 entryRecommendation.entries 的 role、menu、defaultMenuKey 和权限依赖。Plan 初始化保留建议并要求业务片段补齐；Fast PRD 使用同一结构。
+
 ## 保存校验
 
 检查 JSON 与集合类型、稳定 key、功能/任务引用、来源标记及用户约束。`intake.confirmed` 按 [需求完成条件](../workflow/prepare-brief.md#3-依据有效功能推导入口) 设置；计划批准由计划版本状态记录。

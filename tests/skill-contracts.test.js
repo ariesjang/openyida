@@ -540,7 +540,7 @@ describe('OpenYida skill contracts', () => {
     expect(skill).toContain('use_skill("yida-data-source-connectors")');
     expect(step9).toContain('先写 2-3 句业务交付总结，再给一个名为“应用访问入口”的入口组');
     expect(step9).toContain('新增、修改或发布单个具体页面时，仍只交付当前页面');
-    expect(step9).toContain('统一工作区或前后台双入口包含“应用工作台” `{base_url}/{appType}/workbench`');
+    expect(step9).toContain('统一工作区或前后台双入口包含经验证的“业务管理入口”');
     expect(step9).toContain('不把表单、流程、报表、页面、资源清单或内部文件分别登记为附件');
     expect(step9).toContain('用户或调用方明确要求资源清单、资源 UUID/ID、发布状态或测试数据摘要时');
     expect(step9).toContain('不得用链接卡代替正文清单');
@@ -1503,7 +1503,7 @@ describe('OpenYida skill contracts', () => {
     expect(pageGeneration).toContain('| 独立前台菜单、页面隐藏导航、无导航全屏、`isRenderNav=false` | 写 `appBlueprint.renderNav: false` | 执行 `openyida update-form-config <appType> <formUuid> false "<页面标题>"` |');
     expect(pageGeneration).toContain('openyida update-app <appType> --hide-app-nav');
     expect(navPatterns).toContain('默认不要在自定义页里自建同级导航');
-    expect(navPatterns).toContain('自绘应用级导航前必须开启 `hideAppNav`');
+    expect(navPatterns).toContain('仅整个应用自绘应用级导航时开启 `hideAppNav`');
     expect(navPatterns).toContain('不要用 `isRenderNav=false` 表达应用导航隐藏');
     expect(navShell).toContain('openyida update-app <appType> --hide-app-nav');
     expect(navShell).toContain('不要用 `isRenderNav=false` 代替 `hideAppNav`');

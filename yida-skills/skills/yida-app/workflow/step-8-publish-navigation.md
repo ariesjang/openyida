@@ -46,10 +46,14 @@ openyida nav-group auto-order <appType>
 此分支只执行一次 `auto-order`，不再执行显式 `order`。完整应用逐页发布均不带 `--auto-nav-order`；存量平台 JSX 页面发布去掉 `--canvas`。
 
 4. 同一搭建 Run 不得同时执行显式排序与自动排序，不生成逐项 `move` 的 Bash/Python 循环。
-5. 兜底顺序为：门户/首页/工作台入口、业务办理、数据管理、经营分析、系统配置。
+5. 平台菜单按业务管理任务排序；默认进入高频管理列表，有明确概览需求才将管理概览放前。独立前台菜单单独组织，不自动把前台首页置顶。双入口优先消费 entryRecommendation 派生的 navigationOrder；frontend-only 不执行平台导航排序。
 6. 本步骤配置宜搭平台导航，不要求页面源码实现侧边栏或顶部应用导航；只有 PRD 已规划该入口自己的菜单时才实现，不因平台排序再回头补导航壳。
 7. 本轮任一页面 `entryMode=standalone` 时，Step 6 已在取得页面 ID 后隐藏页面导航；发布和健康检查通过后执行 `openyida get-form-config <appType> <displayPageFormUuid> --json` 核对。配置缺失或变化时才执行 `openyida update-form-config <appType> <displayPageFormUuid> false "<页面标题>"` 并再次回读。只有回读明确为 `isRenderNav=false` 时，才把干净的 `{base_url}/{appType}/custom/{displayPageFormUuid}` 交给 Step 9 作为独立业务入口；写入或回读失败时只保留工作台入口，不用 `?isRenderNav=false` 猜测成功。
 8. 主页面 `entryMode=platform-shell` 或缺失时，不修改页面导航配置，也不输出独立业务入口。
+
+## 无自定义页面的管理端
+
+没有本轮源码时跳过 publish，继续核对真实资源、权限、管理菜单和默认入口。缺少 display 主页面不构成失败，不追加自定义首页。新版双入口按 [访问态入口契约](../references/entry-navigation.md) 处理，显式排序不会删除未列出的导航项；需精简平台菜单时单独规划 hide/show 并回读。
 
 ## 混合导航验收
 
