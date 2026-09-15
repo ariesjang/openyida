@@ -15,7 +15,7 @@ assetStrategy: {"pages":[{"pageId":"home","imageNeed":"required","slots":[{"slot
 - `required` 默认 true；设计允许无图布局时可设 false。
 - `minSize` 为 `宽x高`，也可填非负整数 `minWidth/minHeight`。CLI 使用设计和草稿中较高的尺寸要求。
 - `generationAllowed=false` 只接受真实素材。
-- `imageNeed=none` 使用空 slots；required 页面缺少 slots 时保持 draft。
+- `imageNeed=none` 省略 slots 时 CLI 补空数组；required/beneficial 页面显式填写 slots。Plan 生成方案时即校验位置、用途和尺寸；required 页面空 slots 时保持 draft。
 
 ## 输入草稿
 
@@ -23,7 +23,7 @@ assetStrategy: {"pages":[{"pageId":"home","imageNeed":"required","slots":[{"slot
 {"assets":[{"slotId":"home.hero","usage":"hero","input":"./assets/home.png","source":"user","alt":"团队讨论方案"}]}
 ```
 
-`input` 使用实际本地文件或 HTTP(S) 图片地址。相对路径基于命令工作目录，跨目录处理使用绝对路径。
+`input` 使用实际本地文件或 HTTP(S) 图片地址。相对路径基于命令工作目录，跨目录处理使用绝对路径。NOT_FOUND 返回 resolvedPath 与 baseDir，核对实际查找位置后修正 input；这类文件路径修正直接重跑该页素材任务。
 
 | source | 来源字段 |
 | --- | --- |

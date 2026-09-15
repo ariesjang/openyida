@@ -8,7 +8,7 @@ const { execFile } = require('child_process');
 const { promisify } = require('util');
 const { resolveAssets } = require('../lib/asset/asset-resolve');
 const { readDesignAssetStrategy } = require('../lib/asset/asset-plan');
-const { renderDesign } = require('../lib/design-plan/materialize');
+const { renderDesign, materialize } = require('../lib/design-plan/materialize');
 
 const run = promisify(execFile);
 const status = { canUpload: false, cdnConfigured: false, hostCapabilities: {} };
@@ -47,6 +47,67 @@ function asset(overrides = {}) {
 function upload() {
   return jest.fn(async files => [{ success: true, originalPath: files[0], cdnUrl: `${baseUrl}/cdn.png` }]);
 }
+
+test('Plan CLI returns independent searches for slots on the same page before app creation', async () => {
+  const plan = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/design-plan.json'), 'utf8'));
+  const pageId = plan.pages.customPageDetails[0].pageId;
+  plan.visualStyle.forUser.assetStrategy = { pages: [
+    { pageId, imageNeed: 'required', slots: ['hero', 'room', 'garden'].map(slotId => ({ slotId, usage: slotId, minSize: '1200x800' })) },
+    { pageId: 'settings', imageNeed: 'none' },
+  ] };
+  const input = path.join(dir, 'plan.json');
+  fs.writeFileSync(input, JSON.stringify(plan));
+  const output = await run(process.execPath, [path.join(__dirname, '../bin/yida.js'), 'design-plan', 'materialize', input, '--json'], {
+    env: { ...process.env, OPENYIDA_SKIP_UPDATE_CHECK: '1' },
+  });
+  const result = JSON.parse(output.stdout);
+  expect(result.assetTasks).toHaveLength(1);
+  const task = result.assetTasks[0];
+  expect(task).toMatchObject({ pageId, startWhen: 'plan_confirmed', owner: 'host_agent', searchConcurrency: 4,
+    concurrencyScope: 'collection_run', resumePolicy: 'reuse_final_slots_and_remaining_round_budget',
+    runAlongside: ['app_creation', 'form_creation', 'pages_without_images'], resultWriter: 'one_per_page' });
+  const guidance = require('../lib/asset/ai-image').getMaterialSourcingGuidance();
+  expect(task.collectionPolicy).toEqual(guidance.collectionPolicy);
+  expect(task.failurePolicy).toEqual(guidance.failurePolicy);
+  expect(task.searches.map(search => search.slotId)).toEqual(['hero', 'room', 'garden']);
+  task.searches.forEach(search => expect(search).toMatchObject({ dependsOn: [], minWidth: 1200, minHeight: 800 }));
+  expect(task.resolve).toMatchObject({ startWhen: 'page_draft_and_app_type_ready', appTypeRequired: true });
+  expect(task.resolve.argv).toContain(task.draft);
+  expect(task.resolve.argv).toContain(task.manifest);
+  expect(task.resolve.argv).toContain(result.outputs.design);
+  expect(fs.existsSync(task.manifest)).toBe(false);
+  expect(fs.existsSync(task.draft)).toBe(false);
+});
+
+test.each([
+  [{ slotId: 'hero', usage: 'hero', minSize: 1200 }, 'ASSET_INVALID_SIZE'],
+  [{ slotId: 'hero', usage: 'hero', minSize: '0x800' }, 'ASSET_INVALID_SIZE'],
+  [{ slotId: '', usage: 'hero' }, 'ASSET_DESIGN_INVALID'],
+  [{ slotId: 'hero', usage: '' }, 'ASSET_DESIGN_INVALID'],
+])('Plan rejects invalid image requirements before overwriting artifacts: %j', (slot, code) => {
+  const plan = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/design-plan.json'), 'utf8'));
+  plan.visualStyle.forUser.assetStrategy = { pages: [{ pageId: 'home', imageNeed: 'required', slots: [slot] }] };
+  const input = path.join(dir, 'plan.json');
+  fs.writeFileSync(input, JSON.stringify(plan));
+  const outputs = ['prd.md', 'design.md', 'build-plan.html', 'app-theme.css'];
+  outputs.forEach(file => fs.writeFileSync(path.join(dir, file), 'original'));
+  expect(() => materialize(input)).toThrow(expect.objectContaining({ code }));
+  outputs.forEach(file => expect(fs.readFileSync(path.join(dir, file), 'utf8')).toBe('original'));
+});
+
+test('none pages may omit slots in the same contract used by resolve', async () => {
+  const result = await resolveAssets([], { status, online: false, assetStrategy: { pages: [{ pageId: 'settings', imageNeed: 'none' }] } });
+  expect(result.materialStatus).toBe('none');
+  expect(result.assetStrategy.pages[0].slots).toEqual([]);
+});
+
+test('missing local images report the actual path and cwd', async () => {
+  const input = './missing-assets/home.png';
+  const result = await resolveAssets([asset({ input })], { status, online: false });
+  expect(result.gaps[0]).toMatchObject({ code: 'NOT_FOUND',
+    details: { input, resolvedPath: path.resolve(input), baseDir: process.cwd(), pathBase: 'cwd' } });
+  expect(result.gaps[0].message).toContain(path.resolve(input));
+});
 
 test.each(['image/png', 'application/octet-stream'])('declared dimensions and %s cannot make text final', async contentType => {
   responseBody = Buffer.from('this is not an image');

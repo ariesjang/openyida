@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "画像ファイルが見つかりません：{0}。コマンドの作業ディレクトリを確認するか、絶対パスを指定してください。",
+    invalidStrategy: "画像の要件は、ページごとの画像の配置を記述したオブジェクトで指定してください。",
+  },
   help: {
     subtitle: '宜搭ローコード AI 開発ツール',
     usage: '使用方法:',

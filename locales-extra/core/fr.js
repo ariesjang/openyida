@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "Image introuvable : {0}. Vérifiez le répertoire de travail de la commande ou utilisez un chemin absolu.",
+    invalidStrategy: "Les besoins en images doivent être un objet indiquant les emplacements par page.",
+  },
   help: {
     subtitle: 'Outil de développement IA low-code pour Yida',
     usage: 'Utilisation :',

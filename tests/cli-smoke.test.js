@@ -2497,6 +2497,10 @@ test('asset fallback and completion policies are shared by the CLI, manifest and
   expect(manifest.summary.core_workflows.full_app_build.optional_asset_branch.failure_policy).toEqual(policy);
   expect(summary.full_app_artifact_route.optional_asset_branch.failure_policy).toEqual(policy);
   const collection = sources.guidance.collectionPolicy;
+  const scheduling = sources.guidance.schedulingPolicy;
+  expect(scheduling).toMatchObject({ searchConcurrency: 4, searchUnit: 'slot', resultWriter: 'one_per_page' });
+  expect(manifest.summary.core_workflows.full_app_build.optional_asset_branch.scheduling_policy).toEqual(scheduling);
+  expect(summary.full_app_artifact_route.optional_asset_branch.scheduling_policy).toEqual(scheduling);
   expect(collection).toMatchObject({ maxRoundsPerPage: 2, imagesPerSlot: 1, candidatesPerSlotPerRound: 1, secondRound: 'failed_required_slots_only', roundOwner: 'host_agent' });
   expect(manifest.summary.core_workflows.full_app_build.optional_asset_branch.collection_policy).toEqual(collection);
   expect(summary.full_app_artifact_route.optional_asset_branch.collection_policy).toEqual(collection);

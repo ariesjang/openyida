@@ -31,7 +31,7 @@
 按 [模式路由](../../yida-design/references/design-mode.md) 读取本次选择：
 
 - Fast：继续 2.2–2.3；已有详细需求直接作为规划基础。
-- Plan：执行 [Plan 编排](plan/workflow.md)，用户确认当前方案后完成主题交接并进入 Step 3。
+- Plan：执行 [Plan 编排](plan/workflow.md)，用户确认当前方案后，按返回的 `assetTasks` 启动素材任务，同时进入 Step 3 创建应用。
 
 Plan 分支从已加载 `yida-app` 的 Available Files 读取精确路径 `workflow/plan/workflow.md`；不要把当前文件名当目录拼成 `workflow/step-2-design/plan/workflow.md`，也不要用 Glob 猜路径。
 
@@ -68,7 +68,7 @@ Plan 分支从已加载 `yida-app` 的 Available Files 读取精确路径 `workf
 - 门户、工作台、档案、知识库和引导页有图片槽位时为 `beneficial`；
 - 表单、审批、台账、设置和库存流水默认 `none`。
 
-存在 `required` 或带槽位的 `beneficial` 时启动 `yida-image-assets`，按页面并发选图，每个位置一张、最多两轮，分别保存 `prd/<项目名>/asset-manifests/<pageId>.draft.json`。宜搭附件上传需要真实 `appType`；已有应用可直接上传，否则等 Step 3 创建应用后再落地，不因缺少 appType 阻塞应用创建。素材只阻塞使用它的页面；Step 7 通过 `--design design.md --page-id <pageId> --app-type <真实appType>` 按页并发上传并校验，以输出清单的页面级状态判断能否继续。
+Fast 设计就绪后按 [素材调度](parallel-work.md#素材与页面同时推进) 启动 `yida-image-assets`，主流程继续创建应用和表单。Plan 在方案确认后启动同一流程。各页及同页各图片位置并发搜索，每个位置一张、最多两轮。每页草稿和真实 appType 就绪即执行 `asset resolve --design design.md --page-id <pageId> --app-type <真实appType>`，写入独立清单；页面按自身状态接图并验收。
 
 ## 主题文件实现指令
 

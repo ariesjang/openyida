@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "找不到圖片檔案：{0}。請檢查指令工作目錄，或使用絕對路徑。",
+    invalidStrategy: "圖片要求應填寫為物件，按頁面列出圖片位置。",
+  },
   help: {
     subtitle: '宜搭低程式碼 AI 開發工具',
     usage: '用法:',
