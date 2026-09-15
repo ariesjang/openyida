@@ -130,7 +130,7 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 openyida design-plan patch prd/<项目名>/build-plan.json --set 'visualStyle.forUser.colorStrategy.primaryColor=#8B5E3C' --materialize --json
 ```
 
-CLI 自动递增 revision、清除旧确认，并在使用 `--materialize` 时同步三份文档和主题 CSS。支持首次添加 execution 的可选字段、tokens、已有页面交接字段和模型示例数据；数组项需已存在。
+CLI 在方案变更时递增 revision、清除旧确认；仅更新 `visualStyle.forUser.assetStrategy.materialStatus` 和 `missingAssets` 时保留 revision 与已有确认。使用 `--materialize` 同步三份文档和主题 CSS。支持首次添加 execution 的可选字段、tokens、已有页面交接字段和模型示例数据；数组项需已存在。
 
 并行合并时 CLI 设置 `meta.status=awaiting_confirmation`；直接维护单一计划时由编排在生成前设置。展示成功后记录 `meta.planState.presentedRevision=meta.revision`；收到明确确认后设置 status=confirmed、planConfirmed=true、confirmedRevision=presentedRevision，再生成文档同步确认状态。详细交互见应用流程的生成与确认步骤。`askhuman` 只保存需要留档的交互事实，未选候选留在会话中。
 

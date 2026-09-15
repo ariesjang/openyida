@@ -279,7 +279,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida design-plan init <requirement-brief.json> [--theme-id <id>] [--output-dir <dir>] [--json]` | 从已确认需求初始化计划草稿 |
 | `openyida design-plan preview <build-plan.json> --part-file <module.json> [--json]` | 按模块更新方案草稿 |
 | `openyida design-plan materialize <build-plan.json> [--from-preview \| --business-file <json> --visual-file <json>] [--output-dir <dir>] [--check] [--json]` | 从 build-plan.json 生成并校验搭建计划产物 |
-| `openyida design-plan patch <build-plan.json> --set <path=value> [--set <path=value> ...] [--materialize] [--output-dir <dir>] [--json]` | 按字段路径调整搭建计划并使旧确认失效 |
+| `openyida design-plan patch <build-plan.json> --set <path=value> [--set <path=value> ...] [--materialize] [--output-dir <dir>] [--json]` | 按字段更新搭建计划，素材进度沿用已有确认 |
 | `openyida update-app <appType> [--name "..."] [--theme-file <css>] [--nav-theme light\|dark\|white\|gray] [--logo-source appIcon\|customImage] [--layout side\|top\|l_shape] [--hide-app-nav\|--show-app-nav]` | 更新应用信息 |
 | `openyida app-online <appType> [--to-ding-app-center] [--show-app-center]` | 启用宜搭应用 |
 | `openyida app-offline <appType> [--to-ding-app-center] [--show-app-center]` | 停用宜搭应用 |

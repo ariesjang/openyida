@@ -230,7 +230,7 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 状态更新规则：
 
 1. 首次生成计划时创建 `meta.revision`，设置 `meta.status=draft`、`meta.planState.planConfirmed=false`。
-2. 每次修改影响搭建计划事实时生成新的 `meta.revision`，并清空旧确认信息。
+2. 业务方案或视觉方案变化时生成新的 `meta.revision`，并清空旧确认信息。素材采集后的进度同步保留版本与已有确认，直接继续搭建。
 3. 计划展示完成后设置 `meta.status=awaiting_confirmation` 和 `presentedRevision=meta.revision`。
 4. 用户在最终确认交互中选择“确认并开始搭建”时，设置 `meta.status=confirmed`、`planConfirmed=true`、`confirmedRevision=meta.revision`，同时记录交互 ID 和确认时间。
 5. 只有 `meta.status=confirmed`、`planConfirmed=true` 且 `meta.revision=presentedRevision=confirmedRevision` 时，Plan Design 才能返回 `yida-app` Step 3。

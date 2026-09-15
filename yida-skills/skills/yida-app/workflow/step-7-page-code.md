@@ -15,7 +15,7 @@
 - 真实 `appType`、当前页面 `formUuid`；
 - `.cache/<项目名>-schema.json`；
 - Step 5 写入的 seed records 或跳过原因。
-- 需要图片时读取 `prd/<项目名>/asset-manifest.json`。
+- 需要图片时读取 `prd/<项目名>/asset-manifests/<pageId>.json`；已有总清单按 pageId 读取。
 
 ## 操作
 
@@ -23,7 +23,7 @@
 
 先读取 `constraints.prohibitedActions`。命中 `page-source` 时，本步骤只能做 Read、编译/静态检查等只读诊断，不得 Write/Edit/Create 页面源码，也不得用脚本、格式化器或生成器间接改写；输出应明确“源码未修改”并跳过依赖源码变更的发布。未命中时才执行下列源码实现动作。
 
-当前页为 `required`，或为带槽位的 `beneficial` 时，先执行 `use_skill("yida-image-assets", "准备当前页图片")`。使用 `--design design.md --app-type <真实appType>` 核对槽位、默认上传宜搭图片附件，输出 `asset-manifest.json`；超过 20 MiB 的外链保留原地址。读取 manifest 中当前页 `pages[].materialStatus`；该页为 `final` 时只使用 `assets[].materialStatus=final` 的图片。必需槽位缺口只阻塞当前页，总状态 `draft` 不阻塞其他已就绪页面。
+当前页为 `required`，或为带槽位的 `beneficial` 时，先执行 `use_skill("yida-image-assets", "准备当前页图片")`。使用 `--design design.md --page-id <pageId> --app-type <真实appType>` 核对当前页槽位、默认并发上传宜搭图片附件，输出独立的 `asset-manifests/<pageId>.json`；超过 20 MiB 的外链保留原地址。读取 manifest 中当前页 `pages[].materialStatus`；该页为 `final` 时只使用 `assets[].materialStatus=final` 的图片。必需槽位缺口只阻塞当前页，总状态 `draft` 不阻塞其他已就绪页面。
 
 1. 自定义页面开发执行 `use_skill("yida-canvas-custom-page", "生成当前页面源码")`。根据 PRD 和 `design.md` 直接编写 `.canvas.jsx` / `.canvas.tsx`；允许从空文件实现完整 UI。内置整页示例按需用于理解数据接入和导航；表单抽屉片段必须按第 9 条整体合并，不要求复制整页，也不能用示例默认外观替代已确认的设计。已有符合设计的页面可继续迭代。
 2. PRD 或页面名包含看板、工作台、驾驶舱、Dashboard 时，必须执行 `use_skill("yida-dashboard", "实现真实业务看板")`。
@@ -48,7 +48,7 @@
 | `page-spec.json` 缺少 sourceOfTruth、design 指针、dataBinding，或与 PRD/design.md 不一致 | 丢弃并从最新 PRD + `design.md` 重生成 |
 | PRD、design.md 和 spec 都完整，但源码有 className、布局比例、字段映射、响应式、loading/empty/error 或编译错误 | 小范围 patch 源码 |
 
-Plan 模式下，上表涉及 PRD/design 的修正均由对应技能更新 `build-plan.json` 源事实，再物化并重新确认；不得直接编辑派生产物。主题 token 变化后重新运行带 `--design-file` 的 sample 命令生成 CSS。
+Plan 模式下，业务方案或视觉方案变化时，由对应技能更新 `build-plan.json` 源事实，再物化并确认变更。素材采集结果按 [素材交接](../../yida-image-assets/SKILL.md#6-交给页面使用) 更新后直接继续，沿用已有方案确认。主题 token 变化后重新运行带 `--design-file` 的 sample 命令生成 CSS。
 
 ## 产出
 

@@ -648,6 +648,52 @@ describe('design-plan materialize', () => {
     expect(html).toContain('#8B5E3C');
   });
 
+  test.each([true, false])('asset progress preserves existing approval (%s) and refreshes documents', (confirmed) => {
+    const input = path.join(tempDir, 'build-plan.json');
+    const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
+    plan.meta.status = confirmed ? 'confirmed' : 'awaiting_confirmation';
+    plan.meta.planState = {
+      planConfirmed: confirmed, presentedRevision: plan.meta.revision,
+      confirmedRevision: confirmed ? plan.meta.revision : null,
+      confirmationInteractionId: confirmed ? 'human-approved' : '',
+    };
+    plan.visualStyle.forUser.assetStrategy.materialStatus = 'draft';
+    plan.visualStyle.forUser.assetStrategy.missingAssets = ['待补封面'];
+    fs.writeFileSync(input, JSON.stringify(plan));
+    const result = patchPlan(input, [
+      'visualStyle.forUser.assetStrategy.materialStatus=final',
+      'visualStyle.forUser.assetStrategy.missingAssets=[]',
+    ], { materialize: true });
+    const after = JSON.parse(fs.readFileSync(input, 'utf8'));
+    expect(result).toMatchObject({ changed: true, confirmationInvalidated: false, revision: plan.meta.revision, materialized: true });
+    expect(after.meta.status).toBe(plan.meta.status);
+    expect(after.meta.planState).toEqual(plan.meta.planState);
+    expect(after.pages).toEqual(plan.pages);
+    const design = fs.readFileSync(path.join(tempDir, 'design.md'), 'utf8');
+    expect(design).toContain('"materialStatus":"final"');
+    expect(design).not.toContain('待补封面');
+  });
+
+  test('asset progress combined with a visual change still invalidates approval', () => {
+    const input = path.join(tempDir, 'build-plan.json');
+    fs.copyFileSync(FIXTURE, input);
+    const result = patchPlan(input, [
+      'visualStyle.forUser.assetStrategy.materialStatus=final',
+      'visualStyle.forUser.colorStrategy.primaryColor=#123456',
+    ], { materialize: true });
+    expect(result.confirmationInvalidated).toBe(true);
+    expect(JSON.parse(fs.readFileSync(input, 'utf8')).meta.planState.planConfirmed).toBe(false);
+  });
+
+  test('changing image requirements still invalidates approval', () => {
+    const input = path.join(tempDir, 'build-plan.json');
+    fs.copyFileSync(FIXTURE, input);
+    const result = patchPlan(input, [
+      'visualStyle.forUser.assetStrategy={"materialStatus":"draft","missingAssets":[],"pages":[{"pageId":"home","imageNeed":"required","slots":[{"slotId":"hero","usage":"hero"}]}]}',
+    ]);
+    expect(result.confirmationInvalidated).toBe(true);
+  });
+
   test('light navigation maps to brand1-3 and invalid navigation values are rejected', () => {
     const compact = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
     compact.visualStyle.forUser.navigationStyle.tone = 'light';

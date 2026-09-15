@@ -158,7 +158,7 @@
 - `draft`：当前版本正在生成或调整。
 - `awaiting_confirmation`：当前版本已通过会话摘要和 `build-plan.html` 展示，`presentedRevision=meta.revision`。
 - `confirmed`：用户已在最终确认交互中确认，`confirmedRevision=meta.revision`、`planConfirmed=true`。
-- 每次影响计划事实的修改都生成新的 `meta.revision`，并清空旧确认信息。
+- 业务方案或视觉方案变化时生成新的 `meta.revision`，并清空旧确认信息；素材进度更新保留版本与已有确认，字段规则见紧凑计划契约。
 - 只有 `meta.status=confirmed`、`planConfirmed=true` 且 `meta.revision=presentedRevision=confirmedRevision` 时，应用生成链路才能消费该计划。
 
 ## overview

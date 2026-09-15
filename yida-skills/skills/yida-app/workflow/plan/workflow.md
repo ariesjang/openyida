@@ -43,6 +43,6 @@ build-plan.json（业务和视觉的源事实）
   └─ app-theme.css（应用主题）
 ```
 
-草稿按已确定的模块更新，最终校验后统一保存三份文档和主题 CSS。调整由对应技能更新源事实，再由编排重新生成并确认，具体命令与版本条件见 [生成与确认](step-4-deliver.md)。
+草稿按已确定的模块更新，最终校验后统一保存三份文档和主题 CSS。业务方案或视觉方案调整由对应技能更新源事实，再由编排重新生成并确认；素材采集后的进度同步沿用已有确认并直接继续，具体命令与版本条件见 [生成与确认](step-4-deliver.md)。
 
 用户交互按 [可见表达契约](../../../yida-design/references/ask-human-interaction-contract.md) 执行。当前展示版本确认后，将 `prd.md`、`design.md` 和已生成的 `outputs.theme` 交给应用主流程 Step 3。仅完整应用同步主题设置；`explicitScope.allowInferredResources=false` 时忽略主题和导航交接，只创建范围内资源并交付，不重复物化计划。

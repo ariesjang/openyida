@@ -51,11 +51,13 @@ describe('OpenYida skill contracts', () => {
     expect(imageAssets).toContain('none');
     expect(imageAssets).toContain('requires_host_tool_inventory_check');
     expect(imageAssets).toContain('同一候选尝试一次');
-    expect(imageAssets).toContain('当前及后续槽位立即换其他来源');
-    expect(imageAssets).toContain('每个槽位保留一个首选和一个备选');
+    expect(imageAssets).toContain('其他页面和后续轮次复用这份记录');
+    expect(imageAssets).toContain('每页最多两轮，每个位置每轮最多一个候选');
+    expect(imageAssets).toContain('只补第一轮失败的必需位置');
     expect(sourcePolicy).toContain('../SKILL.md#失败后立即切换');
     expect(imageAssets).toContain('asset-manifest.json');
-    expect(imageAssets).toContain('--input <草稿> --manifest <asset-manifest.json>');
+    expect(imageAssets).toContain('--manifest asset-manifests/<pageId>.json');
+    expect(imageAssets).toContain('--page-id <pageId>');
     expect(sourcePolicy).toContain('Unsplash API');
     expect(sourcePolicy).toContain('Pexels API');
     expect(sourcePolicy).toMatch(/source=search[^\n]+provider=unsplash\|pexels/);
@@ -63,7 +65,7 @@ describe('OpenYida skill contracts', () => {
     expect(imageSources).toMatch(/图片搜索与采集仅使用 Unsplash \/ Pexels/);
     expect(imageSources).not.toMatch(/Pixabay|Lorem Picsum|Wikimedia Commons/);
     expect(canvasPageGuide).toContain('联网搜图仅使用 Unsplash/Pexels');
-    expect(canvasPageGuide).toContain('asset-manifest.json');
+    expect(canvasPageGuide).toContain('asset-manifests/<pageId>.json');
     expect(canvasPageGuide).not.toMatch(/heroImage|productImages/);
     expect(canvasPageGuide).toContain('不内嵌 data URI');
     expect(entry).toMatchObject({ category: 'yida-skills/design' });

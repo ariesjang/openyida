@@ -2448,7 +2448,7 @@ test('command and agent navigation policies align with AI intake decisions', () 
   expect(capabilities.recommended.default_full_app_workflow.completion_contract).toBe(workflow.completion_contract);
 });
 
-test('asset source fallback policy is shared by the CLI, manifest and agent summary', () => {
+test('asset fallback and completion policies are shared by the CLI, manifest and agent summary', () => {
   const sources = JSON.parse(runOk(['asset', 'sources', '--json']));
   const manifest = JSON.parse(runOk(['commands', '--json']));
   const summary = JSON.parse(runOk(['agent-capabilities', '--summary-json']));
@@ -2457,10 +2457,19 @@ test('asset source fallback policy is shared by the CLI, manifest and agent summ
     attemptsPerCandidate: 1,
     sourceUnavailable: 'switch_source_for_remaining_slots',
     candidateFailed: 'replace_input',
-    exhausted: 'allowed_generation_or_optional_layout_or_gap',
+    exhausted: 'planned_optional_layout_or_required_gap',
   });
   expect(manifest.summary.core_workflows.full_app_build.optional_asset_branch.failure_policy).toEqual(policy);
   expect(summary.full_app_artifact_route.optional_asset_branch.failure_policy).toEqual(policy);
+  const collection = sources.guidance.collectionPolicy;
+  expect(collection).toMatchObject({ maxRoundsPerPage: 2, imagesPerSlot: 1, candidatesPerSlotPerRound: 1, secondRound: 'failed_required_slots_only', roundOwner: 'host_agent' });
+  expect(manifest.summary.core_workflows.full_app_build.optional_asset_branch.collection_policy).toEqual(collection);
+  expect(summary.full_app_artifact_route.optional_asset_branch.collection_policy).toEqual(collection);
+  expect(manifest.commands.find(command => command.id === 'asset').args).toContainEqual(expect.objectContaining({ name: 'pageId', builder_options: ['--page-id'] }));
+  const completion = sources.guidance.completionPolicy;
+  expect(completion).toMatchObject({ resultSource: 'asset-manifests/<pageId>.json', planApproval: 'reuse_existing_approval', nextStep: 'continue_ready_pages' });
+  expect(manifest.summary.core_workflows.full_app_build.optional_asset_branch.completion_policy).toEqual(completion);
+  expect(summary.full_app_artifact_route.optional_asset_branch.completion_policy).toEqual(completion);
 });
 
 test('Plan CLI preserves workspace navigation while materializing and patching a frontend menu', () => {
