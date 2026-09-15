@@ -76,6 +76,80 @@ describe('design-plan materialize', () => {
     fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
+  test('writes ordered business blocks once and derives the full plan without losing business differences', () => {
+    const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
+    const page = plan.pages.customPageDetails[0];
+    page.blocks = [
+      { name: '订单核对', purpose: '比较订单金额和采购明细，标记不一致的记录' },
+      { name: '处理结果', purpose: '确认后刷新队列，失败时保留输入并显示失败原因' },
+    ];
+    delete page.contentPriority;
+    delete page.contentRichness;
+    const customCheck = '金额不一致时阻止确认，并指出差异字段';
+    const defaultCheck = `${plan.dataModels[0].name}的字段、必填规则与关系符合数据模型`;
+    plan.execution = { acceptanceCriteria: [customCheck, customCheck, defaultCheck], interactionStates: { error: '核对失败时保留用户输入' } };
+    const input = path.join(tempDir, 'compact-business.json');
+    const before = JSON.stringify(plan);
+    fs.writeFileSync(input, before);
+    const normalized = normalizePlan(plan);
+    const derived = normalized.pages.customPageDetails[0];
+    expect(derived.contentPriority).toEqual(['订单核对', '处理结果']);
+    expect(derived.contentRichness.contentLayers).toEqual(page.blocks.map(block => `${block.name}：${block.purpose}`));
+    expect(derived.signatureInteraction).toBe(page.signatureInteraction);
+    expect(normalizePlan(normalized)).toEqual(normalized);
+    const result = materialize(input);
+    const prd = fs.readFileSync(result.outputs.prd, 'utf8');
+    const html = fs.readFileSync(result.outputs.html, 'utf8');
+    const design = fs.readFileSync(result.outputs.design, 'utf8');
+    for (const block of page.blocks) {
+      for (const output of [prd, html, design]) {expect(output).toContain(block.purpose);}
+    }
+    const handoff = JSON.parse(prd.match(/```json\n([\s\S]*?)\n```/)[1]);
+    expect(handoff.acceptanceCriteria.filter(item => item === customCheck)).toHaveLength(1);
+    expect(handoff.acceptanceCriteria.filter(item => item === defaultCheck)).toHaveLength(1);
+    expect(handoff.acceptanceCriteria).toContain('应用主题按 design.md 配置，页面消费同一组 token');
+    expect(handoff.interactionStates).toMatchObject({ error: '核对失败时保留用户输入', loading: expect.any(String) });
+    expect(html).toContain(customCheck);
+    expect(fs.readFileSync(input, 'utf8')).toBe(before);
+    expect(JSON.stringify(plan)).toBe(before);
+  });
+
+  test('preserves separately authored priority and content layers with structured blocks', () => {
+    const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
+    const page = plan.pages.customPageDetails[0];
+    page.blocks = [{ name: '订单', purpose: '检查采购订单' }];
+    const original = JSON.parse(JSON.stringify(page));
+    const derived = normalizePlan(plan).pages.customPageDetails[0];
+    expect(derived.contentPriority).toEqual(original.contentPriority);
+    expect(derived.contentRichness.contentLayers).toEqual(original.contentRichness.contentLayers);
+    expect(derived.firstScreenStructure).toBe(original.firstScreenStructure);
+    expect(derived.permissionSummary).toBe(original.permissionSummary);
+  });
+
+  test.each([
+    [{ name: '订单', purpose: '' }],
+    [{ name: '订单', purpose: '核对订单', failure: '保留业务约束' }],
+    [{ name: '订单', purpose: '核对订单' }, '混合格式'],
+    [''],
+  ].map(blocks => [blocks]))('rejects incomplete or ambiguous block content before writing artifacts: %j', blocks => {
+    const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
+    plan.pages.customPageDetails[0].blocks = blocks;
+    const input = path.join(tempDir, 'invalid-blocks.json');
+    fs.writeFileSync(input, JSON.stringify(plan));
+    expect(() => materialize(input)).toThrow();
+    expect(fs.existsSync(path.join(tempDir, 'prd.md'))).toBe(false);
+  });
+
+  test('handoff overrides cannot hide malformed structured blocks', () => {
+    const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
+    plan.pages.customPageDetails[0].blocks = [{ name: '订单', purpose: '' }];
+    plan.pages.customPageDetails[0].pageSpecHandoff = { contentBlocks: ['订单'] };
+    const input = path.join(tempDir, 'invalid-override.json');
+    fs.writeFileSync(input, JSON.stringify(plan));
+    expect(() => materialize(input)).toThrow('未完成的区块说明');
+    expect(fs.existsSync(path.join(tempDir, 'prd.md'))).toBe(false);
+  });
+
   test('derives PRD, design contract, and anchor-based HTML from one plan', () => {
     const input = path.join(tempDir, 'build-plan.json');
     fs.copyFileSync(FIXTURE, input);

@@ -254,6 +254,10 @@ test('init reports only missing authoring fields and keeps type examples outside
   expect(business.facts.execution.interactionStates).toBeUndefined();
   expect(business.ready).toBe(false);
   expect(fs.readFileSync(result.context, 'utf8')).toContain('"interactionStates": {');
+  expect(business.facts.pages.customPageDetails[0]).not.toHaveProperty('contentPriority');
+  expect(business.facts.pages.customPageDetails[0]).not.toHaveProperty('contentRichness');
+  expect(pending.some(item => /contentPriority|contentLayers/.test(item.path))).toBe(false);
+  expect(fs.readFileSync(result.context, 'utf8')).toContain('"purpose":');
 });
 
 test('catalog is read-only and its theme IDs initialize through the public CLI without login', () => {

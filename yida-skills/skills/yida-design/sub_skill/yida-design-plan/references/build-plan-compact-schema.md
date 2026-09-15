@@ -59,13 +59,16 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 | --- | --- |
 | `pageId/sceneKey/name` | 稳定 ID、稳定场景 key、业务名称；sceneKey 位于页面顶层 |
 | `positioning/primaryUsers/primaryTask` | 页面定位、用户数组、核心任务 |
-| `contentPriority/blocks` | 内容优先级数组、功能区块数组 |
+| `blocks` | 按优先顺序填写 `{name,purpose}` 数组，每项写区块名称和具体业务用途 |
+| `contentPriority` | 有独立优先级设计时填写；省略时由结构化 blocks 的顺序和名称派生 |
 | `firstScreenStructure/signatureInteraction` | 首屏布局与关键交互 |
 | `layoutPattern` | `{id,reason,adaptations}`；id 从当前上下文的页面模式选择，adaptations 只写项目差异 |
-| `contentRichness.contentLayers` | 实际业务需要的决策、任务、上下文、异常或下一步内容，非空数组 |
+| `contentRichness.contentLayers` | 有额外内容层次设计时填写非空数组；省略时由结构化 blocks 的名称和用途派生 |
 | `density/permissionSummary` | 信息密度与权限说明 |
 | `dataBinding/dataSources` | `form/report/connector/static-empty`；来源为名称数组，form 对应已有模型 |
 | `emptyReason` | static-empty 时填写原因，并将 dataSources 设为 `[]` |
+
+例如 `blocks: [{"name":"客房选择","purpose":"按日期和人数筛选可预约房型"},{"name":"预约结果","purpose":"查看提交结果，失败时保留输入并显示原因"}]`。每项仅使用 name、purpose；业务动作和成功、失败处理写入用途或 signatureInteraction。现有字符串 blocks 继续配合 contentPriority 与 contentRichness.contentLayers 使用；已填写的独立设计原样保留。
 
 页面模式的 mode、mustKeep、丰富度标准、页面概览由 CLI 补齐。页面按任务选择模式，工作台通常在首位。报名、申请、登记入口承接表单提交；查询和维护承接数据管理。
 
@@ -119,7 +122,7 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 | `navigationOrder/navigationFallback` | 旧计划的菜单顺序或排序策略；提供 entryRecommendation 时从管理菜单派生，不混入前台菜单，重复声明必须一致 |
 | `sampleDataPlan` | `{form,records}` 或 `{form,skipReason}` 数组，覆盖全部普通表单 |
 | `interactionStates` | 对象，键为 empty/loading/error/formEntry/detail，值为非空业务说明；例如 `{"empty":"展示空态和新建入口","error":"保留输入并提示失败原因"}` |
-| `acceptanceCriteria` | 非空业务验收标准数组 |
+| `acceptanceCriteria` | 项目特有的业务验收条件，非空文本数组；CLI 与按资源生成的通用检查合并并去重 |
 
 源 JSON 保留项目事实；派生后的 PRD 包含完整 11 章业务与实施交接，HTML 展示同一套业务内容。
 

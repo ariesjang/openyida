@@ -93,6 +93,9 @@ describe('OpenYida skill contracts', () => {
     expect(planWorkflow).toContain('authoring.pendingFields');
     expect(planWorkflow).toContain('将已完成片段设为 `ready=true`');
     expect(compactSchema).toContain('对象，键为 empty/loading/error/formEntry/detail');
+    expect(compactSchema).toContain('按优先顺序填写 `{name,purpose}`');
+    expect(compactSchema).toContain('与按资源生成的通用检查合并并去重');
+    expect(planBusiness).toContain('功能范围、数据与规则、页面组织、关键交互、业务验收');
     expect(planWorkflow).toContain('绝不写 `visualStyle`');
     expect(planWorkflow).toContain('只物化一次');
     expect(parallel).toContain('业务任务必须先读后写');
