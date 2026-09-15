@@ -872,7 +872,18 @@ def render_pages(data: dict[str, Any]) -> str:
 """
         binding_labels = {"form": "表单数据", "report": "报表数据", "connector": "外部系统数据", "static-empty": "静态内容或空态"}
         binding = handoff.get("dataBinding") or detail.get("dataBinding")
+        page_menu = handoff.get("navigation") or {}
+        app_custom = ((data.get("execution") or {}).get("appConfig") or {}).get("navigationType") == "custom"
+        standalone = handoff.get("entryMode") == "standalone"
+        variants = {"top": "顶部", "side": "侧边", "mixed": "顶部与侧边", "dock": "底部"}
+        menu_label = ("自定义" + variants.get(page_menu.get("variant"), "") + "菜单") if page_menu.get("type") == "custom" else (
+            "不设菜单" if page_menu.get("type") == "none" else "沿用应用自定义菜单" if app_custom else "按页面任务设计" if standalone else "沿用平台导航"
+        )
         data_rows = [
+            ["访问方式", "独立页面入口" if standalone else "应用工作区入口"],
+            ["页面菜单", menu_label],
+            ["导航影响范围", "应用采用自定义导航" if app_custom else "仅当前入口，应用工作区保留平台导航" if standalone else "保留平台导航"],
+            ["导航依据", page_menu.get("reason")],
             ["数据接入", binding_labels.get(binding, binding)],
             ["数据来源", display_value(handoff.get("dataSources") or detail.get("dataSources"))],
             ["主操作", handoff.get("primaryAction") or detail.get("primaryTask")],

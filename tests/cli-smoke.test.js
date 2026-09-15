@@ -1652,7 +1652,7 @@ describe('CLI offline smoke', () => {
     expect(parsed.recommended.default_full_app_workflow.completion_contract).toContain('one named application entry group');
     expect(parsed.recommended.default_full_app_workflow.application_entry_policy).toEqual({
       delivery_unit: 'single_application_entry_group',
-      workbench: { include: 'always', url: '{base_url}/{appType}/workbench' },
+      workbench: { include: 'when_workspace_in_scope', url: '{base_url}/{appType}/workbench' },
       custom: {
         include: 'when_entry_mode_standalone_and_is_render_nav_false_readback',
         url: '{base_url}/{appType}/custom/{formUuid}',
@@ -2419,11 +2419,11 @@ test('command and agent navigation policies align with AI intake decisions', () 
   const manifest = JSON.parse(runOk(['commands', '--json']));
   const summary = JSON.parse(runOk(['agent-capabilities', '--summary-json']));
   const capabilities = JSON.parse(runOk(['agent-capabilities', '--json']));
-  const brief = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-requirement-analysis/workflow/prepare-brief.md'), 'utf8');
-  expect(brief).toContain('### 导航设计');
+  const brief = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/navigation-decision.md'), 'utf8');
+  expect(brief).toContain('# 平台导航与自定义导航决策');
   expect(brief).not.toContain('| 导航归属 |');
   expect(brief).not.toContain('你希望应用使用哪种导航菜单');
-  expect(brief).toContain('`ai_default`');
+  expect(brief).toContain('ai_default');
   expect(brief).toContain('`user_selected`');
 
   const workflow = manifest.summary.core_workflows.full_app_build;
@@ -2433,10 +2433,41 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.navigation_policy).toContain('Preserve explicit user requirements and existing navigation');
     expect(route.navigation_policy).toContain('ai_default for agent ownership decisions');
     expect(route.navigation_policy).toContain('Include navigation in the overall Plan confirmation');
+    expect(route.navigation_policy).toContain('Configure a custom frontend menu at page scope');
+    expect(route.navigation_policy).toContain('Choose backend native or coding pages by task efficiency');
     expect(route.navigation_policy).not.toContain('offer exactly two');
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
     expect(route.design_mode_policy).not.toContain('Confirm unresolved navigation');
   }
+  expect(workflow.default_nav_order_policy).toContain('preserve platform ordering for the workspace');
+  expect(workflow.completion_contract).toContain('frontend-only delivery includes only its verified frontend entry');
+  expect(capabilities.recommended.default_full_app_workflow.completion_contract).toBe(workflow.completion_contract);
+});
+
+test('Plan CLI preserves workspace navigation while materializing and patching a frontend menu', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-entry-cli-'));
+  try {
+    const input = path.join(dir, 'build-plan.json');
+    const plan = JSON.parse(fs.readFileSync(path.join(ROOT, 'tests/fixtures/design-plan.json'), 'utf8'));
+    plan.execution = { appConfig: { navigationType: 'platform-side' } };
+    const frontend = JSON.parse(JSON.stringify(plan.pages.customPageDetails[0]));
+    frontend.pageId = frontend.sceneKey = 'employee-entry';
+    frontend.name = '员工办事入口';
+    frontend.pageSpecHandoff = {
+      entryMode: 'standalone', navigation: { type: 'custom', variant: 'top', reason: '员工办理个人事项' },
+    };
+    plan.pages.customPageDetails.push(frontend);
+    fs.writeFileSync(input, JSON.stringify(plan));
+    runOk(['design-plan', 'materialize', input, '--json']);
+    const handoff = () => JSON.parse(fs.readFileSync(path.join(dir, 'prd.md'), 'utf8').match(/```json\n([\s\S]*?)\n```/)[1]);
+    expect(handoff().appConfig).toMatchObject({ navigationType: 'platform-side', hideAppNav: 'n' });
+    expect(handoff().pageNavigation).toEqual([{ name: frontend.name, type: 'display-page', isRenderNav: false }]);
+    expect(handoff().pages[0].pageSpecHandoff.entryMode).toBe('platform-shell');
+    const menu = { type: 'none', reason: '单步办理' };
+    runOk(['design-plan', 'patch', input, '--set', 'pages.customPageDetails[1].pageSpecHandoff.navigation=' + JSON.stringify(menu), '--materialize', '--json']);
+    expect(handoff().pages[1].pageSpecHandoff.navigation).toEqual(menu);
+    expect(handoff().appConfig.hideAppNav).toBe('n');
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
 
 test('Plan CLI and design-file sample work locally without a login', () => {

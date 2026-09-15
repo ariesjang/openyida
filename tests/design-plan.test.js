@@ -308,6 +308,57 @@ describe('design-plan materialize', () => {
     expect(() => renderPrd(plan)).toThrow(/业务表单与页面名称重复/);
   });
 
+  test('standalone frontend menus preserve platform navigation for the management workspace', () => {
+    const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
+    plan.execution = { appConfig: { navigationType: 'platform-side' } };
+    const front = JSON.parse(JSON.stringify(plan.pages.customPageDetails[0]));
+    front.pageId = 'employee-entry';
+    front.sceneKey = 'employee-entry';
+    front.name = '员工采购入口';
+    front.primaryUsers = ['员工'];
+    front.primaryTask = '提交申请并查看自己的处理进度';
+    front.pageSpecHandoff = { entryMode: 'standalone', navigation: {
+      type: 'custom', variant: 'top', reason: '员工只办理自己的采购事项',
+    } };
+    plan.pages.customPageDetails.push(front);
+    const input = path.join(tempDir, 'build-plan.json');
+    fs.writeFileSync(input, JSON.stringify(plan));
+    materialize(input);
+    const prd = fs.readFileSync(path.join(tempDir, 'prd.md'), 'utf8');
+    const handoff = JSON.parse(prd.match(/```json\n([\s\S]*?)\n```/)[1]);
+    expect(handoff.appConfig).toMatchObject({ navigationType: 'platform-side', hideAppNav: 'n' });
+    expect(handoff.pageNavigation).toEqual([{ name: front.name, type: 'display-page', isRenderNav: false }]);
+    expect(handoff.pages[0].pageSpecHandoff.entryMode).toBe('platform-shell');
+    expect(handoff.pages[1].pageSpecHandoff.navigation).toEqual(front.pageSpecHandoff.navigation);
+    expect(handoff.resourceBlueprint.filter(item => item.type !== 'display-page')).toHaveLength(plan.dataModels.length);
+    for (const file of ['prd.md', 'design.md', 'build-plan.html']) {
+      const content = fs.readFileSync(path.join(tempDir, file), 'utf8');
+      expect(content).toContain('自定义顶部菜单');
+      expect(content).toContain('仅当前入口，应用工作区保留平台导航');
+      expect(content).toContain('沿用平台导航');
+    }
+    patchPlan(input, ['pages.customPageDetails[1].pageSpecHandoff.navigation=' + JSON.stringify({ type: 'none', reason: '仅保留单步办理' })], { materialize: true });
+    expect(fs.readFileSync(path.join(tempDir, 'build-plan.html'), 'utf8')).toContain('不设菜单');
+    const updated = JSON.parse(fs.readFileSync(path.join(tempDir, 'prd.md'), 'utf8').match(/```json\n([\s\S]*?)\n```/)[1]);
+    expect(updated.appConfig.hideAppNav).toBe('n');
+  });
+
+  test.each([
+    [{ type: 'custom', variant: 'top', reason: '办事入口', hideAppNav: 'y' }, 'standalone'],
+    [{ type: 'platform-side', reason: '错误层级' }, 'standalone'],
+    [{ type: 'custom', variant: 'unknown', reason: '办事入口' }, 'standalone'],
+    [{ type: 'custom', variant: 'top', reason: '办事入口' }, 'platform-shell'],
+  ])('rejects invalid entry menu %j without changing app settings', (navigation, entryMode) => {
+    const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
+    plan.execution = { appConfig: { navigationType: 'platform-side' } };
+    plan.pages.customPageDetails[0].pageSpecHandoff = { entryMode, navigation };
+    const input = path.join(tempDir, 'build-plan.json');
+    fs.writeFileSync(input, JSON.stringify(plan));
+    expect(() => materialize(input)).toThrow();
+    expect(fs.readdirSync(tempDir)).toEqual(['build-plan.json']);
+    expect(plan.execution.appConfig).toEqual({ navigationType: 'platform-side' });
+  });
+
   test('rejects contradictory navigation choices', () => {
     const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
     for (const config of [

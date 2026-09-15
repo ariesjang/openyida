@@ -142,7 +142,7 @@
 
 约束：
 
-- 计划生成前先确定应用范围，导航方式与布局按 [导航设计](../../../../yida-requirement-analysis/workflow/prepare-brief.md#导航设计) 写入 brief，用户明确要求优先。视觉候选沿用该导航决策，随整体方案确认。其余必要问题必须有 `interactionId` 和 `writeBackPath`。
+- 计划生成前先确定应用范围，导航方式与布局按 [导航设计](../../../../yida-design/references/navigation-decision.md) 写入 brief，用户明确要求优先。视觉候选沿用该导航决策，随整体方案确认。其余必要问题必须有 `interactionId` 和 `writeBackPath`。
 - `questionType` 只取 `single_choice`、`multi_choice`、`free_text` 或最终计划使用的 `confirm`，不设置 AI 代填项中间确认类型。
 - 只有宽泛应用名称且缺少模块、场景、任务、流程和可读需求时才问应用范围。
 - 审批、角色权限、字段、首页、看板、页面和常规流程细节不进入 `ask_human`；用户已提供时承接，未提供时基于业务推断并在最终计划统一呈现。

@@ -8,11 +8,19 @@
 
 ## 2.0 先分析并确认需求
 
-调用 `yida-requirement-analysis`，按 [需求分析与首次搭建确认](../../yida-requirement-analysis/workflow/prepare-brief.md) 整理来源、复用资源及用户已有计划，在同一轮一次性确认尚未明确的 Fast / Plan、业务模块、页面与表单及风格。导航方式与布局按 [导航设计](../../yida-requirement-analysis/workflow/prepare-brief.md#导航设计) 确定；用户已明确要求优先，后续阶段复用判断和依据。首次搭建在必要回答与导航判断写回、`intake.confirmed=true` 后继续。
+调用 `yida-requirement-analysis`，按 [首轮需求分析](../../yida-requirement-analysis/workflow/prepare-brief.md) 读取必需来源，尽早确认核心功能和关键用法。该技能统一负责提问、答案合并和需求记录；完成后进入规划准备。
 
-回答齐全后直接保存内部需求记录并进入 2.1；不把“生成需求简报”列为独立任务，不再扩写或展示简报请用户确认。已有确认记录且需求未变化时直接复用。记录粒度、保存和校验规则统一遵守上述需求分析流程。
+取得 `intake.confirmed=true` 的 brief 后进入规划准备；已有确认记录且需求未变化时直接复用。
 
-显式搭建方式属于本次任务的粘性输入。若用户在首次消息已选择 Plan，澄清业务模块、页面或风格时不得再次询问模式，也不得在合并回答后改写为 Fast；进入 2.1 前必须以用户最后一次明确选择校验 `intake.designMode`。Fast 同理。
+### 规划准备
+
+澄清结束后，完成以下准备；字段格式按 [交接契约](../../yida-requirement-analysis/references/handoff.md#规划阶段补齐) 写回同一份 brief：
+
+1. 按 Step 1 核验确实需要的资源上下文，保留用户显式目标；纯需求/方案讨论不要求登录，不执行资源写操作。
+2. 按 [模式路由](../../yida-design/references/design-mode.md) 确定执行方式，沿用用户最后一次明确选择。
+3. AI 根据有效功能、`userTasks` 与 `entryRecommendation`，按 [导航决策](../../yida-design/references/navigation-decision.md) 规划各入口的页面和菜单，补齐稳定 `pageScenes` 与主题映射。新增建议标记来源，范围遵守 explicitScope。
+
+进入 2.1 前校验规划字段完整性和 `intake.designMode`。页面、导航、主题等建议随整体搭建方案展示。
 
 执行规划前读取 `constraints.prohibitedActions`。PRD 与 design 必须把禁止项写成实现门禁：`theme-file` 禁止时沿用现有平台主题且不安排主题文件任务；`page-source` 禁止时只允许只读核查与非源码配置；`publish` 禁止时把发布明确标记为跳过。不得为了满足默认九步流程静默删除这些约束。
 

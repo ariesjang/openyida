@@ -343,3 +343,18 @@ test('CLI init is permitted locally, documents every argument and runs through t
   expect(result.success).toBe(true);
   expect(fs.existsSync(result.output)).toBe(true);
 });
+
+
+test('preserves a frontend page menu independently of the application navigation', () => {
+  brief.navigation = { type: 'platform-side', source: 'ai_default', reason: '后台用平台菜单' };
+  brief.pageScenes[0].pageSpecHandoff = {
+    entryMode: 'standalone', navigation: { type: 'custom', variant: 'dock', reason: '个人事项入口' },
+  };
+  save();
+  const result = init();
+  const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+  const business = JSON.parse(fs.readFileSync(result.preparedInputs.business, 'utf8'));
+  expect(plan.execution.appConfig.navigationType).toBe('platform-side');
+  expect(plan.execution.appConfig.hideAppNav).toBeUndefined();
+  expect(business.facts.pages.customPageDetails[0].pageSpecHandoff).toEqual(brief.pageScenes[0].pageSpecHandoff);
+});

@@ -73,7 +73,9 @@
 
 ## 页面导航配置
 
-PRD 导航类型为自定义导航时，对本轮创建或复用的每个表单、流程表单及其他业务页面，按 [导航壳必做配置](../../yida-nav-shell/SKILL.md#必做配置) 调用 `update-form-config` 并回读 `isRenderNav=false`。以 PRD 清单及真实 formUuid 逐项记录结果。
+只有 PRD 的应用工作区导航 `execution.appConfig.navigationType=custom` 时，对本轮创建或复用的每个表单、流程表单及其他业务页面，按 [导航壳必做配置](../../yida-nav-shell/SKILL.md#必做配置) 调用 `update-form-config` 并回读 `isRenderNav=false`。以 PRD 清单及真实 formUuid 逐项记录结果。
+
+仅前台页面自定义菜单时，不修改这些后台表单、流程或报表的导航；共用数据不等于共用页面显示设置。
 
 ## 产出
 

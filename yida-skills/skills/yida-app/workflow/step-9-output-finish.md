@@ -36,6 +36,8 @@
 
 若本轮修改过页面源码但没有成功执行 `openyida publish <source> <appType> <displayPageFormUuid>`，只能交付“源码已修改，尚未发布”的说明。
 
+需求含 `userTasks` 和 `entryRecommendation` 时，按最终 PRD 核对服务与管理任务的实际访问路径，沿用用户已确认的调整；入口建议不作为完成证据。只有相关页面及访问配置回读通过后才交付对应入口，不为双入口补造后台功能，不用 `/admin` 开发后台代替业务管理工作区。
+
 ## build-manifest 约定
 
 完整搭建收尾前，从本轮真实创建、复用和发布结果写入 `prd/<项目名>/build-manifest.json`。它只是轻量事实源，不是严格 schema；只记录已经拿到的真实资源名、类型和 ID，用于让 `check-prd-completeness` 做一次 app 资源列表 readback 后判断页面/资源数量是否完整。
@@ -74,9 +76,9 @@
 - 用户或调用方明确要求资源清单、资源 UUID/ID、发布状态或测试数据摘要时，final 必须在业务总结与唯一入口组之间补充一个简洁的“交付清单”。清单只列本轮已通过真实返回值或只读 readback 核验的资源名称、类型和 ID，并同时写明主页面发布状态及 seed records 写入/抽查摘要；不得遗漏已创建或发布的资源，不得用链接卡代替正文清单，也不得编造未知 ID。
 - 即使用户没有要求技术清单，业务总结中的资源数量、seed records 数量以及“已写入/已验证/已就绪”等完成状态也必须逐资源来自真实返回值或只读 readback。证据不完整时缩小表述范围并明确未核验项，禁止为了让总结完整而补齐推测数字。
 - 新增、修改或发布单个具体页面时，仍只交付当前页面，不扩展成完整应用入口组。
-- 完整应用的入口组始终包含“应用工作台” `{base_url}/{appType}/workbench`。
-- 主页面在 PRD 中为 `entryMode=standalone`，且 Step 8 回读确认 `isRenderNav=false` 时，入口组额外包含“独立业务入口” `{base_url}/{appType}/custom/{formUuid}`；否则不得输出。
-- 先读取 `openyida agent-capabilities --summary-json` 的 `application_entry_policy.entries.admin`：值为 `include` 时，入口组额外包含“应用开发后台” `{base_url}/{appType}/admin`；值为 `omit` 时不得输出。不要根据 Agent 名称或自然语言猜测云端/非云端。
+- 完整应用的入口组按有效范围交付：统一工作区或前后台双入口包含“应用工作台” `{base_url}/{appType}/workbench`；明确仅前台时只交付前台页面，不追加后台。
+- 前台页面在 PRD 中为 `entryMode=standalone`，且 Step 8 回读确认 `isRenderNav=false` 时，入口组额外包含“独立业务入口” `{base_url}/{appType}/custom/{formUuid}`；否则不得输出。
+- 先读取 `openyida agent-capabilities --summary-json` 的 `application_entry_policy.entries.admin`：值为 `include` 且本轮包含应用管理交付时，入口组额外包含“应用开发后台” `{base_url}/{appType}/admin`；值为 `omit` 时不得输出。不要根据 Agent 名称或自然语言猜测云端/非云端。
 - 三个入口属于同一个应用入口组，不得各自连同业务资源再生成多组交付。
 - 不把 `g.alicdn.com` 的 `index.css`、`index.js`、`index.html`、`locales/*.json`、构建产物 URL、CDN 资源 URL 或中间文件链接当成最终结果展示。
 - 调用方或评测要求结构化结果时，额外输出顶层 `skillsUsed`，只填写本轮实际读取并使用的 `yida-*` 子技能名；不得把计划使用或未加载的技能写入。

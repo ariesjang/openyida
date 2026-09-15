@@ -49,7 +49,7 @@ description: >
 
 1. **平台能力优先**：数据录入、提交、编辑、审批、权限、字段校验走宜搭表单/流程；自定义页负责展示数据、呈现分析结果、放置业务入口、打开详情页，并串联表单、流程、报表和导航入口。
 2. **美感提升保持功能契约**：页面美化、视觉升级和页面重构默认只调整颜色、布局、密度、间距、视觉层级、素材和图标表达；现有数据源、字段映射、按钮动作、筛选逻辑、提交 URL、权限和业务状态保持原样。
-3. **默认保留平台应用导航**：普通自定义页、页面内 tab、分段、筛选和快捷入口都不触发 `yida-nav-shell`。PRD 选择自定义导航，或用户明确要求自绘应用级导航、隐藏应用导航时，写 `appBlueprint.hideAppNav: 'y'` 并交给 `yida-nav-shell`。用户只说全屏、无导航或 `isRenderNav=false` 时，只写页面级隐藏配置。
+3. **默认保留平台应用导航**：普通自定义页、页面内 tab、分段、筛选和快捷入口都不触发 `yida-nav-shell`。PRD 的应用工作区选择自定义导航，或用户明确要求自绘应用级导航、隐藏应用导航时，写 `appBlueprint.hideAppNav: 'y'` 并交给 `yida-nav-shell`。独立前台选择自己的菜单时，同样进入 `yida-nav-shell`，但只配置该页独立展示，保留后台应用导航。用户只说全屏、无导航或 `isRenderNav=false` 时，只写页面级隐藏配置。
 4. **同应用页面入口归导航**：同应用页面优先放入平台导航或导航分组；自定义页内容区放当前页动作、原生表单新建/查看、外部链接和跨应用资源。
 5. **表单入口响应式**：新增/提交页 URL 默认使用页面级隐藏导航的 `submission/{formUuid}?isRenderNav=false`；详情页 URL 默认使用 `formDetail/{formUuid}?formInstId={formInstId}&navConfig.layout=1180&isRenderNav=false`，且 `formInstId` 必须来自真实数据记录并优先取 `row.formInstId`；PC 端默认在侧边抽屉中用 iframe 承载宜搭原生表单，抽屉默认半屏 `50vw`，提交页和详情页使用同一宽度规则；移动端整页或新页打开。
 6. **主题文件**：Plan 直接使用 CLI 返回的 `outputs.theme`；Fast 和已有主题调整按 [主题文件生成与更新](workflow/output-design.md#cli-token-契约fast--plan-共用) 执行。主题 CSS 生成后只用 `Read` 查看目标 token、用小范围 `Edit` 逐组修改；不得用 Python、Node、Shell 或 `run_workspace_script` 脚本生成、复制、整文件重写、正则替换或 retheme `app-theme.css`，校验脚本只能读取并报告问题，不能改写主题文件。

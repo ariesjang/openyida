@@ -73,7 +73,8 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 
 - `scene`：`workbench/dashboard/list/detail/landing/screen`，也可写在页面顶层；与页面模式 ID 分开。
 - `pageStructure`：`workbench/dashboard-overview/business-list/detail-profile/official-homepage/data-screen/split-pane-detail/portal-shell-home`。
-- `entryMode`：`platform-shell/standalone`；自定义导航由 CLI 使用 standalone。
+- `entryMode`：`platform-shell/standalone`；应用级 custom 及独立前台使用 standalone，后台平台页面使用 platform-shell。
+- `navigation`：可选的当前入口菜单 `{type:"custom",variant:"top",reason:"员工只办理自己的事项"}`，variant 为 top/side/mixed/dock；无菜单用 `{type:"none",reason:"单步办理"}`。只能用于 standalone，不接受应用设置字段。省略则沿用既有入口规则；CLI 不据此修改应用 navigationType。
 - `contentBlocks/dataSources/dataBinding/emptyReason/primaryAction/themeSummary`：本页交接差异。
 - `designFile/designRefs`：默认由 CLI 生成 `prd/<projectName>/design.md` 和 `themeProfile`、`sceneRecipes.<sceneKey>`。额外引用须存在于最终设计文档的 components、states 或 sceneRecipes 中。
 
@@ -109,7 +110,7 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 
 | 字段 | 格式 |
 | --- | --- |
-| `appConfig` | 已知真实 `appType/corpId/baseUrl`；`navigationType` 为 platform-l-shape/platform-top/platform-side/custom。hideAppNav/layoutDirection/navTheme/logoSource 由导航与视觉派生 |
+| `appConfig` | 已知真实 `appType/corpId/baseUrl`；`navigationType` 为 platform-l-shape/platform-top/platform-side/custom。仅代表应用工作区；hideAppNav/layoutDirection/navTheme/logoSource 由应用导航与视觉派生，不被前台菜单覆盖 |
 | `explicitScope` | 用户明确的页面、表单、流程、报表、导航和交付范围；`allowInferredResources=false` 时不增加未点名的 seed records、自定义页面、主题或导航任务；自定义导航布局保留在 navigation.variant |
 | `resourceBlueprint` | `{name,type,purpose,pageId?}` 数组；type 为 normal-form/process-form/display-page/report，名称与模型、页面对应且唯一 |
 | `resourceCreationOrder` | 覆盖全部资源的有序名称数组，先应用，再被依赖模型，最后依赖它们的页面 |

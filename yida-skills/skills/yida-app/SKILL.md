@@ -1,6 +1,6 @@
 ---
 name: yida-app
-description: 宜搭完整应用开发编排技能。对普通 OpenYida 应用做完整搭建或补齐时使用；先确认已有资源并整理用户需求，再按 Fast / Plan 生成 prd.md 与 design.md，校验通过后按 PRD 创建或复用应用、表单、流程和页面；页面 UI 按已确认设计实现，代码示例按需参考。
+description: 宜搭完整应用开发编排技能。对普通 OpenYida 应用做完整搭建或补齐时使用；先澄清核心功能和实际用法，再确认资源并按 Fast / Plan 生成 prd.md 与 design.md，校验通过后按 PRD 创建或复用应用、表单、流程和页面；页面 UI 按已确认设计实现，代码示例按需参考。
 ---
 
 # yida-app
@@ -8,6 +8,8 @@ description: 宜搭完整应用开发编排技能。对普通 OpenYida 应用做
 完整应用编排技能。它负责把一次“创建/搭建/补齐应用”的需求拆成资源解析、产品设计、资源落地、页面发布和结果输出。全局 CLI、ID、存储、发布和输出规则以主入口 `SKILL.md` 为准；按步骤执行该步骤所需 `use_skill(...)`。
 
 ## 模式入口（先按这里路由）
+
+首次需求澄清优先进入 Step 2 的 2.0；首问前不执行 Step 1 的环境和资源预检，已有明确资源引用作为需求上下文保留。澄清完成后再按需核验资源、补齐规划输入。
 
 Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-design.md` 和精确路径 `workflow/plan/workflow.md`；后者已经包含完整 Plan 入口。禁止用 Glob 查找 Plan 文件，也不要额外读取 `workflow/plan/step-1-understand.md` 或 `workflow/plan/step-2-confirm.md`。Plan 确认恢复后，若 `explicitScope.allowInferredResources=false`，直接读取 `workflow/step-4-forms-processes.md` 实施范围内资源，不再重读 Step 1、调用 list-forms 或做应用设置预检。
 
@@ -54,7 +56,7 @@ Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-de
 
 完整应用先分析需求；首次搭建按 yida-requirement-analysis/workflow/prepare-brief.md 确认未决事项，再进入已选 Fast / Plan。两种模式共享需求分析与 PRD 契约，以下并行生成规则用于 Fast；Plan 确认当前版本后交接派生文件，直接进入 Step 3。只有 Plan 的 build-plan.html 用于方案展示，其余设计文件保持内部使用。
 
-以下 9 步仅用于内部执行，不复制为宿主待办；用户可见的步骤名称直接使用上方“步骤模版”。每一步开始前读取对应 workflow 文件；按真实依赖满足下游输入后继续。Step 3 拿到 appType 即可启动表单创建，主题生成与设置同步作为独立分支继续，不将主题完成作为所有后续步骤的串行前置条件。无直接依赖的页面同时开发，每页只等待自身资源，独立校验并发布；全部页面完成后再统一导航排序。
+以下 9 步仅用于内部执行，不复制为宿主待办；用户可见的步骤名称直接使用上方“步骤模版”。需求首问前只读本阶段必需材料；后续每一步开始前读取对应 workflow 文件；按真实依赖满足下游输入后继续。Step 3 拿到 appType 即可启动表单创建，主题生成与设置同步作为独立分支继续，不将主题完成作为所有后续步骤的串行前置条件。无直接依赖的页面同时开发，每页只等待自身资源，独立校验并发布；全部页面完成后再统一导航排序。
 
 | 步骤 | 名称 | 目标 | 产出 |
 | --- | --- | --- | --- |
@@ -79,7 +81,7 @@ Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-de
 5. **真实 ID 和真实数据**：不编造 `appType`、`formUuid`、`fieldId`、`processCode`、`reportId`。无显式窄范围的完整应用默认给核心普通表单写入 1-3 条业务化 seed records 并 query 抽查；`explicitScope.allowInferredResources=false` 时不得增加未点名的 seed records 或页面。
 6. **自定义页面开发技能固定**：完整应用页面源码按 Step 7 执行。
 7. **删除必须确认**：用户要求删除应用时，先展示应用名称、应用 ID 和影响范围，等待明确“确认删除”后才能执行。
-8. **列表页选择**：默认使用普通表单的数据管理页；用户明确要求自定义列表页时才创建 display 页面。
+8. **页面实现选择**：前台默认一个 coding 页承载已选任务的多个视图；后台按操作效率选择原生或 coding。平台数据管理满足任务时可复用，需要不同交互时由 AI 为已选功能规划自定义视图。
 9. **交付物收口**：Step 2 的三个文件和 Step 9 的 build manifest 都是内部文件，不是用户交付物。表单、流程、报表和页面只在业务总结中概述，不逐项生成用户可见附件；宿主支持交付工具时，final 只交付一次“应用访问入口”组。
 10. **窄范围停止点**：完成 `explicitScope` 中的资源回读与真实链接交付后立即停止；不得为了满足完整应用默认完成条件继续进入被裁剪的 Step 5-8。
 
@@ -96,7 +98,7 @@ Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-de
 - 默认页面源码不得使用 `this.dataSourceMap.*`，除非本轮已经创建并绑定对应设计器数据源。
 - 真实表单数据默认通过页面数据桥或 `window.__OPENYIDA_YIDA_API__.searchFormDatas(params)` 读取；流程发起、流程列表、表单保存/更新等能力也通过发布层注入的同一个 yida API 桥调用；不要用前端 seedRows 冒充真实表单数据。
 - 页面根级运行态工具通过 `window.__OPENYIDA_UTILS__` 读取，`toast/dialog/openPage/router.push/isMobile` 等工具不能在 `YidaComp` 内直接写 `this.utils.*`。
-- 表单新建/提交/详情入口统一使用 `FormOpenContainer`，详情页必须从真实行数据解析 `formInstId`。
+- 计划选择打开原生表单的新建/提交/详情入口统一使用 `FormOpenContainer`，详情页必须从真实行数据解析 `formInstId`。
 - 用户明确要求的自定义列表、看板和详情页优先读取真实表单数据；`page-spec.json` 写 `dataBinding.mode=form`、真实 `appType/formUuid/fieldId` 和字段映射。表单数据管理页不另生成页面源码。
 - 完整应用默认先写入 1-3 条业务化 seed records 并 query 抽查；没写入成功时，页面展示空态、表单入口、刷新或登记按钮，并在 final 说明原因。
 - 若页面确实依赖 `this.dataSourceMap.*`，必须执行 `use_skill("yida-data-source-connectors")` 创建/绑定数据源，并在发布后确认页面 Schema 中存在对应数据源；发布输出出现 `No custom page data sources to preserve` 时，本次发布不能视为完成。

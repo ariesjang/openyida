@@ -42,6 +42,8 @@
 
 按 PRD 的 [导航类型](../../yida-prd/workflow/output-prd.md#agent-导航实施映射) 设置布局。已有应用切换平台导航时执行 `openyida update-app <appType> --layout <l_shape|top|side> --show-app-nav`；自定义导航执行 `openyida update-app <appType> --hide-app-nav`，并将逐页隐藏清单交给 Step 4 与 Step 6，在各页面创建后立即配置，Step 8 只做发布后核对。新建应用也在主题文件生成后的同一次 `update-app --theme-file` 中传入布局和 `--hide-app-nav` / `--show-app-nav`，不要提前单独更新导航或在创建时传入布局。用户已确认的应用导航隐藏随这次设置更新一起生效，不等待自定义页面创建、代码开发或发布。
 
+当前步骤只读取应用工作区的 `execution.appConfig.navigationType`。独立前台页面的 `pageSpecHandoff.navigation.type=custom` 不代表应用级 custom；不得据此前台菜单传入 `--hide-app-nav`。前台自定义、后台平台导航时，应用保持 `--show-app-nav`，页面在 Step 6 单独配置。
+
 ### 平台导航参数
 
 与 `yida-next` 的 ThemeNavSetting 一致：`updateApp.json` 接收的字段名是 **`layoutDirection`**。CLI 使用 `--layout` 传入，按下表逐项对应：

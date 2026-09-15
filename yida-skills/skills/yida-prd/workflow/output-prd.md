@@ -26,9 +26,11 @@
 | --- | --- |
 | 导航类型 | <平台L型导航 / 平台顶部导航 / 平台侧边导航 / 自定义导航；沿用需求阶段的导航判断和用户明确要求> |
 | 是否使用平台应用导航 | <前三种为是，自定义导航为否> |
-| 页面导航配置 | <自定义导航：列出本轮全部表单、流程表单、自定义页面及需配置的其他页面，统一隐藏平台页面导航；平台导航：保留页面设置，明确独立入口例外> |
+| 页面导航配置 | <应用级自定义导航：列出本轮全部表单、流程表单、自定义页面及需配置的其他页面，统一隐藏平台页面导航；平台导航：保留页面设置，明确独立入口例外> |
 
-导航方式与布局沿用 brief 中的决策，判断规则见 [导航设计](../../yida-requirement-analysis/workflow/prepare-brief.md#导航设计)。上表记录可执行方案和依据，区分用户明确要求与 AI 判断，说明页面入口和跨页切换方式；导航配色单独说明深色或浅色。
+导航方式与布局沿用 brief 中的决策，判断规则见 [导航设计](../../yida-design/references/navigation-decision.md)。上表记录可执行方案和依据，区分用户明确要求与 AI 判断，说明页面入口和跨页切换方式；导航配色单独说明深色或浅色。
+
+每个入口另列使用者、任务、访问方式和页面菜单；独立前台在 pageSpecHandoff 记录 entryMode=standalone 与 navigation={type:custom,variant,reason}，或 type=none。PRD、design、计划中说明“仅当前入口，后台保留平台导航”。
 
 ## 3. 数据结构（业务语义，不含细节 ID）
 
@@ -133,7 +135,7 @@
 | <审批表单> | process-form | <流程闭环> | <节点和条件> | <复用 / 创建 / 更新> |
 | <报表> | report | <汇总分析> | <指标口径> | <复用 / 创建 / 更新> |
 
-默认不创建自定义列表页；用户明确要求时才新增 `display-page / list`。
+按实际任务决定列表承载；平台数据管理满足需求时复用，前台多视图或不同交互需要时可由 AI 规划 coding 列表。共用一个页面的视图不重复创建 display 页面。
 
 ## 8. 资源创建顺序
 
@@ -202,7 +204,9 @@
 | 平台侧边导航 | platform-side | side | n | 同上 |
 | 自定义导航 | custom | 保留平台布局配置 | y | 本轮涉及页面逐一设置 isRenderNav=false，加载 yida-nav-shell 实现导航 |
 
-导航类型是业务入口方案，`navTheme` 只控制导航明暗。新方案明确填写 navigationType；已有应用以确认后的导航方案为准。自定义导航的 display 页面使用 `entryMode=standalone`。实施时按 [导航壳必做配置](../../yida-nav-shell/SKILL.md#必做配置) 调用应用和页面接口，不能仅靠 URL 参数隐藏。
+表中的导航类型只控制应用工作区；独立前台页可另外配置 `pageSpecHandoff.navigation`，不能据此修改应用 hideAppNav。
+
+导航类型是应用工作区方案，`navTheme` 只控制导航明暗。新方案明确填写 navigationType；已有应用以确认后的导航方案为准。自定义导航的 display 页面使用 `entryMode=standalone`。实施时按 [导航壳必做配置](../../yida-nav-shell/SKILL.md#必做配置) 调用应用和页面接口，不能仅靠 URL 参数隐藏。
 
 
 应用上下文在 Agent 实施交接中按下表记录：
