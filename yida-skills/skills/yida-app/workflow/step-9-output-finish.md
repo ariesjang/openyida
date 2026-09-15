@@ -16,7 +16,11 @@
 
 主入口与页面入口必须取自本轮 CLI 成功结果返回的 `appUrl`、`workbenchUrl` 或 `url`，并在后续只读回查中保持一致。不得由模型根据 `appType` 自行拼接或猜测链接；下文 URL 规则仅用于校验服务端/CLI 返回值，不是缺失链接时的生成规则。若成功结果没有权威 URL，必须明确交付失败并执行只读回查，不能交付空卡片或用模板补齐。
 
+入口层级由用户的交付目标决定：应用访问、应用入口或应用工作台使用成功结果的 `appUrl`；具体表单、流程、报表或页面入口使用对应资源结果的 `url` / `workbenchUrl`。同一结果同时提供两种入口时，优先满足用户明确点名的层级。
+
 ## 完成条件核对
+
+`execution.explicitScope.allowInferredResources=false` 时走范围完成路径：逐项核对清单内资源的成功结果或只读回读、用户要求的入口层级和交付状态；`remainingScope` 为空且真实链接已交付即为完成。下方完整应用检查表仅适用于 `allowInferredResources=true`。
 
 完整应用默认完成需要同时满足：
 
@@ -67,17 +71,17 @@
 
 ## 结果输出格式
 
-- 先写 2-3 句业务交付总结，再给一个名为“应用访问入口”的入口组。
-- 调用 `notify_human` 前必须先输出上述正文总结；用户明确要求记录数、资源 ID、发布状态或核验结果时，先在正文写完经 readback 支撑的简洁清单，再调用交付工具。链接卡或平台产物卡不能替代正文总结与显式要求的清单。
-- 一次完整应用搭建只产生这一组用户可见交付，不把表单、流程、报表、页面、资源清单或内部文件分别登记为附件、链接卡或下载卡。
-- 业务资源只在总结中按能力或数量概述是默认规则，例如“已完成 4 张业务表单、1 条审批流程和 1 个经营看板”；不默认输出资源 ID 表格、资源清单、长列表、appType、formUuid、pageId、reportId。
-- 用户或调用方明确要求资源清单、资源 UUID/ID、发布状态或测试数据摘要时，final 必须在业务总结与唯一入口组之间补充一个简洁的“交付清单”。清单只列本轮已通过真实返回值或只读 readback 核验的资源名称、类型和 ID，并同时写明主页面发布状态及 seed records 写入/抽查摘要；不得遗漏已创建或发布的资源，不得用链接卡代替正文清单，也不得编造未知 ID。
-- 即使用户没有要求技术清单，业务总结中的资源数量、seed records 数量以及“已写入/已验证/已就绪”等完成状态也必须逐资源来自真实返回值或只读 readback。证据不完整时缩小表述范围并明确未核验项，禁止为了让总结完整而补齐推测数字。
-- 新增、修改或发布单个具体页面时，仍只交付当前页面，不扩展成完整应用入口组。
-- 完整应用的入口组始终包含“应用工作台” `{base_url}/{appType}/workbench`。
-- 主页面在 PRD 中为 `entryMode=standalone`，且 Step 8 回读确认 `isRenderNav=false` 时，入口组额外包含“独立业务入口” `{base_url}/{appType}/custom/{formUuid}`；否则不得输出。
-- 先读取 `openyida agent-capabilities --summary-json` 的 `application_entry_policy.entries.admin`：值为 `include` 时，入口组额外包含“应用开发后台” `{base_url}/{appType}/admin`；值为 `omit` 时不得输出。不要根据 Agent 名称或自然语言猜测云端/非云端。
-- 三个入口属于同一个应用入口组，不得各自连同业务资源再生成多组交付。
+- 准备 2-3 句业务交付总结，并给一个名为“应用访问入口”的入口组。
+- `notify_human` 是终态交付动作，其终态 artifact 的可见 `description` 是本轮业务总结、readback 事实和必要上下文的统一载体；用户要求的记录数、资源 ID、发布状态或核验结果也写入这里。调用成功即完成本轮交付。
+- 一次完整应用 run 交付一组用户可见的“应用访问入口”。同一应用的后续交付从已有资源和已验证 URL 生成当前 run 的入口组；资源变更由用户本轮明确要求的变更范围驱动。
+- 业务资源在总结中按能力或数量概述，例如“已完成 4 张业务表单、1 条审批流程和 1 个经营看板”。
+- 用户或调用方明确要求资源清单、资源 UUID/ID、发布状态或测试数据摘要时，终态 artifact 的 `description` 包含简洁的“交付清单”。清单是本轮真实返回值和只读 readback 的投影，覆盖已创建或发布资源的名称、类型、ID、主页面发布状态及 seed records 写入/抽查摘要；未知信息标记为未核验。
+- 业务总结中的资源数量、seed records 数量和完成状态与逐资源真实返回值/readback 一一对应；证据不完整的资源标记为未核验。
+- 新增、修改或发布单个具体页面时，交付当前页面并保持单页范围。
+- 完整应用的入口组包含“应用工作台” `{base_url}/{appType}/workbench`。
+- 主页面在 PRD 中为 `entryMode=standalone`，且 Step 8 回读确认 `isRenderNav=false` 时，入口组包含“独立业务入口” `{base_url}/{appType}/custom/{formUuid}`。
+- “应用开发后台”的入口谓词是 `application_entry_policy.entries.admin=include`；命中时加入 `{base_url}/{appType}/admin`，值为 `omit` 时入口组保持已有入口。该策略的事实源是 `openyida agent-capabilities --summary-json`，其中 include 由已注入可用鉴权 `builder_path.auth.auth_runtime=env_token_bootstrap && can_auto_use=true` 推导。
+- 工作台、符合条件的独立业务入口和开发后台共同组成同一个应用入口组。
 - 不把 `g.alicdn.com` 的 `index.css`、`index.js`、`index.html`、`locales/*.json`、构建产物 URL、CDN 资源 URL 或中间文件链接当成最终结果展示。
 - 调用方或评测要求结构化结果时，额外输出顶层 `skillsUsed`，只填写本轮实际读取并使用的 `yida-*` 子技能名；不得把计划使用或未加载的技能写入。
 
@@ -132,10 +136,10 @@
 
 ## Checklist
 
-- [ ] final 先写业务总结，再给唯一一组“应用访问入口”；
-- [ ] `notify_human` 在正文总结与用户显式要求的事实清单之后调用，未把链接卡当成正文替代品；
+- [ ] 唯一一组“应用访问入口”的终态 artifact `description` 已包含业务总结；
+- [ ] `notify_human` 作为最后一个动作调用，用户显式要求的事实清单和资源 ID 已进入可见 `description`；
 - [ ] final 中每个资源数量和数据完成声明都有对应资源自己的成功返回值/readback；未把一张表单的记录数套用到其他表单；
-- [ ] 用户或调用方显式要求资源清单/UUID/发布状态/测试数据摘要时，正文已完整列出经核验的交付清单，未只返回链接卡；
+- [ ] 用户或调用方显式要求资源清单/UUID/发布状态/测试数据摘要时，终态 artifact `description` 已完整列出经核验的交付清单；
 - [ ] 已写入轻量 build-manifest 并运行页面/资源数量完整性风险检查；未通过时没有声称“已按 PRD 完成搭建”；
 - [ ] 已按 `constraints.prohibitedActions` 调整完成条件；跳过写操作时没有伪造已换肤、已修改源码或已发布；
 - [ ] 未把内部文件或每个业务资源分别交付；

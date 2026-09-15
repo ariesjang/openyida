@@ -6,8 +6,9 @@
 
 - 规划功能、页面和配色：设计功能和页面
 - 生成方案并等待用户确认：生成PRD方案&确认
-- 新建应用确认后：创建应用 → 搭建表单与审批流 → 准备示例数据 → 搭建业务页面 → 发布页面与配置导航 → 检查功能并交付
-- 已有应用确认后：搭建表单与审批流 → 准备示例数据 → 搭建业务页面 → 发布页面与配置导航 → 检查功能并交付
+- 方案确认后：读取同一 revision 的 `execution.explicitScope`，为其中非空的资源集合生成对应实施步骤，最后增加“检查范围并交付”
+- `allowInferredResources=true` 的完整应用：按 `yida-app` 完整应用模版生成后续步骤
+- `allowInferredResources=false` 的闭合范围：后续步骤总集等于确认方案中的资源步骤与交付步骤；每完成并回读一个资源，就从剩余集合中移除
 
 沿用已有待办，不把下面的内部执行顺序另建成一份任务列表。
 
@@ -25,7 +26,7 @@
 4. init 已创建并预填 `business.json` 骨架；先 Read 该文件，保留 `base`，一次补完后再 Write/Edit，避免覆盖保护失败。`facts` 只允许 overview、dataModels、businessFlows、pages 和可选 execution，绝不写 `visualStyle`。同一次补齐所有普通表单的 sampleDataPlan（窄范围不造数时写 skipReason）及所有自定义页面的 permissionSummary，然后直接执行 init 返回的 `materialize.command`，只物化一次。标准首版禁止先试 `--from-preview`、`preview`、`--check` 或无参数 materialize；成功 JSON 已返回 HTML 路径和 revision，不再用 Glob、Read 或帮助命令检查产物。只有存在品牌稿、参考图、页面级特殊风格或用户明确要求精修时，才执行 `optionalTasks.visual-refinement` 后再物化。
 5. 读取精确路径 `workflow/plan/step-4-deliver.md`，按其中契约直接展示并确认当前方案。超大需求需要展示中间进展或用户明确要求边生成边查看时，才使用 [按模块更新方案](../incremental-preview.md)；普通首版不逐模块预览和重复渲染。
 
-明确窄交付时，方案只描述 `explicitScope` 中的资源；确认后裁剪无关步骤，在这些资源回读并交付真实链接后停止。不得因用户使用“应用”一词自行增加 seed records、自定义页面、主题或导航工作。
+明确范围的方案以 `explicitScope` 作为完整执行清单。确认后的每个写操作都对应清单中的一个资源或交付项；清单资源全部回读且真实链接完成交付时，本轮达到完成态。
 
 初次编写只读 CLI 返回的紧凑契约、当前主题上下文及共享需求；模板全文由 CLI 读取。具体组件定制、暗色浮层或复杂页面需要额外规则时，再读取对应章节。
 

@@ -2098,11 +2098,218 @@ describe('create-form create recovery guardrails', () => {
         'verify_final_schema',
       ],
       url: 'https://example.test/APP_TEST/workbench/FORM_HALF_CREATED',
+      formUrl: 'https://example.test/APP_TEST/workbench/FORM_HALF_CREATED',
+      appUrl: 'https://example.test/APP_TEST/workbench',
     });
     expect(mockHttpGet).toHaveBeenCalledTimes(2);
     expect(mockHttpPost.mock.calls.filter((call) => call[1].includes('/saveFormSchema.json'))).toHaveLength(1);
     expect(mockHttpPost.mock.calls.filter((call) => call[1].includes('saveFormSchemaInfo'))).toHaveLength(0);
     expect(JSON.stringify(currentSchema)).toContain('手机号');
+    consoleSpy.mockRestore();
+  });
+
+  test('create-form resume safely retries one server-side save failure after exact readback proves fields are missing', async () => {
+    let currentSchema = formCompiler.compileFormDefinition({
+      formTitle: '半成功表单',
+      fields: [{ key: 'name', type: 'TextField', label: '姓名' }],
+    }, {
+      appType: 'APP_TEST',
+      formUuid: 'FORM_RETRY_SAVE',
+    }).schema;
+    let revision = 100;
+    let saveCount = 0;
+    const mockHttpGet = jest.fn(() => Promise.resolve({
+      success: true,
+      appType: 'APP_TEST',
+      formUuid: 'FORM_RETRY_SAVE',
+      gmtModified: revision,
+      content: JSON.parse(JSON.stringify(currentSchema)),
+    }));
+    const mockHttpPost = jest.fn((baseUrl, requestPath, postData) => {
+      if (!requestPath.includes('/saveFormSchema.json')) { return Promise.resolve({ success: true }); }
+      saveCount++;
+      if (saveCount === 1) {
+        revision = 101;
+        return Promise.resolve({ success: false, errorMsg: 'HTTP 500', __httpStatus: 500 });
+      }
+      currentSchema = JSON.parse(querystring.parse(postData).content);
+      return Promise.resolve({ success: true });
+    });
+    const { isolatedCreateForm, consoleSpy } = loadIsolatedCreateFormCommand({
+      httpGet: mockHttpGet,
+      httpPost: mockHttpPost,
+    });
+
+    const output = await isolatedCreateForm.run([
+      'resume',
+      'APP_TEST',
+      'FORM_RETRY_SAVE',
+      JSON.stringify([
+        { key: 'name', type: 'TextField', label: '姓名' },
+        { key: 'phone', type: 'TextField', label: '手机号' },
+      ]),
+      '--json',
+    ]);
+
+    expect(output).toMatchObject({
+      success: true,
+      formUuid: 'FORM_RETRY_SAVE',
+      addedFieldCount: 1,
+      completedStages: expect.arrayContaining(['save_schema_retried']),
+    });
+    expect(mockHttpGet).toHaveBeenCalledTimes(3);
+    expect(mockHttpPost.mock.calls.filter((call) => call[1].includes('/saveFormSchema.json'))).toHaveLength(2);
+    expect(querystring.parse(mockHttpPost.mock.calls[1][2]).gmtModified).toBe('101');
+    expect(JSON.stringify(currentSchema)).toContain('手机号');
+    const structuredOutput = consoleSpy.mock.calls
+      .map((call) => call[0])
+      .filter((line) => typeof line === 'string' && line.startsWith('{'))
+      .map((line) => JSON.parse(line));
+    expect(structuredOutput).toHaveLength(1);
+    expect(structuredOutput[0]).toMatchObject({ success: true, formUuid: 'FORM_RETRY_SAVE' });
+    consoleSpy.mockRestore();
+  });
+
+  test('create-form resume accepts a server-side save failure when exact readback proves the write was applied', async () => {
+    let currentSchema = formCompiler.compileFormDefinition({
+      formTitle: '半成功表单',
+      fields: [{ key: 'name', type: 'TextField', label: '姓名' }],
+    }, {
+      appType: 'APP_TEST',
+      formUuid: 'FORM_RESULT_UNKNOWN',
+    }).schema;
+    const mockHttpGet = jest.fn(() => Promise.resolve({
+      success: true,
+      appType: 'APP_TEST',
+      formUuid: 'FORM_RESULT_UNKNOWN',
+      gmtModified: 100,
+      content: JSON.parse(JSON.stringify(currentSchema)),
+    }));
+    const mockHttpPost = jest.fn((baseUrl, requestPath, postData) => {
+      if (requestPath.includes('/saveFormSchema.json')) {
+        currentSchema = JSON.parse(querystring.parse(postData).content);
+        return Promise.resolve({ success: false, errorMsg: 'HTTP 500', __httpStatus: 500 });
+      }
+      return Promise.resolve({ success: true });
+    });
+    const { isolatedCreateForm, consoleSpy } = loadIsolatedCreateFormCommand({
+      httpGet: mockHttpGet,
+      httpPost: mockHttpPost,
+    });
+
+    const output = await isolatedCreateForm.run([
+      'resume',
+      'APP_TEST',
+      'FORM_RESULT_UNKNOWN',
+      JSON.stringify([
+        { key: 'name', type: 'TextField', label: '姓名' },
+        { key: 'phone', type: 'TextField', label: '手机号' },
+      ]),
+      '--json',
+    ]);
+
+    expect(output).toMatchObject({
+      success: true,
+      completedStages: expect.arrayContaining(['save_schema_recovered_by_readback']),
+    });
+    expect(mockHttpPost.mock.calls.filter((call) => call[1].includes('/saveFormSchema.json'))).toHaveLength(1);
+    expect(mockHttpGet).toHaveBeenCalledTimes(3);
+    consoleSpy.mockRestore();
+  });
+
+  test('create-form resume does not retry a non-server save failure', async () => {
+    const currentSchema = formCompiler.compileFormDefinition({
+      formTitle: '半成功表单',
+      fields: [{ key: 'name', type: 'TextField', label: '姓名' }],
+    }, {
+      appType: 'APP_TEST',
+      formUuid: 'FORM_NO_RETRY',
+    }).schema;
+    const mockHttpGet = jest.fn(() => Promise.resolve({
+      success: true,
+      appType: 'APP_TEST',
+      formUuid: 'FORM_NO_RETRY',
+      gmtModified: 100,
+      content: currentSchema,
+    }));
+    const mockHttpPost = jest.fn(() => Promise.resolve({
+      success: false,
+      errorMsg: 'HTTP 409',
+      __httpStatus: 409,
+    }));
+    const { isolatedCreateForm, consoleSpy } = loadIsolatedCreateFormCommand({
+      httpGet: mockHttpGet,
+      httpPost: mockHttpPost,
+    });
+
+    await expect(isolatedCreateForm.run([
+      'resume',
+      'APP_TEST',
+      'FORM_NO_RETRY',
+      JSON.stringify([
+        { key: 'name', type: 'TextField', label: '姓名' },
+        { key: 'phone', type: 'TextField', label: '手机号' },
+      ]),
+      '--json',
+    ])).rejects.toMatchObject({ code: 'CREATE_FORM_SAVE_SCHEMA_FAILED' });
+
+    expect(mockHttpGet).toHaveBeenCalledTimes(1);
+    expect(mockHttpPost.mock.calls.filter((call) => call[1].includes('/saveFormSchema.json'))).toHaveLength(1);
+    consoleSpy.mockRestore();
+  });
+
+  test('create-form resume stops after one safe retry and preserves the original server failure', async () => {
+    const currentSchema = formCompiler.compileFormDefinition({
+      formTitle: '半成功表单',
+      fields: [{ key: 'name', type: 'TextField', label: '姓名' }],
+    }, {
+      appType: 'APP_TEST',
+      formUuid: 'FORM_RETRY_FAILED',
+    }).schema;
+    let revision = 100;
+    let saveCount = 0;
+    const mockHttpGet = jest.fn(() => Promise.resolve({
+      success: true,
+      appType: 'APP_TEST',
+      formUuid: 'FORM_RETRY_FAILED',
+      gmtModified: revision,
+      content: JSON.parse(JSON.stringify(currentSchema)),
+    }));
+    const mockHttpPost = jest.fn(() => {
+      saveCount++;
+      if (saveCount === 1) {
+        revision = 101;
+        return Promise.resolve({ success: false, errorMsg: 'HTTP 500 first', __httpStatus: 500 });
+      }
+      return Promise.resolve({ success: false, errorMsg: 'HTTP 503 retry', __httpStatus: 503 });
+    });
+    const { isolatedCreateForm, consoleSpy } = loadIsolatedCreateFormCommand({
+      httpGet: mockHttpGet,
+      httpPost: mockHttpPost,
+    });
+
+    await expect(isolatedCreateForm.run([
+      'resume',
+      'APP_TEST',
+      'FORM_RETRY_FAILED',
+      JSON.stringify([
+        { key: 'name', type: 'TextField', label: '姓名' },
+        { key: 'phone', type: 'TextField', label: '手机号' },
+      ]),
+      '--json',
+    ])).rejects.toMatchObject({
+      code: 'CREATE_FORM_SAVE_SCHEMA_FAILED',
+      message: 'HTTP 500 first',
+      details: expect.objectContaining({
+        safeRetryAttempted: true,
+        retryErrorCode: 'CREATE_FORM_SAVE_SCHEMA_FAILED',
+        result: expect.objectContaining({ __httpStatus: 500 }),
+        retryResult: expect.objectContaining({ __httpStatus: 503 }),
+      }),
+    });
+
+    expect(mockHttpGet).toHaveBeenCalledTimes(2);
+    expect(mockHttpPost.mock.calls.filter((call) => call[1].includes('/saveFormSchema.json'))).toHaveLength(2);
     consoleSpy.mockRestore();
   });
 
@@ -3681,6 +3888,8 @@ describe('legacy create-form compatibility', () => {
       icon: 'name-card',
       iconSource: 'auto',
       url: 'https://example.test/APP_XXX/workbench/FORM_TEST',
+      formUrl: 'https://example.test/APP_XXX/workbench/FORM_TEST',
+      appUrl: 'https://example.test/APP_XXX/workbench',
     });
 
     consoleSpy.mockRestore();

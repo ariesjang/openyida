@@ -847,9 +847,9 @@ describe('Plan contract and file consistency', () => {
       expect(content).toContain('revision');
     }
     expect(interactionContract).toContain('同一次 `ask_human`');
-    expect(interactionContract).toContain('不得先发普通文本附件');
-    expect(workflow).toContain('必须实际调用 `ask_human`');
-    expect(workflow).toContain('严禁用它替代 `ask_human`');
+    expect(interactionContract).toContain('附件、问题与 `revision` 是一个原子交互');
+    expect(workflow).toContain('实际调用 `ask_human` 创建结构化提问');
+    expect(workflow).toContain('一次成功调用同时建立方案展示、版本绑定和最终选择');
   });
 
   test('plan final confirmation uses the callable single-select ask_human schema only', () => {
@@ -868,7 +868,7 @@ describe('Plan contract and file consistency', () => {
       'utf8',
     );
     const example = interactionContract.match(
-      /#### 实际 `ask_human` 调用参数[\s\S]*?```json\n([\s\S]*?)\n```/,
+      /#### 最终确认 `ask_human` payload[\s\S]*?```json\n([\s\S]*?)\n```/,
     );
 
     expect(example).not.toBeNull();
@@ -900,10 +900,12 @@ describe('Plan contract and file consistency', () => {
     );
 
     for (const content of [interactionContract, workflow]) {
-      expect(content).toContain('恰好两个顶层 `options`');
-      expect(content).toContain('禁止使用 `fields`、`text`、`textarea`');
-      expect(content).toContain('下一轮');
+      expect(content).toContain('`confirm_build`');
+      expect(content).toContain('`continue_editing`');
+      expect(content).toContain('下一次交互');
     }
+    expect(interactionContract).toContain('顶层字段集合固定为');
+    expect(workflow).toContain('唯一 payload schema');
   });
 
   test('staging failure changes no source or artifact', () => {
