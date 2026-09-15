@@ -110,7 +110,7 @@ description: 表单页面创建与更新；支持 19 种业务字段和 Divider�
 
 关联字段必须把引用放在 `associationForm` 内。推荐使用紧凑写法 `"associationForm": { "$form": "customer", "field": "客户名称" }`；batch 会将其规范化为 `associationForm.formUuid` 和 `associationForm.mainFieldId`。完整写法则分别在 `formUuid` 使用 `{ "$form": "customer" }`、在 `mainFieldId` 使用 `{ "$form": "customer", "field": "客户名称" }`。不要把 `$form` 放在 `AssociationFormField` 顶层，也不要用 `batch --help`、空参数或临时计划探索格式；技能中的结构就是正式契约。
 
-批量命令超过前台时限进入后台属于正常行为。此时必须保留原任务和 `<forms.json>.state.json`，等待运行时自动回传结果；禁止调用 `ToolStop`，禁止删除 `.state.json`/`.lock`，禁止改变参数再次调用 batch。若最终返回 `FORM_BATCH_PARTIAL_FAILURE`，在本轮原样保留结构化错误并停止；禁止模型侧再调用 `create-form create`、`update` 或 `resume` 补洞。CLI 会在同一次 batch 内对已取得真实 `formUuid` 的空壳表单执行一次保守恢复。后续明确进入恢复时，只在结果为 `recoveryAction=rerun_unchanged_plan` 时重新执行完全相同的 batch 命令；原任务文件内容和 batch 参数必须逐字保持不变，不得把 `.state.json` 中的 ID 回填到任务文件。若返回 `recoveryAction=inspect_unknown_write_then_reconcile`，先核对远端资源并准备新的 reconcile 任务，不得重跑或编辑当前指纹计划。
+批量创建以“原始 `forms.json` + 相邻 `.state.json` + fingerprint”为一个可恢复执行单元。进入后台时保留该执行单元并等待运行时回传最终结果。CLI 在批次内部识别已取得真实 `formUuid` 的空壳表单并执行一次保守恢复；模型始终以 batch 结果作为批次真相源。`FORM_BATCH_PARTIAL_FAILURE` 的 `recoveryAction` 决定下一步：`rerun_unchanged_plan` 使用原文件和原参数恢复同一执行单元，CLI 从 state 复用已知 ID；`inspect_unknown_write_then_reconcile` 先回读远端事实，再用已确认 ID 准备新的 reconcile 执行单元。
 
 ## 官方表单示例范式
 
@@ -179,8 +179,10 @@ openyida create-form create <appType> <formTitle> <fieldsJsonOrFile> [--layout d
 输出：
 
 ```json
-{"success":true,"formUuid":"FORM-XXX","formTitle":"用户信息表","appType":"APP_xxx","fieldCount":4,"icon":"name-card","iconSource":"auto","url":"{base_url}/APP_xxx/workbench/FORM-XXX"}
+{"success":true,"formUuid":"FORM-XXX","formTitle":"用户信息表","appType":"APP_xxx","fieldCount":4,"icon":"name-card","iconSource":"auto","url":"{base_url}/APP_xxx/workbench/FORM-XXX","appUrl":"{base_url}/APP_xxx/workbench"}
 ```
+
+成功结果同时提供两个明确层级的入口。终态交付按用户目标选择对应资源：用户要应用访问入口时，使用 `appUrl`，并将 artifact 标记为 `resourceType=app_home`、`resourceId=appType`；用户要当前表单入口时，使用 `url`，并标记为 `resourceType=form`、`resourceId=formUuid`。artifact 的 `url` 始终写入所选层级的权威入口。
 
 完整应用模式下的下一步：
 
@@ -221,13 +223,15 @@ openyida create-form resume <appType> <formUuid> <fieldsJsonOrFile> --json
 该命令先回读目标表单并核对字段，只添加可唯一判定的缺失字段，保存后再次回读；同名异类型、重复
 目标字段、归属不匹配或回读不确定时均停止且不写入。它不会新建替代表单，也不会覆盖已有字段。
 
-`resume` 对明确的保存端 HTTP 5xx 只做安全恢复：先精确回读；若目标字段已存在则直接收口，若仍缺失且无冲突则绑定最新服务端 revision 至多重试一次。成功 JSON 已包含真实 `formUuid` 和 `url` 时，立即进入终态交付并停止，不再追加 Write、重复 `get-schema` 或过程性说明。用户明确要求资源 ID 时，把已验证 `formUuid` 写进终态 artifact 的可见 `description`，不能只放在 metadata。
+`resume` 对明确的保存端 HTTP 5xx 采用“精确回读 → 判断是否已完成 → 对仍缺失且无冲突的字段绑定最新服务端 revision 重试一次”的恢复流程。成功 JSON 提供真实 `formUuid`、表单入口 `url` 和应用工作台入口 `appUrl`，据此完成终态交付；用户要求资源 ID 时，将已验证的 `formUuid` 写入终态 artifact 的可见 `description`。
 
 输出：
 
 ```json
-{"success":true,"formUuid":"FORM-YYY","appType":"APP_XXX","changesApplied":1,"changes":[{"action":"update","label":"备注","changedProps":"required","resolved":{"label":"备注","fieldId":"textField_xxx","componentName":"TextField"},"updatedProps":{"required":true}}],"url":"{base_url}/APP_XXX/workbench/FORM-YYY"}
+{"success":true,"formUuid":"FORM-YYY","appType":"APP_XXX","changesApplied":1,"changes":[{"action":"update","label":"备注","changedProps":"required","resolved":{"label":"备注","fieldId":"textField_xxx","componentName":"TextField"},"updatedProps":{"required":true}}],"url":"{base_url}/APP_XXX/workbench/FORM-YYY","appUrl":"{base_url}/APP_XXX/workbench"}
 ```
+
+`resume` 的终态交付沿用相同入口映射：应用级交付选择 `appUrl` / `app_home`，表单级交付选择 `url` / `form`。
 
 常见 compact changes：
 

@@ -63,9 +63,9 @@ batch 会在预校验前把紧凑写法规范化为下面的完整结构；前�
 - `--concurrency 1..4` 设置并发上限，默认 3。
 - 结果保存在任务文件旁的 `.state.json`，包含每张表单的 ID、字段和状态。主流程从中汇总资源上下文，再配置导航。
 - 相同任务再次执行时，成功表单回读复用。失败及中断任务保留原状态，其依赖标记为 blocked；独立任务继续。
-- 当前批次返回 `success:false` 时，以返回的 `results`、子命令诊断和 `.state.json` 为准停止本轮创建；不得为补齐失败项改用单条 `create-form create`，也不得把剩余项拆成新的 batch。返回 `recoveryAction=rerun_unchanged_plan` 时，后续只允许用原任务文件和原参数重新执行完全相同的 batch；不得修改字段、依赖、标题或参数，也不得把 `.state.json` 中的 `formUuid` 回填到原任务文件。CLI 会从 state 读取已知 ID 并恢复，不会重复 create。
-- 返回 `recoveryAction=inspect_unknown_write_then_reconcile` 时，说明至少一个写结果没有资源 ID。此时不得重跑或编辑当前指纹计划；先核对远端已创建资源。只有核对完成后才准备一个新的 reconcile 任务文件，用已确认的 `formUuid` 复用完整表单，并仅为确认尚未创建的表单保留创建任务。
+- 当前批次返回 `success:false` 时，`results`、子命令诊断和 `.state.json` 共同构成恢复事实。`recoveryAction=rerun_unchanged_plan` 表示使用原任务文件和原参数恢复同一 fingerprint；CLI 从 state 读取已知 ID，并继续未完成项。
+- `recoveryAction=inspect_unknown_write_then_reconcile` 表示至少一个写结果缺少资源 ID。先回读远端资源，再创建新的 reconcile 任务文件：已确认的完整表单携带 `formUuid` 进入复用路径，确认尚未创建的表单保留创建任务。
 - `.lock` 防止同一任务重复启动。进程异常退出遗留锁时，确认原进程已结束、核对已创建资源后再清理。
-- 首次 batch 返回 background pending 时等待运行时自动投递完成结果；pending 不是失败，也不是重试信号，不得再次调用 batch。
+- 首次 batch 返回 background pending 时，当前执行单元保持运行中，由运行时投递最终结果；后续动作以该最终结果为准。
 
 已有表单的字段修改仍使用 update/patch 等命令；不同表单可分别更新，同一张表单由一个任务维护。流程审批按 `yida-create-process` 执行，等待其依赖的表单就绪后再配置。

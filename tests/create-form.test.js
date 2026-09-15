@@ -3886,6 +3886,7 @@ describe('legacy create-form compatibility', () => {
       icon: 'name-card',
       iconSource: 'auto',
       url: 'https://example.test/APP_XXX/workbench/FORM_TEST',
+      appUrl: 'https://example.test/APP_XXX/workbench',
     });
 
     consoleSpy.mockRestore();

@@ -11,9 +11,11 @@ description: 宜搭完整应用开发编排技能。对普通 OpenYida 应用做
 
 Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-design.md` 和精确路径 `workflow/plan/workflow.md`；后者已经包含完整 Plan 入口。禁止用 Glob 查找 Plan 文件，也不要额外读取 `workflow/plan/step-1-understand.md` 或 `workflow/plan/step-2-confirm.md`。Plan 确认恢复后，若 `explicitScope.allowInferredResources=false`，直接读取 `workflow/step-4-forms-processes.md` 实施范围内资源，不再重读 Step 1、调用 list-forms 或做应用设置预检。
 
-## 步骤模版（进行时展示给用户看的步骤）
+## 执行步骤（进行时展示给用户）
 
-完整应用搭建时，直接使用对应模式的步骤名称。
+先从已经确认的 `execution.explicitScope` 生成本轮步骤，再开始资源实施。步骤只对应范围内尚未完成的资源和交付；资源成功回读后从剩余步骤中移除。`allowInferredResources=true` 表示完整应用交付，可使用下面的完整应用模版；`allowInferredResources=false` 表示边界已闭合，使用“需求识别与分析 / 设计功能和页面 / 生成PRD方案&确认（Plan）+ 范围内资源步骤 + 检查范围并交付”的精简步骤。
+
+完整应用搭建时使用对应模式的步骤名称。
 
 **Plan 模式**
 
@@ -38,11 +40,11 @@ Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-de
 7. 发布页面与配置导航
 8. 检查功能并交付
 
-已有应用时，直接省略“创建应用”，不另列“复用现有应用”待办，后续步骤重新编号；无需示例数据时跳过对应步骤。步骤状态按真实进度更新，有独立输入的工作可同时进行。
+已有应用时省略“创建应用”，后续步骤重新编号。步骤状态按真实进度更新，有独立输入的工作可同时进行。
 
 用户明确把本轮交付限定为一个或若干具体表单、流程、报表或页面时，按 `explicitScope` 只保留达到该交付所需的步骤；即使需求背景使用“应用/系统”，也不自动补示例数据、自定义工作台、主题设置、导航排序或其他资源。Plan 模式仍生成并确认方案，但确认后只执行该窄范围。
 
-若窄范围只要求创建一个普通表单并交付链接，成功的 `create-form create` 结果就是本轮资源回读证据：立即交付其中的真实链接并停止。不要再调用 `get-schema`、`list-forms`、数据管理技能、示例数据、主题或导航命令，除非创建结果明确缺少 ID/链接或用户另外要求这些内容。
+若窄范围只要求创建一个普通表单并交付链接，成功的 `create-form create` 结果就是本轮资源回读证据。结果中的 `url` 表示表单入口，`appUrl` 表示应用工作台入口；按用户要求的入口层级交付对应字段。交付后即完成当前窄范围；仅在结果缺少明确验收所需的 ID 或链接时追加一次针对性只读回查。
 
 禁区：待办标题、说明和进度不出现技能名、命令、文件路径、登录账号、内部资源 ID；这些留在工具调用里。用户明确询问技术细节时再解释。
 
@@ -81,7 +83,7 @@ Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-de
 7. **删除必须确认**：用户要求删除应用时，先展示应用名称、应用 ID 和影响范围，等待明确“确认删除”后才能执行。
 8. **列表页选择**：默认使用普通表单的数据管理页；用户明确要求自定义列表页时才创建 display 页面。
 9. **交付物收口**：Step 2 的三个文件和 Step 9 的 build manifest 都是内部文件，不是用户交付物。表单、流程、报表和页面只在业务总结中概述，不逐项生成用户可见附件；宿主支持交付工具时，final 只交付一次“应用访问入口”组。
-10. **窄范围停止点**：完成 `explicitScope` 中的资源回读与真实链接交付后立即停止；不得为了满足完整应用默认完成条件继续进入被裁剪的 Step 5-8。
+10. **范围完成点**：以 `explicitScope` 的资源集合为任务队列；集合清空且真实链接已交付时，本轮完成。完整应用默认完成条件只在 `allowInferredResources=true` 时生效。
 
 ## 关键决策树
 

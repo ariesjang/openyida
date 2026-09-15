@@ -79,7 +79,7 @@ describe('OpenYida skill contracts', () => {
     expect(requirement).toContain('`allowInferredResources:false`');
     expect(prepareBrief).toContain('不把“应用”自动扩展为示例数据、工作台、自定义列表或其他未点名资源');
     expect(app).toContain('即使需求背景使用“应用/系统”');
-    expect(app).toContain('窄范围停止点');
+    expect(app).toContain('范围完成点');
     expect(planWorkflow).toContain('命令第一次就传入 `visualSelection.themeId`');
     expect(planWorkflow).toContain('不再额外读取 `step-1-understand.md` 或 `step-2-confirm.md`');
     expect(planWorkflow).toContain('先 Read 该文件');
@@ -89,8 +89,10 @@ describe('OpenYida skill contracts', () => {
     expect(planBusiness).toContain('普通表单的 sampleDataPlan 用 skipReason');
     expect(compactSchema).toContain('避免用多轮 materialize 探测必填字段');
     expect(app).toContain('禁止用 Glob 查找 Plan 文件');
-    expect(app).toContain('不要再调用 `get-schema`、`list-forms`');
-    expect(formsStep).toContain('成功结果已包含真实 formUuid/链接时，直接交付并停止');
+    expect(app).toContain('完整应用默认完成条件只在 `allowInferredResources=true` 时生效');
+    expect(planWorkflow).toContain('后续步骤总集等于确认方案中的资源步骤与交付步骤');
+    expect(formsStep).toContain('将该表单标记为已完成并计算 `remainingScope`');
+    expect(formsStep).toContain('`remainingScope` 为空：→ [Step 9');
     expect(prepareBrief).toContain('不要留到 `design-plan init` 失败后再选择');
   });
 
@@ -531,11 +533,11 @@ describe('OpenYida skill contracts', () => {
     expect(step9).toContain('准备 2-3 句业务交付总结，并给一个名为“应用访问入口”的入口组');
     expect(step9).toContain('新增、修改或发布单个具体页面时，仍只交付当前页面');
     expect(step9).toContain('完整应用的入口组始终包含“应用工作台” `{base_url}/{appType}/workbench`');
-    expect(step9).toContain('不把表单、流程、报表、页面、资源清单或内部文件分别登记为附件');
+    expect(step9).toContain('业务资源与内部文件在组内总结而不拆分成多张卡');
     expect(step9).toContain('用户或调用方明确要求资源清单、资源 UUID/ID、发布状态或测试数据摘要时');
-    expect(step9).toContain('终态 artifact 的 `description` 必须包含一个简洁的“交付清单”');
+    expect(step9).toContain('终态 artifact 的 `description` 包含一个简洁的“交付清单”');
     expect(step9).toContain('`notify_human` 是终态交付动作');
-    expect(step9).toContain('写进终态 artifact 的可见 `description`');
+    expect(step9).toContain('写入 artifact 的可见 `description`');
     expect(step9).toContain('每个被 final 声称“已写入”“已验证”或给出记录数的表单/流程');
     expect(step9).toContain('不得把一张表单的 3 条记录复制成其他表单也有 3 条');
     expect(step9).toContain('每个资源数量和数据完成声明都有对应资源自己的成功返回值/readback');
@@ -653,10 +655,17 @@ describe('OpenYida skill contracts', () => {
 
     expect(root).toContain('不得把需求信息文件、PRD、视觉设计、build manifest、资源清单');
     expect(app).toContain('宿主支持交付工具时，final 只交付一次“应用访问入口”组');
+    expect(app).toContain('`url` 表示表单入口，`appUrl` 表示应用工作台入口');
+    const formPage = readSkill('yida-skills/skills/yida-create-form-page/SKILL.md');
+    expect(formPage).toContain('用户要应用访问入口时，使用 `appUrl`');
+    expect(formPage).toContain('`resourceType=app_home`、`resourceId=appType`');
+    expect(formPage).toContain('用户要当前表单入口时，使用 `url`');
+    expect(formPage).toContain('`resourceType=form`、`resourceId=formUuid`');
     expect(step2).toContain('需求文件与实施文档供内部执行，Plan 的 HTML 用于用户查看和确认方案');
-    expect(step9).toContain('一次 run 最多交付这一组用户可见的“应用访问入口”');
-    expect(step9).toContain('同一应用在后续 run 中被用户再次请求时');
-    expect(step9).toContain('不得为了重新展示入口而重建、更新或重新发布资源');
+    expect(step9).toContain('一次 run 交付一组用户可见的“应用访问入口”');
+    expect(step9).toContain('应用访问、应用入口或应用工作台使用成功结果的 `appUrl`');
+    expect(step9).toContain('同一应用在后续 run 中被再次请求时');
+    expect(step9).toContain('复用已有资源和已验证 URL');
     expect(step9).toContain('builder_path.auth.auth_runtime=env_token_bootstrap');
     expect(step9).toContain('can_auto_use=true');
     expect(feature).toContain('应复用已有资源和已验证 URL');
@@ -1628,15 +1637,15 @@ describe('OpenYida skill contracts', () => {
     expect(formStep).not.toContain('关联表单等待前置表单完成');
     expect(formSkill).toContain('<workspace>/project/.cache/openyida/<项目名>/forms.json');
     expect(formSkill).toContain('先用 Read 确认任务文件存在');
-    expect(formSkill).toContain('batch 返回 background pending 时等待运行时投递完成结果');
+    expect(formSkill).toContain('进入后台时保留该执行单元并等待运行时回传最终结果');
     expect(formSkill).toContain('不要再调用 `create-form batch --help`、`create-form batch --check`');
     expect(formSkill).toContain('执行普通批量创建无需再查 help、sample 或 CLI 源码');
     expect(formSkill).toContain('确认 `projectRoot` → Write 一个任务文件 → Read 确认文件 → 唯一一次真实 batch');
     expect(formSkill).toContain('"formUuid": { "$form": "customer" }');
-    expect(formSkill).toContain('`recoveryAction=rerun_unchanged_plan`');
-    expect(formSkill).toContain('原任务文件内容和 batch 参数必须逐字保持不变');
-    expect(batchForms).toContain('pending 不是失败，也不是重试信号');
-    expect(batchForms).toContain('不得把 `.state.json` 中的 `formUuid` 回填到原任务文件');
+    expect(formSkill).toContain('`rerun_unchanged_plan`');
+    expect(formSkill).toContain('使用原文件和原参数恢复同一执行单元');
+    expect(batchForms).toContain('当前执行单元保持运行中，由运行时投递最终结果');
+    expect(batchForms).toContain('CLI 从 state 读取已知 ID');
     expect(batchForms).not.toContain('修正输入或为已知资源补入 `formUuid` 后');
     expect(finishStep).toContain('CLI 成功结果返回的 `appUrl`、`workbenchUrl` 或 `url`');
     expect(finishStep).toContain('不得由模型根据 `appType` 自行拼接');
