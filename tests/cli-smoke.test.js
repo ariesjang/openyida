@@ -2464,6 +2464,13 @@ test('command and agent navigation policies align with AI intake decisions', () 
   expect(workflow.application_entry_policy.workbench).toMatchObject({
     task_url: '{base_url}/{appType}/workbench/{formUuid}', view_parameter: 'viewUuid',
   });
+  for (const policy of [workflow.ui_guidance_policy, capabilities.commands.core_workflows.full_app_build.ui_guidance_policy]) {
+    expect(policy).toContain('alongside page layout and interaction work');
+    expect(policy).toContain('image binding and acceptance');
+    expect(policy).not.toContain('before that page is implemented');
+  }
+  expect(workflow.completion_contract).toContain('delivery artifact description');
+  expect(workflow.completion_contract).toContain('when no delivery tool is available');
   expect(workflow.completion_contract).toContain('frontend-only delivery includes only its verified frontend entry');
   expect(capabilities.recommended.default_full_app_workflow.completion_contract).toBe(workflow.completion_contract);
 });
