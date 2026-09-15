@@ -214,6 +214,37 @@ test('normalizes omitted sample data to an explicit skip for resource-only plans
   );
 });
 
+test.each(['海洋蓝，搭配沙滩暖色', '海洋🌊风格', ''])('keeps a color description as text instead of character properties: %s', description => {
+  brief.visualSelection.colorStrategy = description;
+  save();
+  const original = fs.readFileSync(briefPath, 'utf8');
+  const result = init();
+  const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+  const visual = JSON.parse(fs.readFileSync(result.preparedInputs.visual, 'utf8'));
+  const strategy = visual.facts.visualStyle.forUser.colorStrategy;
+  expect(strategy).toEqual({ primaryColor: '', primaryColorName: '', source: '', usage: description, surfaceTone: 'brand-tinted' });
+  expect(plan.visualStyle.forUser.colorStrategy).toEqual(strategy);
+  expect(visual.ready).toBe(false);
+  expect(result.authoring.pendingFields).toContainEqual(expect.objectContaining({ path: 'facts.visualStyle.forUser.colorStrategy.primaryColor' }));
+  expect(fs.readFileSync(briefPath, 'utf8')).toBe(original);
+});
+
+test.each([undefined, null])('keeps absent color strategies as incomplete objects: %s', value => {
+  brief.visualSelection.colorStrategy = value;
+  save();
+  const result = init();
+  const visual = JSON.parse(fs.readFileSync(result.preparedInputs.visual, 'utf8'));
+  expect(visual.facts.visualStyle.forUser.colorStrategy.usage).toBe('');
+  expect(visual.ready).toBe(false);
+});
+
+test.each([[], ['海洋蓝'], 123, true])('rejects invalid color strategy types before creating files: %j', value => {
+  brief.visualSelection.colorStrategy = value;
+  save();
+  expect(init).toThrow(expect.objectContaining({ code: 'DESIGN_PLAN_INVALID_COLOR_STRATEGY' }));
+  expect(fs.existsSync(path.join(dir, 'prd'))).toBe(false);
+});
+
 test('preserves an explicit neutral reference palette at intake', () => {
   brief.visualSelection.colorStrategy.surfaceTone = 'theme';
   save();

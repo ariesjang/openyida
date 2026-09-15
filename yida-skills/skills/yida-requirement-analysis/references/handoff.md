@@ -41,6 +41,8 @@
 
 Plan 在 `design-plan init` 前必须补齐合法的导航字段（见下节）及 `visualSelection.themeId`。视觉沿用 `visualSelection` 的 `themeId/visualDirection/colorStrategy/navigationStyle`，AI 补齐颜色或主题时标记 `ai_default`。Fast 共用这些字段。主题 ID 尚未确定时，通过 `openyida design-plan catalog --json` 查询合法主题及页面模式，复用本轮查询结果。
 
+`visualSelection.colorStrategy` 使用对象，例如 `{"primaryColor":"#1677FF","primaryColorName":"蓝色","usage":"用于主要操作"}`。只有文字配色要求时也可先保存字符串；CLI 将原文放入 `usage`，并提示补齐 `primaryColor`。
+
 PRD 将 userTasks 与入口建议转为页面的访问路径、任务和权限；Plan 的 business.json 使用现有 facts 契约，视觉设计共用入口和导航记录。
 
 ## 前后台导航交接
