@@ -11,6 +11,8 @@
 
 ## 通用门禁
 
+来源可用性按 [选图与失败切换](../SKILL.md#失败后立即切换) 执行：一次失败即换候选或来源，本轮后续槽位复用不可用记录。优先选取来源信息齐全的候选；恢复服务、更新输入或用户明确要求后，再尝试此前失败的路径。
+
 - 记录 `provider/sourcePage/creator/license/attribution`；Unsplash 另记 `downloadLocation/downloadTracked`。
 - 搜索素材使用 `source=search`，只接受 `provider=unsplash|pexels`；用户授权外链使用 `--source user`。
 - 品牌、人物和敏感场景记录授权与真实关系。

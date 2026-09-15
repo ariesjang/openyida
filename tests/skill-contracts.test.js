@@ -50,6 +50,10 @@ describe('OpenYida skill contracts', () => {
     expect(imageAssets).toContain('beneficial');
     expect(imageAssets).toContain('none');
     expect(imageAssets).toContain('requires_host_tool_inventory_check');
+    expect(imageAssets).toContain('同一候选尝试一次');
+    expect(imageAssets).toContain('当前及后续槽位立即换其他来源');
+    expect(imageAssets).toContain('每个槽位保留一个首选和一个备选');
+    expect(sourcePolicy).toContain('../SKILL.md#失败后立即切换');
     expect(imageAssets).toContain('asset-manifest.json');
     expect(imageAssets).toContain('--input <草稿> --manifest <asset-manifest.json>');
     expect(sourcePolicy).toContain('Unsplash API');

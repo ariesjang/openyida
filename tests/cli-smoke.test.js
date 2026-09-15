@@ -2446,6 +2446,21 @@ test('command and agent navigation policies align with AI intake decisions', () 
   expect(capabilities.recommended.default_full_app_workflow.completion_contract).toBe(workflow.completion_contract);
 });
 
+test('asset source fallback policy is shared by the CLI, manifest and agent summary', () => {
+  const sources = JSON.parse(runOk(['asset', 'sources', '--json']));
+  const manifest = JSON.parse(runOk(['commands', '--json']));
+  const summary = JSON.parse(runOk(['agent-capabilities', '--summary-json']));
+  const policy = sources.guidance.failurePolicy;
+  expect(policy).toMatchObject({
+    attemptsPerCandidate: 1,
+    sourceUnavailable: 'switch_source_for_remaining_slots',
+    candidateFailed: 'replace_input',
+    exhausted: 'allowed_generation_or_optional_layout_or_gap',
+  });
+  expect(manifest.summary.core_workflows.full_app_build.optional_asset_branch.failure_policy).toEqual(policy);
+  expect(summary.full_app_artifact_route.optional_asset_branch.failure_policy).toEqual(policy);
+});
+
 test('Plan CLI preserves workspace navigation while materializing and patching a frontend menu', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-entry-cli-'));
   try {

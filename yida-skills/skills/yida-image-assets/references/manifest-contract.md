@@ -77,11 +77,11 @@ openyida asset resolve --input manifest-draft.json --manifest asset-manifest.jso
 | `EMPTY` / `NOT_FOUND` | 补正确的图片输入路径或 URL |
 | `INVALID_IMAGE_CONTENT` / `NOT_IMAGE_FILE` / `DIMENSIONS_UNAVAILABLE` | 换成可读取格式与尺寸的真实图片；不要手填宽高绕过 |
 | `WIDTH_TOO_SMALL` / `HEIGHT_TOO_SMALL` | 换更大图片 |
-| `MISSING_METADATA` | 按缺失字段补用途、alt 或真实来源记录 |
+| `MISSING_METADATA` | 补用途、alt 或已取得的真实来源记录；来源获取失败则换候选 |
 | `ASSET_APP_TYPE_REQUIRED` | 传入真实 `--app-type`，或在当前项目配置 appType |
 | `ASSET_TOO_LARGE_NO_ORIGINAL_URL` | 本地图超过 20 MiB，补原始图片 URL 或换小图 |
 | `ASSET_ATTACHMENT_URL_INVALID` | 上传接口未返回 HTTP(S) 公开链接，排查转换接口；不使用签名下载地址 |
 | `ASSET_DUPLICATE_SLOT` / `ASSET_UNDECLARED_SLOT` | 修正槽位 ID，使其与设计一致 |
 | `MISSING_PAGE_SLOTS` / `ASSET_DESIGN_INVALID` | 回到设计阶段补齐或修正 `assetStrategy` |
-| 下载错误（如 `HTTP_404`、`TIMEOUT`） | 本次跳过，不上传、不使用原链接；需要该图时换 `input` |
+| 下载错误（如 `HTTP_404`、`TIMEOUT`） | 换 `input`；备选用尽时按槽位规则使用允许的生成图、无图布局或保留缺口 |
 | 登录、上传、离线错误 | 恢复相应能力后，用保留的原始输入重跑 |
