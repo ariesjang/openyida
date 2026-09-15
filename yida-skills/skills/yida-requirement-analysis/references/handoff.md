@@ -39,7 +39,7 @@
 
 由 `yida-app` 按 [规划准备](../../yida-app/workflow/step-2-design.md#规划准备) 补齐页面场景、导航和主题，AI 新增内容记录来源并遵守 explicitScope。
 
-Plan 在 `design-plan init` 前必须补齐合法的导航字段（见下节）及 `visualSelection.themeId`。视觉沿用 `visualSelection` 的 `themeId/visualDirection/colorStrategy/navigationStyle`，AI 补齐颜色或主题时标记 `ai_default`。Fast 共用这些字段。
+Plan 在 `design-plan init` 前必须补齐合法的导航字段（见下节）及 `visualSelection.themeId`。视觉沿用 `visualSelection` 的 `themeId/visualDirection/colorStrategy/navigationStyle`，AI 补齐颜色或主题时标记 `ai_default`。Fast 共用这些字段。主题 ID 尚未确定时，通过 `openyida design-plan catalog --json` 查询合法主题及页面模式，复用本轮查询结果。
 
 PRD 将 userTasks 与入口建议转为页面的访问路径、任务和权限；Plan 的 business.json 使用现有 facts 契约，视觉设计共用入口和导航记录。
 

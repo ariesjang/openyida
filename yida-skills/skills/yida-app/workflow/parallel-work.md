@@ -43,7 +43,7 @@
 
 标准 Plan 首版采用一次收齐：业务任务完成一个 `business.json`，视觉直接复用 init 根据已确认选择生成的 `visual.json`，随后合并物化。这样首版只等待一次模型规划。品牌稿、参考图、页面级特殊视觉或明确的视觉精修要求命中时，才由视觉任务更新 `visual.json`；超大需求需要展示中间进展时才使用 [按模块更新方案](incremental-preview.md)，全部完成后再用 `materialize --from-preview` 汇总校验。
 
-init 返回的 `materialize.command` 是标准首版唯一生成命令。执行成功后直接使用其 `outputs.html` 和 `revision` 展示确认，不通过 `--from-preview`、preview、Glob 或额外 Read 探测产物；确认后不再物化或 patch。`explicitScope.allowInferredResources=false` 时，完整主题仍可作为 Plan 展示的一部分，但不进入应用设置、导航或发布执行。
+按 init 返回的 `authoring.pendingFields` 和 `context` 中的类型示例补齐事实，复核内容后设置片段 `ready=true`。init 返回的 `materialize.command` 是标准首版唯一生成命令。执行成功后直接使用其 `outputs.html` 和 `revision` 展示确认，不通过 `--from-preview`、preview、Glob 或额外 Read 探测产物；确认后不再物化或 patch。`explicitScope.allowInferredResources=false` 时，完整主题仍可作为 Plan 展示的一部分，但不进入应用设置、导航或发布执行。
 
 `design-plan init` 返回 `parallelTasks` 和两个片段文件：
 

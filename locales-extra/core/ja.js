@@ -22,6 +22,7 @@ module.exports = {
     cmd_create_app: '宜搭アプリを作成',
     cmd_design_plan_preview: 'モジュールごとに計画草稿を更新',
     design_plan_preview_invalid: '草稿の更新に失敗しました。詳細を確認してください',
+    cmd_design_plan_catalog: '計画に利用できるテーマとページパターンを一覧表示',
     cmd_design_plan_init: '確認済みの要件から計画の下書きを作成',
     cmd_design_plan_materialize: 'build-plan.json から設計計画成果物を生成・検証',
     cmd_design_plan_patch: 'フィールドパスで計画を更新し以前の確認を無効化',

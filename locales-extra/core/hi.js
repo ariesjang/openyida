@@ -22,6 +22,7 @@ module.exports = {
     cmd_create_app: 'Yida ऐप बनाएं',
     cmd_design_plan_preview: 'मॉड्यूल के अनुसार योजना का मसौदा अपडेट करें',
     design_plan_preview_invalid: 'मसौदा अपडेट विफल; त्रुटि विवरण देखें',
+    cmd_design_plan_catalog: 'योजना के लिए उपलब्ध थीम और पेज पैटर्न दिखाएँ',
     cmd_design_plan_init: 'पुष्टि की गई आवश्यकताओं से योजना का मसौदा बनाएँ',
     cmd_design_plan_materialize: 'build-plan.json से योजना आउटपुट बनाएं और जाँचें',
     cmd_design_plan_patch: 'फ़ील्ड पथ से योजना बदलें और पुरानी पुष्टि अमान्य करें',

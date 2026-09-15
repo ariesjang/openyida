@@ -22,6 +22,7 @@ module.exports = {
     cmd_create_app: '建立宜搭應用程式',
     cmd_design_plan_preview: '按模組更新方案草稿',
     design_plan_preview_invalid: '方案草稿更新失敗，請檢查錯誤詳情',
+    cmd_design_plan_catalog: '查詢規劃可用的主題與頁面模式',
     cmd_design_plan_init: '從已確認需求初始化計劃草稿',
     cmd_design_plan_materialize: '從 build-plan.json 產生並校驗搭建計畫產物',
     cmd_design_plan_patch: '按欄位路徑調整搭建計畫並使舊確認失效',

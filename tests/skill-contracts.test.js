@@ -86,7 +86,11 @@ describe('OpenYida skill contracts', () => {
     expect(app).toContain('窄范围停止点');
     expect(planWorkflow).toContain('命令第一次就传入 `visualSelection.themeId`');
     expect(planWorkflow).toContain('不再额外读取 `step-1-understand.md` 或 `step-2-confirm.md`');
-    expect(planWorkflow).toContain('先 Read 该文件');
+    expect(planWorkflow).toContain('读取该文件及 `context` 中的类型示例');
+    expect(planWorkflow).toContain('openyida design-plan catalog --json');
+    expect(planWorkflow).toContain('authoring.pendingFields');
+    expect(planWorkflow).toContain('将已完成片段设为 `ready=true`');
+    expect(compactSchema).toContain('对象，键为 empty/loading/error/formEntry/detail');
     expect(planWorkflow).toContain('绝不写 `visualStyle`');
     expect(planWorkflow).toContain('只物化一次');
     expect(parallel).toContain('业务任务必须先读后写');

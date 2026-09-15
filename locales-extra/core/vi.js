@@ -22,6 +22,7 @@ module.exports = {
     cmd_create_app: 'Tạo ứng dụng Yida',
     cmd_design_plan_preview: 'Cập nhật bản nháp theo mô-đun',
     design_plan_preview_invalid: 'Cập nhật bản nháp thất bại; kiểm tra chi tiết lỗi',
+    cmd_design_plan_catalog: 'Liệt kê chủ đề và mẫu trang có sẵn để lập kế hoạch',
     cmd_design_plan_init: 'Khởi tạo bản nháp kế hoạch từ yêu cầu đã xác nhận',
     cmd_design_plan_materialize: 'Tạo và xác thực sản phẩm từ build-plan.json',
     cmd_design_plan_patch: 'Sửa kế hoạch theo đường dẫn và vô hiệu xác nhận trước',

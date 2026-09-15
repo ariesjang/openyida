@@ -22,6 +22,7 @@ module.exports = {
     cmd_create_app: 'إنشاء تطبيق Yida',
     cmd_design_plan_preview: 'تحديث مسودة الخطة حسب الوحدة',
     design_plan_preview_invalid: 'فشل تحديث المسودة؛ تحقق من تفاصيل الخطأ',
+    cmd_design_plan_catalog: 'عرض السمات وأنماط الصفحات المتاحة للتخطيط',
     cmd_design_plan_init: 'تهيئة مسودة خطة من المتطلبات المؤكدة',
     cmd_design_plan_materialize: 'إنشاء مخرجات الخطة والتحقق منها من build-plan.json',
     cmd_design_plan_patch: 'تعديل الخطة حسب مسار الحقل وإبطال التأكيد السابق',

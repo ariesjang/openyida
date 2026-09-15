@@ -22,6 +22,7 @@ module.exports = {
     cmd_create_app: 'Yida-App erstellen',
     cmd_design_plan_preview: 'Planentwürfe pro Modul aktualisieren',
     design_plan_preview_invalid: 'Entwurfsaktualisierung fehlgeschlagen; Details prüfen',
+    cmd_design_plan_catalog: 'Verfügbare Planungsthemen und Seitenmuster auflisten',
     cmd_design_plan_init: 'Planentwurf aus bestätigten Anforderungen erstellen',
     cmd_design_plan_materialize: 'Planartefakte aus build-plan.json erzeugen und validieren',
     cmd_design_plan_patch: 'Plan per Feldpfad ändern und frühere Bestätigung verwerfen',

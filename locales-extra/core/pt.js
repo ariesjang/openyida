@@ -22,6 +22,7 @@ module.exports = {
     cmd_create_app: 'Criar um aplicativo Yida',
     cmd_design_plan_preview: 'Atualizar rascunhos por módulo',
     design_plan_preview_invalid: 'Falha ao atualizar o rascunho; verifique os detalhes',
+    cmd_design_plan_catalog: 'Listar temas e padrões de página disponíveis para planejamento',
     cmd_design_plan_init: 'Criar um rascunho do plano com requisitos confirmados',
     cmd_design_plan_materialize: 'Gerar e validar artefatos a partir de build-plan.json',
     cmd_design_plan_patch: 'Alterar o plano por caminho e invalidar a confirmação anterior',

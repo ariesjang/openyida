@@ -2410,7 +2410,9 @@ test('Plan and navigation commands are discoverable with their existing permissi
   expect(commands.get('update-app').usage).toContain('[--layout side|top|l_shape]');
   expect(commands.get('update-app').usage).toContain('[--hide-app-nav|--show-app-nav]');
   expect(commands.get('update-app').usage).not.toContain('--nav-type');
-  expect(summary.full_app_artifact_route.plan_command_ids).toEqual(local.slice(0, 4));
+  expect(summary.full_app_artifact_route.plan_command_ids).toEqual(['design-plan.catalog', ...local.slice(0, 4)]);
+  expect(commands.get('design-plan.catalog')).toMatchObject({ requires_login: false, permission: { mode: 'allow' }, side_effect: { kind: 'local_read', mutates_yida: false, mutates_local: false } });
+  expect(summary.builder_path.command_contract.canonical_builder_command_ids).toContain('design-plan.catalog');
   expect(summary.full_app_artifact_route.navigation_command_ids.custom).toEqual(remote);
   expect(summary.full_app_artifact_route.navigation_policy.toLowerCase()).toContain('before prd planning');
 });

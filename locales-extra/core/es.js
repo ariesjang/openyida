@@ -22,6 +22,7 @@ module.exports = {
     cmd_create_app: 'Crear una aplicación Yida',
     cmd_design_plan_preview: 'Actualizar borradores por módulo',
     design_plan_preview_invalid: 'Error al actualizar el borrador; revise los detalles',
+    cmd_design_plan_catalog: 'Mostrar temas y patrones de página disponibles para la planificación',
     cmd_design_plan_init: 'Crear un borrador del plan a partir de requisitos confirmados',
     cmd_design_plan_materialize: 'Generar y validar artefactos desde build-plan.json',
     cmd_design_plan_patch: 'Modificar el plan por ruta e invalidar la confirmación previa',

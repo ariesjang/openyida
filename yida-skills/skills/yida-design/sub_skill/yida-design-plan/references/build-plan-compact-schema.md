@@ -2,12 +2,12 @@
 
 ## 输入与生成
 
-`design-plan init` 从已确认需求建立草稿、主题上下文和业务/视觉片段，返回必要任务与可选视觉精修。标准首版只编写业务事实，视觉片段复用已确认选择，由 CLI 补齐标准页面视觉；视觉选择不完整时返回补齐任务，有特殊视觉要求时执行可选精修。片段写入与合并见 [并行交接](../../../../yida-app/workflow/parallel-work.md#plan-的-cli-交接)。保留生成的项目目录名、页面 ID 与 sceneKey；业务名称使用 `meta.appName`。补齐业务与视觉片段后执行交接命令；直接维护单一计划时使用：
+`design-plan init` 从已确认需求建立草稿、主题上下文和业务/视觉片段，返回必要任务与可选视觉精修。标准首版只编写业务事实，视觉片段复用已确认选择，由 CLI 补齐标准页面视觉；视觉选择不完整时返回补齐任务，有特殊视觉要求时执行可选精修。片段写入与合并见 [并行交接](../../../../yida-app/workflow/parallel-work.md#plan-的-cli-交接)。保留生成的项目目录名、页面 ID 与 sceneKey；业务名称使用 `meta.appName`。补齐业务与视觉片段后执行交接命令；标准首版使用 init 返回的 `materialize.command`：
 
-init 已预填 `business.json` 结构，业务任务先读后写并保留 base。业务 facts 仅允许 overview、dataModels、businessFlows、pages、execution；visualStyle 只属于 `visual.json`。首次合并前一次补齐每个普通表单的 sampleDataPlan（跳过则写 skipReason）和每个自定义页面的 permissionSummary，避免用多轮 materialize 探测必填字段。
+init 已预填 `business.json` 结构，业务任务先读后写并保留 base。`authoring.pendingFields` 列出初始化时的待补文件、字段路径与说明；格式示例位于返回的 `context` 文件。示例用于说明类型，实际值按当前业务填写。复核内容后将片段设为 `ready=true`，最终生成继续执行完整校验。业务 facts 仅允许 overview、dataModels、businessFlows、pages、execution；visualStyle 只属于 `visual.json`。首次合并前一次补齐每个普通表单的 sampleDataPlan（跳过则写 skipReason）和每个自定义页面的 permissionSummary，避免用多轮 materialize 探测必填字段。
 
 ```bash
-openyida design-plan materialize prd/<项目名>/build-plan.json --json
+openyida design-plan materialize prd/<项目名>/build-plan.json --business-file prd/<项目名>/business.json --visual-file prd/<项目名>/visual.json --json
 ```
 
 CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 `build-plan.html`。模板标准规则、摘要、设计路径和默认交接字段自动补齐。模型只维护源事实及项目差异。
@@ -117,7 +117,7 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 | `pageImplementationOrder` | 覆盖全部页面的 pageId 或名称数组 |
 | `navigationOrder/navigationFallback` | 已确认的菜单顺序，或明确的排序策略；权限接口决定可见性 |
 | `sampleDataPlan` | `{form,records}` 或 `{form,skipReason}` 数组，覆盖全部普通表单 |
-| `interactionStates` | 可覆盖 empty/loading/error/formEntry/detail 的业务行为说明 |
+| `interactionStates` | 对象，键为 empty/loading/error/formEntry/detail，值为非空业务说明；例如 `{"empty":"展示空态和新建入口","error":"保留输入并提示失败原因"}` |
 | `acceptanceCriteria` | 非空业务验收标准数组 |
 
 源 JSON 保留项目事实；派生后的 PRD 包含完整 11 章业务与实施交接，HTML 展示同一套业务内容。

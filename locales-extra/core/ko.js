@@ -22,6 +22,7 @@ module.exports = {
     cmd_create_app: 'Yida 앱 생성',
     cmd_design_plan_preview: '모듈별 계획 초안 업데이트',
     design_plan_preview_invalid: '초안 업데이트 실패. 오류 세부 정보를 확인하세요',
+    cmd_design_plan_catalog: '계획에 사용할 수 있는 테마와 페이지 패턴 조회',
     cmd_design_plan_init: '확인된 요구 사항으로 계획 초안 만들기',
     cmd_design_plan_materialize: 'build-plan.json에서 설계 계획 산출물 생성 및 검증',
     cmd_design_plan_patch: '필드 경로로 계획을 수정하고 이전 확인 무효화',
