@@ -2466,6 +2466,23 @@ test('command and agent navigation policies align with AI intake decisions', () 
   expect(capabilities.recommended.default_full_app_workflow.completion_contract).toBe(workflow.completion_contract);
 });
 
+test('plain user-facing guidance is available from manifest and both agent capability formats', () => {
+  const manifest = JSON.parse(runOk(['commands', '--json']));
+  const summary = JSON.parse(runOk(['agent-capabilities', '--summary-json']));
+  const capabilities = JSON.parse(runOk(['agent-capabilities', '--json']));
+  const policy = manifest.summary.core_workflows.full_app_build.user_visible_expression_policy;
+  expect(policy).toMatchObject({
+    audience: 'nontechnical_user',
+    wording: expect.stringContaining('everyday language'),
+    failures: expect.stringContaining('pending verification'),
+    diagnostics: expect.stringContaining('exact technical fields and error codes'),
+  });
+  expect(summary.full_app_artifact_route.user_visible_expression_policy).toEqual(policy);
+  expect(capabilities.commands.core_workflows.full_app_build.user_visible_expression_policy).toEqual(policy);
+  expect(capabilities.recommended.default_full_app_workflow.user_visible_expression_policy).toEqual(policy);
+  expect(fs.existsSync(path.join(ROOT, policy.reference))).toBe(true);
+});
+
 test('asset fallback and completion policies are shared by the CLI, manifest and agent summary', () => {
   const sources = JSON.parse(runOk(['asset', 'sources', '--json']));
   const manifest = JSON.parse(runOk(['commands', '--json']));
