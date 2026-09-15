@@ -24,7 +24,7 @@ openyida design-plan materialize prd/<项目名>/build-plan.json --from-preview 
 
 CLI 完整校验后一起保存源计划、`prd.md`、`design.md`、`build-plan.html` 和 `app-theme.css`。HTML 使用预置模板，业务内容与 PRD 一致。
 
-标准首版必须直接执行 init 返回的 `materialize.command`；不得先试 `--from-preview`、`preview`、无参数 materialize 或 shell 重定向。成功 JSON 已包含 `outputs.html` 和 `revision`，直接用于下一步同一次结构化提问，不再 Glob 目录，也不额外 Read `prd.md`、`design.md` 或 `build-plan.json`。
+标准首版的生成入口是 init 返回的 `materialize.command`。成功 JSON 中的 `outputs.html` 和 `revision` 直接构成下一步结构化确认的附件与版本输入。按模块更新过的草稿使用本节单列的 `--from-preview` 命令；诊断使用下方 `--check` 命令。
 
 完整文件的职责与版本规则见 [完整文件合并](../parallel-work.md#plan-的-cli-交接)。直接维护源计划时先设 `meta.status=awaiting_confirmation`，再执行 `openyida design-plan materialize prd/<项目名>/build-plan.json --json`；仅做诊断时使用 `openyida design-plan materialize prd/<项目名>/build-plan.json --check --json`。正常生成已经包含完整校验，不先运行一次 --check 再重复生成。
 
@@ -37,7 +37,7 @@ HTML 保留“需求总览、数据模型、业务流程、页面规划”四章
 按 [用户交互契约](../../../yida-design/references/ask-human-interaction-contract.md) 执行：
 
 1. 在会话中展示“当前这版方案”，并用 3–7 条业务摘要说明方案内容。
-2. 必须实际调用 `ask_human` 创建结构化提问，并通过同一次调用的 `attachments` 携带可打开的 `prd/<项目名>/build-plan.html`；附件对象固定使用 `name: "build-plan.html"`，并将 `revision` 设为当前 `meta.revision`。调用必须遵守交互契约中的实际参数模板：一个顶层 `question`、恰好两个顶层 `options`（value 只能是 `confirm_build`、`continue_editing`）、同次调用的 `attachments`、`revision` 和 `submitLabel`。禁止使用 `fields`、`text`、`textarea`，禁止增加“调整说明”或其他条件式输入。只输出方案正文或普通 assistant 文本后结束本轮属于未完成，严禁用它替代 `ask_human`；也不得改成项目标题，或先发普通文本附件、再单独提问。
+2. 实际调用 `ask_human` 创建结构化提问。调用对象严格采用交互契约中的唯一 payload schema；`attachments` 携带 `name: "build-plan.html"`、`path: "prd/<项目名>/build-plan.html"`，`revision` 使用当前 `meta.revision`，`options` 固定为 `confirm_build` 和 `continue_editing`。一次成功调用同时建立方案展示、版本绑定和最终选择。
 3. 结构化交互成功创建后内部记录 `presentedRevision=meta.revision`。询问“确认并开始搭建”或“继续调整”，提交时由宿主原样回传 revision，将确认结果绑定到本次展示版本。用户可见版本称为“第 N 版方案”，展示序号与内部 revision 绑定。
 
 只有以下条件同时成立才交接；它们由本轮 ask_human 请求和回传在运行时判定，不要求把确认状态写回 workspace 文件：
@@ -46,11 +46,11 @@ HTML 保留“需求总览、数据模型、业务流程、页面规划”四章
 - `meta.planState.planConfirmed=true`
 - `meta.revision=presentedRevision=confirmedRevision`
 
-收到“确认并开始搭建”且回传 revision 等于展示 revision 后，直接进入同版本资源实施。确认之后严禁再次 materialize、patch、Edit 或 Read 计划来“同步确认状态”；不存在可写 `meta.planState.planConfirmed` 的确认命令。`explicitScope.allowInferredResources=false` 时也不执行主题 CSS、应用设置或导航交接，只创建范围内资源并回读、交付。
+收到 `confirm_build` 且回传 revision 等于展示 revision 后，以该版本计划作为实施阶段的唯一方案输入并直接创建范围内资源。`explicitScope.allowInferredResources=false` 时，实施范围由 `explicitScope` 决定，完成资源创建、回读和交付。
 
 ## 4. 处理调整
 
-用户选择“继续调整”后保持在 Plan Design，本轮不创建应用、表单、流程或页面。下一轮再单独询问需要修改的内容；不要把调整说明、自由文本或 textarea 塞进最终确认卡。收到具体调整后才执行下面的 patch，物化新 revision 并重新展示最终确认。
+`continue_editing` 把工作流从 `awaiting_confirmation` 转为 `editing`。下一次交互收集变更内容；收到变更后更新当前计划源，物化新 revision，并重新进入最终确认。
 
 按字段更新源事实并重新生成，例如同时调整品牌色和圆角：
 
