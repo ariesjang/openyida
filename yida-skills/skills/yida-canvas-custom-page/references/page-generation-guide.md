@@ -14,15 +14,14 @@ PRD 写有 `pageSpecHandoff` 时，可以把 `pageSpecHandoff` 转成 `page-spec
 
 ## Source Of Truth
 
-`prd.md` 和 `design.md` 是唯一设计事实源。`page-spec.json` 只是页面实现阶段的派生文件，用于喂给生成器或保存一次稳定交接，不是第三份设计文件。
+业务按 `prd.md` 实现，视觉按 `design.md` 实现。手写页面可直接使用这两份文件；使用生成器时，先整理 `page-spec.json`：
 
-- `page-spec.json` 必须由当前 `prd.md + design.md` 派生，不允许凭空新增视觉规则、页面结构或业务功能。
-- `page-spec.json` 不复制 `visualScaffold`、`surfaceMap`、`componentRecipe`、tokens、完整色盘或组件规则；只保存 `designFile/designRefs` 和与 design.md 一致的 `themeSummary`。
-- spec 必须包含 `sourceOfTruth.prdFile`、`sourceOfTruth.designFile`、`sourceOfTruth.designRefs` 和 `sourceOfTruth.conflictPolicy = "prd-design-win"`。
-- spec 与 PRD/design.md 冲突时，以 PRD/design.md 为准，重新生成 spec；不要修改 PRD/design.md 来迎合旧 spec。
-- 手写页面且结构清楚时可以跳过 `page-spec.json`，但源码实现备注必须能说明已读取 `prd.md` 和 `design.md`。
+- 业务字段来自当前 PRD。
+- 视觉部分保存 `designFile/designRefs` 和一致的 `themeSummary`，完整视觉规则从 design.md 读取。
+- `sourceOfTruth` 填写 `prdFile`、`designFile`、`designRefs` 和 `conflictPolicy = "prd-design-win"`。
+- spec 与 PRD/design.md 冲突时，按这两份文件重新生成 spec。
 
-实现阶段不再从 PRD 里反推视觉，也不直接读取 `references/style-designs/`。该目录只在 yida-design 阶段提供 `design.md` 结构模板；`YidaCodeCanvas` 组件实现只遵守当前项目的 `design.md`。工作台/业务首页通常需要圆润紧凑状态摘要、高频动作、待办/动态/最近记录和右侧上下文；实现阶段用这些结构替代“4 个等宽大 KPI 白卡 + 图标快捷卡 + 大空态白卡”。列表/管理页通常需要顶部视觉区、搜索筛选区、左侧列表或表格、右侧详情预览、错误/空态下一步动作；实现阶段用这些结构替代单个渐变标题、单个指标卡和大块空白提示。工作台、首页、门户、看板、展示页和业务入口页推荐落地 8-10 个有业务目的的区块以上；区块可以紧凑组合，不能用重复 KPI 卡、重复快捷入口或大空白卡凑数；KPI 子项、快捷入口子项和列表行不计入区块数量。窄场景或用户要求精简时可以更少，不应因此阻塞实现。
+按页面任务组织内容：工作台通常包含状态摘要、高频动作、待办、动态和上下文信息；列表页通常包含搜索筛选、列表或表格、详情预览，以及空态和错误时的下一步操作。工作台、首页、门户、看板和展示页推荐 8-10 个有业务目的的区块，窄场景或精简需求按实际任务减少。KPI 子项、快捷入口子项和列表行计入各自所属区块。
 
 如果当前 `design.md` 缺少 `roundedRule`、`densityRule` 或 `breathingRule`，先回写设计文件再实现。默认业务页应写清卡片 padding >20px、卡片 gap <20px、卡片圆角 0-32px；状态摘要、任务列表、动作条和空态保持紧凑，不得用额外 margin、超宽空状态框或空白高度制造“高级感”。
 

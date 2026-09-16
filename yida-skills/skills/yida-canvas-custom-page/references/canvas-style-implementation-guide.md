@@ -1,10 +1,10 @@
 # YidaCodeCanvas 组件样式实现指南
 
-本文件是 `YidaCodeCanvas` 组件的样式实现适配指南，不是新的设计系统，也不产出配色、视觉 DNA 或页面风格。业务事实来自 `yida-prd` 输出的 `prd.md`，视觉事实来自 `yida-design` 输出的 `design.md`。`YidaCodeCanvas` 页面只在 `YidaComp` 内消费当前应用的主题 token，并把布局、材质、密度、图表、控件状态和背景规则落到组件内部。
+按本指南把 `design.md` 的布局、材质、密度、图表和控件样式写入 Canvas 页面。业务事实来自 `yida-prd` 输出的 `prd.md`，视觉事实来自 `yida-design` 输出的 `design.md`。
 
-`app-theme.css` 只在应用级配置，平台负责应用壳、原生表单、详情页和 `YidaCodeCanvas` 外层的主题一致性。Canvas Page 宿主的 `contentBgColor`、`pageStyle.backgroundColor` 和 `contentBgColorMobile` 使用 `var(--pod-page-bg-color, var(--color-white, #fff))`，保证平台宿主背景一致；自绘导航页的内部画布允许采用下文的局部背景方案。
+应用主题通过 app-theme.css 配置，页面样式限定在 `YidaComp` 内，使用 `--pod-page-*`、`--pod-card-*`、`--color-brand1-*` 和 `--color-group`。平台负责应用壳、原生表单和详情页的主题。
 
-宿主属性绑定不是主题注入。严禁生成 `body` 背景 CSS，也严禁 `YidaComp` 修改 `document.documentElement`、`document.body`、父页面或平台容器的主题变量。组件自己的背景、卡片和控件样式留在 `YidaComp` 内，并使用 `--pod-page-*`、`--pod-card-*`、`--color-brand1-*` 和 `--color-group`。
+CLI 将 Canvas 宿主的 `contentBgColor`、`pageStyle.backgroundColor`、`contentBgColorMobile` 设为 `var(--pod-page-bg-color, var(--color-white, #fff))`。自绘导航页的内部画布按下方规则设置局部背景。
 
 ## 嵌入页面的宿主高度
 

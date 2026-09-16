@@ -644,9 +644,8 @@ describe('OpenYida skill contracts', () => {
     const guide = readSkill('yida-skills/skills/yida-canvas-custom-page/references/data-bridge-guide.md');
 
     expect(skill).toContain('每行业务字段位于 `row.formData[fieldId]`');
-    expect(skill).toContain('`row.formData || row.data || row` 归一化为页面行模型');
-    expect(skill).toContain('不能把字段 ID 直接作为原始行顶层的 `dataIndex`');
-    expect(skill).toContain('有记录但全部显示空值/--');
+    expect(skill).toContain('`row.formData || row.data || row` 和真实字段 ID 转为页面行数据');
+    expect(skill).toContain('再把表格 `dataIndex` 绑定到转换后的字段');
     expect(skill).toContain('`dynamicOrder` key 必须来自当前 `get-schema` 返回的真实业务字段 ID');
     expect(skill).toContain('禁止使用返回记录的元数据名 `gmtCreate`');
     expect(skill).toContain('没有可排序的业务日期字段时删除 `dynamicOrder`');
@@ -742,7 +741,7 @@ describe('OpenYida skill contracts', () => {
     expect(appStep7).toContain('回写 `prd.md`');
     expect(appStep7).toContain('回写 `design.md`');
     expect(appStep7).toContain('小范围 patch 源码');
-    expect(pageGeneration).toContain('实现阶段不再从 PRD 里反推视觉，也不直接读取 `references/style-designs/`');
+    expect(pageGeneration).toContain('业务按 `prd.md` 实现，视觉按 `design.md` 实现');
     expect(pageGeneration).toContain('页面实现路径二选一');
     expect(pageGeneration).toContain('结构化实现工具提供可编译运行时结构');
     expect(skill).toContain('[写入初始表单数据](workflow/step-5-seed-records.md)');
@@ -883,10 +882,10 @@ describe('OpenYida skill contracts', () => {
     expect(pageGeneration).toContain('源码不得输出浅底白卡无边框');
     expect(pageGeneration).toContain('实现时按下表选择页面结构');
     expect(pageGeneration).toContain('## Source Of Truth');
-    expect(pageGeneration).toContain('`prd.md` 和 `design.md` 是唯一设计事实源');
-    expect(pageGeneration).toContain('`page-spec.json` 只是页面实现阶段的派生文件');
-    expect(pageGeneration).toContain('sourceOfTruth.conflictPolicy = "prd-design-win"');
-    expect(pageGeneration).toContain('`YidaCodeCanvas` 组件实现只遵守当前项目的 `design.md`');
+    expect(pageGeneration).toContain('spec 与 PRD/design.md 冲突时，按这两份文件重新生成 spec');
+    expect(pageGeneration).toContain('手写页面可直接使用这两份文件；使用生成器时，先整理 `page-spec.json`');
+    expect(pageGeneration).toContain('`sourceOfTruth` 填写 `prdFile`、`designFile`、`designRefs` 和 `conflictPolicy = "prd-design-win"`');
+    expect(pageGeneration).toContain('视觉部分保存 `designFile/designRefs` 和一致的 `themeSummary`，完整视觉规则从 design.md 读取');
     expect(pageGeneration).toContain('## 修复路径');
     expect(pageGeneration).toContain('页面目标、业务对象、指标口径、主操作、表单入口、数据来源');
     expect(pageGeneration).toContain('回写 `prd.md`，再重新派生 `page-spec.json`');
@@ -1054,13 +1053,13 @@ describe('OpenYida skill contracts', () => {
       expect(doc).toContain('_csrf_token');
     });
     expect(canvas).toContain('window.__OPENYIDA_YIDA_API__.searchFormDatas(params)');
-    expect(canvas).toContain('startProcessInstance');
-    expect(canvas).toContain('searchUserList');
+    expect(bridge).toContain('startProcessInstance');
+    expect(bridge).toContain('searchUserList');
     expect(bridge).toContain('getProcessInstances');
     expect(bridge).toContain('window.__OPENYIDA_UTILS__.yida');
     expect(step7).toContain('表单/流程/表单设计 API 走 yida API 桥');
     expect(publish).toContain('发布流程会在外层页面 `didMount` 注入');
-    expect(canvas).toContain('不能使用 `/query/form/searchFormDatas.json`');
+    expect(canvas).toContain('references/data-bridge-guide.md');
     expect(dataBinding).toContain('`/query/form/searchFormDatas.json` 不是可用表单数据端点');
     expect(bridge).toContain('`/query/form/searchFormDatas.json` 不是可用表单数据端点');
     expect(generation).toContain('用前端 seedRows 冒充真实表单数据');
@@ -1147,7 +1146,7 @@ describe('OpenYida skill contracts', () => {
     expect(appStep1).toContain('读取 PRD、字段 JSON、页面源码或 schema 文件时优先用当前工具的 Read / Glob / Grep');
 
     [appStep1, canvas, native, publish].forEach((skill) => {
-      expect(skill).toContain('从仓库根执行');
+      expect(skill).toMatch(/从(?:仓库|工作区)根执行/);
       expect(skill).toContain('<workspace>/project');
       expect(skill).toContain('`pages/src/...`');
     });
@@ -1189,12 +1188,12 @@ describe('OpenYida skill contracts', () => {
     expect(appStep9).toContain('显示至少一条已 query 确认的记录');
 
     expect(canvas).toContain('final 前需要成功执行 `openyida publish <source> <appType> <displayPageFormUuid>`');
-    expect(canvas).toContain('不得用 Python、Node、Shell 或 `run_workspace_script`');
+    expect(canvas).toContain('业务源码使用 Write/Edit/patch 编写');
     expect(canvas).toContain('已有 JSX/CSS/JSON 源码只做定点 Edit');
     expect(canvas).toContain('不要写 `project/.cache/...`');
     expect(canvas).toContain('openyida compile <页面源码.canvas.jsx> --json');
     expect(canvas).not.toContain('node -e');
-    expect(canvas).toContain('该历史源码只由 `yida-custom-page` 自身闭环维护');
+    expect(canvas).toContain('维护 `.oyd.jsx` / `.oyb.jsx` / `renderJsx` / 平台 `Jsx` 页面时使用 `yida-custom-page`');
     expect(canvas).toContain('交给 `yida-canvas-upgrade`');
     expect(canvas).toContain('有 publish 成功证据时表述为“页面已发布”');
     expect(canvas).toContain('只有本地校验证据时表述为“源码已修改，尚未发布”');
@@ -1241,8 +1240,8 @@ describe('OpenYida skill contracts', () => {
     expect(canvas).toContain('一次修复 `details.issues` 中的全部名称');
     expect(canvas).toContain('const dingTalk = window.dd;');
     expect(canvas).toContain("typeof dingTalk?.biz?.navigation?.setTitle === 'function'");
-    expect(canvas).toContain('未绑定标识符守卫边界');
-    expect(canvas).toContain('不代表能发现全部拼写错误');
+    expect(canvas).toContain('编译通过后仍需检查变量拼写');
+    expect(canvas).toContain('误写成这些名字时编译器也可能放行');
     expect(canvas).toContain('`name`、`status`、`length`、`event`、`origin`、`top`');
     const drawerTemplate = readSkill('lib/samples/openyida-scaffold/canvas-form-drawer.canvas.jsx');
     expect(drawerTemplate.match(/function getYidaFormInstId\(/g)).toHaveLength(1);
@@ -1405,7 +1404,7 @@ describe('OpenYida skill contracts', () => {
     expect(outputDesign).toContain('校验脚本只能读取并报告问题，不能改写主题文件');
     expect(step2).toContain('若截图或预览中出现左侧导航选中态与页面主操作颜色不一致');
     expect(styleSelection).toContain('应用主题主导，生成色彩作为辅助色');
-    expect(canvasStyleGuide).toContain('本文件是 `YidaCodeCanvas` 组件的样式实现适配指南，不是新的设计系统');
+    expect(canvasStyleGuide).toContain('按本指南把 `design.md` 的布局、材质、密度、图表和控件样式写入 Canvas 页面');
     expect(canvasStyleGuide).toContain('业务事实来自 `yida-prd` 输出的 `prd.md`，视觉事实来自 `yida-design` 输出的 `design.md`');
     expect(canvasStyleGuide).toContain('## 应用主题与页面风格冲突处理');
     expect(canvasStyleGuide).toContain('默认值是 `跟随应用主题`，不是 `跟随生成色盘色相`');
@@ -1574,11 +1573,11 @@ describe('OpenYida skill contracts', () => {
     expect(step5).toContain('KPI 子项、快捷入口子项和列表行不能分别计数');
     expect(outputPrd).toContain('推荐逐条列出 8-10 个 `contentBlocks` 以上');
     expect(outputPrd).toContain('KPI 组、快捷入口组、列表组各只算 1 个区块');
-    expect(pageGeneration).toContain('替代“4 个等宽大 KPI 白卡 + 图标快捷卡 + 大空态白卡”');
+    expect(pageGeneration).toContain('工作台通常包含状态摘要、高频动作、待办、动态和上下文信息');
     expect(pageGeneration).toContain('工作台的状态摘要必须是 64-88px 圆润紧凑状态条');
     expect(pageGeneration).toContain('`contentBlocks`');
-    expect(pageGeneration).toContain('推荐落地 8-10 个有业务目的的区块以上');
-    expect(pageGeneration).toContain('KPI 子项、快捷入口子项和列表行不计入区块数量');
+    expect(pageGeneration).toContain('推荐 8-10 个有业务目的的区块');
+    expect(pageGeneration).toContain('KPI 子项、快捷入口子项和列表行计入各自所属区块');
     expect(pageGeneration).toContain('实现前建议补充 `contentBlocks`');
     expect(canvasStyleGuide).toContain('## 工作台卡片密度红线');
     expect(canvasStyleGuide).toContain('禁止使用“4 个等宽大 KPI 白卡 + 彩色图标盒 + 大数字 0”');
@@ -1773,16 +1772,17 @@ describe('OpenYida skill contracts', () => {
     expect(pageUiux).toContain('常规业务图表使用 `yida-rechart`');
     expect(pageUiux).toContain('ECharts 例外');
     expect(pageUiux).toContain('workflow/output-design.md#cli-token-契约fast--plan-共用');
-    expect(canvas).toContain('产品与视觉输入来自 `yida-prd` 输出的 `prd/<项目名>/prd.md` 和 `yida-design` 输出的 `prd/<项目名>/design.md`');
-    expect(canvas).toContain('主题只消费、不上注');
+    expect(canvas).toContain('从 `yida-prd` 的 `prd/<项目名>/prd.md` 读取业务目标');
+    expect(canvas).toContain('从 `yida-design` 的 `prd/<项目名>/design.md` 读取主题');
+    expect(canvas).toContain('页面跟随应用主题');
     expect(canvas).not.toContain('update-app <appType> --theme-file');
     expect(canvas).toContain('canvas-style-implementation-guide.md');
     expect(canvas).not.toContain('canvas-design-system.md');
     expect(canvas).not.toContain('references/theme-runtime-helpers.md');
-    expect(canvas).toContain('主题只消费、不上注');
-    expect(canvas).toContain('`contentBgColor`、`pageStyle.backgroundColor` 和 `contentBgColorMobile`');
-    expect(canvas).toContain('这是宿主容器消费应用 token，不是注入主题');
-    expect(canvas).toContain('严禁修改 `document.documentElement`、`document.body`、父页面或平台容器的主题变量');
+    expect(canvas).toContain('页面跟随应用主题');
+    expect(canvasStyleGuide).toContain('`contentBgColor`、`pageStyle.backgroundColor`、`contentBgColorMobile`');
+    expect(canvas).toContain('宿主背景和局部画布规则见 [样式指南]');
+    expect(canvas).toContain('样式限定在 `YidaComp` 内');
     expect(canvas).toContain('必须写 `import ... from \'包名\'`');
     expect(canvas).toContain('严禁写未声明裸变量依赖或手写 window 依赖');
     expect(canvas).toContain('`const { Drawer } = antd`');
@@ -1792,16 +1792,16 @@ describe('OpenYida skill contracts', () => {
     expect(authoringExamples).toContain('所有包依赖都用标准 `import`');
     expect(authoringExamples).toContain('不要直接从 `window.*` 解构');
     expect(authoringExamples).toContain('JSX 文案只能写成纯文本 `所有级别` 或带引号字符串 `{\'所有级别\'}`');
-    expect(canvasStyleGuide).toContain('本文件是 `YidaCodeCanvas` 组件的样式实现适配指南，不是新的设计系统');
+    expect(canvasStyleGuide).toContain('按本指南把 `design.md` 的布局、材质、密度、图表和控件样式写入 Canvas 页面');
     expect(canvasStyleGuide).toContain('业务事实来自 `yida-prd` 输出的 `prd.md`，视觉事实来自 `yida-design` 输出的 `design.md`');
     expect(pageUiux).toContain('yida-canvas-custom-page 样式实现指南');
     expect(pageUiux).not.toContain('Canvas 设计系统');
     expect(canvasStyleGuide).toContain('| `--color-brand1-6` | 主色 |');
     expect(canvasStyleGuide).toContain('| `--color-brand-1` ~ `--color-brand-4` | 移动端品牌色阶 |');
     expect(canvas).toContain('页面背景、组件样式和主题 Provider 只作用于 `YidaComp` 的组件子树');
-    expect(canvasStyleGuide).toContain('组件自己的背景、卡片和控件样式留在 `YidaComp` 内');
-    expect(canvasStyleGuide).toContain('宿主属性绑定不是主题注入');
-    expect(canvasStyleGuide).toContain('严禁生成 `body` 背景 CSS');
+    expect(canvasStyleGuide).toContain('页面样式限定在 `YidaComp` 内');
+    expect(canvasStyleGuide).toContain('CLI 将 Canvas 宿主的');
+    expect(canvasStyleGuide).toContain('平台负责应用壳、原生表单和详情页的主题');
     expect(canvasStyleGuide).toContain('min-height: 100vh;');
     expect(canvasStyleGuide).toContain('background: var(--pod-page-bg-color, var(--color-white, #fff));');
     expect(canvasStyleGuide).toContain('background: var(--pod-card-bg-color, var(--color-white, #fff));');
@@ -1821,7 +1821,7 @@ describe('OpenYida skill contracts', () => {
     expect(canvasStyleGuide).toContain('## 源码结构验收');
     expect(canvasStyleGuide).toContain('缺少 `prioritySurface`、`contentPrimitive` 或 `statePrimitive` 任意一项');
     expect(pageGeneration).toContain('| `themeSummary` | 应用主题色、风格关键词、主题交付方式摘要 |');
-    expect(pageGeneration).toContain('`page-spec.json` 不复制 `visualScaffold`、`surfaceMap`、`componentRecipe`、tokens、完整色盘或组件规则');
+    expect(pageGeneration).toContain('视觉部分保存 `designFile/designRefs` 和一致的 `themeSummary`，完整视觉规则从 design.md 读取');
     expect(pageGeneration).toContain('| `sourceOfTruth` |');
     expect(pageGeneration).toContain('"conflictPolicy": "prd-design-win"');
     expect(pageGeneration).toContain('使用 `YidaCodeCanvas` 组件实现的自定义页面消费 `yida-prd` 输出的 `prd.md` 与 `yida-design` 输出的 `design.md`');
@@ -1835,8 +1835,8 @@ describe('OpenYida skill contracts', () => {
     expect(allSkillGuidance).not.toContain('yidaThemeRuntime');
     expect(allSkillGuidance).not.toContain('data-yida-theme-root');
     expect(pageGeneration).toContain('页面美感提升/页面重构写入 `functionContract`');
-    expect(canvas).toContain('完整应用默认在页面实现前通过 `yida-data-management` 写入 1-3 条业务化 demo records');
-    expect(canvas).toContain('页面读取这些真实表单记录，不使用前端 seedRows 冒充');
+    expect(canvas).toContain('完整应用默认先用 `yida-data-management` 把 1-3 条业务化 seed records 写入核心普通表单并抽查');
+    expect(canvas).toContain('再让页面读取；前端静态数据只能用于明确标注的离线演示态');
     expect(canvas).toContain('JSX 文案只能写成纯文本 `所有级别` 或带引号字符串 `{\'所有级别\'}`');
     expect(pageGeneration).toContain('默认读取 `yida-app` 通过 `yida-data-management` 写入的 1-3 条 seed records');
     expect(readSkill('yida-skills/skills/yida-canvas-custom-page/references/data-bridge-guide.md')).toContain('完整应用/真实交付页默认先由 `yida-app` 调用 `yida-data-management` 把 1-3 条 demo records 写入真实表单');
