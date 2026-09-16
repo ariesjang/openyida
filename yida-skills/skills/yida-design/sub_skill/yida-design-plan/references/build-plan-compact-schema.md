@@ -134,9 +134,9 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 openyida design-plan patch prd/<项目名>/build-plan.json --set 'visualStyle.forUser.colorStrategy.primaryColor=#8B5E3C' --materialize --json
 ```
 
-CLI 在方案变更时递增 revision、清除旧确认；仅更新 `visualStyle.forUser.assetStrategy.materialStatus` 和 `missingAssets` 时保留 revision 与已有确认。使用 `--materialize` 同步三份文档和主题 CSS。支持首次添加 execution 的可选字段、tokens、已有页面交接字段和模型示例数据；数组项需已存在。
+初始化 revision=1；未展示的首次合并、preview 汇总和内部 patch 保持当前版。已展示或已确认的当前版发生实质修改才升版并清空确认；相同内容不升版。旧文件缺少 planState 时保守升版。片段仍以 base.digest 校验来源，版本相同也不能复用过期片段。仅更新素材 materialStatus/missingAssets 保留版本与确认。
 
-并行合并时 CLI 设置 `meta.status=awaiting_confirmation`；直接维护单一计划时由编排在生成前设置。展示成功后记录 `meta.planState.presentedRevision=meta.revision`；收到明确确认后设置 status=confirmed、planConfirmed=true、confirmedRevision=presentedRevision，再生成文档同步确认状态。详细交互见应用流程的生成与确认步骤。`askhuman` 只保存需要留档的交互事实，未选候选留在会话中。
+展示成功后必须将 `meta.planState.presentedRevision=meta.revision` 写回源 JSON，仅更新展示事实，不再物化。awaiting_confirmation 仅表示准备确认，不证明已展示；收到明确确认后绑定 confirmedRevision、planConfirmed 与同版产物，按应用流程交接。内部补全不得伪造展示或确认记录。`--materialize` 同步文档和主题；可选字段范围见下节。
 
 旧版无 schemaVersion 或 1.x 文件继续使用原结构；维护旧计划时按需查阅旧版结构说明。
 

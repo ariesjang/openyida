@@ -401,6 +401,7 @@ test('materializes a complete standard Plan from business facts and the prepared
   fs.writeFileSync(businessFile, JSON.stringify(business));
   const output = materialize(result.output, { businessFile, visualFile: result.preparedInputs.visual });
   expect(output.success).toBe(true);
+  expect(output).toMatchObject({ previousRevision: '1', revision: '1' });
   const design = fs.readFileSync(output.outputs.design, 'utf8');
   expect(design).toContain('dashboard');
   expect(design).toContain('#6F4E37');

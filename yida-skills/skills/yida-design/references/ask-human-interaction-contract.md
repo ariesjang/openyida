@@ -160,7 +160,7 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 
 1. 在会话中使用“当前这版方案”或“第 N 版方案”，给出 3-7 条业务摘要；原始 `meta.revision` 仅用于内部状态绑定。
 2. 在“最新搭建计划确认”的同一次 `ask_human` 中，通过 `attachments` 展示可打开的 `prd/<项目名>/build-plan.html`，并以 `revision` 绑定当前 `meta.revision`。
-3. 结构化交互成功创建后令 `meta.planState.presentedRevision` 等于 `meta.revision`；awaiting_confirmation 在生成前写入。
+3. 结构化交互成功创建后将 `meta.planState.presentedRevision=meta.revision` 写回源 JSON，不再物化；awaiting_confirmation 在生成前写入。
 4. 提供“确认并开始搭建”和“继续调整”两个选择，并等待用户回答。
 
 `build-plan.html` 不承载对话控件或确认按钮；用户在会话中完成确认。
@@ -220,7 +220,7 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 
 1. 首次生成计划时创建 `meta.revision`，设置 `meta.status=draft`、`meta.planState.planConfirmed=false`。
 2. 业务方案或视觉方案变化时生成新的 `meta.revision`，并清空旧确认信息。素材采集后的进度同步保留版本与已有确认，直接继续搭建。
-3. 计划展示完成后设置 `meta.status=awaiting_confirmation` 和 `presentedRevision=meta.revision`。
+3. 计划展示成功后向源 JSON 写回 `meta.status=awaiting_confirmation` 和 `presentedRevision=meta.revision`。
 4. 用户在最终确认交互中选择 `confirm_build`（确认并开始搭建）且回传 revision 等于展示 revision 时，设置 `meta.status=confirmed`、`planConfirmed=true`、`confirmedRevision=meta.revision`，同时记录交互 ID 和确认时间。
 5. 只有 `meta.status=confirmed`、`planConfirmed=true` 且 `meta.revision=presentedRevision=confirmedRevision` 时，Plan Design 才能返回 `yida-app` Step 3。
 6. 用户选择“继续调整”时保持在 Plan Design，本轮不创建应用资源；下一轮单独收集调整内容，生成新 revision 并重新确认。用户取消或关闭交互时停止执行，不创建应用资源。

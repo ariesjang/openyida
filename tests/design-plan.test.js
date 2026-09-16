@@ -728,6 +728,31 @@ describe('design-plan materialize', () => {
     expect(html).toContain('#8B5E3C');
   });
 
+  test('internal patches keep the current draft revision; only editing the presented version advances it', () => {
+    const input = path.join(tempDir, 'build-plan.json');
+    const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
+    plan.meta.revision = '1';
+    plan.meta.planState = { presentedRevision: null, confirmedRevision: null, planConfirmed: false };
+    fs.writeFileSync(input, JSON.stringify(plan));
+    const patch = color => patchPlan(input, [`visualStyle.forUser.colorStrategy.primaryColor=${color}`]);
+    expect(patch('#123456').revision).toBe('1');
+    // Awaiting confirmation alone does not prove a successful user presentation.
+    const ready = JSON.parse(fs.readFileSync(input));
+    ready.meta.status = 'awaiting_confirmation';
+    fs.writeFileSync(input, JSON.stringify(ready));
+    expect(patch('#234567').revision).toBe('1');
+    const presented = JSON.parse(fs.readFileSync(input));
+    presented.meta.planState.presentedRevision = '1';
+    fs.writeFileSync(input, JSON.stringify(presented));
+    expect(patch('#345678').revision).toBe('2');
+    expect(JSON.parse(fs.readFileSync(input)).meta.planState.presentedRevision).toBeNull();
+    expect(patch('#456789').revision).toBe('2');
+    expect(patch('#456789')).toMatchObject({ changed: false, revision: '2' });
+    const beforeFailure = fs.readFileSync(input, 'utf8');
+    expect(() => patch('not-a-color')).toThrow();
+    expect(fs.readFileSync(input, 'utf8')).toBe(beforeFailure);
+  });
+
   test.each([true, false])('asset progress preserves existing approval (%s) and refreshes documents', (confirmed) => {
     const input = path.join(tempDir, 'build-plan.json');
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));

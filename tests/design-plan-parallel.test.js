@@ -33,6 +33,7 @@ test('joins independent results, invalidates old confirmation, and writes one ma
   source.meta.status = 'confirmed';
   source.meta.planState = { planConfirmed: true, presentedRevision: source.meta.revision, confirmedRevision: source.meta.revision };
   business.base = visual.base = planBase(source);
+  business.facts.overview.summary = '根据已展示方案补充采购目标';
   save();
   const beforeParts = [businessFile, visualFile].map(file => fs.readFileSync(file, 'utf8'));
   const result = JSON.parse(require('child_process').execFileSync(process.execPath, [path.join(__dirname, '../bin/yida.js'),
@@ -49,6 +50,31 @@ test('joins independent results, invalidates old confirmation, and writes one ma
   }
   expect([businessFile, visualFile].map(file => fs.readFileSync(file, 'utf8'))).toEqual(beforeParts);
   expect(() => merge()).toThrow('旧版本');
+});
+
+test('first assembly keeps revision 1 and still rejects reused parts by digest', () => {
+  source.meta.revision = '1';
+  source.meta.planState = { presentedRevision: null, confirmedRevision: null, planConfirmed: false };
+  business.base = visual.base = planBase(source);
+  business.facts.overview.summary = '首次补全业务事实';
+  save();
+  const result = merge();
+  expect(result).toMatchObject({ previousRevision: '1', revision: '1' });
+  expect(JSON.parse(fs.readFileSync(input)).meta.status).toBe('awaiting_confirmation');
+  for (const name of ['prd', 'design']) {
+    expect(fs.readFileSync(result.outputs[name], 'utf8')).toContain('buildPlanRevision: "1"');
+  }
+  expect(() => merge()).toThrow('旧版本');
+});
+
+test('identical reassembly preserves a confirmed version and its approval', () => {
+  source.meta.status = 'confirmed';
+  source.meta.planState = { planConfirmed: true, presentedRevision: source.meta.revision, confirmedRevision: source.meta.revision };
+  business.base = visual.base = planBase(source);
+  save();
+  const result = merge();
+  expect(result.revision).toBe(source.meta.revision);
+  expect(JSON.parse(fs.readFileSync(input)).meta).toEqual(source.meta);
 });
 
 test.each([
