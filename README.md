@@ -393,6 +393,8 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 
 | Command | Description |
 |---------|-------------|
+| `openyida app-entry get <appType> [--json]` | Read frontend and management runtime entries |
+| `openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]` | Register application entries with partial update and readback |
 | `openyida app-list [--type managed\|created] [--page N] [--size N]` | Page through apps I manage or created |
 | `openyida corp-efficiency [overview\|details\|detail\|groups\|notify] [options] [--open\|--no-open]` | Query enterprise efficiency overview and detail reports |
 | `openyida create-app "<name>"\|--name <name> [options] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Create a Yida app |

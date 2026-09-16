@@ -5,6 +5,14 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  app_entry: {
+    desc_get: 'Read frontend and management runtime entries',
+    desc_set: 'Register application entries with partial update and readback',
+    usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
+    invalid_path: 'Provide a runtime URL for the current organization and application. Designer URLs, other applications, and temporary parameters are unsupported.',
+    invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
+    readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+  },
   asset: {
     localFileUnavailable: "找不到圖片檔案：{0}。請檢查指令工作目錄，或使用絕對路徑。",
     invalidStrategy: "圖片要求應填寫為物件，按頁面列出圖片位置。",

@@ -1652,6 +1652,10 @@ describe('CLI offline smoke', () => {
     expect(parsed.recommended.default_full_app_workflow.completion_contract).toContain('one named application entry group');
     expect(parsed.recommended.default_full_app_workflow.application_entry_policy).toEqual({
       delivery_unit: 'single_application_entry_group',
+      persistence: {
+        command_ids: ['app-entry.get', 'app-entry.set'],
+        policy: expect.stringContaining('Conflicts require reread and review'),
+      },
       workbench: {
         include: 'when_workspace_in_scope',
         url: '{base_url}/{appType}/workbench',

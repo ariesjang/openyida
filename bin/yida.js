@@ -729,6 +729,12 @@ async function main() {
       break;
     }
 
+    case 'app-entry': {
+      const { run } = require('../lib/app/app-entry');
+      await run(args);
+      break;
+    }
+
     case 'app-list': {
       const { run } = require('../lib/app/app-list');
       await run(args);
