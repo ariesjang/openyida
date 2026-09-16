@@ -2469,7 +2469,12 @@ test('command and agent navigation policies align with AI intake decisions', () 
     modes: ['unified', 'service-management', 'frontend-only'],
     local_menu_binding: expect.stringContaining('management/workspace'),
     leaf_access_required: expect.stringContaining('Every leaf menu'),
-    runtime: { default_mode: 'platform', builtin_permission_adapter: false },
+    runtime: {
+      modes: ['local', 'platform', 'independent'], default_mode: 'platform', builtin_permission_adapter: false,
+      local_policy: expect.stringContaining('no platform navigation request'),
+      platform_policy: expect.stringContaining('Every leaf binds formUuid/navUuid'),
+      layout_policy: expect.stringContaining('layout=document with natural height'),
+    },
   });
   expect(workflow.application_entry_policy.workbench).toMatchObject({
     task_url: '{base_url}/{appType}/workbench/{formUuid}', view_parameter: 'viewUuid',

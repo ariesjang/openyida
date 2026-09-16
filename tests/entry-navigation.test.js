@@ -101,6 +101,43 @@ describe('entry planning and platform navigation', () => {
   });
 });
 
+describe('local presentation menus do not depend on platform navigation', () => {
+  const items = ['home', 'culture', 'tour', 'booking'].map(key => ({ key, label: key, targetType: 'local', viewKey: key }));
+  test('keeps all four views, grouping and requested/default selection when platform service is unavailable', async () => {
+    const fetch = jest.fn().mockRejectedValue(new Error('platform unavailable'));
+    const { loadCanvasNavigation, selectCanvasNavigation } = runtime(fetch);
+    const input = [{ key: 'group', children: items }];
+    const result = await loadCanvasNavigation({ items: input, mode: 'local' });
+    expect(result).toEqual(input);
+    expect(selectCanvasNavigation(result, 'tour', 'home').viewKey).toBe('tour');
+    expect(selectCanvasNavigation(result, 'missing', 'home').viewKey).toBe('home');
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  test('declared business permissions still fail closed and never fall back to the full menu', async () => {
+    const view = requirement('FORM_PRIVATE');
+    const input = { items: [items[0], { ...items[1], access: [view] }], mode: 'local', appType: 'APP' };
+    const fetch = jest.fn();
+    const { loadCanvasNavigation } = runtime(fetch);
+    await expect(loadCanvasNavigation(input)).rejects.toThrow('权限查询');
+    await expect(loadCanvasNavigation({ ...input, resolveAccess: async () => ({ appType: 'APP', grants: [] }) })).resolves.toEqual([items[0]]);
+    await expect(loadCanvasNavigation({ ...input, resolveAccess: async () => ({ appType: 'APP', grants: [grant(view)] }) })).resolves.toEqual(input.items);
+    await expect(loadCanvasNavigation({ ...input, resolveAccess: async () => { throw new Error('permission unavailable'); } })).rejects.toThrow('permission unavailable');
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  test('rejects mismatched modes before network access', async () => {
+    const fetch = jest.fn();
+    const { loadCanvasNavigation } = runtime(fetch);
+    for (const mode of [undefined, 'platform']) {
+      await expect(loadCanvasNavigation({ items, mode, appType: 'APP' })).rejects.toThrow('页内菜单不能');
+    }
+    for (const item of [{ ...items[0], href: '/private' }, { ...items[0], viewKey: '' }, { key: 'remote', targetType: 'page', formUuid: 'FORM' }]) {
+      await expect(loadCanvasNavigation({ items: [item], mode: 'local' })).rejects.toThrow('local 模式只接受');
+    }
+    await expect(loadCanvasNavigation({ items, mode: 'local', signal: { aborted: true } })).rejects.toThrow('取消');
+    expect(fetch).not.toHaveBeenCalled();
+  });
+});
+
 describe('independent menus use current viewer operation and view grants', () => {
   test('separates submission, own records, management view and platform hidden resources', async () => {
     const fetch = jest.fn();

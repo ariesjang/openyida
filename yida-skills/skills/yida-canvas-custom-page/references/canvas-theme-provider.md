@@ -60,6 +60,7 @@ node <skill-dir>/scripts/build-canvas-theme.js \
 ## 3. 接入控件和图表
 
 - 页面背景使用 `--pod-page-bg-color`，卡片使用 `--pod-card-bg-color`。Provider 已提供根节点背景和最小高度，业务内容负责布局、卡片和装饰。
+- Drawer 的组件级背景单独读取 `--pod-shell-theme-bg-color`，回退 `--color-white`，跟随主题更新；不沿用卡片或通用浮层的底色。
 - antd 自动接收主色、表面、文字、填充和边框色。成功、警告和错误使用 antd 默认色；尺寸、圆角、字体和图表色组按 design.md 设置。
 - 图表在 PageContent 内调用 `useCanvasThemeContext()` 获取解析后的 token。
 - 弹窗使用 `Modal.useModal`，消息使用上下文 API，holder 放在 Provider 内。

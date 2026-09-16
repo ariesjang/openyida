@@ -14,8 +14,9 @@ const path = require('path');
 // 11 packs 510 files into 1,908,652 bytes (6,644,070 unpacked). Retain the measured
 // ~21 KiB npm 10 compression overhead and round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 1888 * 1024;
-const MAX_UNPACKED_BYTES = 6496 * 1024;
-const MAX_ENTRY_COUNT = 510;
+// Navigation source guard and aligned samples/docs add about 15 KiB unpacked.
+const MAX_UNPACKED_BYTES = 6512 * 1024;
+const MAX_ENTRY_COUNT = 511;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -23,6 +24,7 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/app/create-form/batch.js',
   'lib/app/inline-css-guard.js',
   'lib/app/canvas-icon-guard.js',
+  'lib/app/canvas-navigation-guard.js',
   'lib/app/canvas-icon-exports.json',
   'lib/design-plan/preview.js',
   'lib/design-plan/entry-navigation.js',

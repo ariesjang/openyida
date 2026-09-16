@@ -1258,6 +1258,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_navigation_local_platform: 'Dòng {0}: các chế độ xem nội bộ bị lọc qua menu nền tảng. Dùng mode=local hoặc trạng thái nội bộ; gắn trang thật với formUuid/navUuid và kiểm tra quyền đã khai báo.',
+    canvas_navigation_document_flex: 'Dòng {0}: document dùng flex với cơ sở bằng 0. Cập nhật canvas-nav-content: chiều cao tự nhiên và khối cho document, flex có chiều cao cố định cho workspace.',
     canvas_theme_not_assembled: 'Dấu chủ đề ở dòng {0} chưa được xử lý. Chạy build-canvas-theme.js rồi biên dịch/xuất bản tệp đầu ra riêng. Trang đã tích hợp Provider không cần dấu này.',
     canvas_theme_provider_missing: 'Trang gần dòng {0} chưa được bọc bằng bộ cung cấp giao diện. Hãy trả về <CanvasThemeProvider><PageContent /></CanvasThemeProvider> từ YidaComp.',
     canvas_theme_root_hook: 'Giao diện được đọc trước khi bộ cung cấp hoạt động gần dòng {0}. Chuyển useCanvasThemeContext vào PageContent và hiển thị nó bên trong CanvasThemeProvider.',

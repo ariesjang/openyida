@@ -1197,6 +1197,8 @@ module.exports = {
     failed: '页面规范检查失败'
   },
   publish: {
+    canvas_navigation_local_platform: '第 {0} 行把本頁選單交給平台導航過濾。請使用 mode=local 或直接切換本頁視圖；實際頁面需 formUuid/navUuid，仍須檢查權限。',
+    canvas_navigation_document_flex: '第 {0} 行仍使用工作區 flex 零基準佈局，可能壓縮長頁。請重新提取 canvas-nav-content：document 使用自然高度與區塊佈局，workspace 才使用固定高度 flex。',
     canvas_theme_not_assembled: '第 {0} 行的主題標記尚未組裝。請執行 build-canvas-theme.js，編譯並發佈獨立輸出檔案。已接好 Provider 的頁面不需要此標記。',
     canvas_theme_provider_missing: '第 {0} 行的頁面未接入主題容器。請在 YidaComp 中返回 <CanvasThemeProvider><PageContent /></CanvasThemeProvider>，讓業務內容讀取應用主題。',
     canvas_theme_root_hook: '第 {0} 行在主題容器生效前讀取了主題。請把 useCanvasThemeContext 移到 PageContent 中，並在 YidaComp 中用 CanvasThemeProvider 包住 <PageContent />。',

@@ -95,11 +95,11 @@ PRD 确定使用自定义导航时，按 `design.md` 编写导航 UI，先参考
 
 页面内操作按钮去新增、提交或查看表单详情时，统一封装成同一个 `FormOpenContainer`。按钮事件只调用 `openForm(request)`；新标签只用于外部 URL 或用户主动点击抽屉标题栏的新窗口操作。PC 端容器表现为右侧抽屉 + iframe，移动端直接进入原生表单页，关闭抽屉后触发当前页刷新。应用级办理导航的提交页在主内容区嵌入，导航选中态与当前任务一致。
 
-YidaCodeCanvas 推荐使用 antd `Drawer`。`FormOpenContainer` 只负责打开原生提交页或详情页。通用 `CanvasDrawer` 提供标题栏、全屏/退出全屏、关闭和 `extra` 操作区，表单容器额外提供新窗口打开。只有普通业务内容模式使用内容卡片。
+YidaCodeCanvas 推荐使用 antd `Drawer`。`FormOpenContainer` 只负责打开原生提交页或详情页。通用 `CanvasDrawer` 提供标题栏、全屏/退出全屏、关闭和 `extra` 操作区，表单容器额外提供新窗口打开。普通业务内容容器保持透明，跟随抽屉外壳背景。
 
 抽屉 header 的工具操作统一使用图标按钮：新窗口打开用 `ExternalLink`，全屏/退出全屏用 `Maximize2` / `Minimize2`，关闭用 `X`。表单抽屉三个操作必须齐全，不得替换为“在新窗口打开”“关闭”等可见文字链接，也不得省略全屏。每个按钮提供对应的 `title`、`aria-label` 和可见键盘焦点；全屏按钮同时更新图标、提示和 `aria-pressed`。按钮默认使用中性色，hover、focus 跟随主题。发布前逐一验证三个按钮的实际行为，不以按钮已渲染代替验收。
 
-模板已内置抽屉主题样式，背景默认使用 `--pod-shell-theme-bg-color`。自定义背景时传入 `CanvasDrawer.background`；表单入口通过 `openForm({ type: 'submission', formUuid, background: 'var(--pod-card-bg-color)' })` 设置。iframe 内页面使用平台主题。
+抽屉外壳默认使用 `var(--pod-shell-theme-bg-color, var(--color-white, #fff))`，标题栏与正文容器透明承接同一底色，不使用 `--pod-card-bg-color` 铺满抽屉。CanvasThemeProvider 同步设置 antd Drawer 的组件级背景；其他卡片、弹窗保留各自表面。只有明确的设计覆盖才传 CanvasDrawer.background 或 openForm 的 background，不主动生成卡片色覆盖。iframe 内页面继续使用平台主题。
 
 提交页和详情页统一由 `FormOpenContainer` 使用 `contentMode="iframe"`：iframe 直接填满标题栏下方的剩余空间，外层不加 `oy-drawer-card`、卡片底色、圆角或 padding，也不设置外层滚动。`oy-drawer-frame` 仅负责尺寸定位和裁切；滚动由 iframe 内页面负责。不要恢复 `calc(100vh - 56px)` 等猜测高度的兜底。
 

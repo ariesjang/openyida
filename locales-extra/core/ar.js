@@ -1258,6 +1258,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_navigation_local_platform: 'السطر {0}: تتم تصفية العروض المحلية عبر تنقل المنصة. استخدم mode=local أو حالة محلية، واربط الصفحات الفعلية بـ formUuid/navUuid وتحقق من الصلاحيات المعلنة.',
+    canvas_navigation_document_flex: 'السطر {0}: يستخدم document تخطيط flex بأساس صفر. حدّث canvas-nav-content: ارتفاع طبيعي وكتل لـ document، وارتفاع ثابت مع flex لـ workspace.',
     canvas_theme_not_assembled: 'علامة القالب في السطر {0} لم تُجهّز بعد. شغّل build-canvas-theme.js ثم ترجم وانشر ملف الإخراج المنفصل. الصفحات التي تحتوي على Provider مدمج لا تحتاج إلى هذه العلامة.',
     canvas_theme_provider_missing: 'لم تُربط الصفحة قرب السطر {0} بمزوّد السمة. أعد <CanvasThemeProvider><PageContent /></CanvasThemeProvider> من YidaComp.',
     canvas_theme_root_hook: 'تُقرأ السمة قبل تفعيل مزوّدها قرب السطر {0}. انقل useCanvasThemeContext إلى PageContent واعرضه داخل CanvasThemeProvider.',

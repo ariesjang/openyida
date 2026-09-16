@@ -30,7 +30,7 @@ sticky 本身占位，共享网格建立叠加关系；先检查宿主滚动和�
 
 ## 连续展示页共享首屏背景
 
-`canvas-nav-content` 的 `layout="document"` 使导航与 main 共用网格区域，导航持续 sticky，main 随已有页面滚动；不固定高度、不裁切内容，也不额外创建滚动条。导航包裹层保持透明，实际菜单按 design.md 渲染。`ResizeObserver` 测量菜单真实高度，在根节点写入局部 `--openyida-navigation-height`；窄屏展开和换行后也能更新安全区。
+`canvas-nav-content` 的 `layout="document"` 使导航与 main 共用网格区域，导航默认 sticky，宿主限制时显式用 `navigationPosition="fixed"`，按本页边界定位，main 随已有页面滚动；不固定高度、不裁切内容，也不额外创建滚动条。document 的根、main、content 均使用自然高度，不套 workspace 的 `flex:1 1 0/min-height:0`。导航包裹层保持透明；提取 canvas-nav-top 后传 `headerOnly`，让它只渲染菜单，避免重复 main 和 100vh 外壳。`ResizeObserver` 测量菜单真实高度，在根节点写入局部 `--openyida-navigation-height`；窄屏展开和换行后也能更新安全区。
 
 ```jsx
 <div className="brand-page">
@@ -44,7 +44,7 @@ sticky 本身占位，共享网格建立叠加关系；先检查宿主滚动和�
     }
     .brand-page .content { max-width: 1200px; margin: 0 auto; }
   `}</style>
-  <CanvasNavigationContent layout="document" navigation={renderBrandMenu()}>
+  <CanvasNavigationContent layout="document" navigation={<CanvasNav headerOnly overlay title={brandName} items={items} activeKey={activeKey} onSelect={select} />}>
     <section className="hero section" id="home" style={{ backgroundImage: heroBackground }}>
       <div className="content">{renderHeroContent()}</div>
     </section>
@@ -53,9 +53,9 @@ sticky 本身占位，共享网格建立叠加关系；先检查宿主滚动和�
 </div>
 ```
 
-这是结构片段，`heroBackground` 来自已验证素材和设计遮罩；菜单、内容函数由页面实现。导航的顶部/左右间距放在菜单内部 padding 中，让测量包含它；不要用折叠 margin 造间距。背景覆盖首屏，内容安全区只加一次。`maxWidth/gutter/radius/height` 是工作区参数，document 模式由页面区块设置内容宽度和间距。
+这是结构片段，`heroBackground` 来自已验证素材和设计遮罩；品牌、菜单、选择回调及内容函数由页面实现。导航的顶部/左右间距放在菜单内部 padding 中，让测量包含它；不要用折叠 margin 造间距。背景覆盖首屏，内容安全区只加一次。`maxWidth/gutter/radius/height` 是工作区参数，document 模式由页面区块设置内容宽度和间距。
 
-锚点不改变 contentKey、不卸载整页。页面须用实际滚动容器的事件或 IntersectionObserver 同步选中态和遮罩，初始化读取位置以支持刷新/返回，并清理监听；示例不自动实现材质切换。滚动后加底色、回顶透明，文字随背景切换，移动端展开时保留底色。实际宿主验证 sticky，不能仅凭本地预览。document 不支持 iframeSrc，原生任务用 workspace 或表单抽屉。
+锚点不改变 contentKey、不卸载整页。容器捕获宿主滚动事件并同步局部 data-scrolled；CanvasNav 的 overlay 随它切换透明/底色，展开时保持底色。锚点选中态仍由页面按实际滚动位置同步，并清理监听。滚动后加底色、回顶透明，文字随背景切换，移动端展开时保留底色。实际宿主验证 sticky，不能仅凭本地预览。document 不支持 iframeSrc，原生任务用 workspace 或表单抽屉。
 
 ## 形态 3：顶部＋侧边
 
@@ -87,7 +87,25 @@ sticky 本身占位，共享网格建立叠加关系；先检查宿主滚动和�
 
 ## 导航数据来源
 
-自定义导航的数量、名称、顺序、分组、默认任务和用途来自当前入口的 PRD。下面的数据树过滤用于 mode=platform；独立前台用 mode=independent 和真实 resolveAccess，按 [访问态入口契约](../../yida-app/references/entry-navigation.md#自定义菜单过滤) 执行，不能将平台树展示规则当作业务授权。使用当前访问者登录态请求 `/{appType}/query/formdesign/getAccessableNavs.json`，获取可见范围；`formUuid` 和 CSRF 值来自当前页面运行态。已有请求和正确的过滤逻辑时直接复用；首次接入可使用下面的数据片段，其中 `filterCanvasNavigation(plannedItems, navs, hiddenNav)` 负责可见性过滤，不包含导航 UI：
+自定义导航的数量、名称、顺序、分组、默认任务和用途来自当前入口的 PRD。
+
+先区分页面内展示与真实资源导航。公开官网的首页、文化介绍等页内视图直接使用本地数组；需要统一过滤/选择 helper 时，显式用 local，不请求 getAccessableNavs：
+
+```jsx
+const items = [
+  { key: 'home', label: '首页', targetType: 'local', viewKey: 'home' },
+  { key: 'culture', label: '文化介绍', targetType: 'local', viewKey: 'culture' },
+];
+const menus = await loadCanvasNavigation({ items, mode: 'local' });
+const active = selectCanvasNavigation(menus, requestedKey, 'home');
+// 按 active.viewKey 渲染真实本页组件，URL 同步沿用下方切换骨架。
+```
+
+local 不接受 href/url 或真实页面跳转。含 access 时仍需 appType 和真实 resolveAccess；未授权项隐藏，查询失败不放行。业务数据读取、预约提交和管理操作另按平台权限执行；不得删除受保护菜单的 access。规划中的 sceneKey/resource/access 仍保留，不能把公开内容的菜单显示与受保护业务授权混为一谈。
+
+platform 只接绑定 formUuid/navUuid 的真实页面，local 或未绑定资源的叶子会在网络请求前报错。编译器也拦截静态可识别的误用；动态配置仍要验证。不要将“过滤后为空”或请求失败兜底为全量菜单。
+
+下面的数据树过滤用于 mode=platform；独立资源任务用 mode=independent 和真实 resolveAccess，按 [访问态入口契约](../../yida-app/references/entry-navigation.md#自定义菜单过滤) 执行，不能将平台树展示规则当作业务授权。使用当前访问者登录态请求 `/{appType}/query/formdesign/getAccessableNavs.json`，获取可见范围；`formUuid` 和 CSRF 值来自当前页面运行态。已有请求和正确的过滤逻辑时直接复用；首次接入可使用下面的数据片段，其中 `filterCanvasNavigation(plannedItems, navs, hiddenNav)` 负责可见性过滤，不包含导航 UI：
 
 ```bash
 openyida sample openyida-page-template canvas-nav-data --output .cache/samples/canvas-nav-data.jsx
@@ -224,7 +242,8 @@ hash 的 `view` 保存任务入口 key，刷新及前进后退恢复选中内容
 | 菜单数据 | 用途 |
 | --- | --- |
 | `key` | 稳定且唯一的入口标识；分组和叶子项不重名 |
-| `navUuid / formUuid` | 真实平台资源标识，用于权限过滤；本地视图绑定承载页面 |
+| `navUuid / formUuid` | platform/independent 的真实资源标识；local 展示项使用 viewKey |
+| `viewKey` | local 的本页视图标识，不是平台资源 ID |
 | `label / icon` | PRD 业务名称、可选功能图标 |
 | `targetType` | 提交、页面或外链等入口用途，按上节确定 |
 | `params` | 预填、来源和其他业务参数，构造 URL 时保留 |

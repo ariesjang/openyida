@@ -66,8 +66,9 @@ Fast（直接搭建）与 Plan（先确认方案）使用同一份入口规划�
 
 | 方式 | 什么时候使用 | 判断依据 |
 | --- | --- | --- |
+| `mode=local` | 纯本页公开展示内容 | key/viewKey/targetType=local，不请求平台导航；显式 access 仍核验 |
 | `mode=platform`，默认方式 | 自定义菜单沿用平台菜单的展示范围 | 当前用户的 `getAccessableNavs` 结果，加上 `hidden/hiddenNav` 设置 |
-| `mode=independent` | 前台需要与管理端不同的菜单 | 本入口的任务清单，加上当前用户的真实资源、操作和视图权限 |
+| `mode=independent` | 独立组织受权限保护的资源任务 | 本入口的任务清单，加上当前用户的真实资源、操作和视图权限 |
 
 平台菜单可见不代表允许提交、编辑或删除。菜单声明了 `access` 权限要求时，即使使用 platform 模式，也要额外查询权限。
 
@@ -154,9 +155,11 @@ openyida update-form-config <appType> <formUuid> <true|false|keep> "<页面标�
 
 导航项显示与隐藏使用 `nav-group show|hide`。应用导航、页面导航、菜单项分别设置和重新查询，不能互相替代。
 
+纯页内公开内容可直接用本地数组或 `mode=local`（key/viewKey/targetType=local），不依赖平台导航树；有 access 的本地业务视图仍需实时权限查询，业务操作权限不变。规划层的 sceneKey/resource/access 不得因此删除。platform 叶子必须绑定真实 formUuid/navUuid；误把 local 交给平台过滤会报错，禁止空菜单或接口失败时回退全量放行。
+
 ### 接入页面权限查询
 
-页面函数的 `mode=platform|independent` 表示菜单过滤方式，与规划字段 mode 的三种入口方案不同。
+页面函数的 `mode=local|platform|independent` 表示菜单过滤方式，与规划字段 mode 的三种入口方案不同。
 
 `resolveAccess({appType,requirements,signal})` 接收当前应用、权限要求和取消请求信号：
 

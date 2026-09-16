@@ -1258,6 +1258,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_navigation_local_platform: 'पंक्ति {0}: स्थानीय व्यू प्लेटफ़ॉर्म मेनू से फ़िल्टर हो रहे हैं। mode=local या स्थानीय स्टेट उपयोग करें; वास्तविक पेजों को formUuid/navUuid से जोड़ें और घोषित अनुमतियाँ जाँचें।',
+    canvas_navigation_document_flex: 'पंक्ति {0}: document में शून्य आधार वाला flex है। canvas-nav-content अपडेट करें: document के लिए प्राकृतिक ऊँचाई और ब्लॉक, workspace के लिए निश्चित ऊँचाई वाला flex।',
     canvas_theme_not_assembled: 'पंक्ति {0} का थीम मार्कर अभी तैयार नहीं हुआ है। build-canvas-theme.js चलाएँ और अलग आउटपुट फ़ाइल को कंपाइल/प्रकाशित करें। एकीकृत Provider वाले पेजों को इस मार्कर की आवश्यकता नहीं है।',
     canvas_theme_provider_missing: 'पंक्ति {0} के पास थीम प्रदाता जुड़ा नहीं है। YidaComp से <CanvasThemeProvider><PageContent /></CanvasThemeProvider> लौटाएँ।',
     canvas_theme_root_hook: 'पंक्ति {0} के पास प्रदाता सक्रिय होने से पहले थीम पढ़ी जा रही है। useCanvasThemeContext को PageContent में ले जाएँ और उसे CanvasThemeProvider के भीतर रेंडर करें।',

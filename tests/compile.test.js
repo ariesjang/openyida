@@ -156,6 +156,21 @@ export default function YidaComp() {
     });
   });
 
+  test.each(['compile', 'publish'])('%s blocks local menus sent to platform filtering before login', command => {
+    fs.writeFileSync(path.join(tmpDir, 'pages', 'src', 'nav.canvas.jsx'), "function YidaComp(){ loadCanvasNavigation({items:[{key:'home',targetType:'local'}]}); return <div/>; }");
+    const args = [BIN, command, 'pages/src/nav.canvas.jsx'];
+    if (command === 'publish') { args.push('APP_TEST', 'FORM_TEST', '--canvas'); }
+    const result = spawnSync(process.execPath, [...args, '--json'], {
+      cwd: tmpDir, env: { ...cliEnv(), YIDA_QUIET: '1', OPENYIDA_SKIP_UPDATE_CHECK: '1' },
+      encoding: 'utf8', timeout: 10000,
+    });
+    expect(result.status).toBe(1);
+    expect(JSON.parse(result.stderr.trim())).toMatchObject({
+      errorCode: 'OPENYIDA_CANVAS_NAVIGATION_INVALID',
+      details: { issueType: 'local_platform', line: 1 },
+    });
+  });
+
   test.each(['compile', 'publish'])('%s rejects an unassembled theme source before login', command => {
     fs.writeFileSync(path.join(tmpDir, 'pages', 'src', 'theme.canvas.jsx'), '/* @canvas-theme-provider */\nexport default () => <CanvasThemeProvider><div/></CanvasThemeProvider>;');
     const args = [BIN, command, 'pages/src/theme.canvas.jsx'];

@@ -19,6 +19,8 @@ function CanvasNavigationContent({
   background = 'transparent',
   layout = 'workspace',
   preserveScroll = false,
+  navigationPosition = 'sticky',
+  navigationTop = 0,
 }) {
   const embedded = Boolean(iframeSrc);
   const documentLayout = layout === 'document';
@@ -33,16 +35,40 @@ function CanvasNavigationContent({
     const root = rootRef.current;
     const nav = navigationRef.current;
     if (!root) return;
-    const measure = () => root.style.setProperty('--openyida-navigation-height', `${nav?.getBoundingClientRect().height || 0}px`);
+    const navStyle = nav ? { position: nav.style.position, left: nav.style.left, width: nav.style.width, top: nav.style.top } : null;
+    const measure = () => {
+      const navHeight = nav?.getBoundingClientRect().height || 0;
+      root.style.setProperty('--openyida-navigation-height', `${navHeight}px`);
+      const bounds = root.getBoundingClientRect();
+      // scroll 事件捕获覆盖宿主内滚动；不假设 window.scrollY 是实际滚动位置。
+      let boundary = 0;
+      for (let ancestor = root.parentElement; ancestor; ancestor = ancestor.parentElement) {
+        if (/(auto|scroll)/.test(window.getComputedStyle(ancestor).overflowY)) {
+          boundary = ancestor.getBoundingClientRect().top + ancestor.clientTop;
+          break;
+        }
+      }
+      const top = Math.max(0, boundary) + navigationTop;
+      root.dataset.scrolled = String(bounds.top < top - 1);
+      if (nav && navigationPosition === 'fixed') {
+        // 仅覆盖本页宽度，不能盖住平台侧栏；离开页面底部后随本页退出。
+        Object.assign(nav.style, { position: 'fixed', left: `${bounds.left}px`, width: `${bounds.width}px`,
+          top: `${Math.min(Math.max(bounds.top, top), bounds.bottom - navHeight)}px` });
+      }
+    };
     measure();
     const observer = nav && window.ResizeObserver ? new window.ResizeObserver(measure) : null;
     if (observer) observer.observe(nav);
+    if (observer) observer.observe(root);
     window.addEventListener('resize', measure);
+    window.addEventListener('scroll', measure, true);
     return () => {
       if (observer) observer.disconnect();
       window.removeEventListener('resize', measure);
+      window.removeEventListener('scroll', measure, true);
+      if (navStyle) Object.assign(nav.style, navStyle);
     };
-  }, [documentLayout, navigation != null]);
+  }, [documentLayout, navigation != null, navigationPosition, navigationTop]);
 
   React.useLayoutEffect(() => {
     const viewport = contentRef.current;
@@ -53,9 +79,10 @@ function CanvasNavigationContent({
   }, [contentKey, documentLayout, embedded, preserveScroll]);
 
   if (documentLayout && embedded) throw new Error('CanvasNavigationContent: iframeSrc requires workspace layout');
+  if (!['sticky', 'fixed'].includes(navigationPosition)) throw new Error('CanvasNavigationContent: navigationPosition must be sticky or fixed');
   return (
-    <div ref={rootRef} className="openyida-nav-layout" data-layout={layout} style={{
-      height: documentLayout ? undefined : height, minHeight: 0, minWidth: 0,
+    <div ref={rootRef} className="openyida-nav-layout" data-layout={layout} data-scrolled="true" style={{
+      height: documentLayout ? 'auto' : height, minHeight: documentLayout ? 'auto' : 0, minWidth: 0,
       display: documentLayout ? 'grid' : 'flex', flexDirection: 'column',
       // 长页不创建第二层滚动容器；导航和 main 共享网格区域，背景可到达导航背后。
       overflow: documentLayout ? 'visible' : 'hidden', background,
@@ -63,11 +90,11 @@ function CanvasNavigationContent({
     }}>
       {navigation != null && <div ref={navigationRef} className="openyida-nav-header" style={{
         flexShrink: 0, minWidth: 0, zIndex: 10,
-        ...(documentLayout ? { gridArea: '1 / 1', alignSelf: 'start', position: 'sticky', top: 0 } : {}),
+        ...(documentLayout ? { gridArea: '1 / 1', alignSelf: 'start', position: 'sticky', top: navigationTop } : {}),
       }}>{navigation}</div>}
       <main className="openyida-nav-main" aria-label={title} style={{
         display: documentLayout ? 'block' : 'flex', flexDirection: 'column',
-        flex: documentLayout ? undefined : '1 1 0', minHeight: 0,
+        flex: documentLayout ? undefined : '1 1 0', minHeight: documentLayout ? 'auto' : 0,
         minWidth: 0, overflow: documentLayout ? 'visible' : 'hidden',
         padding: documentLayout ? 0 : gutter, boxSizing: 'border-box',
         ...(documentLayout ? { gridArea: '1 / 1' } : {}),
@@ -79,7 +106,7 @@ function CanvasNavigationContent({
             scrollPositions.current.set(contentKey, { top: viewport.scrollTop, left: viewport.scrollLeft });
           }
         }} style={{
-          position: 'relative', flex: documentLayout ? undefined : '1 1 0', minHeight: 0, minWidth: 0,
+          position: 'relative', flex: documentLayout ? undefined : '1 1 0', minHeight: documentLayout ? 'auto' : 0, minWidth: 0,
           width: '100%', maxWidth: documentLayout ? undefined : maxWidth,
           margin: '0 auto', borderRadius: documentLayout ? 0 : radius,
           overflow: documentLayout ? 'visible' : embedded ? 'hidden' : 'auto',

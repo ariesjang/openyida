@@ -1259,6 +1259,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_navigation_local_platform: '{0}행: 로컬 뷰를 플랫폼 메뉴로 필터링하고 있습니다. mode=local 또는 로컬 상태를 사용하고 실제 페이지에는 formUuid/navUuid를 지정하며 권한을 확인하세요.',
+    canvas_navigation_document_flex: '{0}행: document에 기준 크기 0인 flex를 사용했습니다. canvas-nav-content를 갱신하세요. document는 자연 높이의 블록, workspace는 고정 높이 flex를 사용합니다.',
     canvas_theme_not_assembled: '{0}행의 테마 마커가 처리되지 않았습니다. build-canvas-theme.js를 실행하고 별도 출력 파일을 컴파일하고 게시하세요. Provider가 통합된 페이지에는 이 마커가 필요 없습니다.',
     canvas_theme_provider_missing: '{0}행 부근에 테마 Provider가 적용되지 않았습니다. YidaComp에서 <CanvasThemeProvider><PageContent /></CanvasThemeProvider>를 반환하세요.',
     canvas_theme_root_hook: '{0}행 부근에서 Provider 적용 전에 테마를 읽고 있습니다. useCanvasThemeContext를 PageContent로 옮기고 CanvasThemeProvider 안에서 렌더링하세요.',

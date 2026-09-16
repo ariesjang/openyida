@@ -107,7 +107,7 @@ function setNavigationTitle(title) {
 2. **组件增强可降级**：门户、成员、部门、上传组件都做 feature detect 和 fallback；组件缺失时页面仍展示自绘基线。
 3. **值先归一化**：成员、部门、文件的原始返回值保留到 `raw` 用于检查，业务 payload 使用统一结构。
 4. **UI 改造保持功能契约**：页面美感提升、页面重构和局部美化只调整颜色、布局、密度、间距、视觉层级、素材和图标表达；已有数据源、字段映射、按钮动作、筛选逻辑、提交 URL、权限和业务状态按原有实现保留。
-5. **页面跟随应用主题**：应用设置使用 `app-theme.css`；页面通过 `--color-brand1-*`、`--color-group` 和 `--pod-*` 取色。页面底色使用 `--pod-page-bg-color`，卡片使用 `--pod-card-bg-color`；自绘导航页按 `design.md` 设置内部画布背景。样式限定在 `YidaComp` 内，应用主题通过 `update-app --theme-file` 更新。根节点使用 `display:flow-root` 或 flex/grid，将导航间距留在根节点内部。宿主背景和局部画布规则见 [样式指南](references/canvas-style-implementation-guide.md)。
+5. **页面跟随应用主题**：应用设置使用 `app-theme.css`；页面通过 `--color-brand1-*`、`--color-group` 和 `--pod-*` 取色。页面底色使用 `--pod-page-bg-color`，卡片使用 `--pod-card-bg-color`，抽屉整体背景使用 `--pod-shell-theme-bg-color`，正文容器保持透明；自绘导航页按 `design.md` 设置内部画布背景。样式限定在 `YidaComp` 内，应用主题通过 `update-app --theme-file` 更新。根节点使用 `display:flow-root` 或 flex/grid，将导航间距留在根节点内部。宿主背景和局部画布规则见 [样式指南](references/canvas-style-implementation-guide.md)。
 6. **先验证再扩展业务**：原生组件、上传、组织搜索、弹层类能力先做 smoke 页面，确认 PC/移动端都可用后再进入复杂业务页面。
 7. **按设计编写 UI，示例按需参考**：新建 `.canvas.jsx` / `.canvas.tsx` 时，直接按 PRD、`design.md`、真实数据和页面交互实现，允许从空文件编写。需要参考完整表单交互时，可执行 `openyida sample openyida-page-template canvas-form-drawer --output .cache/samples/form-drawer.canvas.jsx --var APP_TYPE=<appType> --var FORM_UUID=<formUuid>`；整页示例按需参考；含表单打开入口时，必须按下方“表单打开入口统一容器”整体合并抽屉片段，不能裁剪交互能力。页面其余布局、材质、留白、圆角和选中态按设计实现。未改写的示例不得直接发布；页面 UI、业务文案、交付说明和 final 中不出现内部示例名、生成过程或实现代号。使用示例时，发布前删除 `@openyida-page-template-base`、`SAMPLE_ROWS`、`{{APP_TYPE}}` / `{{FORM_UUID}}`、示例数据和占位文案。
 8. **用文件编辑工具维护源码**：业务源码使用 Write/Edit/patch 编写，已有 JSX/CSS/JSON 源码只做定点 Edit。主题代码使用 `sample` 提取，或由 `scripts/build-canvas-theme.js` 插入标记处并输出独立文件。修改业务时编辑原始文件，再重新运行主题脚本。
@@ -168,6 +168,8 @@ openyida publish project/pages/src/<页面名>.canvas.jsx <appType> <formUuid>
 # 6. 发布后回读字段摘要验收；如需留证，用结构化文件写入工具保存 stdout，不用 shell 重定向
 openyida get-schema <appType> <formUuid> --field-map-json
 ```
+
+导航生成前读取 [页面与导航连续性](../yida-design/references/page-continuity.md)。纯页内展示直接切换本地视图或用 canvas-nav-data 的 local 模式；真实资源才按 platform/independent 过滤。长页提取最新 canvas-nav-content，使用 document 自然高度；顶部模板以 headerOnly 接入，有首屏背景用 overlay。`OPENYIDA_CANVAS_NAVIGATION_INVALID` 按 details.issueType 和源码行修正，禁止删除检查或回退全量菜单；动态数据与宿主滚动仍需实际浏览器验收。
 
 `openyida compile` 会自动识别 `.canvas.jsx` / `.canvas.tsx` 并调用 Canvas 编译器；`--json` 返回可机器读取的 hash 和依赖清单。该命令只读、无需登录、不访问网络、不发布页面，也不写入构建产物。`openyida publish` 仍是远端写入证据。
 

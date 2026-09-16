@@ -16,7 +16,7 @@ const CANVAS_THEME_ROLES = {
   colorFillAlter: ['--color-fill1-1'], colorFillSecondary: ['--color-fill1-2'],
 };
 
-function resolveCanvasTheme(root) {
+function resolveCanvasTheme(root, roles = CANVAS_THEME_ROLES) {
   const view = root.ownerDocument.defaultView;
   const scope = view.getComputedStyle(root);
   const probe = root.ownerDocument.createElement('span');
@@ -24,7 +24,7 @@ function resolveCanvasTheme(root) {
   root.appendChild(probe);
   const token = {};
   try {
-    Object.entries(CANVAS_THEME_ROLES).forEach(([role, names]) => {
+    Object.entries(roles).forEach(([role, names]) => {
       const value = names.map((name) => scope.getPropertyValue(name).trim()).find(Boolean);
       if (!value || !view.CSS.supports('color', value)) return;
       probe.style.color = value;
@@ -40,7 +40,7 @@ function resolveCanvasTheme(root) {
 // preview=true is explicit: the local snapshot is scoped to this page only.
 function CanvasThemeProvider({ children, preview = false, getPopupContainer }) {
   const rootRef = React.useRef(null);
-  const [theme, setTheme] = React.useState({ token: {}, status: 'loading' });
+  const [theme, setTheme] = React.useState({ token: {}, components: {}, status: 'loading' });
   React.useLayoutEffect(() => {
     const root = rootRef.current;
     const doc = root.ownerDocument;
@@ -50,9 +50,10 @@ function CanvasThemeProvider({ children, preview = false, getPopupContainer }) {
       let next;
       try {
         const token = resolveCanvasTheme(root);
-        next = { token, status: token.colorPrimary ? (preview ? 'preview' : 'ready') : 'missing' };
+        const components = { Drawer: resolveCanvasTheme(root, { colorBgElevated: ['--pod-shell-theme-bg-color', '--color-white'] }) };
+        next = { token, components, status: token.colorPrimary ? (preview ? 'preview' : 'ready') : 'missing' };
       } catch (_error) {
-        next = { token: {}, status: 'error' };
+        next = { token: {}, components: {}, status: 'error' };
       }
       setTheme((previous) => JSON.stringify(previous) === JSON.stringify(next) ? previous : next);
     };
@@ -89,7 +90,7 @@ function CanvasThemeProvider({ children, preview = false, getPopupContainer }) {
       color: 'var(--color-text1-4, #1f2329)',
     }}>
       <CanvasThemeContext.Provider value={context}>
-        <ConfigProvider theme={{ token: theme.token }} getPopupContainer={getPopupContainer}>{children}</ConfigProvider>
+        <ConfigProvider theme={{ token: theme.token, components: theme.components }} getPopupContainer={getPopupContainer}>{children}</ConfigProvider>
       </CanvasThemeContext.Provider>
     </div>
   );

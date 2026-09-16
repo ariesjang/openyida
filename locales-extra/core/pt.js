@@ -1260,6 +1260,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_navigation_local_platform: 'Linha {0}: vistas locais estão sendo filtradas pela navegação da plataforma. Use mode=local ou estado local; associe páginas reais a formUuid/navUuid e verifique as permissões declaradas.',
+    canvas_navigation_document_flex: 'Linha {0}: document usa flex com base zero. Atualize canvas-nav-content: altura natural e blocos para document, flex de altura fixa para workspace.',
     canvas_theme_not_assembled: 'O marcador de tema na linha {0} não foi montado. Execute build-canvas-theme.js e compile/publique o arquivo de saída separado. Páginas com Provider integrado não precisam deste marcador.',
     canvas_theme_provider_missing: 'Falta o provedor de tema perto da linha {0}. Retorne <CanvasThemeProvider><PageContent /></CanvasThemeProvider> em YidaComp.',
     canvas_theme_root_hook: 'O tema é lido antes de seu provedor ser ativado perto da linha {0}. Mova useCanvasThemeContext para PageContent e renderize-o dentro de CanvasThemeProvider.',

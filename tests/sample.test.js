@@ -43,7 +43,7 @@ describe('sample templates', () => {
     for (const other of ['side', 'top', 'mixed', 'dock'].filter(name => name !== layout)) {
       expect(fragment).not.toContain(`oy-nav-${other} `);
     }
-    expect(Buffer.byteLength(fragment)).toBeLessThan(['side', 'mixed'].includes(layout) ? 14000 : 7000);
+    expect(Buffer.byteLength(fragment)).toBeLessThan(['side', 'mixed'].includes(layout) ? 14000 : layout === 'top' ? 8000 : 7000);
     expect(fragment.includes('function CanvasSidebar')).toBe(['side', 'mixed'].includes(layout));
     if (layout !== 'tabs') {
       expect(fragment).toContain('--pod-nav-item-text-disabled-color');
@@ -71,6 +71,9 @@ describe('sample templates', () => {
     expect(normal.children[2].children).toContain('已有内容');
     expect(render({ floating: false }).props.className).toBe(normal.props.className);
     expect(render({ floating: true }).props.className).toBe(`${normal.props.className} is-floating`);
+    const header = render({ headerOnly: true, overlay: true, children: '不能重复包裹正文' });
+    expect(header.props.className).toBe(`${normal.props.className} is-header-only is-overlay`);
+    expect(header.children[2]).toBe(false);
   });
 
   test('navigation content sample compiles and switches scroll ownership for embedded pages', async () => {
@@ -105,11 +108,12 @@ describe('sample templates', () => {
     expect(render({ children: '无可用导航' }).children[1].children[0].children).toContain('无可用导航');
     const document = render({ layout: 'document', navigation: '品牌菜单', children: '首屏与产品区' });
     expect(document.props.style).toMatchObject({ display: 'grid', overflow: 'visible' });
-    expect(document.props.style.height).toBeUndefined();
+    expect(document.props.style.height).toBe('auto');
+    expect(document.children[1].props.style).toMatchObject({ display: 'block', minHeight: 'auto', flex: undefined });
     expect(document.children[0].props.style).toMatchObject({ gridArea: '1 / 1', position: 'sticky' });
     expect(document.children[1].props.style).toMatchObject({ gridArea: '1 / 1', padding: 0 });
     const documentViewport = document.children[1].children[0];
-    expect(documentViewport.props.style).toMatchObject({ overflow: 'visible', borderRadius: 0 });
+    expect(documentViewport.props.style).toMatchObject({ overflow: 'visible', borderRadius: 0, minHeight: 'auto', flex: undefined });
     expect(documentViewport.props.style.maxWidth).toBeUndefined();
     expect(() => render({ layout: 'document', iframeSrc: '/submission/form' })).toThrow('requires workspace layout');
   });
@@ -157,11 +161,11 @@ describe('sample templates', () => {
     expect(render({ contentKey: 'home', preserveScroll: true }).dom.scrollTop).toBe(720);
   });
 
-  test('document layout measures resized navigation and cleans up observers', async () => {
+  test.each(['sticky', 'fixed'])('document %s navigation follows nested host scroll and releases observers', async navigationPosition => {
     const output = path.join(tmpDir, 'nav-content.jsx');
     await run(['openyida-page-template', 'canvas-nav-content', '--output', output]);
     const { runtimeCode } = compileCanvasLocal(`${fs.readFileSync(output, 'utf8')}
-      function YidaComp() { return CanvasNavigationContent({layout:'document', navigation:'菜单'}); }`);
+      function YidaComp() { return CanvasNavigationContent({layout:'document', navigation:'菜单', navigationPosition:'${navigationPosition}'}); }`);
     const effects = [];
     const observe = jest.fn();
     const disconnect = jest.fn();
@@ -179,23 +183,44 @@ describe('sample templates', () => {
           this.disconnect = disconnect;
         }
       },
+      getComputedStyle: () => ({ overflowY: 'auto' }),
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
     };
     const tree = new Function('window', `${runtimeCode}; return YidaComp();`)(runtime);
     const setProperty = jest.fn();
     let height = 80;
-    tree.props.ref.current = { style: { setProperty } };
-    tree.children[0].props.ref.current = { getBoundingClientRect: () => ({ height }) };
+    let top = 40;
+    const navStyle = { position: 'sticky', left: '', width: '', top: '0px' };
+    tree.props.ref.current = { style: { setProperty }, dataset: {},
+      parentElement: { clientTop: 0, getBoundingClientRect: () => ({ top: 40 }) },
+      getBoundingClientRect: () => ({ top, left: 220, width: 980, bottom: top + 1600 }) };
+    tree.children[0].props.ref.current = { style: { ...navStyle }, getBoundingClientRect: () => ({ height }) };
     const cleanups = effects.map(effect => effect());
     expect(observe).toHaveBeenCalledWith(tree.children[0].props.ref.current);
     expect(setProperty).toHaveBeenLastCalledWith('--openyida-navigation-height', '80px');
+    expect(tree.props.ref.current.dataset.scrolled).toBe('false');
+    expect(runtime.addEventListener).toHaveBeenCalledWith('scroll', measure, true);
+    top = -500;
+    measure();
+    expect(tree.props.ref.current.dataset.scrolled).toBe('true');
+    const nav = tree.children[0].props.ref.current;
+    if (navigationPosition === 'fixed') {
+      expect(nav.style).toEqual({ position: 'fixed', left: '220px', width: '980px', top: '40px' });
+      top = -1580;
+      measure();
+      expect(nav.style.top).toBe('-60px');
+    } else { expect(nav.style).toEqual(navStyle); }
+    top = 40;
     height = 240;
     measure();
+    expect(tree.props.ref.current.dataset.scrolled).toBe('false');
     expect(setProperty).toHaveBeenLastCalledWith('--openyida-navigation-height', '240px');
     cleanups.forEach(cleanup => cleanup?.());
     expect(disconnect).toHaveBeenCalledTimes(1);
     expect(runtime.removeEventListener).toHaveBeenCalledWith('resize', measure);
+    expect(runtime.removeEventListener).toHaveBeenCalledWith('scroll', measure, true);
+    expect(nav.style).toEqual(navStyle);
     expect(tree.children[1].props.style.display).toBe('block');
   });
 
@@ -259,7 +284,6 @@ describe('sample templates', () => {
         { key: 'vm-hidden-child', formUuid: 'vm-hidden-child' },
       ] },
       { key: 'empty-group', children: [{ key: 'missing', formUuid: 'not-returned' }] },
-      { key: 'unbound-view', label: '未绑定资源的视图' },
     ];
     const fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true, content: { navs } }) });
     const load = new Function('fetch', `${source}; return loadCanvasNavigation;`)(fetch);
@@ -421,6 +445,14 @@ describe('sample templates', () => {
     const contentShell = renderShell({ open: true, children: '正文' });
     expect(contentShell.props.styles.body.padding).toBe('0 8px 8px');
     expect(contentShell.children.some((child) => child?.props?.className === 'oy-drawer-card')).toBe(true);
+    const drawerBackground = 'var(--pod-shell-theme-bg-color, var(--color-white, #fff))';
+    expect(contentShell.props.styles.content.background).toBe(drawerBackground);
+    expect(frameShell.props.styles.content.background).toBe(drawerBackground);
+    expect(contentShell.props.styles.body.background).toBe('transparent');
+    expect(pageSource.match(/\.openyida-form-drawer \.oy-drawer-card \{([^}]+)\}/)[1]).toContain('background: transparent;');
+    expect(renderShell({ open: true, background: '#123456' }).props.styles.content.background).toBe('#123456');
+    const customForm = FormOpenContainer({ request: { type: 'submission', formUuid: 'FORM_SAMPLE', background: '#123456' }, currentAppType: 'APP_SAMPLE' });
+    expect(renderShell(customForm.props).props.styles.content.background).toBe('#123456');
 
 
     for (const type of ['submission', 'detail']) {

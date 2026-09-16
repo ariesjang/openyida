@@ -1209,6 +1209,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_navigation_local_platform: '行 {0}: ローカルビューをプラットフォームナビゲーションで絞り込んでいます。mode=local またはローカル状態を使い、実際のページには formUuid/navUuid を指定して権限を検証してください。',
+    canvas_navigation_document_flex: '行 {0}: document にゼロ基準の flex が使用されています。canvas-nav-content を更新し、document は自然な高さのブロック、workspace は固定高さの flex を使用してください。',
     canvas_theme_not_assembled: '行 {0} のテーママーカーは未展開です。build-canvas-theme.js を実行し、別の出力ファイルをコンパイル・公開してください。Provider 組み込み済みのページにはマーカーは不要です。',
     canvas_theme_provider_missing: '{0} 行付近でテーマの Provider が適用されていません。YidaComp から <CanvasThemeProvider><PageContent /></CanvasThemeProvider> を返してください。',
     canvas_theme_root_hook: '{0} 行付近で Provider の適用前にテーマを参照しています。useCanvasThemeContext を PageContent に移し、CanvasThemeProvider の子として描画してください。',
