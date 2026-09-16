@@ -84,7 +84,7 @@ openyida sample openyida-page-template canvas-admin-entry --output .cache/sample
 
 这些常量必须来自真实应用和资源映射；没有 corpid 需求时省略 params。指定管理视图可传 viewUuid。默认使用 `/{appType}/workbench/{workbenchFormUuid}`，不继承前台的 isRenderNav/iframe/hideLeftNav/navConfig.layout 参数。只有已验证应用默认工作台落点正确时才省略页面 ID 并显式传 `useDefaultWorkbench`；默认工作台可能回到前台首页。整个应用采用自绘管理壳时，应选择实际承载该业务壳的页面，并验证其入口，不能靠按钮擅自开启或隐藏应用导航。
 
-身份来自当前页面服务端注入的 `window.loginUser.isAppAdmin`，同时核对 `window.g_config.appType` 与目标 appType 一致、userId 非空。只把 `"y"` 或布尔 true 视为允许；`"n"`/false 拒绝，其余未知。禁止 `Boolean(isAppAdmin)` 或 `if (isAppAdmin)`，因为 `"n"` 是真值。没有上下文、应用不匹配、匿名访问时隐藏，不读取父窗口另一应用的角色，不写死管理员名单，也不使用 CLI 操作者身份或 token 判断访问者。
+身份来自当前页面服务端注入的 `window.loginUser.isAppAdmin`，同时核对当前窗口的 `window.g_config.appType` / `window.pageConfig.appType` 与目标 appType 一致、userId 非空。访问态可能只提供 pageConfig；至少有一个非空应用标识，存在两个时必须全部一致，冲突仍按未知处理。只把 `"y"` 或布尔 true 视为允许；`"n"`/false 拒绝，其余未知。禁止 `Boolean(isAppAdmin)` 或 `if (isAppAdmin)`，因为 `"n"` 是真值。没有上下文、应用不匹配、匿名访问时隐藏，不读取父窗口另一应用的角色，不写死管理员名单，也不使用 CLI 操作者身份或 token 判断访问者。
 
 这个标识采用平台的 `isSuperOrAppManager` 口径，可能覆盖超级管理员、应用主管理员、数据管理员、开发成员及平台授权角色；它不等价于仅 MAIN，也不等价于某业务角色。若需求限定“仅主管理员”或“业务运营人员”，需另接已验证的当前访问者角色/权限服务，不通过姓名、菜单可见性或复制 CLI 管理员列表代替。
 

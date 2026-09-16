@@ -5,9 +5,12 @@ import { Button } from 'antd';
 // The platform's app-admin scope includes super/app managers, not only MAIN.
 function readCanvasAppAdmin(appType) {
   try {
-    const config = window.g_config;
+    // Access pages may expose appType on pageConfig rather than g_config.
+    // Any explicit conflicting context remains unknown; never borrow parent roles.
+    const appContexts = [window.g_config?.appType, window.pageConfig?.appType]
+      .filter(value => value !== undefined && value !== null && value !== '');
     const user = window.loginUser;
-    if (!/^APP_[A-Za-z0-9_-]+$/.test(appType || '') || config?.appType !== appType
+    if (!/^APP_[A-Za-z0-9_-]+$/.test(appType || '') || !appContexts.length || appContexts.some(value => value !== appType)
       || typeof user?.userId !== 'string' || !user.userId.trim()) return { appType, status: 'unknown' };
     const flag = user.isAppAdmin;
     const status = flag === 'y' || flag === true ? 'allowed' : flag === 'n' || flag === false ? 'denied' : 'unknown';
@@ -34,7 +37,7 @@ function useCanvasAppAdmin(appType) {
 
 function buildCanvasWorkbenchEntry({ appType, workbenchFormUuid, viewUuid, params = {}, useDefaultWorkbench = false }) {
   if (!appType || (!workbenchFormUuid && !useDefaultWorkbench)) return null;
-  if (workbenchFormUuid && workbenchFormUuid === window.g_config?.formUuid) return null;
+  if (workbenchFormUuid && [window.g_config?.formUuid, window.pageConfig?.formUuid].includes(workbenchFormUuid)) return null;
   const query = { ...params };
   // Do not carry the visitor page's navigation hiding/embedding settings back.
   for (const key of ['isRenderNav', 'iframe', 'hideLeftNav', 'navConfig.layout']) delete query[key];
@@ -50,7 +53,7 @@ function CanvasAdminWorkbenchButton({ appType, workbenchFormUuid, viewUuid, para
   if (!entry) return null;
   let href;
   try { href = buildCanvasPageUrl(entry, { appType }); } catch (_error) { return null; }
-  return <Button href={href} onClick={event => {
+  return <Button href={href} style={{ color: 'var(--color-text1-4, inherit)' }} onClick={event => {
     if (readCanvasAppAdmin(appType).status !== 'allowed') { event.preventDefault(); return; }
     if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
