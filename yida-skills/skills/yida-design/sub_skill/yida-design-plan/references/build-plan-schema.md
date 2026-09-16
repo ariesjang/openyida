@@ -340,7 +340,7 @@
 - `prd.md`、`design.md` 和 `build-plan.html` 必须来自同一个 `meta.revision`；用户确认后把 `meta.status` 更新为 `confirmed`。
 - 确认生成应用前，`build-plan.json` 是唯一搭建计划事实源。
 - 旧数据中的 `selectedStyleOption`、`pageVisualPlanning`、`firstScreen`、`signatureMoment` 和 `visualAtmosphere` 仅用于渲染兼容；新计划不得继续写入。
-- 旧数据只有 `themeId` 时，ID 仍存在于当前索引 → 通过同一记录补齐 `templatePath`；ID 不存在于当前索引 → 返回 Step 2 重新选择当前主题，不凭印象映射旧主题。
+- 输入只有 `themeId` 时，从当前主题索引的对应记录补齐 `templatePath`；ID 不在当前索引中时，返回 Step 2 选择当前可用主题。
 
 ### 紧凑区块输入（schemaVersion 2.0）
 

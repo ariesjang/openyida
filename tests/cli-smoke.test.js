@@ -2412,6 +2412,8 @@ test('Plan and navigation commands are discoverable with their existing permissi
   }
   for (const id of remote) {expect(commands.get(id).requires_login).toBe(true);}
   expect(commands.get('sample').usage).toContain('--design-file');
+  expect(commands.get('sample').notes.join(' ')).toContain('CanvasThemeProvider');
+  expect(commands.get('sample').notes.join(' ')).toContain('openyida-page-template canvas-theme');
   expect(commands.get('update-form-config').usage).toContain('<true|false|keep>');
   expect(commands.get('update-app').usage).toContain('[--layout side|top|l_shape]');
   expect(commands.get('update-app').usage).toContain('[--hide-app-nav|--show-app-nav]');

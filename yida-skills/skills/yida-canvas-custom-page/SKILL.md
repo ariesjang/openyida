@@ -144,7 +144,7 @@ function setNavigationTitle(title) {
 
 纯 DOM 页面直接消费平台 CSS 变量，不必引入 antd 或 Provider。
 
-新写或改造 antd Canvas 页面时，使用本技能 `scripts/build-canvas-theme.js`，输入本地 app-theme.css 和真实上传 URL，生成 CanvasThemeProvider 测试页或展开业务页面的适配层。业务代码只包 Provider，不再手写变量映射和监听；图表按需使用 useCanvasThemeContext。页面底色统一消费 --pod-page-bg-color，卡片消费 --pod-card-bg-color。具体命令、preview 与应用主题模式、编译发布边界见 [CanvasThemeProvider 脚本指南](references/canvas-theme-provider.md)。已有 useCanvasTheme 页面可暂时保留，迁移时移除重复 Provider 和 hook。
+antd Canvas 页面统一使用 CanvasThemeProvider。`sample` 输出的表单抽屉、批量表格和趋势图示例已自动装配；已有页面通过 `sample openyida-page-template canvas-theme` 提取同一份 Provider。需要本地主题预览时，用本技能 `scripts/build-canvas-theme.js` 输入 app-theme.css 和真实上传 URL 生成测试页或装配业务页面。图表通过 useCanvasThemeContext 取色，页面底色使用 --pod-page-bg-color，卡片使用 --pod-card-bg-color。接入方法和编译发布步骤见 [CanvasThemeProvider 指南](references/canvas-theme-provider.md)。
 
 ## 数据真实性边界
 
@@ -197,7 +197,7 @@ openyida get-schema <appType> <formUuid> --field-map-json
 | [dependencies-and-cdn.md](references/dependencies-and-cdn.md) | 可用前端资源、import 写法、运行时加载方式 | 选择或验证前端资源时必读 |
 | [employeefield-verification.md](references/employeefield-verification.md) | 运行时事实、原生组件验证、EmployeeField 验收 | 验证成员/字段组件时阅读 |
 | [data-bridge-guide.md](references/data-bridge-guide.md) | 表单、平台连接器与自定义同源接口的数据桥 | 接入真实数据时阅读 |
-| [canvas-theme-provider.md](references/canvas-theme-provider.md) | 主题脚本、新页面接入、旧页面迁移、预览与发布 | 新写或迁移 antd 页面时必读 |
+| [canvas-theme-provider.md](references/canvas-theme-provider.md) | 统一主题接入、示例装配、预览与发布 | 编写或调整 antd 页面时必读 |
 | [canvas-style-implementation-guide.md](references/canvas-style-implementation-guide.md) | 将 `design.md` 的 App 主题色、antd token、背景层、卡片边界、圆角密度、控件焦点/下拉 reset、图表配色落到 `YidaCodeCanvas` 组件 | MUST：新建页面或调整视觉前完整读取，见顶部编码前必读 |
 | [component-library-guide.md](references/component-library-guide.md) | 组件库推荐组合和页面选型建议 | 选择 UI/图表依赖时阅读 |
 | [canvas-authoring-examples.md](references/canvas-authoring-examples.md) | 最小组件、hooks、副作用、图表示例 | 手写 `.canvas.jsx` 代码时阅读 |

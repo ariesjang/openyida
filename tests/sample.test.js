@@ -238,7 +238,7 @@ describe('sample templates', () => {
     expect(JSON.parse(tableResult.importedModules)).toEqual(['antd', 'dayjs', 'react']);
     expect(tableSource).toContain('writeBridge.verified');
     expect(tableSource).toContain('Promise.all');
-    expect(tableSource).toContain('readCanvasTheme');
+    expect(tableSource).toContain('resolveCanvasTheme');
     expect(tableSource).toContain('min-height: 100vh');
     expect(tableSource).toContain('background: var(--pod-page-bg-color, var(--color-white, #fff))');
     expect(tableSource).toContain('background: var(--pod-card-bg-color, var(--color-white, #fff))');
@@ -270,6 +270,7 @@ describe('sample templates', () => {
     // 校验生成并编译后的 iframe 使用容器高度，避免外层再次出现滚动。
     const runtimeWindow = {
       React: {
+        createContext: () => ({}),
         createElement: (type, props, ...children) => ({ type, props, children }),
         useMemo: (factory) => factory(),
       },
@@ -328,7 +329,7 @@ describe('sample templates', () => {
     expect(() => createForm._private.validateFormFieldDefinitions(fields)).not.toThrow();
     expect(JSON.parse(pageResult.importedModules)).toEqual(['antd', 'lucide-react', 'react']);
     expect(pageSource).toContain('function FormOpenContainer');
-    expect(pageSource).toContain('readCanvasTheme');
+    expect(pageSource).toContain('resolveCanvasTheme');
     expect(pageSource).toContain('min-height: 100vh');
     expect(pageSource).toContain('background: var(--pod-page-bg-color, var(--color-white, #fff))');
     expect(pageSource).toContain('background: var(--pod-card-bg-color, var(--color-white, #fff))');
@@ -419,7 +420,7 @@ describe('sample templates', () => {
     sampleRoots.forEach((root) => {
       fs.readdirSync(root).filter((filename) => /\.(js|jsx)$/.test(filename)).forEach((filename) => {
         const source = fs.readFileSync(path.join(root, filename), 'utf8');
-        // Canvas templates consume the application theme; legacy samples keep their own defaults.
+        // Canvas templates consume application CSS variables; platform JSX samples use their runtime theme adapter.
         if (!filename.endsWith('.canvas.jsx')) {expect(source).not.toMatch(appThemePattern);}
         expect(source).not.toMatch(nearBlackThemePattern);
       });

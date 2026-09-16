@@ -114,7 +114,7 @@ design.md 存在“项目配色适配”时先应用该节，它高于模板默�
 
 ## 主题实现
 
-新 antd 页面按 [CanvasThemeProvider 指南](canvas-theme-provider.md) 装配主题；只编译和发布装配后的文件。纯 DOM 页面不需要 Provider；旧 hook 页面按该指南迁移，不能重复接入。
+antd 页面按 [CanvasThemeProvider 指南](canvas-theme-provider.md) 统一接入主题，编译和发布装配后的文件。纯 DOM 页面直接使用应用 CSS 变量。
 
 主题色决策来自 `yida-design` 的 `design.md`。`app-theme.css` 只在应用级配置，由平台统一作用于整个应用。
 

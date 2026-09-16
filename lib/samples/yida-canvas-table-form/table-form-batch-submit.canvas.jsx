@@ -110,86 +110,10 @@ function getBridgeState(props) {
   return { ready: true, reason: '', writeBridge, fieldMap };
 }
 
-// @openyida-canvas-theme:start
-// Standalone samples keep this fragment identical; see canvas-theme.test.js.
-function readCanvasTheme(root, fallback) {
-  const roles = {
-    colorPrimary: '--color-brand1-6', colorLink: '--color-brand1-6',
-    colorPrimaryHover: '--color-brand1-5', colorPrimaryActive: '--color-brand1-9',
-    colorBgLayout: ['--pod-page-bg-color', '--color-white'],
-    colorBgContainer: ['--pod-card-bg-color', '--color-white'],
-    colorBgElevated: ['--pod-card-bg-color', '--color-white'], colorText: '--color-text1-4',
-    colorTextHeading: '--color-text1-4', colorTextSecondary: '--color-text1-3',
-    colorTextDescription: '--color-text1-3', colorTextPlaceholder: '--color-text1-10',
-    colorBorder: '--color-line1-2', colorBorderSecondary: '--color-line1-1',
-    colorFillAlter: '--color-fill1-1', colorFillSecondary: '--color-fill1-2',
-  };
-  const token = { ...fallback };
-  if (!root) return token;
-  const doc = root.ownerDocument;
-  const view = doc.defaultView;
-  const scope = view.getComputedStyle(root);
-  const probe = doc.createElement('span');
-  probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;';
-  root.appendChild(probe);
-  try {
-    Object.keys(roles).forEach((role) => {
-      const names = Array.isArray(roles[role]) ? roles[role] : [roles[role]];
-      const value = names.map((name) => scope.getPropertyValue(name).trim()).find(Boolean) || '';
-      if (!value || !view.CSS.supports('color', value)) return;
-      probe.style.color = value;
-      const color = view.getComputedStyle(probe).color;
-      if (color) token[role] = color;
-    });
-  } finally {
-    probe.remove();
-  }
-  return token;
-}
+/* @canvas-application-theme */
 
-function useCanvasTheme(fallback) {
-  const rootRef = React.useRef(null);
-  const fallbackRef = React.useRef(fallback);
-  const [token, setToken] = React.useState(fallback);
-  React.useLayoutEffect(() => {
-    const root = rootRef.current;
-    if (!root) return undefined;
-    const doc = root.ownerDocument;
-    const view = doc.defaultView;
-    let frame;
-    const refresh = () => {
-      const next = readCanvasTheme(root, fallbackRef.current);
-      setToken((previous) => JSON.stringify(previous) === JSON.stringify(next) ? previous : next);
-    };
-    const schedule = () => {
-      view.cancelAnimationFrame(frame);
-      frame = view.requestAnimationFrame(refresh);
-    };
-    refresh();
-    // Observe only theme-bearing ancestors and stylesheet changes, not business DOM.
-    const observer = new view.MutationObserver(schedule);
-    for (let node = root; node; node = node.parentElement) {
-      observer.observe(node, { attributes: true });
-    }
-    if (doc.head) observer.observe(doc.head, { subtree: true, childList: true, characterData: true, attributes: true });
-    doc.addEventListener('load', schedule, true);
-    view.addEventListener('resize', schedule);
-    view.addEventListener('openyida:theme-change', schedule);
-    return () => {
-      observer.disconnect();
-      view.cancelAnimationFrame(frame);
-      doc.removeEventListener('load', schedule, true);
-      view.removeEventListener('resize', schedule);
-      view.removeEventListener('openyida:theme-change', schedule);
-    };
-  }, []);
-  return { rootRef, token };
-}
-// @openyida-canvas-theme:end
-
-function YidaComp(props) {
+function PageContent(props) {
   const [modal, modalContextHolder] = Modal.useModal();
-  const { rootRef, token } = useCanvasTheme({ colorPrimary: "#1677ff", borderRadius: 9 });
   const formUuid = props && props.formUuid ? props.formUuid : 'sample-unbound';
   const draftKey = 'openyida_canvas_table_form_draft_' + formUuid;
   const [rows, setRows] = useState(() => loadDraft(draftKey));
@@ -459,9 +383,7 @@ function YidaComp(props) {
   const pendingCount = rows.filter((row) => row._status !== 'submitted').length;
 
   return (
-    <ConfigProvider
-      theme={{ token }}
-    >
+    <>
       <style>{`
         .canvas-table-page {
           display: flow-root;
@@ -503,7 +425,7 @@ function YidaComp(props) {
         }
       `}</style>
 
-      <div ref={rootRef} className="canvas-table-page">
+      <div className="canvas-table-page">
         {modalContextHolder}
         <div className="canvas-table-shell">
           <div className="canvas-table-header">
@@ -576,8 +498,12 @@ function YidaComp(props) {
           </div>
         </div>
       </div>
-    </ConfigProvider>
+    </>
   );
+}
+
+function YidaComp(props) {
+  return <CanvasThemeProvider><PageContent {...props} /></CanvasThemeProvider>;
 }
 
 export default YidaComp;

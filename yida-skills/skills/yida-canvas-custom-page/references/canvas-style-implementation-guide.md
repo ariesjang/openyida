@@ -281,9 +281,9 @@ YidaCodeCanvas 必须把 `design.md` 的 `roundedRule`、`densityRule` 和 `brea
 
 ## 统一主题适配
 
-新 antd 页面使用 [CanvasThemeProvider 脚本](canvas-theme-provider.md)，不再复制变量映射、读取 hook 或监听代码。纯 DOM 页面直接使用 CSS 变量。
+antd 页面统一使用 [CanvasThemeProvider](canvas-theme-provider.md) 读取应用主题。纯 DOM 页面直接使用 CSS 变量。
 
-旧页面已有 `useCanvasTheme` 和 `ConfigProvider` 时可继续维护；不要再叠加新的 Provider。迁移时按脚本指南替换整条主题接入链路。旧示例和 `openyida sample openyida-page-template canvas-theme` 仅保留供存量维护，不作为新页面起点。
+`openyida sample openyida-page-template canvas-theme` 输出同一份 Provider；表单抽屉、批量表格和趋势图示例已自动装配。已有页面按脚本指南统一接入。
 
 ### 按钮语义与优先级
 
