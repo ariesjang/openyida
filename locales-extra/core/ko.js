@@ -9,7 +9,7 @@ module.exports = {
     desc_get: 'Read frontend and management runtime entries',
     desc_set: 'Register application entries with partial update and readback',
     usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
-    invalid_path: 'Provide a runtime URL for the current organization and application. Designer URLs, other applications, and temporary parameters are unsupported.',
+    invalid_url: '현재 앱의 페이지, 공개 페이지 또는 단축 링크에 대한 완전한 http:// 또는 https:// URL을 입력하세요. 상대 경로, 디자이너 URL 및 임시 인증 매개변수는 지원하지 않습니다.',
     invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
     readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
   },

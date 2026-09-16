@@ -9,7 +9,7 @@ jest.mock('../lib/core/yida-client', () => ({
   }),
 }));
 const { createAuthRef, createYidaClient } = require('../lib/core/yida-client');
-const { run, parseArgs, normalizePath } = require('../lib/app/app-entry');
+const { run, parseArgs, normalizeUrl } = require('../lib/app/app-entry');
 const origin = 'https://tenant.example.com';
 const response = (accessEntries, revision = 'v1') => ({ success: true, content: { accessEntries, revision } });
 let client;
@@ -22,20 +22,25 @@ beforeEach(() => {
 afterEach(() => jest.restoreAllMocks());
 
 test.each([
-  ['/APP/custom/FORM', '/APP/custom/FORM'],
-  [`${origin}/APP/workbench/FORM?viewUuid=VIEW#tab`, '/APP/workbench/FORM?viewUuid=VIEW#tab'],
-  ['/APP/workbench', '/APP/workbench'],
-  ['/APP/submission/FORM', '/APP/submission/FORM'],
-])('normalizes a runtime address %s', (input, expected) => {
-  expect(normalizePath(input, 'APP', origin)).toBe(expected);
+  `${origin}/APP/custom/FORM`, `${origin}/APP/workbench`, `${origin}/APP/manage/FORM`,
+  `${origin}/APP/workbench/FORM?viewUuid=VIEW&corpid=ding123&hideLeftNav=true#tab`,
+  `${origin}/APP/submission/FORM?processCode=PROC&noShowTopBottom=true`,
+  `${origin}/o/public-alias`, `${origin}/o/public-alias/FORM-123`, `${origin}/s/app-alias`,
+  'https://enterprise.example.com/o/public',
+])('keeps complete runtime URL %s', (input) => {
+  expect(normalizeUrl(input, 'APP')).toBe(input);
 });
 test.each([
-  '/OTHER/custom/FORM', '//evil.test/APP/custom/FORM', 'https://evil.test/APP/workbench',
-  '/APP/admin', '/APP/custom/../admin', '/APP/custom/%2e%2e', '/APP/custom/FORM?token=secret',
-  '/APP/workbench/FORM?viewUuid=X&token=secret', '/APP/custom/FORM#<script>',
-  '/APP/custom/FORM\\x', '/APP/custom/FORM\nsecret', '/APP/workbench?', '/APP/workbench#',
-])('rejects unsafe or transient address %s', (input) => {
-  expect(() => normalizePath(input, 'APP', origin)).toThrow();
+  '', '/APP/custom/FORM', '//tenant.example.com/APP/custom/FORM',
+  `${origin}/OTHER/custom/FORM`, `${origin}/APP/admin`, `${origin}/APP/custom/../admin`,
+  `${origin}/APP/custom/%2e%2e`, `${origin}/APP/custom/FORM?token=secret`,
+  `${origin}/APP/workbench/FORM?viewUuid=X&token=secret`, `${origin}/APP/custom/FORM#<script>`,
+  `${origin}/APP/custom/FORM\\x`, `${origin}/APP/custom/FORM\nsecret`, `${origin}/APP/workbench?`, `${origin}/APP/workbench#`,
+  `${origin}/s/alias/extra`, `${origin}/o/alias?formUuid=OTHER`, `${origin}/o/alias?corpid=a&corpid=b`,
+  `${origin}/o/alias?hideLeftNav=invalid`, 'https://user:pass@tenant.example.com/o/alias',
+  'javascript:alert(1)', 'ftp://tenant.example.com/o/alias',
+])('rejects relative or unsafe address %s', (input) => {
+  expect(() => normalizeUrl(input, 'APP')).toThrow();
 });
 test.each([
   ['set', 'APP'], ['get', '../APP'], ['set', 'APP', '--frontend'],
@@ -47,42 +52,55 @@ test('help does not require authentication', async () => {
   expect(createAuthRef).not.toHaveBeenCalled();
 });
 test('updates only the supplied entry and uses the read revision', async () => {
-  const management = { path: '/APP/workbench' };
+  const management = { url: `${origin}/APP/workbench` };
   client.get.mockResolvedValueOnce(response({ management })).mockResolvedValueOnce(response({
-    management, frontend: { path: '/APP/custom/FORM' },
+    management, frontend: { url: `${origin}/APP/custom/FORM` },
   }, 'v2'));
   const result = await run(['set', 'APP', '--frontend', `${origin}/APP/custom/FORM`, '--json']);
   expect(client.postForm).toHaveBeenCalledWith('/APP/query/app/saveAccessEntries.json', {
-    accessEntries: JSON.stringify({ frontend: { path: '/APP/custom/FORM' } }), revision: 'v1',
+    accessEntries: JSON.stringify({ frontend: { url: `${origin}/APP/custom/FORM` } }), revision: 'v1',
   });
   expect(result.accessEntries.management).toEqual(management);
   expect(client.get).toHaveBeenCalledTimes(2);
 });
 test('clear is explicit and leaves other entries alone', async () => {
-  client.get.mockResolvedValueOnce(response({ frontend: { path: '/APP/custom/F' } })).mockResolvedValueOnce(response({}, 'v2'));
+  client.get.mockResolvedValueOnce(response({ frontend: { url: `${origin}/APP/custom/F` } })).mockResolvedValueOnce(response({}, 'v2'));
   await run(['set', 'APP', '--clear-frontend']);
   expect(JSON.parse(client.postForm.mock.calls[0][1].accessEntries)).toEqual({ frontend: null });
 });
 test('conflict does not retry or overwrite', async () => {
   client.get.mockResolvedValue(response({}));
   client.postForm.mockResolvedValue({ success: false, errorMsg: 'conflict' });
-  await expect(run(['set', 'APP', '--management', '/APP/workbench'])).rejects.toThrow('conflict');
+  await expect(run(['set', 'APP', '--management', `${origin}/APP/workbench`])).rejects.toThrow('conflict');
   expect(client.postForm).toHaveBeenCalledTimes(1);
   expect(client.get).toHaveBeenCalledTimes(1);
 });
 test('missing revision prevents writes', async () => {
   client.get.mockResolvedValue(response({}, ''));
-  await expect(run(['set', 'APP', '--management', '/APP/workbench'])).rejects.toThrow();
+  await expect(run(['set', 'APP', '--management', `${origin}/APP/workbench`])).rejects.toThrow();
   expect(client.postForm).not.toHaveBeenCalled();
 });
 test('readback mismatch is not reported as success', async () => {
   client.get.mockResolvedValue(response({}));
-  await expect(run(['set', 'APP', '--management', '/APP/workbench'])).rejects.toThrow();
+  await expect(run(['set', 'APP', '--management', `${origin}/APP/workbench`])).rejects.toThrow();
   expect(console.log).not.toHaveBeenCalled();
 });
 test('get is read-only and returns resolved URLs', async () => {
-  client.get.mockResolvedValue(response({ management: { path: '/APP/workbench' } }));
+  client.get.mockResolvedValue(response({ management: { url: `${origin}/APP/workbench` } }));
   await run(['get', 'APP']);
   expect(client.postForm).not.toHaveBeenCalled();
   expect(JSON.parse(console.log.mock.calls[0][0]).urls.management).toBe(`${origin}/APP/workbench`);
+});
+
+test('keeps the verified enterprise URL even when the API authentication host differs', async () => {
+  const url = 'https://enterprise.example.com/o/public?corpid=ding123#home';
+  client.get.mockResolvedValueOnce(response({})).mockResolvedValueOnce(response({ frontend: { url } }, 'v2'));
+  await run(['set', 'APP', '--frontend', url]);
+  expect(JSON.parse(client.postForm.mock.calls[0][1].accessEntries)).toEqual({ frontend: { url } });
+  expect(JSON.parse(console.log.mock.calls[0][0]).urls.frontend).toBe(url);
+});
+test('rejects relative input before any request', async () => {
+  await expect(run(['set', 'APP', '--frontend', '/APP/custom/FORM'])).rejects.toThrow();
+  expect(client.get).not.toHaveBeenCalled();
+  expect(client.postForm).not.toHaveBeenCalled();
 });
