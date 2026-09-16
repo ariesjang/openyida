@@ -144,7 +144,7 @@ def render_nav() -> str:
     for anchor, title, subtitle, icon in SECTIONS:
         icon_src = icon_data_uri(icon)
         icon_html = (
-            f'<img class="nav-icon-img" src="{esc(icon_src)}" alt="" aria-hidden="true" />'
+            f'<span class="nav-icon-img" style="--nav-icon-image: url(\'{esc(icon_src)}\')" aria-hidden="true"></span>'
             if icon_src
             else '<span class="nav-icon-fallback" aria-hidden="true"></span>'
         )
