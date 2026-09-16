@@ -20,6 +20,8 @@
 2. 按 [模式路由](../../yida-design/references/design-mode.md) 确定执行方式，沿用用户最后一次明确选择。
 3. AI 根据有效功能、`userTasks` 与 `entryRecommendation`，按 [导航决策](../../yida-design/references/navigation-decision.md) 规划各入口的页面和菜单，补齐稳定 `pageScenes` 与主题映射。新增建议标记来源，范围遵守 explicitScope。
 
+Fast / Plan 的主题与配色统一按[设计方向比较](../../yida-design/references/style-design-selection.md#设计方向比较)在本轮规划中选定，结果写回 brief，后续直接复用。
+
 进入 2.1 前校验规划字段完整性和 `intake.designMode`。页面、导航、主题等建议随整体搭建方案展示。
 
 执行规划前读取 `constraints.prohibitedActions`。PRD 与 design 必须把禁止项写成实现门禁：`theme-file` 禁止时沿用现有平台主题且不安排主题文件任务；`page-source` 禁止时只允许只读核查与非源码配置；`publish` 禁止时把发布明确标记为跳过。不得为了满足默认九步流程静默删除这些约束。

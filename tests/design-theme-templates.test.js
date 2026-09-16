@@ -8,6 +8,15 @@ const { spawnSync } = require('child_process');
 const SKILL = path.resolve(__dirname, '../yida-skills/skills/yida-design/sub_skill/yida-design-plan');
 const THEMES = path.join(SKILL, 'templates/design-themes');
 
+test('shipped themes inherit project color instead of prescribing a hue when branding is absent', () => {
+  const index = JSON.parse(fs.readFileSync(path.join(THEMES, 'index.json'), 'utf8'));
+  for (const theme of index.themes) {
+    const source = fs.readFileSync(path.join(SKILL, theme.templatePath), 'utf8');
+    expect(source).not.toMatch(/(?:无品牌色|没有品牌色)[^。\n]*(?:默认[^。\n]*(?:蓝色|冷色|纯黑)|(?:蓝色|冷色|纯黑)[^。\n]*默认)/);
+    expect(source).toContain('{{PRIMARY_COLOR}}');
+  }
+});
+
 test.each(['utf-8', 'cp1252'])('all shipped themes pass the full template contract with inherited %s encoding', encoding => {
   const result = spawnSync('python3', [path.join(SKILL, 'scripts/validate_design_themes.py')], {
     encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: encoding },

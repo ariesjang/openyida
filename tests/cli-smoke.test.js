@@ -2499,6 +2499,12 @@ test('plain user-facing guidance is available from manifest and both agent capab
   expect(capabilities.commands.core_workflows.full_app_build.user_visible_expression_policy).toEqual(policy);
   expect(capabilities.recommended.default_full_app_workflow.user_visible_expression_policy).toEqual(policy);
   expect(fs.existsSync(path.join(ROOT, policy.reference))).toBe(true);
+  const visual = manifest.summary.core_workflows.full_app_build.visual_decision_policy;
+  expect(visual).toEqual(require('../lib/design-plan/visual-policy').getVisualDecisionPolicy());
+  expect(summary.full_app_artifact_route.visual_decision_policy).toEqual(visual);
+  expect(capabilities.commands.core_workflows.full_app_build.visual_decision_policy).toEqual(visual);
+  expect(capabilities.recommended.default_full_app_workflow.visual_decision_policy).toEqual(visual);
+  expect(fs.existsSync(path.join(ROOT, visual.reference.split('#')[0]))).toBe(true);
 });
 
 test('asset fallback and completion policies are shared by the CLI, manifest and agent summary', () => {

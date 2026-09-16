@@ -86,7 +86,7 @@ tags: [<业务领域>, <角色>, <数据形态>]
 avoid: [<不适合场景>]
 themeProfile:
   name: <主题名称>
-  themeColorSource: <user-specified / application-theme / business-inferred / template-default>
+  themeColorSource: <user-specified / application-theme / business-inferred>
   themeColorToken: <--color-brand1-6 的字面量值>
   themeDelivery: <app-custom-theme-file / current-app-theme>
   customThemeTemplate: yida-design/references/theme/app-custom-theme-template.css

@@ -13,6 +13,8 @@ let briefPath;
 let brief;
 const save = () => fs.writeFileSync(briefPath, JSON.stringify(brief));
 const init = () => initialize(briefPath, { themeId: 'airy-modular-clarity', outputDir: path.join(dir, 'prd') });
+const colorExample = result => JSON.parse(fs.readFileSync(result.context, 'utf8')
+  .split('## 输入格式示例')[1].match(/```json\n([\s\S]*?)\n```/)[1]).colorStrategy;
 
 beforeEach(() => {
   dir = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-plan-init-'));
@@ -35,6 +37,37 @@ beforeEach(() => {
   save();
 });
 afterEach(() => fs.rmSync(dir, { recursive: true, force: true }));
+
+test.each(['#6F4E37', '#1677FF'])('color examples preserve the project choice %s instead of proposing a preset', primaryColor => {
+  brief.visualSelection.colorStrategy = { primaryColor, primaryColorName: '项目主色', usage: '来自用户提供的品牌规范' };
+  save();
+  const result = init();
+  expect(colorExample(result)).toEqual(brief.visualSelection.colorStrategy);
+  expect(result.authoring.visualDecision).toEqual(require('../lib/design-plan/visual-policy').getVisualDecisionPolicy());
+  const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+  expect(plan.visualStyle.forUser.colorStrategy.primaryColor).toBe(primaryColor);
+});
+
+test('missing color uses the existing visual-selection task and leaves the example unfilled', () => {
+  delete brief.visualSelection.colorStrategy;
+  save();
+  const result = init();
+  expect(colorExample(result)).toEqual({ primaryColor: '', primaryColorName: '', usage: '' });
+  expect(result.authoring.pendingFields).toEqual(expect.arrayContaining([
+    expect.objectContaining({ path: 'facts.visualStyle.forUser.colorStrategy.primaryColor' }),
+  ]));
+  expect(result.parallelTasks.map(task => task.id)).toEqual(['business', 'visual-selection']);
+  expect(result.authoring.visualDecision.comparison).toMatchObject({ baseline: 'first_instinct', alternatives: 2, distinctDimensions: 2 });
+});
+
+test.each([undefined, 'ai_default', 'user_selected'])('visual selection preserves its actual source: %s', source => {
+  brief.visualSelection.visualDirection.source = source;
+  save();
+  const result = init();
+  const visual = JSON.parse(fs.readFileSync(result.output, 'utf8')).visualStyle;
+  expect(visual.forUser.visualDirection.source).toBe(source || 'ai_default');
+  expect(visual.internal.selectedTheme.source).toBe(source || 'ai_default');
+});
 
 test('initializes stable references, preserves explicit facts and returns a bounded theme context', () => {
   const original = fs.readFileSync(briefPath, 'utf8');
