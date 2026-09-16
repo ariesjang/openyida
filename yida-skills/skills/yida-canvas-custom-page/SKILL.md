@@ -7,6 +7,8 @@ description: 宜搭自定义页面开发规范，使用 `YidaCodeCanvas` 组件�
 
 ## 编码前必读（MUST）
 
+先确定控件与动作的接入方式，再写业务 JSX：使用 antd 时先读取并合并 [标准主题桥](references/canvas-theme-provider.md)，所有 Button、Tabs、Segmented、链接与弹层放在同一主题子树；普通 DOM 控件直接消费应用 CSS 变量。需要跨页按钮或链接时，先按 [入口契约](references/navigation-and-entry-guide.md#先建立动作与目标清单) 提取 `canvas-navigation`，填写真实资源 ID 和目标类型。本页 Tab 用状态或 hash；按钮点击和链接 href 共用同一个 URL 构造函数。缺少目标资源时保留布局并禁用该入口，不猜地址。
+
 新建页面或调整视觉前，完整读取 [canvas-style-implementation-guide.md](references/canvas-style-implementation-guide.md)，结合当前 PRD 和 `design.md` 实现。读取结果被截断时分段读完；同一任务已读完且文件未变时可复用。仅修改数据逻辑时可跳过，并记录原因。
 
 在现有实现计划中记录适用章节、采用规则和页面位置，覆盖画布与导航、卡片边界、控件主题、密度留白。例如：`客户列表白底白卡 → 主题中性细边框`。交付前核对源码与实际页面，未实测项标为待验证。
@@ -21,6 +23,7 @@ description: 宜搭自定义页面开发规范，使用 `YidaCodeCanvas` 组件�
 
 ## 运行时事实
 
+- 独立前台需向应用管理员提供业务工作台入口时，按 [管理员入口](references/navigation-and-entry-guide.md#管理员返回业务工作台) 提取 `canvas-admin-entry`。核对当前应用 loginUser.isAppAdmin 的明确允许值，未知时隐藏；目标来自真实管理页资源，不从访客菜单或 CLI 登录身份推断。
 - 使用 `YidaCodeCanvas` 组件实现的源码写成 `.canvas.jsx` / `.canvas.tsx`，`openyida publish` 会自动写入 `YidaCodeCanvas` Schema。
 - 页面源码路径按 Bash cwd 选择：从工作区根执行命令时用 `project/pages/src/...`；cwd 已是 `<workspace>/project` 时用 `pages/src/...`。
 - `runtimeCode` 在运行页面真实 `window` 中执行，入口必须返回 `YidaComp` / `YidaComp.default` / 组件函数。

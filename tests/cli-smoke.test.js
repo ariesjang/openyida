@@ -1667,7 +1667,7 @@ describe('CLI offline smoke', () => {
         url: '{base_url}/{appType}/custom/{formUuid}',
       },
       admin: {
-        include: 'follow_agent_capabilities_application_entry_policy',
+        include: 'default_for_complete_application',
         url: '{base_url}/{appType}/admin',
       },
       internal_artifacts: 'never_user_visible',
@@ -2486,7 +2486,7 @@ test('command and agent navigation policies align with AI intake decisions', () 
   }
   expect(workflow.completion_contract).toContain('delivery artifact description');
   expect(workflow.completion_contract).toContain('when no delivery tool is available');
-  expect(workflow.completion_contract).toContain('frontend-only delivery includes only its verified frontend entry');
+  expect(workflow.completion_contract).toContain('frontend-only delivery includes its verified frontend entry and developer admin URL');
   expect(capabilities.recommended.default_full_app_workflow.completion_contract).toBe(workflow.completion_contract);
 });
 
@@ -2536,7 +2536,7 @@ test('asset fallback and completion policies are shared by the CLI, manifest and
   const collection = sources.guidance.collectionPolicy;
   const scheduling = sources.guidance.schedulingPolicy;
   expect(scheduling).toMatchObject({ searchConcurrency: 4, searchUnit: 'slot', resultWriter: 'one_per_page',
-    dispatchMode: 'host_background_task', afterDispatch: 'continue_resource_and_page_work',
+    dispatchMode: 'host_capability_adaptive', afterDispatch: 'continue_resource_and_page_work',
     resumeRunning: 'attach_existing_host_task', waitAt: 'own_page_image_binding_and_acceptance',
     waitPolicy: 'own_page_only_after_independent_work',
     timeBudget: { owner: 'host_agent', requestTimeoutMs: 30000, pageDeadlineMs: 180000, startsAt: 'first_search_dispatch', resume: 'keep_original_deadline' },
@@ -2619,4 +2619,17 @@ test('form recovery command contracts expose bounded recovery and compatible URL
   expect(batch.notes.join(' ')).toContain('url remains the compatible form entry');
   expect(resume.notes.join(' ')).toContain('retry missing compatible fields once');
   expect(resume.usage).toContain('create-form resume <appType> <formUuid> <fieldsJsonOrFile> [--json]');
+});
+
+test('QwenWork declares Bash background separately from synchronous Agent in both CLI capability formats', () => {
+  for (const format of ['--summary-json', '--json']) {
+    const result = JSON.parse(runOkWithEnv(['agent-capabilities', format], {
+      QWENWORK: '1', OPENYIDA_AGENT_BACKGROUND_AGENT: '0', OPENYIDA_AGENT_BACKGROUND_SHELL: '1',
+    }));
+    expect(result.asset_capabilities).toMatchObject({
+      background_agent: { available: false, source: 'environment_declaration' },
+      background_shell: { available: true, source: 'environment_declaration' },
+      execution: { selected_mode: 'background_shell', shell: { foregroundWork: expect.arrayContaining(['visual_image_review']) } },
+    });
+  }
 });

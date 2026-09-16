@@ -560,9 +560,13 @@ describe('OpenYida skill contracts', () => {
     expect(step9).toContain('不得把一张表单的 3 条记录复制成其他表单也有 3 条');
     expect(step9).toContain('每个资源数量和数据完成声明都有对应资源自己的成功返回值/readback');
     expect(step9).toContain('已完成订单、客户和商品等核心业务表单');
-    expect(step9).toContain('应用工作台：`{base_url}/{appType}/workbench`');
-    expect(step9).toContain('独立业务入口：`{base_url}/{appType}/custom/{formUuid}`');
+    expect(step9).toContain('业务后台：`{base_url}/{appType}/workbench`');
+    expect(step9).toContain('前台：`{base_url}/{appType}/custom/{formUuid}`');
     expect(step9).toContain('`application_entry_policy.entries.admin=include`');
+    expect(step9).toContain('前台、业务后台、开发者管理后台');
+    expect(step9).toContain('统一工作区时为“应用工作台、开发者管理后台”');
+    expect(step9).toContain('不得静默省略或声明交付完成');
+    expect(step9).not.toContain('值为 `omit` 时不得输出');
     expect(step9).toContain('不把 `g.alicdn.com` 的 `index.css`、`index.js`、`index.html`、`locales/*.json`');
     expect(step9).toContain('顶层 `skillsUsed`');
     expect(step9).toContain('实际读取并使用');
@@ -1667,7 +1671,7 @@ describe('OpenYida skill contracts', () => {
     expect(batchForms).toContain('background pending 表示原 batch 仍在执行');
     expect(batchForms).toContain('CLI 从 state 读取已知 ID 并复用成功表单');
     expect(batchForms).not.toContain('修正输入或为已知资源补入 `formUuid` 后');
-    expect(finishStep).toContain('CLI 成功结果返回的 `appUrl`、`workbenchUrl` 或 `url`');
+    expect(finishStep).toContain('CLI 成功结果返回的 `appUrl`、`workbenchUrl`、`adminUrl` 或 `url`');
     expect(finishStep).toContain('不得由模型根据 `appType` 自行拼接');
   });
 
@@ -1695,15 +1699,15 @@ describe('OpenYida skill contracts', () => {
     expect(navGuide).toContain('openyida sample openyida-page-template form-open-container');
     expect(navGuide).toContain('useYidaFormOpen(appType, reload)');
     expect(navGuide).toContain('window.__OPENYIDA_UTILS__');
-    expect(navGuide).toContain('getOpenYidaUtilsBridge');
+    expect(navGuide).toContain('openyida sample openyida-page-template canvas-navigation');
     expect(navGuide).not.toContain('installYidaGlobalThemeIntoFrame');
     expect(navGuide).not.toContain('themeTokens');
     expect(navGuide).not.toContain('onLoad={syncThemeToIframe}');
     expect(navGuide).toContain('`FormOpenContainer` 只负责打开原生提交页或详情页');
     expect(navGuide).toContain('`50vw`');
     expect(navGuide).toContain('退出全屏或关闭后重新打开保留已调整的宽度');
-    expect(navGuide).toContain('return `/${appType}/submission/${entry.formUuid}?isRenderNav=false`;');
-    expect(navGuide).toContain('formDetail/${entry.formUuid}?formInstId=');
+    expect(navGuide).toContain('navigateCanvasPage(target, {');
+    expect(navGuide).toContain('formInstId: getYidaFormInstId(entry.row) || entry.formInstId');
     expect(navGuide).toContain('navConfig.layout=1180');
     expect(navGuide).toContain('row.formInstId || row.formInstanceId || row.instanceId || row.id');
     expect(navGuide).toContain('有实例 ID 时启用详情按钮；缺少时禁用按钮，并提示“未找到数据实例”');

@@ -12,12 +12,25 @@ description: >
 
 ## 后台启动与接收
 
-1. **启动**：应用编排使用宿主后台任务工具，传入当前页设计、`searches`、`draft`、`manifest` 和时间预算。收到真实任务编号后，立即继续创建应用、表单和页面；有图页面先做布局、文字、真实数据绑定和交互。
-2. **记录**：编排负责维护 `taskState`，记录 `taskKey`、`pageId`、`hostTaskId`、`status`、`startedAt`、`firstSearchAt`、`deadlineAt`、各位置已用轮次及输出路径。状态使用 `pending/running/completed/partial/failed`；真实启动后才记为 `running`。采集任务独占该页草稿和清单，每轮开始及结束时向编排报告轮次和进度，编排统一保存任务记录。Fast 使用同样规则，任务记录位于页面清单旁的 `<pageId>.task.json`，`taskKey` 使用清单绝对路径。
+**先判宿主能力，再决定执行方式，不能把同步 Agent 调用当成后台任务。** 复用 `agent-capabilities --summary-json` 的 `asset_capabilities.background_agent/background_shell/execution`，对照本轮真实工具参数和结果接收能力；宿主名称、任务标题和“并行”话术都不是证据。
+
+| 当前实际能力 | 执行方式 |
+| --- | --- |
+| Agent 支持非阻塞后台派发，立即返回可查询任务编号 | 后台采集该页素材，主流程立即继续业务 |
+| Agent 只有同步调用，但 Bash 支持后台执行 | 可脚本化步骤用后台 Bash；宿主专有搜图、生图、看图判断留在前台分批处理，不整包交给同步 Agent |
+| 两种后台能力均不可用或未能验证 | 先做已获授权的应用/表单创建或复用、范围内种子数据、无图页面及有图页面布局交互，再分批素材；批次间继续独立工作，记录限制 |
+
+QwenWork 优先检查实际 Bash 工具是否提供 `run_in_background`；支持时这是 **Bash 工具参数**，不是 `openyida` CLI 参数。用它后台执行已具备命令入口的搜索、允许的下载上传、`asset resolve`。从 `assetTasks.resolve.argv` 构造命令，路径按实际 shell 正确引用；上传填真实 appType。保存工具返回的任务编号、日志/清单路径和派发返回时间后立刻继续主流程，不紧接着调用等待工具。到所属页面接图时再读取任务状态、退出码和清单；退出码 2 表示仍有素材缺口，不能当成功。宿主若只有轮询就按需查询，不承诺自动通知。
+
+Bash 不能直接执行仅 Agent 可用的搜图/生图/看图工具。后台 shell 只证明可脚本化部分异步，不能据此宣称整条采集链都在后台。普通命令末尾加 `&` 或看到 PID 不足以证明任务能跨工具调用存活、收取结果和取消。只有真实工具核实后才设置 `OPENYIDA_AGENT_BACKGROUND_AGENT` / `OPENYIDA_AGENT_BACKGROUND_SHELL` 为 1/0；未知保持 unknown，CLI 不凭 QwenWork 名称自动放行。
+
+
+1. **启动**：应用编排按上述能力决策选择后台工具或业务优先的同步批次，传入当前页设计、`searches`、`draft`、`manifest` 和时间预算。收到真实任务编号后，立即继续创建应用、表单和页面；有图页面先做布局、文字、真实数据绑定和交互。
+2. **记录**：编排负责维护 `taskState`，记录 `taskKey`、`pageId`、`hostTaskId`、`executionMode`、`toolName`、`backgroundOption`、`dispatchReturnedAt`、`status`、`startedAt`、`endedAt`、`firstSearchAt`、`deadlineAt`、各位置已用轮次及输出路径。状态使用 `pending/running/completed/partial/failed`；真实启动后才记为 `running`。executionMode 使用 background_agent/background_shell/synchronous；同步时记录 fallbackReason，复用 final 图片记录 reused 和 reuseEvidence。主流程另外记录 businessWork 的真实 startedAt/endedAt（含时区），收尾汇总至 build-manifest.assetExecution。采集任务独占该页草稿和清单，每轮开始及结束时向编排报告轮次和进度，编排统一保存任务记录。Fast 使用同样规则，任务记录位于页面清单旁的 `<pageId>.task.json`，`taskKey` 使用清单绝对路径。
 3. **复用**：按 `taskKey` 找已有任务，结合宿主状态核对是否仍在运行；运行中接收原任务，已完成则读取清单。恢复中断任务时沿用已用轮次和原截止时间，并核对图片用途、尺寸和当前设计。设计变化时先终止旧任务，确认退出后再交接文件写入权。
 4. **接收**：主流程在当前页接图前读取一次结果；仍在运行时先完成其他独立工作，确需结果时使用宿主等待工具。按该页清单验收真实图片，再发布页面。`completed` 表示清单检查通过，`partial` 表示仍有必需图片缺口；宿主任务结束后由编排回读清单再更新状态。
 
-CLI 的 `assetTasks` 是派发输入，后台执行能力来自宿主。仅支持同步工具时，批量调用可并行的搜索和检查，完成一批后继续独立业务工作，并记录实际等待。用户待办沿用简短阶段名称，图片任务显示为“准备页面图片”，“创建应用”保持独立待办。素材采集与应用创建同时进行时，进度描述统一为“素材采集&应用创建”；单独采集时写“素材采集”。图片数量、子任务、槽位、编号、轮次和耗时写入内部执行记录。
+CLI 的 `assetTasks` 是派发输入，后台执行能力来自宿主。仅支持同步工具时先推进独立业务，再批量调用搜索和检查，完成一批后继续独立业务工作，并记录实际等待；禁止把整包素材放在应用创建之前。用户待办沿用简短阶段名称，图片任务显示为“准备页面图片”，“创建应用”保持独立待办。仅在素材与业务执行区间实际重叠时，进度描述才使用“素材采集&应用创建”；单独采集时写“素材采集”。图片数量、子任务、槽位、编号、轮次和耗时写入内部执行记录。
 
 ## 1. 确定哪些页面需要图片
 

@@ -6,6 +6,7 @@
  */
 module.exports = {
   asset: {
+    executionReview: '素材執行記錄需覆核：{0}。請檢查背景派發回執、業務執行時間及同步退化原因。',
     localFileUnavailable: "找不到圖片檔案：{0}。請檢查指令工作目錄，或使用絕對路徑。",
     invalidStrategy: "圖片要求應填寫為物件，按頁面列出圖片位置。",
   },
@@ -1197,6 +1198,8 @@ module.exports = {
     failed: '页面规范检查失败'
   },
   publish: {
+    canvas_path_missing_app_type: '第 {0} 行的跳轉地址缺少 appType。請用 canvas-navigation 與真實 ID 建立 /{appType}/{pageType}/{formUuid}，不要直接跳轉 /custom/ 等路徑。',
+    canvas_theme_fixed_brand: '第 {0} 行的 ConfigProvider 固定了品牌互動色。請使用 canvas-theme 解析應用主題；CSS var 用於 DOM 樣式，不直接傳給 antd 色值。',
     canvas_navigation_local_platform: '第 {0} 行把本頁選單交給平台導航過濾。請使用 mode=local 或直接切換本頁視圖；實際頁面需 formUuid/navUuid，仍須檢查權限。',
     canvas_navigation_document_flex: '第 {0} 行仍使用工作區 flex 零基準佈局，可能壓縮長頁。請重新提取 canvas-nav-content：document 使用自然高度與區塊佈局，workspace 才使用固定高度 flex。',
     canvas_theme_not_assembled: '第 {0} 行的主題標記尚未組裝。請執行 build-canvas-theme.js，編譯並發佈獨立輸出檔案。已接好 Provider 的頁面不需要此標記。',

@@ -6,6 +6,7 @@
  */
 module.exports = {
   asset: {
+    executionReview: 'Revise las pruebas de ejecución de recursos: {0}. Compruebe las respuestas de tareas en segundo plano, los intervalos de trabajo y los motivos del modo síncrono.',
     localFileUnavailable: "No se encontró la imagen: {0}. Comprueba el directorio de trabajo del comando o usa una ruta absoluta.",
     invalidStrategy: "Los requisitos de imágenes deben ser un objeto con las posiciones de imágenes por página.",
   },
@@ -1260,6 +1261,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_path_missing_app_type: 'Línea {0}: falta appType en el destino. Use canvas-navigation e ID verificados para /{appType}/{pageType}/{formUuid}, no una ruta /custom/ aislada.',
+    canvas_theme_fixed_brand: 'Línea {0}: ConfigProvider fija un color de marca. Use canvas-theme con colores resueltos del tema; reserve CSS var para estilos DOM.',
     canvas_navigation_local_platform: 'Línea {0}: las vistas locales se filtran por la navegación de plataforma. Use mode=local o estado local; vincule páginas reales a formUuid/navUuid y compruebe los permisos declarados.',
     canvas_navigation_document_flex: 'Línea {0}: document usa flex con base cero. Actualice canvas-nav-content: altura natural y bloques para document, flex de altura fija para workspace.',
     canvas_theme_not_assembled: 'El marcador de tema de la línea {0} no está ensamblado. Ejecute build-canvas-theme.js y compile/publique el archivo de salida independiente. Las páginas con Provider integrado no necesitan este marcador.',

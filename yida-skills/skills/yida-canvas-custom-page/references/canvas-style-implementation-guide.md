@@ -292,6 +292,7 @@ antd 页面统一使用 [CanvasThemeProvider](canvas-theme-provider.md) 读取�
 
 ### 按钮语义与优先级
 
+- 内容面板切换用 Tabs，类别单选用 Segmented/Radio.Group，主动作才用实心 Button。按 [默认控件状态](canvas-theme-provider.md#默认控件状态) 接入 Provider：中性普通项、轻底选中项、清晰文字与独立禁用态；不把分类筛选做成一排主操作，不以主色文字叠加同色实心底。
 - 主按钮、链接、选中态跟随应用品牌 token；普通按钮使用中性表面、文字和边框。
 - 删除、失败、成功、警告保留语义色，不能把所有按钮和提示都染成品牌色。
 - 原生 DOM 按钮直接消费 CSS 变量；antd 控件使用 `ConfigProvider` 的解析值，保留库的 disabled/loading/focus 行为。

@@ -10,21 +10,26 @@ const path = require('path');
 // Budgets are ratchets that track legitimate content growth (12 locale packs,
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
-// Icon export checks and authoring guards add two runtime files. Node 26/npm
-// 11 packs 510 files into 1,908,652 bytes (6,644,070 unpacked). Retain the measured
-// ~21 KiB npm 10 compression overhead and round budgets to 16 KiB boundaries.
-const MAX_TARBALL_BYTES = 1888 * 1024;
-// Navigation source guard and aligned samples/docs add about 15 KiB unpacked.
-const MAX_UNPACKED_BYTES = 6512 * 1024;
-const MAX_ENTRY_COUNT = 511;
+// Asset dispatch, navigation/admin-entry samples, source guards and app URL
+// output add runtime/sample files. Node 26/npm 11 measures
+// 1,933,768 packed / 6,711,457 unpacked bytes across 516 files.
+// Retain ~21 KiB npm 10 compression overhead; round budgets to 16 KiB boundaries.
+const MAX_TARBALL_BYTES = 1920 * 1024;
+const MAX_UNPACKED_BYTES = 6560 * 1024;
+const MAX_ENTRY_COUNT = 516;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
   'bin/yida.js',
   'lib/app/create-form/batch.js',
+  'lib/app/application-entry-urls.js',
   'lib/app/inline-css-guard.js',
   'lib/app/canvas-icon-guard.js',
   'lib/app/canvas-navigation-guard.js',
+  'lib/app/canvas-path-guard.js',
+  'lib/samples/openyida-scaffold/canvas-navigation.jsx',
+  'lib/samples/openyida-scaffold/canvas-admin-entry.jsx',
+  'lib/asset/asset-execution.js',
   'lib/app/canvas-icon-exports.json',
   'lib/design-plan/preview.js',
   'lib/design-plan/entry-navigation.js',

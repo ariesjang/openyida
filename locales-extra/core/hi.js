@@ -6,6 +6,7 @@
  */
 module.exports = {
   asset: {
+    executionReview: 'सामग्री निष्पादन के प्रमाण की समीक्षा करें: {0}। पृष्ठभूमि कार्य की पुष्टि, व्यावसायिक कार्य अवधि और समकालिक विकल्प के कारण जाँचें।',
     localFileUnavailable: "चित्र फ़ाइल नहीं मिली: {0}। कमांड की कार्य निर्देशिका जाँचें या पूर्ण पथ दें।",
     invalidStrategy: "चित्र आवश्यकताएँ एक ऑब्जेक्ट में दें, जिसमें हर पृष्ठ के चित्र स्थान हों।",
   },
@@ -1258,6 +1259,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_path_missing_app_type: 'पंक्ति {0}: नेविगेशन में appType नहीं है। canvas-navigation और सत्यापित ID से /{appType}/{pageType}/{formUuid} बनाएँ; केवल /custom/ पथ न दें।',
+    canvas_theme_fixed_brand: 'पंक्ति {0}: ConfigProvider में ब्रांड रंग स्थिर है। canvas-theme से प्राप्त थीम रंग उपयोग करें; CSS var सीधे केवल DOM स्टाइल में दें।',
     canvas_navigation_local_platform: 'पंक्ति {0}: स्थानीय व्यू प्लेटफ़ॉर्म मेनू से फ़िल्टर हो रहे हैं। mode=local या स्थानीय स्टेट उपयोग करें; वास्तविक पेजों को formUuid/navUuid से जोड़ें और घोषित अनुमतियाँ जाँचें।',
     canvas_navigation_document_flex: 'पंक्ति {0}: document में शून्य आधार वाला flex है। canvas-nav-content अपडेट करें: document के लिए प्राकृतिक ऊँचाई और ब्लॉक, workspace के लिए निश्चित ऊँचाई वाला flex।',
     canvas_theme_not_assembled: 'पंक्ति {0} का थीम मार्कर अभी तैयार नहीं हुआ है। build-canvas-theme.js चलाएँ और अलग आउटपुट फ़ाइल को कंपाइल/प्रकाशित करें। एकीकृत Provider वाले पेजों को इस मार्कर की आवश्यकता नहीं है।',

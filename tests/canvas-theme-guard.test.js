@@ -79,3 +79,26 @@ test('unexpanded theme markers report assembly instructions before missing bindi
 test('marker text in a string or explanatory comment is not an assembly placeholder', () => {
   expect(() => compileCanvasLocal('/* Documenting @canvas-theme-provider here */\nfunction YidaComp() { return <div>{"/* @canvas-theme-provider */"}</div>; }')).not.toThrow();
 });
+
+test.each([
+  "{token:{colorPrimary:'#1677ff'}}",
+  "{token:{colorLink:'var(--color-brand1-6)'}}",
+  "{components:{Tabs:{itemSelectedColor:'#1677ff',inkBarColor:'#1677ff'}}}",
+  "{components:{Button:{colorPrimary:'blue'}}}",
+])('rejects fixed brand overrides including nested component overrides: %s', theme => {
+  expect(() => compileCanvasLocal(`import {ConfigProvider as Theme} from 'antd'; const config=${theme}; function YidaComp(){return <Theme theme={config}><div/></Theme>}`))
+    .toThrow(expect.objectContaining({ code: 'OPENYIDA_CANVAS_THEME_FIXED_BRAND' }));
+});
+
+test.each([
+  "{token:{colorError:'#ff0000',borderRadius:12}}",
+  '{token:window.resolvedTheme}',
+  '{components:{Tabs:{itemSelectedColor:window.resolvedTheme.colorPrimary}}}',
+])('preserves semantic and dynamic colors: %s', theme => {
+  expect(() => compileCanvasLocal(`import {ConfigProvider} from 'antd'; function YidaComp(){return <ConfigProvider theme={${theme}}><div/></ConfigProvider>}`)).not.toThrow();
+});
+
+test('namespace ConfigProvider fixed tokens are checked', () => {
+  expect(() => assertCanvasThemeStructure("import * as UI from 'antd'; const color='orange'; function YidaComp(){return <UI.ConfigProvider theme={{token:{colorPrimary:color}}}><div/></UI.ConfigProvider>}"))
+    .toThrow(expect.objectContaining({ code: 'OPENYIDA_CANVAS_THEME_FIXED_BRAND' }));
+});

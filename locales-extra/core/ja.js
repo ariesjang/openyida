@@ -6,6 +6,7 @@
  */
 module.exports = {
   asset: {
+    executionReview: '素材の実行記録を確認してください：{0}。バックグラウンド実行の応答、業務の実行時間、同期処理への切り替え理由を確認してください。',
     localFileUnavailable: "画像ファイルが見つかりません：{0}。コマンドの作業ディレクトリを確認するか、絶対パスを指定してください。",
     invalidStrategy: "画像の要件は、ページごとの画像の配置を記述したオブジェクトで指定してください。",
   },
@@ -1209,6 +1210,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_path_missing_app_type: '行 {0}: 遷移先に appType がありません。canvas-navigation と確認済み ID で /{appType}/{pageType}/{formUuid} を構築し、/custom/ 単独のパスを避けてください。',
+    canvas_theme_fixed_brand: '行 {0}: ConfigProvider がブランド色を固定しています。canvas-theme で解決したテーマ色を使い、CSS var は DOM スタイルにのみ直接使用してください。',
     canvas_navigation_local_platform: '行 {0}: ローカルビューをプラットフォームナビゲーションで絞り込んでいます。mode=local またはローカル状態を使い、実際のページには formUuid/navUuid を指定して権限を検証してください。',
     canvas_navigation_document_flex: '行 {0}: document にゼロ基準の flex が使用されています。canvas-nav-content を更新し、document は自然な高さのブロック、workspace は固定高さの flex を使用してください。',
     canvas_theme_not_assembled: '行 {0} のテーママーカーは未展開です。build-canvas-theme.js を実行し、別の出力ファイルをコンパイル・公開してください。Provider 組み込み済みのページにはマーカーは不要です。',

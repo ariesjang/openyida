@@ -6,6 +6,7 @@
  */
 module.exports = {
   asset: {
+    executionReview: '소재 실행 기록 검토 필요: {0}. 백그라운드 실행 응답, 업무 실행 시간 및 동기 처리 전환 이유를 확인하세요.',
     localFileUnavailable: "이미지 파일을 찾을 수 없습니다: {0}. 명령의 작업 디렉터리를 확인하거나 절대 경로를 사용하세요.",
     invalidStrategy: "이미지 요구사항은 페이지별 이미지 위치를 나열한 객체로 입력하세요.",
   },
@@ -1259,6 +1260,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_path_missing_app_type: '{0}행: 이동 주소에 appType이 없습니다. canvas-navigation과 확인된 ID로 /{appType}/{pageType}/{formUuid}를 구성하세요. /custom/ 단독 경로는 사용하지 마세요.',
+    canvas_theme_fixed_brand: '{0}행: ConfigProvider가 브랜드 색상을 고정했습니다. canvas-theme으로 해석한 테마 색상을 사용하고 CSS var는 DOM 스타일에 직접 사용하세요.',
     canvas_navigation_local_platform: '{0}행: 로컬 뷰를 플랫폼 메뉴로 필터링하고 있습니다. mode=local 또는 로컬 상태를 사용하고 실제 페이지에는 formUuid/navUuid를 지정하며 권한을 확인하세요.',
     canvas_navigation_document_flex: '{0}행: document에 기준 크기 0인 flex를 사용했습니다. canvas-nav-content를 갱신하세요. document는 자연 높이의 블록, workspace는 고정 높이 flex를 사용합니다.',
     canvas_theme_not_assembled: '{0}행의 테마 마커가 처리되지 않았습니다. build-canvas-theme.js를 실행하고 별도 출력 파일을 컴파일하고 게시하세요. Provider가 통합된 페이지에는 이 마커가 필요 없습니다.',

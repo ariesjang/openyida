@@ -6,6 +6,7 @@
  */
 module.exports = {
   asset: {
+    executionReview: 'Ausführungsnachweise der Medien prüfen: {0}. Prüfen Sie Hintergrundaufträge, Geschäftsintervalle und Gründe für synchrone Ausführung.',
     localFileUnavailable: "Bilddatei nicht gefunden: {0}. Prüfen Sie das Arbeitsverzeichnis des Befehls oder verwenden Sie einen absoluten Pfad.",
     invalidStrategy: "Die Bildanforderungen müssen ein Objekt mit Bildpositionen pro Seite sein.",
   },
@@ -1258,6 +1259,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_path_missing_app_type: 'Zeile {0}: Im Navigationsziel fehlt appType. Nutzen Sie canvas-navigation und echte IDs für /{appType}/{pageType}/{formUuid} statt /custom/.',
+    canvas_theme_fixed_brand: 'Zeile {0}: ConfigProvider setzt eine feste Markenfarbe. Nutzen Sie canvas-theme mit aufgelösten Anwendungsfarben; CSS var gehört in DOM-Stile, nicht in antd-Farbwerte.',
     canvas_navigation_local_platform: 'Zeile {0}: Lokale Ansichten werden durch Plattformmenüs gefiltert. Nutzen Sie mode=local oder lokalen Zustand; echte Seiten benötigen formUuid/navUuid und Berechtigungsprüfungen.',
     canvas_navigation_document_flex: 'Zeile {0}: document verwendet Flex mit Basis null. Aktualisieren Sie canvas-nav-content: natürliche Blockhöhe für document, feste Flex-Höhe für workspace.',
     canvas_theme_not_assembled: 'Die Themenmarkierung in Zeile {0} wurde noch nicht verarbeitet. Führen Sie build-canvas-theme.js aus und kompilieren/veröffentlichen Sie die separate Ausgabedatei. Seiten mit integriertem Provider benötigen diese Markierung nicht.',

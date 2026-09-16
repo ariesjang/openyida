@@ -19,6 +19,8 @@
 
 ## 操作
 
+**先接通主题与动作**：给页面实现者传入真实资源映射（appType、目标类型、formUuid/navUuid；详情另带 formInstId 的数据来源）。含 antd 控件先提取并合并 `canvas-theme`；跨页入口先提取 `canvas-navigation`，按 [动作与目标清单](../../yida-canvas-custom-page/references/navigation-and-entry-guide.md#先建立动作与目标清单) 实现。页面内 Tab 使用状态，不拼平台路由；暂缺资源的动作禁用，独立页面布局继续开发。完成后逐项核对 Tab/按钮/链接各交互状态的主题色及最终地址，不把编译通过当作换肤或跳转验收。
+
 **编码前置条件（MUST）**：新建 Canvas 页面或调整视觉时，执行页面开发的模型必须先完整读取 [canvas-style-implementation-guide.md](../../yida-canvas-custom-page/references/canvas-style-implementation-guide.md)，按 [编码前必读](../../yida-canvas-custom-page/SKILL.md#编码前必读must) 记录适用规则与落点，再写源码。派发页面任务时必须带上这个文件路径和读取要求；不能只传递设计摘要或认为主流程读过就等于页面实现者读过。
 
 先读取 `constraints.prohibitedActions`。命中 `page-source` 时，本步骤只能做 Read、编译/静态检查等只读诊断，不得 Write/Edit/Create 页面源码，也不得用脚本、格式化器或生成器间接改写；输出应明确“源码未修改”并跳过依赖源码变更的发布。未命中时才执行下列源码实现动作。
@@ -59,6 +61,7 @@ Plan 模式下，业务方案或视觉方案变化时，由对应技能更新 `b
 
 ## Checklist
 
+- [ ] 独立前台需要管理员入口时，已用 canvas-admin-entry 对接当前应用访问者身份与真实业务工作台；普通/匿名/未知身份隐藏，未复制 CLI 管理员名单或跳转开发后台；
 - [ ] 页面实现已读取 PRD 和 `design.md`；
 - [ ] 需要图片时只使用 manifest 中已验证的素材；
 - [ ] 新建页面或调整视觉前，实际实现者已完整读取 `canvas-style-implementation-guide.md`；检查记录包含文件路径、适用章节和页面落点，工具读取结果未遗漏截断部分；仅改数据逻辑时说明不适用原因；

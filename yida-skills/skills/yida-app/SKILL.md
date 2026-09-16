@@ -7,6 +7,8 @@ description: 创建完整宜搭应用，或补齐已有应用时使用。先确�
 
 完整应用编排技能。它负责把一次“创建/搭建/补齐应用”的需求拆成资源解析、产品设计、资源落地、页面发布和结果输出。全局 CLI、ID、存储、发布和输出规则以主入口 `SKILL.md` 为准；按步骤执行该步骤所需 `use_skill(...)`。
 
+完整应用交付默认保留开发者管理后台（CLI `adminUrl`），与业务后台区分：有前后台时共三个地址；仅前台或统一工作区时共两个地址。登录态来源不影响 `/admin` 的交付；单页任务保持单页范围，用户明确排除的入口优先。详见 Step 9。
+
 ## 模式入口（先按这里路由）
 
 首次需求澄清优先进入 Step 2 的 2.0；首问前不执行 Step 1 的环境和资源预检，已有明确资源引用作为需求上下文保留。澄清完成后再按需核验资源、补齐规划输入。
@@ -79,6 +81,8 @@ Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-de
 独立工作按 [并行执行](workflow/parallel-work.md) 调度，任务分别产出，由主流程汇合。完整应用在计划或主题确认后生成主题 CSS，appType 和 CSS 就绪就同步应用设置；`explicitScope.allowInferredResources=false` 的资源级交付不生成或上传主题、不修改应用设置、不排序导航。
 
 ## 核心规则
+
+素材准备先核实宿主后台 Agent 与后台 Bash 能力。按 materialize.assetTasks[].executionContract 派发后立即继续主流程；QwenWork 核实 Bash.run_in_background 后可后台执行脚本步骤。只有同步工具时先做已授权资源及独立页面工作，再分批素材，禁止将整包素材前置。仅在对应页面接图/验收时等待该页结果；执行记录按 [并行执行](workflow/parallel-work.md) 汇总校验。
 
 1. **资源判断以 Step 1 为准**：已有 app/page/form/process 默认复用；只有用户明确从零创建，或目标缺失且本轮允许创建时，才创建缺失资源。
 2. **显式目标优先**：本轮用户给出的 `appType`、`formUuid`、URL、页面名或流程标识，优先级高于绑定上下文和历史缓存；同级冲突或无法唯一识别时才问用户。

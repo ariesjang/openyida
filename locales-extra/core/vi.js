@@ -6,6 +6,7 @@
  */
 module.exports = {
   asset: {
+    executionReview: 'Cần kiểm tra bằng chứng thực thi tư liệu: {0}. Kiểm tra xác nhận tác vụ nền, thời gian công việc và lý do chuyển sang đồng bộ.',
     localFileUnavailable: "Không tìm thấy tệp ảnh: {0}. Kiểm tra thư mục làm việc của lệnh hoặc dùng đường dẫn tuyệt đối.",
     invalidStrategy: "Yêu cầu về ảnh phải là một đối tượng liệt kê vị trí ảnh theo từng trang.",
   },
@@ -1258,6 +1259,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_path_missing_app_type: 'Dòng {0}: đích điều hướng thiếu appType. Dùng canvas-navigation và ID đã xác minh để tạo /{appType}/{pageType}/{formUuid}, không dùng riêng /custom/.',
+    canvas_theme_fixed_brand: 'Dòng {0}: ConfigProvider cố định màu thương hiệu. Dùng canvas-theme với màu đã phân giải từ chủ đề; chỉ dùng CSS var trực tiếp trong kiểu DOM.',
     canvas_navigation_local_platform: 'Dòng {0}: các chế độ xem nội bộ bị lọc qua menu nền tảng. Dùng mode=local hoặc trạng thái nội bộ; gắn trang thật với formUuid/navUuid và kiểm tra quyền đã khai báo.',
     canvas_navigation_document_flex: 'Dòng {0}: document dùng flex với cơ sở bằng 0. Cập nhật canvas-nav-content: chiều cao tự nhiên và khối cho document, flex có chiều cao cố định cho workspace.',
     canvas_theme_not_assembled: 'Dấu chủ đề ở dòng {0} chưa được xử lý. Chạy build-canvas-theme.js rồi biên dịch/xuất bản tệp đầu ra riêng. Trang đã tích hợp Provider không cần dấu này.',

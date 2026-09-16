@@ -102,7 +102,7 @@ describe('host asset capabilities', () => {
     expect(local.online_search.available).toBe(true);
     expect(local.image_search.available).toBe(true);
     expect(local.image_generation.available).toBe(true);
-    expect(local.requires_host_tool_inventory_check).toBe(false);
+    expect(local.requires_host_tool_inventory_check).toBe(true);
   });
 
   test('accepts explicit independent declarations ahead of runtime defaults', () => {
@@ -118,7 +118,7 @@ describe('host asset capabilities', () => {
     expect(capabilities.online_search.available).toBe(true);
     expect(capabilities.image_search.available).toBe(false);
     expect(capabilities.image_generation.available).toBe(true);
-    expect(capabilities.requires_host_tool_inventory_check).toBe(false);
+    expect(capabilities.requires_host_tool_inventory_check).toBe(true);
     expect(readDeclaredCapability('unexpected').status).toBe('unknown');
   });
 

@@ -85,6 +85,9 @@ describe('run() 正常查询', () => {
       appName: '测试应用',
       appType: 'APP_TEST001',
       systemLink: 'https://www.aliwork.com/APP_TEST001/workbench',
+      appUrl: 'https://www.aliwork.com/APP_TEST001/workbench',
+      workbenchUrl: 'https://www.aliwork.com/APP_TEST001/workbench',
+      adminUrl: 'https://www.aliwork.com/APP_TEST001/admin',
     });
     expect(output[1].appName).toBe('应用B');
 

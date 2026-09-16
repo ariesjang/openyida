@@ -6,6 +6,7 @@
  */
 module.exports = {
   asset: {
+    executionReview: 'تحتاج سجلات تنفيذ المواد إلى مراجعة: {0}. تحقق من إيصالات المهام الخلفية وفترات العمل وأسباب التنفيذ المتزامن.',
     localFileUnavailable: "ملف الصورة غير موجود: {0}. تحقق من مجلد عمل الأمر أو استخدم مسارًا مطلقًا.",
     invalidStrategy: "يجب أن تكون متطلبات الصور كائنًا يحدد مواضع الصور حسب الصفحة.",
   },
@@ -1258,6 +1259,8 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_path_missing_app_type: 'السطر {0}: عنوان التنقل يفتقد appType. استخدم canvas-navigation ومعرّفات موثّقة لبناء /{appType}/{pageType}/{formUuid} بدلاً من /custom/ وحده.',
+    canvas_theme_fixed_brand: 'السطر {0}: يثبت ConfigProvider لون العلامة التجارية. استخدم canvas-theme وألوان السمة المحللة؛ استخدم CSS var مباشرة في أنماط DOM فقط.',
     canvas_navigation_local_platform: 'السطر {0}: تتم تصفية العروض المحلية عبر تنقل المنصة. استخدم mode=local أو حالة محلية، واربط الصفحات الفعلية بـ formUuid/navUuid وتحقق من الصلاحيات المعلنة.',
     canvas_navigation_document_flex: 'السطر {0}: يستخدم document تخطيط flex بأساس صفر. حدّث canvas-nav-content: ارتفاع طبيعي وكتل لـ document، وارتفاع ثابت مع flex لـ workspace.',
     canvas_theme_not_assembled: 'علامة القالب في السطر {0} لم تُجهّز بعد. شغّل build-canvas-theme.js ثم ترجم وانشر ملف الإخراج المنفصل. الصفحات التي تحتوي على Provider مدمج لا تحتاج إلى هذه العلامة.',

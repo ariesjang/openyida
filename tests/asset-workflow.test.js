@@ -65,13 +65,16 @@ test('Plan CLI returns independent searches for slots on the same page before ap
   const task = result.assetTasks[0];
   expect(task).toMatchObject({ pageId, startWhen: 'plan_confirmed', owner: 'host_agent', searchConcurrency: 4,
     concurrencyScope: 'collection_run', resumePolicy: 'reuse_final_slots_and_remaining_round_budget',
-    dispatchMode: 'host_background_task', afterDispatch: 'continue_resource_and_page_work',
+    dispatchMode: 'host_capability_adaptive', afterDispatch: 'continue_resource_and_page_work',
     resumeRunning: 'attach_existing_host_task', waitPolicy: 'own_page_only_after_independent_work',
     runAlongside: ['app_creation', 'form_creation', 'page_creation', 'pages_without_images', 'image_page_layout', 'page_data_binding', 'page_interactions'],
     resultWriter: 'one_per_page',
     timeBudget: { owner: 'host_agent', requestTimeoutMs: 30000, pageDeadlineMs: 180000, resume: 'keep_original_deadline' } });
   const guidance = require('../lib/asset/ai-image').getMaterialSourcingGuidance();
   expect(task).toMatchObject(guidance.schedulingPolicy);
+  expect(task.executionContract.modes).toEqual(['background_agent', 'background_shell', 'synchronous']);
+  expect(task.executionContract.shell.qwenworkHint).toContain('Bash.run_in_background');
+  expect(task.executionContract.synchronousOrder[0]).toBe('authorized_resource_creation_or_reuse');
   expect(task.collectionPolicy).toEqual(guidance.collectionPolicy);
   expect(task.failurePolicy).toEqual(guidance.failurePolicy);
   expect(task.searches.map(search => search.slotId)).toEqual(['hero', 'room', 'garden']);
