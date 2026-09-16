@@ -10,13 +10,12 @@ const path = require('path');
 // Budgets are ratchets that track legitimate content growth (12 locale packs,
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
-// Asset dispatch, navigation/admin-entry samples, source guards and app URL
-// output add runtime/sample files. With the shared navigation policy contract,
-// Node 26/npm 11 measures 1,938,355 packed / 6,724,711 unpacked bytes in 517 files.
+// State recovery adds a sample and two skill references (3 published files).
+// Node 26/npm 11 measures 1,944,066 packed / 6,738,306 unpacked bytes in 520 files.
 // Retain ~21 KiB npm 10 compression overhead; round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 1920 * 1024;
-const MAX_UNPACKED_BYTES = 6576 * 1024;
-const MAX_ENTRY_COUNT = 517;
+const MAX_UNPACKED_BYTES = 6592 * 1024;
+const MAX_ENTRY_COUNT = 520;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -29,6 +28,9 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/app/canvas-path-guard.js',
   'lib/samples/openyida-scaffold/canvas-navigation.jsx',
   'lib/samples/openyida-scaffold/canvas-admin-entry.jsx',
+  'lib/samples/openyida-scaffold/canvas-view-state.jsx',
+  'yida-skills/skills/yida-canvas-custom-page/references/view-state-recovery.md',
+  'yida-skills/skills/yida-canvas-data-binding/references/business-action-permissions.md',
   'lib/asset/asset-execution.js',
   'lib/app/canvas-icon-exports.json',
   'lib/design-plan/preview.js',

@@ -94,6 +94,8 @@ openyida sample openyida-page-template canvas-admin-entry --output .cache/sample
 
 ## 导航决策
 
+页内筛选、分页、详情往返与草稿按[状态恢复规则](view-state-recovery.md)设计。无现有路由且无未保存编辑拦截需求时可提取 `canvas-view-state`，不要在点击处理里零散保存状态。管理员入口只负责展示和跳转，业务写操作须加载 `yida-canvas-data-binding` 并核对其业务动作权限清单。
+
 | 用户说法 | 怎么理解 | 怎么做 |
 | --- | --- | --- |
 | “加侧边导航 / 顶部导航 / 导航壳 / 自绘应用导航” | 自定义页要承担应用级导航 | 进入 `yida-nav-shell`，并执行 `openyida update-app <appType> --hide-app-nav` |
