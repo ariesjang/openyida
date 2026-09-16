@@ -65,7 +65,7 @@ function buildYidaFormUrl(request, currentAppType) {
 function CanvasDrawer({
   open, title, onClose, onOpenInNewWindow, extra, children,
   contentMode = 'content',
-  background = 'var(--pod-shell-theme-bg-color, var(--drawer-bg, var(--color-brand1-1, #f4f6ff)))',
+  background = 'var(--pod-shell-theme-bg-color, var(--color-white, #fff))',
 }) {
   const [fullScreen, setFullScreen] = useState(false);
   const [drawerWidth, setDrawerWidth] = useState(null);
@@ -159,7 +159,7 @@ function CanvasDrawer({
           height: 100%;
           min-height: 0;
           overflow: auto;
-          background: var(--pod-card-bg-color, var(--drawer-bg, var(--color-white, #fff)));
+          background: transparent;
           border-radius: var(--pod-card-border-radius, 20px);
         }
         .openyida-form-drawer .oy-drawer-resize {
@@ -233,6 +233,7 @@ function CanvasDrawer({
             borderBottom: 'var(--drawer-title-border-width, 0px) solid var(--drawer-title-border-color, var(--drawer-border-color, transparent))',
           },
           body: {
+            background: 'transparent',
             display: 'flex', flexDirection: 'column', flex: '1 1 0',
             padding: contentMode === 'iframe' ? 0 : '0 8px 8px',
             minHeight: 0, overflow: 'hidden',

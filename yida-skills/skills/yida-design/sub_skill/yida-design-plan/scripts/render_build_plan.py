@@ -877,11 +877,12 @@ def render_pages(data: dict[str, Any]) -> str:
         standalone = handoff.get("entryMode") == "standalone"
         variants = {"top": "顶部", "side": "侧边", "mixed": "顶部与侧边", "dock": "底部"}
         menu_label = ("自定义" + variants.get(page_menu.get("variant"), "") + "菜单") if page_menu.get("type") == "custom" else (
-            "不设菜单" if page_menu.get("type") == "none" else "沿用应用自定义菜单" if app_custom else "按页面任务设计" if standalone else "沿用平台导航"
+            "不设菜单" if page_menu.get("type") == "none" else "沿用应用自定义菜单" if app_custom else "未规划应用菜单，仅实现业务内容" if standalone else "沿用平台导航"
         )
         data_rows = [
             ["访问方式", "独立页面入口" if standalone else "应用工作区入口"],
             ["页面菜单", menu_label],
+            ["页面实现边界", "按独立入口方案组织内容" if standalone else "只实现业务内容；跨模块使用平台菜单，同任务分类可用页内 Tab"],
             ["导航影响范围", "应用采用自定义导航" if app_custom else "仅当前入口，应用工作区保留平台导航" if standalone else "保留平台导航"],
             ["导航依据", page_menu.get("reason")],
             ["数据接入", binding_labels.get(binding, binding)],

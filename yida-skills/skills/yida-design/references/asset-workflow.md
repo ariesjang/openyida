@@ -4,7 +4,7 @@
 
 ## 规则
 
-方案确认后与应用、表单及无图页面同时推进，各页及同页图片位置并发搜索；每个位置一张图、最多两轮；第二轮只补失败的必需位置。各页通过 `--page-id` 写入独立的 `asset-manifests/<pageId>.json`，就绪后立即交给页面开发。
+Plan 方案确认后、Fast 设计就绪后，按[后台启动与接收](../../yida-image-assets/SKILL.md#后台启动与接收)派发素材任务，与应用、表单、页面创建以及布局、数据绑定和交互开发同时推进，各页及同页图片位置并发搜索；每个位置一张图、最多两轮；第二轮只补失败的必需位置。各页通过 `--page-id` 写入独立的 `asset-manifests/<pageId>.json`，就绪后立即交给页面开发。
 
 1. 先用用户素材，再从 Unsplash/Pexels 搜图，仍有缺口时使用宿主生图。
 2. 图片统一写入 manifest 草稿并通过 `asset resolve`。
@@ -19,4 +19,6 @@
 | `openyida asset resolve --input <草稿> --manifest <页面清单> --design <design.md> --page-id <pageId> --json` | 并发处理当前页槽位并写清单 |
 | `openyida asset resolve --slot <slotId>=<路径或URL> --json` | 快速检查单个槽位 |
 
-`--offline` 仅做离线检查；默认上传宜搭附件，`--upload-assets` 兼容旧命令。尺寸和来源规则见 [素材技能](../../yida-image-assets/SKILL.md)。
+允许外链的图片检查后直接交付，页面草稿就绪即可处理。`--upload-assets` 请求上传可转存的图片，上传时使用真实 appType；`--offline` 仅做离线检查。尺寸和来源规则见 [素材技能](../../yida-image-assets/SKILL.md)。
+
+派发前分别核实后台 Agent 和后台 Bash；QwenWork 的 Bash.run_in_background 只有实际工具支持时才使用。同步 Agent 不等于后台任务；无法后台时先推进已授权资源与独立页面，再分批素材。只在对应页接图和验收时汇合，按 yida-image-assets 的 executionContract 记录实际执行证据。

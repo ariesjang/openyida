@@ -48,7 +48,7 @@ afterEach(async () => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 function asset(input = `${baseUrl}/no-extension`) {
-  return { slotId: 'hero', usage: 'hero', alt: '示意', source: 'user', input };
+  return { slotId: 'hero', usage: 'hero', alt: '示意', source: 'user', hotlinkAllowed: true, deliveryMode: 'upload', input };
 }
 function uploader() {
   return jest.fn(async files => [{ success: true, originalPath: files[0], cdnUrl: `${baseUrl}/public` }]);
@@ -74,7 +74,7 @@ test('a private download URL cannot substitute for a missing public URL', async 
   await expect(uploadAttachment([file], { appType: 'APP_TARGET' })).rejects.toMatchObject({ code: 'ASSET_ATTACHMENT_URL_INVALID' });
 });
 
-test('default resolver downloads, fixes the extension and uploads without CDN configuration', async () => {
+test('requested hosting downloads, fixes the extension and uploads without CDN configuration', async () => {
   ai.uploadImageForAI.mockResolvedValue({ imageUrl: `${baseUrl}/public` });
   const result = await resolveAssets([asset()], { appType: 'APP_TARGET' });
   expect(result.materialStatus).toBe('final');
@@ -133,7 +133,7 @@ test.each(['UPLOAD_FAILED', 'INVALID_UPLOAD_RESULT'])('%s stays draft instead of
   const uploadFn = code === 'UPLOAD_FAILED'
     ? jest.fn(async () => { throw new Error(code); })
     : jest.fn(async files => [{ success: true, originalPath: files[0], cdnUrl: 'invalid-url' }]);
-  const result = await resolveAssets([asset()], { uploadFn });
+  const result = await resolveAssets([{ ...asset(), hotlinkAllowed: false }], { uploadFn });
   expect(result.assets[0]).toMatchObject({ url: '', materialStatus: 'draft', input: asset().input });
   expect(result.gaps[0].code).toBe('UPLOAD_FAILED');
 });

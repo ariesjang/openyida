@@ -15,7 +15,7 @@
 
 自定义导航将每个入口的用途、目标资源和打开方式写清：管理视图走 `workbench/{formUuid}`，直接填写走 `submission/{formUuid}`；同一表单可对应两个独立入口，不重复创建表单。保留自绘导航时，表单在主内容区 iframe 打开；跨真实页面默认当前标签跳转；页面内新增/详情按钮使用抽屉。参数与路由规则见 [链接参考](../../../references/field-and-url-reference.md)。
 
-已确认的自定义顶部导航默认浮导，侧边或顶部＋侧边导航必须支持折叠/展开、恢复宽度和拖拽调宽；将这些交互写入 PRD，视觉细节交给 `design.md`。按 [导航壳形态目录](../../yida-nav-shell/references/nav-shell-patterns.md) 的场景与骨架引导设计，代码示例按需参考。
+自定义顶部导航默认贴顶通栏，悬浮胶囊仅按明确设计选用；有首屏背景图时默认顶部透明、滚动后加遮罩底色。侧边或顶部＋侧边支持折叠、恢复宽度和拖拽调宽；交互写入 PRD，视觉细节交给 `design.md`。参考 [导航壳形态目录](../../yida-nav-shell/references/nav-shell-patterns.md)。
 
 ## 列资源清单
 

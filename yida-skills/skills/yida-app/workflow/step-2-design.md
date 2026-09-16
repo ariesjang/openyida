@@ -4,7 +4,7 @@
 
 - 需求识别与分析
 - 设计功能和页面
-- 生成PRD方案&确认（仅 Plan）
+- 确认搭建方案（仅 Plan）
 
 ## 2.0 先分析并确认需求
 
@@ -19,6 +19,8 @@
 1. 按 Step 1 核验确实需要的资源上下文，保留用户显式目标；纯需求/方案讨论不要求登录，不执行资源写操作。
 2. 按 [模式路由](../../yida-design/references/design-mode.md) 确定执行方式，沿用用户最后一次明确选择。
 3. AI 根据有效功能、`userTasks` 与 `entryRecommendation`，按 [导航决策](../../yida-design/references/navigation-decision.md) 规划各入口的页面和菜单，补齐稳定 `pageScenes` 与主题映射。新增建议标记来源，范围遵守 explicitScope。
+
+Fast / Plan 的主题与配色统一按[设计方向比较](../../yida-design/references/style-design-selection.md#设计方向比较)在本轮规划中选定，结果写回 brief，后续直接复用。
 
 进入 2.1 前校验规划字段完整性和 `intake.designMode`。页面、导航、主题等建议随整体搭建方案展示。
 
@@ -68,7 +70,7 @@ Plan 分支从已加载 `yida-app` 的 Available Files 读取精确路径 `workf
 - 门户、工作台、档案、知识库和引导页有图片槽位时为 `beneficial`；
 - 表单、审批、台账、设置和库存流水默认 `none`。
 
-Fast 设计就绪后按 [素材调度](parallel-work.md#素材与页面同时推进) 启动 `yida-image-assets`，主流程继续创建应用和表单。Plan 在方案确认后启动同一流程。各页及同页各图片位置并发搜索，每个位置一张、最多两轮。每页草稿和真实 appType 就绪即执行 `asset resolve --design design.md --page-id <pageId> --app-type <真实appType>`，写入独立清单；页面按自身状态接图并验收。
+Fast 设计就绪后按 [素材调度](parallel-work.md#素材与页面同时推进) 派发 `yida-image-assets` 后台任务，记录任务编号后主流程继续创建应用、表单和页面，有图页面先做布局、数据绑定和交互。Plan 在方案确认后启动同一流程。各页及同页各图片位置并发搜索，每个位置一张、最多两轮。每页草稿就绪即执行 `asset resolve --design design.md --page-id <pageId>`；允许外链的图片直接交付，上传时追加 `--app-type <真实appType>`，写入独立清单；页面按自身状态接图并验收。
 
 ## 主题文件实现指令
 

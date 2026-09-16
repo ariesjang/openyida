@@ -163,6 +163,20 @@ export default function Page() {
     }
   });
 
+  test.each([
+    ["function YidaComp(){return <button onClick={()=>window.open('/custom/FORM-room')}>预订</button>}", 'OPENYIDA_CANVAS_PATH_MISSING_APP_TYPE'],
+    ["import {ConfigProvider} from 'antd'; function YidaComp(){return <ConfigProvider theme={{token:{colorPrimary:'#1677ff'}}}><div/></ConfigProvider>}", 'OPENYIDA_CANVAS_THEME_FIXED_BRAND'],
+  ])('rejects invalid navigation and theme before remote writes: %s', async (source, code) => {
+    const sourcePath = path.join(workspace, 'entry.canvas.jsx');
+    fs.writeFileSync(sourcePath, source);
+    const requestSpy = jest.spyOn(https, 'request').mockImplementation(() => { throw new Error('Unexpected HTTP request'); });
+    try {
+      await expect(publishPage([sourcePath, 'APP_XXX', 'FORM-PAGE', '--canvas', '--force', '--skip-lint', '--no-open']))
+        .rejects.toMatchObject({ code });
+      expect(requestSpy).not.toHaveBeenCalled();
+    } finally { requestSpy.mockRestore(); }
+  });
+
   test('suggests pages/src path when cwd is already the OpenYida project directory', () => {
     const sourceDir = path.join(workspace, 'pages', 'src');
     fs.mkdirSync(sourceDir, { recursive: true });

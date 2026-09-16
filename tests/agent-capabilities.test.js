@@ -38,7 +38,7 @@ describe('agent-capabilities summary', () => {
       online_search: { status: 'available', available: true },
       image_search: { status: 'available', available: true },
       image_generation: { status: 'available', available: true },
-      requires_host_tool_inventory_check: false,
+      requires_host_tool_inventory_check: true,
     });
 
     const declared = buildAssetCapabilities(
@@ -53,11 +53,11 @@ describe('agent-capabilities summary', () => {
       online_search: { status: 'available', available: true },
       image_search: { status: 'available', available: true },
       image_generation: { status: 'unavailable', available: false },
-      requires_host_tool_inventory_check: false,
+      requires_host_tool_inventory_check: true,
     });
   });
 
-  test('application entry policy follows usable injected auth rather than host signals', () => {
+  test('application entry policy includes developer admin regardless of injected auth or host signals', () => {
     const { buildApplicationEntryPolicy } = require('../lib/core/agent-capabilities');
 
     expect(buildApplicationEntryPolicy({
@@ -65,7 +65,7 @@ describe('agent-capabilities summary', () => {
       runtime: { runtime: 'desktop_shell' },
     }, { CODEX_SHELL: '1', CODEX_CI: '1' })).toMatchObject({
       environment: 'managed_cloud_agent',
-      entries: { admin: 'omit' },
+      entries: { admin: 'include' },
     });
 
     expect(buildApplicationEntryPolicy({
@@ -195,7 +195,7 @@ describe('agent-capabilities summary', () => {
         entries: {
           workbench: 'when_workspace_in_scope',
           custom: 'when_entry_mode_standalone_and_is_render_nav_false_readback',
-          admin: 'omit',
+          admin: 'include',
         },
       });
     } finally {

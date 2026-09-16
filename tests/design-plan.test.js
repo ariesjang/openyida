@@ -76,6 +76,18 @@ describe('design-plan materialize', () => {
     fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
+  test.each(['visualDirection', 'navigationStyle'])('rejects non-object %s before normalization', field => {
+    for (const value of ['简洁', [], null, true]) {
+      const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
+      plan.visualStyle.forUser[field] = value;
+      expect(() => normalizePlan(plan)).toThrow(expect.objectContaining({
+        code: 'DESIGN_PLAN_VISUAL_FIELD_TYPE_INVALID',
+        details: expect.objectContaining({ path: `visualStyle.forUser.${field}`, expectedType: 'object', example: expect.any(Object) }),
+      }));
+      expect(plan.visualStyle.forUser[field]).toEqual(value);
+    }
+  });
+
   test('writes ordered business blocks once and derives the full plan without losing business differences', () => {
     const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
     const page = plan.pages.customPageDetails[0];
@@ -174,10 +186,18 @@ describe('design-plan materialize', () => {
     expect(design).toContain('"--color-brand1-6": "#6F4E37"');
     expect(design).toContain('buildPlanRevision: "2026-08-31-01"');
     expect(design).toContain('## 项目视觉选择');
+    // 物化产物必须携带 Fast 同样消费的规则，而不只留一个实现者可能漏读的引用。
+    const continuity = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/page-continuity.md'), 'utf8').trim();
+    expect(design).toContain(continuity);
+    expect(design).toContain('顶部导航默认贴顶通栏');
+    expect(design).toContain('初始透明，滚动后增加遮罩底色，回到顶部恢复透明');
+    expect(design.split('## 页面与导航连续性')).toHaveLength(2);
     expect(design).not.toMatch(/^themeId:/m);
     expect(design).not.toMatch(/\{\{[^}]+\}\}|<基于 --color-brand1-6/);
     expect(html).toContain('href="#overview"');
     expect(html).toContain('href="#pages"');
+    expect(html).not.toContain(result.revision);
+    expect(html).not.toMatch(/第\s*\d+\s*版|buildPlanRevision/);
   });
 
   test('renders Chinese artifacts over UTF-8 pipes even with inherited Windows encoding', () => {
@@ -329,7 +349,33 @@ describe('design-plan materialize', () => {
       expect(handoff.pageNavigation.every(page => page.isRenderNav === false)).toBe(true);
       expect(handoff.pages[0].pageSpecHandoff.entryMode).toBe('standalone');
       expect(html).toContain('<h3>页面导航</h3>');
-    } else {expect(handoff.pageNavigation).toEqual([]);}
+      expect(handoff.pages[0].navigationPolicy).toMatchObject({ applicationMenuOwner: 'page', renderApplicationMenu: true, pageLayout: 'standalone' });
+    } else {
+      expect(handoff.pageNavigation).toEqual([]);
+      expect(handoff.pages[0].navigationPolicy).toEqual({
+        applicationMenuOwner: 'platform', pageLayout: 'content-only', renderApplicationMenu: false,
+        localTabs: 'same-task-only', duplicatePlatformMenu: false,
+      });
+      expect(handoff.acceptanceCriteria).toContain('采购工作台只实现业务内容，同任务分类可用页内 Tab，跨模块使用平台菜单；实际管理入口无重复导航');
+      expect(design).toContain('跨模块切换交给平台菜单，不重复自绘管理导航');
+      expect(html).toContain('只实现业务内容；跨模块使用平台菜单，同任务分类可用页内 Tab');
+    }
+  });
+
+  test('standalone without a planned menu keeps no-menu policy in PRD, design and HTML', () => {
+    const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
+    plan.execution = { appConfig: { navigationType: 'platform-side' } };
+    plan.pages.customPageDetails[0].pageSpecHandoff = { entryMode: 'standalone' };
+    const input = path.join(tempDir, 'build-plan.json');
+    fs.writeFileSync(input, JSON.stringify(plan));
+    materialize(input);
+    const prd = fs.readFileSync(path.join(tempDir, 'prd.md'), 'utf8');
+    const handoff = JSON.parse(prd.match(/```json\n([\s\S]*?)\n```/)[1]);
+    expect(handoff.pages[0].navigationPolicy.applicationMenuOwner).toBe('none');
+    expect(handoff.pages[0].navigationPolicy.renderApplicationMenu).toBe(false);
+    for (const file of ['prd.md', 'design.md', 'build-plan.html']) {
+      expect(fs.readFileSync(path.join(tempDir, file), 'utf8')).toContain('未规划应用菜单，仅实现业务内容');
+    }
   });
 
   test('custom navigation includes all business pages and extra reports despite blueprint ordering', () => {
@@ -404,6 +450,8 @@ describe('design-plan materialize', () => {
     expect(handoff.pageNavigation).toEqual([{ name: front.name, type: 'display-page', isRenderNav: false }]);
     expect(handoff.pages[0].pageSpecHandoff.entryMode).toBe('platform-shell');
     expect(handoff.pages[1].pageSpecHandoff.navigation).toEqual(front.pageSpecHandoff.navigation);
+    expect(handoff.pages[0].navigationPolicy.renderApplicationMenu).toBe(false);
+    expect(handoff.pages[1].navigationPolicy.renderApplicationMenu).toBe(true);
     expect(handoff.resourceBlueprint.filter(item => item.type !== 'display-page')).toHaveLength(plan.dataModels.length);
     for (const file of ['prd.md', 'design.md', 'build-plan.html']) {
       const content = fs.readFileSync(path.join(tempDir, file), 'utf8');
@@ -415,6 +463,7 @@ describe('design-plan materialize', () => {
     expect(fs.readFileSync(path.join(tempDir, 'build-plan.html'), 'utf8')).toContain('不设菜单');
     const updated = JSON.parse(fs.readFileSync(path.join(tempDir, 'prd.md'), 'utf8').match(/```json\n([\s\S]*?)\n```/)[1]);
     expect(updated.appConfig.hideAppNav).toBe('n');
+    expect(updated.pages[1].navigationPolicy).toMatchObject({ applicationMenuOwner: 'none', renderApplicationMenu: false });
   });
 
   test.each([
@@ -722,6 +771,31 @@ describe('design-plan materialize', () => {
     expect(html).toContain('#8B5E3C');
   });
 
+  test('internal patches keep the current draft revision; only editing the presented version advances it', () => {
+    const input = path.join(tempDir, 'build-plan.json');
+    const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
+    plan.meta.revision = '1';
+    plan.meta.planState = { presentedRevision: null, confirmedRevision: null, planConfirmed: false };
+    fs.writeFileSync(input, JSON.stringify(plan));
+    const patch = color => patchPlan(input, [`visualStyle.forUser.colorStrategy.primaryColor=${color}`]);
+    expect(patch('#123456').revision).toBe('1');
+    // Awaiting confirmation alone does not prove a successful user presentation.
+    const ready = JSON.parse(fs.readFileSync(input));
+    ready.meta.status = 'awaiting_confirmation';
+    fs.writeFileSync(input, JSON.stringify(ready));
+    expect(patch('#234567').revision).toBe('1');
+    const presented = JSON.parse(fs.readFileSync(input));
+    presented.meta.planState.presentedRevision = '1';
+    fs.writeFileSync(input, JSON.stringify(presented));
+    expect(patch('#345678').revision).toBe('2');
+    expect(JSON.parse(fs.readFileSync(input)).meta.planState.presentedRevision).toBeNull();
+    expect(patch('#456789').revision).toBe('2');
+    expect(patch('#456789')).toMatchObject({ changed: false, revision: '2' });
+    const beforeFailure = fs.readFileSync(input, 'utf8');
+    expect(() => patch('not-a-color')).toThrow();
+    expect(fs.readFileSync(input, 'utf8')).toBe(beforeFailure);
+  });
+
   test.each([true, false])('asset progress preserves existing approval (%s) and refreshes documents', (confirmed) => {
     const input = path.join(tempDir, 'build-plan.json');
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
@@ -999,7 +1073,8 @@ describe('Plan contract and file consistency', () => {
     await run(['materialize', input, '--check', '--json']);
     expect(JSON.parse(log.mock.calls[0][0]).revision).toBe(read().meta.revision);
     const workflow = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-app/workflow/plan/step-4-deliver.md'), 'utf8');
-    expect(workflow).toContain('展示“当前这版方案”');
+    expect(workflow).toContain('展示“当前方案”');
+    expect(workflow).not.toContain('第 N 版方案');
     expect(workflow).not.toContain('展示当前 revision');
     expect(workflow).toContain('presentedRevision=meta.revision');
   });
@@ -1060,7 +1135,7 @@ describe('Plan contract and file consistency', () => {
       'submitLabel',
       'title',
     ]);
-    expect(payload.question).toBe('是否按当前这版方案开始搭建？');
+    expect(payload.question).toBe('是否按当前方案开始搭建？');
     expect(payload.options.map(option => option.value)).toEqual([
       'confirm_build',
       'continue_editing',
@@ -1073,6 +1148,7 @@ describe('Plan contract and file consistency', () => {
       },
     ]);
     expect(payload.revision).toBe('{revision}');
+    expect([payload.title, payload.question, ...payload.attachments.map(item => item.name)].join(' ')).not.toMatch(/第\s*(?:N|\d+)\s*版|\{revision\}/);
     expect(payload.submitLabel).toBeTruthy();
     expect(JSON.stringify(payload)).not.toMatch(
       /"(?:fields|text|textarea)"\s*:|调整说明/,

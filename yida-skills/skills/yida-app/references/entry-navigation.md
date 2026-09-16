@@ -13,6 +13,8 @@
 
 Fast（直接搭建）与 Plan（先确认方案）使用同一份入口规划。只修改指定表单或页面时，不额外创建入口，也不调整无关导航。
 
+管理端选择自定义页面默认仍使用平台导航；管理 `menu` 用于组织平台入口，不直接变成页面内的导航栏。页面只实现当前任务内容，按[管理页面边界](../../yida-canvas-custom-page/references/navigation-and-entry-guide.md#平台导航下的管理页面)区分跨模块菜单、同任务 Tab 与上下文动作。
+
 ## 导航设置和访问路径
 
 ### 分清四种设置
@@ -66,8 +68,9 @@ Fast（直接搭建）与 Plan（先确认方案）使用同一份入口规划�
 
 | 方式 | 什么时候使用 | 判断依据 |
 | --- | --- | --- |
+| `mode=local` | 纯本页公开展示内容 | key/viewKey/targetType=local，不请求平台导航；显式 access 仍核验 |
 | `mode=platform`，默认方式 | 自定义菜单沿用平台菜单的展示范围 | 当前用户的 `getAccessableNavs` 结果，加上 `hidden/hiddenNav` 设置 |
-| `mode=independent` | 前台需要与管理端不同的菜单 | 本入口的任务清单，加上当前用户的真实资源、操作和视图权限 |
+| `mode=independent` | 独立组织受权限保护的资源任务 | 本入口的任务清单，加上当前用户的真实资源、操作和视图权限 |
 
 平台菜单可见不代表允许提交、编辑或删除。菜单声明了 `access` 权限要求时，即使使用 platform 模式，也要额外查询权限。
 
@@ -105,18 +108,34 @@ Fast（直接搭建）与 Plan（先确认方案）使用同一份入口规划�
 | 字段 | 含义和要求 |
 | --- | --- |
 | `mode` | `unified`：共用工作区；`service-management`：访客端与管理端分开；`frontend-only`：只交付前台。实施前必须选定，不能为 `undetermined` |
-| `entries[]` | 每个入口填写 `key/name/role/menu/defaultMenuKey`；访客入口还需 `sceneKey` |
+| `entries[]` | 每个入口填写 `key/name/role/menu/defaultMenuKey`；访客入口或包含 `local` 菜单的任意入口还需 `sceneKey` |
 | `role` | `service`：访客；`management`：业务管理者；`workspace`：共用工作区 |
-| `sceneKey` | 关联承载该入口的页面；service 入口必须关联 `entryMode=standalone` 的独立自定义页面 |
+| `sceneKey` | 关联唯一承载页面的顶层 `sceneKey`；service 入口必须关联 `entryMode=standalone`；management/workspace 含 local 菜单时也必须填写 |
 | `menu[]` | 分组用 `{key,label,children}`；可点击菜单用 `{key,label,resource,targetType,viewUuid?,viewKey?,access}` |
 | `resource` | 规划中的资源名称；实施时创建或查询资源，换成真实 ID |
-| `targetType` | `local`：本页业务视图，需绑定承载页面和 `viewKey`；`submission`：原生填写页；`page`：原生管理工作区；`custom`：独立自定义页面 |
+| `targetType` | `local`：本页业务视图，入口 sceneKey 关联承载页面、resource 等于页面 name、viewKey 非空；`submission`：原生填写页；`page`：原生管理工作区；`custom`：独立自定义页面 |
 | `viewUuid` | 仅用于 `page`，填写已查询到的真实视图 ID；尚未取得时省略，实施时补齐，不编造占位 ID |
-| `access[]` | `{resource,operation,dataScope,viewUuid?}`；填写需要 `OPERATE_CREATE`，打开页面或视图需要 `OPERATE_VIEW`；编辑、删除等要求另列 |
+| `access[]` | 所有身份的每个叶子菜单必填 `{resource,operation,dataScope,viewUuid?}`；填写需要 `OPERATE_CREATE`，打开页面或视图需要 `OPERATE_VIEW`；声明不等于实际授权，编辑、删除等要求另列 |
 | `dataScope` | 用业务语言写明本人、本部门或具体管理范围；实际限制由平台权限配置执行 |
 | `defaultMenuKey` | 入口打开后首先显示的可点击菜单。只有一个任务时也填写，但无需绘制菜单 UI |
 
 ## CLI 与运行时参数边界
+
+例如管理端在同一个自定义页面内切换业务视图时，承载页面为 `{ "sceneKey": "management", "name": "业务管理" }`，入口应写成：
+
+```json
+{
+  "key": "management", "name": "业务管理端", "role": "management",
+  "sceneKey": "management", "defaultMenuKey": "orders",
+  "menu": [{
+    "key": "orders", "label": "订单管理", "targetType": "local",
+    "resource": "业务管理", "viewKey": "orders",
+    "access": [{ "resource": "业务管理", "operation": "OPERATE_VIEW", "dataScope": "已授权管理范围" }]
+  }]
+}
+```
+
+上述资源必须在计划中真实存在，页面需实现 `orders` 视图；其订单数据另列真实数据资源权限。管理端直接打开原生业务页面时使用 `page`，填写时使用 `submission`，这两种情况不要求为入口新增自定义承载页面。
 
 ### 传入入口规划
 
@@ -138,9 +157,11 @@ openyida update-form-config <appType> <formUuid> <true|false|keep> "<页面标�
 
 导航项显示与隐藏使用 `nav-group show|hide`。应用导航、页面导航、菜单项分别设置和重新查询，不能互相替代。
 
+纯页内公开内容可直接用本地数组或 `mode=local`（key/viewKey/targetType=local），不依赖平台导航树；有 access 的本地业务视图仍需实时权限查询，业务操作权限不变。规划层的 sceneKey/resource/access 不得因此删除。platform 叶子必须绑定真实 formUuid/navUuid；误把 local 交给平台过滤会报错，禁止空菜单或接口失败时回退全量放行。
+
 ### 接入页面权限查询
 
-页面函数的 `mode=platform|independent` 表示菜单过滤方式，与规划字段 mode 的三种入口方案不同。
+页面函数的 `mode=local|platform|independent` 表示菜单过滤方式，与规划字段 mode 的三种入口方案不同。
 
 `resolveAccess({appType,requirements,signal})` 接收当前应用、权限要求和取消请求信号：
 

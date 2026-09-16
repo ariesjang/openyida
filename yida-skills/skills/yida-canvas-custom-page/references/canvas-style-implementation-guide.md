@@ -6,6 +6,12 @@
 
 CLI 将 Canvas 宿主的 `contentBgColor`、`pageStyle.backgroundColor`、`contentBgColorMobile` 设为 `var(--pod-page-bg-color, var(--color-white, #fff))`。自绘导航页的内部画布按下方规则设置局部背景。
 
+## 导航、画布与切换
+
+先按[管理页面边界](navigation-and-entry-guide.md#平台导航下的管理页面)确认本页是否拥有导航。平台导航管理页只实现业务内容，不套带菜单的内容壳；以下自绘导航的背景与切换规则仅适用于已确认的独立入口或应用级自绘导航。
+
+按 [页面与导航连续性](../../yida-design/references/page-continuity.md) 实现共同背景、滚动和切换；沉浸展示页不套业务工作区。加载/错误保留导航和画布，验收首屏、第二屏和窄屏菜单。
+
 ## 嵌入页面的宿主高度
 
 `openyida publish --canvas` 在 Page Schema 中统一配置宿主最小高度：
@@ -78,21 +84,22 @@ YidaCodeCanvas 必须把 `design.md` 的 `roundedRule`、`densityRule` 和 `brea
 ## 背景与导航的关联
 
 背景职责统一：Shell 的 `--pod-shell-bg-color-light/white/gray/dark` 承载外层氛围；原生页面与自定义页面的基础底色统一消费 `--pod-page-bg-color`；卡片、表格外壳和面板消费 `--pod-card-bg-color`，回退 `--color-white`。渐变、纹理和图片作为页面局部装饰层叠加，不另设应用基础背景变量。
+抽屉整体背景默认使用 `--pod-shell-theme-bg-color`，回退 `--color-white`；标题栏、正文容器透明承接外壳，不铺 `--pod-card-bg-color`。抽屉内独立业务卡片才使用卡片 token。
 
 导航布局和页面底色分别配置。隐藏应用导航不自动把 Canvas 改为透明；深色或明确的应用底色在 `design.md` 的平台 token 中定义，生成 `app-theme.css` 后统一生效。页面局部视觉不能通过修改应用 token 影响其他页面。
 
 普通 Canvas 根背景默认使用 `background: var(--pod-page-bg-color, var(--color-white, #fff));`。自绘应用导航页的内部画布按下节设计，不要求可见底色与平台宿主相同。
 
-浮导距顶部的留白放在自定义页根节点内部。发布层的 `.yida-code-canvas{display:flow-root}` 只保护宿主，不能阻止 `.doll-page` / `.oy-page-root` 等内层根节点与导航的 margin 折叠。页面根必须使用 `display:flow-root`（已有 flex/grid 可保留），或用根容器 padding 承载顶部间距；不能仅给 Canvas 宿主加 flow-root。验收时分别测量宿主、页面根与导航的 top：宿主和页面根贴齐，导航仍保留设计间距。不要用 overflow:hidden 修复，它可能影响 sticky 和弹层；不要向平台父容器写负 margin 抵消。
+顶部导航默认贴顶通栏；首屏有背景图时透明叠加、滚动加遮罩、回顶透明，规则见 [页面与导航连续性](../../yida-design/references/page-continuity.md)。仅明确选择浮导时留外侧间距。Canvas 宿主的 flow-root 无法阻止内部根节点 margin 折叠；内部根也须用 flow-root 或 flex/grid，文字安全区不推下背景。测量宿主、页面根与导航的 top；不用 overflow:hidden 修复，不改平台父容器。
 
 ## 自定义导航页的独立画布
 
 **MUST** 区分平台宿主与自绘应用画布：宿主继续使用平台背景 token；内部导航壳可按 `design.md` 使用浅灰、浅彩、低饱和渐变或局部纹理，不强制使用 `--pod-page-bg-color` 作为唯一可见底色。`design.md` 明确 `canvasBackground`、`navigationSurface` 和 `cardSurface`，仅在当前页面根选择器实现，不修改 body、父页面或全局变量。
 
-浅色非白或渐变画布，顶部浮导默认白色或近白半透明、柔和投影；白卡默认无框，品牌色留给 Logo、导航选中态和主操作。白色画布上的白卡用细边框或投影。深色画布按独立对比方案设计，不强制白色浮导。渐变应低饱和、集中于顶部或局部，内容区域保持安静，不能遮挡文字或滚动内容。
+导航底色按首屏、滚动和展开状态设计，不因浅色画布强制白色浮导。浅彩画布上的白卡可无框，白画布上的白卡用细边框或投影；品牌色用于 Logo、选中态和主操作。渐变低饱和、集中于局部；深色画布独立设计对比。
 
 ```css
-/* 自定义导航页局部设计示例，色值由本页 design.md 确认。 */
+/* 明确选择浮导时的局部示例，色值由 design.md 确认。 */
 .custom-nav-canvas {
   min-height: 100dvh;
   display: flow-root;
@@ -104,7 +111,7 @@ YidaCodeCanvas 必须把 `design.md` 的 `roundedRule`、`densityRule` 和 `brea
 }
 ```
 
-验收覆盖首屏、滚动底部、窄屏和导航切换：画布铺满内容区，无意外白边；浮导与卡片边界清楚，品牌色不过度铺满导航；原生 iframe 不被跨框样式修改。工作台同时压缩重复操作条、等权大指标卡和过高空态，不能仅靠渐变声称完成设计优化。
+验收覆盖首屏、滚动底部、窄屏和导航切换：画布铺满内容区，无意外白边；导航与卡片边界清楚，品牌色不过度铺满导航；原生 iframe 不被跨框样式修改。工作台同时压缩重复操作条、等权大指标卡和过高空态，不能仅靠渐变声称完成设计优化。
 
 ## 同色表面的卡片边界
 
@@ -205,7 +212,7 @@ YidaCodeCanvas 必须把 `design.md` 的 `roundedRule`、`densityRule` 和 `brea
 
 落地要求：
 
-- 普通页面和业务卡片按上述主题契约实现；自绘应用导航页的局部画布、浮导按下述独立画布规则实现，不覆盖平台或原生内页主题。
+- 普通页面和业务卡片按上述主题契约实现；自绘应用导航页的局部画布、导航按下述独立画布规则实现，不覆盖平台或原生内页主题。
 - `softTintCanvas`：根节点使用低饱和浅底、带弱渐变的近白画布或深色舞台；不要为了背景感强行铺满高饱和色。
 - `topIrregularWash`：用 `::before`、`clip-path`、局部 SVG 背景或伪元素形成顶部波浪、斜切、有机边界、细线曲线或图形标记；内容层固定在规则栅格上。
 - `radialGlowWash`：使用大面积柔和径向光或光洗，禁止离散装饰圆球、bokeh 和随机漂浮点。
@@ -287,6 +294,7 @@ antd 页面统一使用 [CanvasThemeProvider](canvas-theme-provider.md) 读取�
 
 ### 按钮语义与优先级
 
+- 内容面板切换用 Tabs，类别单选用 Segmented/Radio.Group，主动作才用实心 Button。按 [默认控件状态](canvas-theme-provider.md#默认控件状态) 接入 Provider：中性普通项、轻底选中项、清晰文字与独立禁用态；不把分类筛选做成一排主操作，不以主色文字叠加同色实心底。
 - 主按钮、链接、选中态跟随应用品牌 token；普通按钮使用中性表面、文字和边框。
 - 删除、失败、成功、警告保留语义色，不能把所有按钮和提示都染成品牌色。
 - 原生 DOM 按钮直接消费 CSS 变量；antd 控件使用 `ConfigProvider` 的解析值，保留库的 disabled/loading/focus 行为。
@@ -303,7 +311,7 @@ antd 页面统一使用 [CanvasThemeProvider](canvas-theme-provider.md) 读取�
 | colorPrimary / colorLink | --color-brand1-6，主操作、链接与选中焦点 |
 | colorBgLayout | --pod-page-bg-color，回退 --color-white；与页面根容器一致 |
 | colorBgContainer | --pod-card-bg-color，回退 --color-white |
-| colorBgElevated | --pod-card-bg-color，浮层的可读表面；有独立浮层设计时使用其已确认 token |
+| colorBgElevated | --pod-card-bg-color，普通浮层表面；Drawer 通过组件级 colorBgElevated 单独使用 --pod-shell-theme-bg-color，回退 --color-white |
 | colorText / colorTextHeading | --color-text1-4，正文与标题 |
 | colorTextSecondary / colorTextDescription | --color-text1-3，辅助说明 |
 | colorTextPlaceholder | --color-text1-10，表头与 placeholder 层级 |
