@@ -2451,6 +2451,9 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.navigation_policy).toContain('Include navigation in the overall Plan confirmation');
     expect(route.navigation_policy).toContain('Configure a custom frontend menu at page scope');
     expect(route.navigation_policy).toContain('Choose backend native or coding pages by task efficiency');
+    expect(route.navigation_policy).toContain('Custom top navigation defaults to edge-to-edge, not floating');
+    expect(route.navigation_policy).toContain('start transparent, add a surface on scroll, restore transparency at the top');
+    expect(route.navigation_policy).toContain('floating requires an explicit design');
     expect(route.navigation_policy).not.toContain('offer exactly two');
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
     expect(route.design_mode_policy).not.toContain('Confirm unresolved navigation');

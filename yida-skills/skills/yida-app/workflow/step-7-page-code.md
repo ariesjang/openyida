@@ -63,9 +63,10 @@ Plan 模式下，业务方案或视觉方案变化时，由对应技能更新 `b
 - [ ] 需要图片时只使用 manifest 中已验证的素材；
 - [ ] 新建页面或调整视觉前，实际实现者已完整读取 `canvas-style-implementation-guide.md`；检查记录包含文件路径、适用章节和页面落点，工具读取结果未遗漏截断部分；仅改数据逻辑时说明不适用原因；
 - [ ] 页面没有默认自绘应用级侧边导航 / 顶部导航；如有页面内自绘导航，已有用户显式要求和 `yida-nav-shell` 依据；
-- [ ] 自定义导航已提取 `canvas-nav-content` 并合并 `CanvasNavigationContent`；源码和 DOM 存在 `.openyida-nav-layout`、`.openyida-nav-content`，且实际测量内容撑满剩余空间、iframe 与视口等高、底部按钮可到达；只加类名不算通过；
+- [ ] 自定义导航已提取 `canvas-nav-content` 并合并 `CanvasNavigationContent`；业务工作区使用 workspace，实际测量内容撑满剩余空间、iframe 与视口等高；连续展示页使用 document，背景覆盖导航背后、内容留实测安全区、沿用页面滚动；源码和 DOM 存在 `.openyida-nav-layout`、`.openyida-nav-content`，只加类名不算通过；
 - [ ] 自定义应用导航默认只切主内容区；原生提交/管理入口嵌入 iframe，整页跳转仅用于已确认保留同一导航壳的目标，不直接离开到无导航的原生页面；
-- [ ] 自定义导航页已明确画布、浮导与卡片搭配；浅色非白或渐变画布默认白色浮导、白色无框卡片，局部背景未修改平台宿主或全局变量；
+- [ ] 自定义导航页已明确画布、导航与卡片搭配；沉浸首屏与导航共同构图，首屏、第二屏和移动菜单的文字均可读；局部背景未修改平台宿主或全局变量；
+- [ ] 已按 [页面与导航连续性](../../yida-design/references/page-continuity.md) 实现锚点、tab、菜单和列表详情往返：壳保持挂载，URL/选中态/内容一致，加载失败不清空整页，快速切换不串数据，返回状态与未保存内容按设计处理；
 - [ ] 页面数据优先接真实表单；
 - [ ] 看板/工作台/驾驶舱已加载 `yida-dashboard`，读取表单数据时已加载 `yida-canvas-data-binding`；
 - [ ] Canvas 页面消费 `window.__OPENYIDA_YIDA_API__` / `window.__OPENYIDA_UTILS__`，没有直接调用 `this.utils.*`；

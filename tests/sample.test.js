@@ -51,6 +51,28 @@ describe('sample templates', () => {
     }
   });
 
+  test('CLI top navigation output defaults to full width and preserves explicit floating opt-in', async () => {
+    const output = path.join(tmpDir, 'nav-top.jsx');
+    await run(['openyida-page-template', 'canvas-nav-top', '--output', output]);
+    const { runtimeCode } = compileCanvasLocal(`${fs.readFileSync(output, 'utf8')}
+      function YidaComp() { return CanvasNav(window.testProps); }`);
+    const render = props => new Function('window', `${runtimeCode}; return YidaComp();`)({
+      testProps: props,
+      React: {
+        createElement: (type, props, ...children) => ({ type, props, children }),
+        useState: () => [false, () => {}],
+        useId: () => 'top-menu',
+        useEffect: () => {},
+      },
+      LucideReact: { Menu: () => null },
+    });
+    const normal = render({ title: '品牌', children: '已有内容' });
+    expect(normal.props.className).toBe('oy-canvas-nav oy-nav-top');
+    expect(normal.children[2].children).toContain('已有内容');
+    expect(render({ floating: false }).props.className).toBe(normal.props.className);
+    expect(render({ floating: true }).props.className).toBe(`${normal.props.className} is-floating`);
+  });
+
   test('navigation content sample compiles and switches scroll ownership for embedded pages', async () => {
     const output = path.join(tmpDir, 'nav-content.jsx');
     await run(['openyida-page-template', 'canvas-nav-content', '--output', output]);
@@ -60,7 +82,11 @@ describe('sample templates', () => {
       function YidaComp() { return CanvasNavigationContent(window.testProps); }`);
     expect(JSON.parse(importedModules)).toEqual(['react']);
     const render = props => new Function('window', `${runtimeCode}; return YidaComp();`)({
-      React: { createElement: (type, props, ...children) => ({ type, props, children }) },
+      React: {
+        createElement: (type, props, ...children) => ({ type, props, children }),
+        useRef: current => ({ current }),
+        useLayoutEffect: () => {},
+      },
       testProps: props,
     });
     const local = render({ navigation: '导航', children: '工作台', height: 640 });
@@ -77,6 +103,100 @@ describe('sample templates', () => {
       src: '/submission/form', title: '报修', style: { position: 'absolute', height: '100%' },
     } });
     expect(render({ children: '无可用导航' }).children[1].children[0].children).toContain('无可用导航');
+    const document = render({ layout: 'document', navigation: '品牌菜单', children: '首屏与产品区' });
+    expect(document.props.style).toMatchObject({ display: 'grid', overflow: 'visible' });
+    expect(document.props.style.height).toBeUndefined();
+    expect(document.children[0].props.style).toMatchObject({ gridArea: '1 / 1', position: 'sticky' });
+    expect(document.children[1].props.style).toMatchObject({ gridArea: '1 / 1', padding: 0 });
+    const documentViewport = document.children[1].children[0];
+    expect(documentViewport.props.style).toMatchObject({ overflow: 'visible', borderRadius: 0 });
+    expect(documentViewport.props.style.maxWidth).toBeUndefined();
+    expect(() => render({ layout: 'document', iframeSrc: '/submission/form' })).toThrow('requires workspace layout');
+  });
+
+  test('navigation restores each local view even when the detached DOM has lost its scroll position', async () => {
+    const output = path.join(tmpDir, 'nav-content.jsx');
+    await run(['openyida-page-template', 'canvas-nav-content', '--output', output]);
+    const { runtimeCode } = compileCanvasLocal(`${fs.readFileSync(output, 'utf8')}
+      function YidaComp() { return CanvasNavigationContent(window.testProps); }`);
+    const refs = [];
+    let cursor = 0;
+    let effects = [];
+    const runtime = {
+      React: {
+        createElement: (type, props, ...children) => ({ type, props, children }),
+        useRef: current => refs[cursor++] ||= { current },
+        useLayoutEffect: effect => effects.push(effect),
+      },
+    };
+    const renderComponent = new Function('window', `${runtimeCode}; return YidaComp;`)(runtime);
+    const render = props => {
+      cursor = 0;
+      effects = [];
+      runtime.testProps = props;
+      const tree = renderComponent();
+      const viewport = tree.children[1].children[0];
+      const dom = { scrollTop: 0, scrollLeft: 0 };
+      viewport.props.ref.current = dom;
+      effects.forEach(effect => effect());
+      return { dom, viewport };
+    };
+    const home = render({ contentKey: 'home', preserveScroll: true });
+    home.dom.scrollTop = 720;
+    home.dom.scrollLeft = 35;
+    home.viewport.props.onScroll({ currentTarget: home.dom });
+    // React 可先移除内容再清理父 effect；不能等卸载时才采集位置。
+    home.dom.scrollTop = 0;
+    home.dom.scrollLeft = 0;
+    expect(render({ contentKey: 'products', preserveScroll: true }).dom.scrollTop).toBe(0);
+    expect(render({ contentKey: 'home', preserveScroll: true }).dom).toEqual({ scrollTop: 720, scrollLeft: 35 });
+    expect(render({ contentKey: 'home', preserveScroll: false }).dom.scrollTop).toBe(0);
+    const embedded = render({ contentKey: 'home', preserveScroll: true, iframeSrc: '/submission/form' });
+    embedded.dom.scrollTop = 99;
+    embedded.viewport.props.onScroll({ currentTarget: embedded.dom });
+    expect(render({ contentKey: 'home', preserveScroll: true }).dom.scrollTop).toBe(720);
+  });
+
+  test('document layout measures resized navigation and cleans up observers', async () => {
+    const output = path.join(tmpDir, 'nav-content.jsx');
+    await run(['openyida-page-template', 'canvas-nav-content', '--output', output]);
+    const { runtimeCode } = compileCanvasLocal(`${fs.readFileSync(output, 'utf8')}
+      function YidaComp() { return CanvasNavigationContent({layout:'document', navigation:'菜单'}); }`);
+    const effects = [];
+    const observe = jest.fn();
+    const disconnect = jest.fn();
+    let measure;
+    const runtime = {
+      React: {
+        createElement: (type, props, ...children) => ({ type, props, children }),
+        useRef: current => ({ current }),
+        useLayoutEffect: effect => effects.push(effect),
+      },
+      ResizeObserver: class {
+        constructor(callback) {
+          measure = callback;
+          this.observe = observe;
+          this.disconnect = disconnect;
+        }
+      },
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    };
+    const tree = new Function('window', `${runtimeCode}; return YidaComp();`)(runtime);
+    const setProperty = jest.fn();
+    let height = 80;
+    tree.props.ref.current = { style: { setProperty } };
+    tree.children[0].props.ref.current = { getBoundingClientRect: () => ({ height }) };
+    const cleanups = effects.map(effect => effect());
+    expect(observe).toHaveBeenCalledWith(tree.children[0].props.ref.current);
+    expect(setProperty).toHaveBeenLastCalledWith('--openyida-navigation-height', '80px');
+    height = 240;
+    measure();
+    expect(setProperty).toHaveBeenLastCalledWith('--openyida-navigation-height', '240px');
+    cleanups.forEach(cleanup => cleanup?.());
+    expect(disconnect).toHaveBeenCalledTimes(1);
+    expect(runtime.removeEventListener).toHaveBeenCalledWith('resize', measure);
+    expect(tree.children[1].props.style.display).toBe('block');
   });
 
   test('sidebar keyboard resizing uses current DOM width and respects bounds', async () => {

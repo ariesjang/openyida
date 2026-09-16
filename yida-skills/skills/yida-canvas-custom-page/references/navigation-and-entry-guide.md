@@ -89,7 +89,7 @@
 
 ## 按需接入自定义导航
 
-PRD 确定使用自定义导航时，按 `design.md` 编写导航 UI，先参考 [导航壳形态目录](../../yida-nav-shell/references/nav-shell-patterns.md) 的场景、布局骨架和小段代码，再按业务设计手写外观或迭代已有导航。自定义顶部默认浮导，侧导必须支持折叠与拖拽调宽。菜单数据、可见性过滤、当前页和跳转按目录中的协议接入，样式消费应用导航 token；不以选择 CLI 导航模板作为起点。
+PRD 确定使用自定义导航时，按 `design.md` 编写导航 UI，先参考 [导航壳形态目录](../../yida-nav-shell/references/nav-shell-patterns.md) 的场景、布局骨架和小段代码，再按业务设计手写外观或迭代已有导航。顶部按连续展示页或业务工作区决定叠加/占位和背景范围，侧导必须支持折叠与拖拽调宽。菜单数据、可见性过滤、当前页和跳转按目录中的协议接入，样式消费应用导航 token；不以选择 CLI 导航模板作为起点。页内切换和跨任务往返均遵循 [页面与导航连续性](../../yida-design/references/page-continuity.md)。
 
 ## 标准 FormOpenContainer
 

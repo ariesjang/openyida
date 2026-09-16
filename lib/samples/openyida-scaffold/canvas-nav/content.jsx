@@ -1,8 +1,11 @@
 import React from 'react';
 
-// 顶部导航与内容的高度链；侧栏布局可在侧栏右侧已分配高度的区域使用 height="100%"。
-// 只管理布局：菜单权限、URL/hash、离开未保存表单的确认由调用方处理。
-// 合并到页面时保留组件，合并重复 import；不要额外包裹滚动卡片。
+/**
+ * workspace 保持原有剩余高度布局；document 用于首屏背景与导航共享画布的连续长页。
+ * document 首屏内容使用 --openyida-navigation-height 留安全区，背景仍从页面顶部开始。
+ * preserveScroll 只恢复当前实例内本地视图的位置；筛选、数据、草稿和路由由调用方持有。
+ * 导航节点不随 contentKey 重建；不要给整个壳添加随菜单变化的 key。
+ */
 function CanvasNavigationContent({
   navigation,
   children,
@@ -14,22 +17,72 @@ function CanvasNavigationContent({
   gutter = 'clamp(12px, 2vw, 24px)',
   radius = 16,
   background = 'transparent',
+  layout = 'workspace',
+  preserveScroll = false,
 }) {
   const embedded = Boolean(iframeSrc);
+  const documentLayout = layout === 'document';
+  const rootRef = React.useRef(null);
+  const navigationRef = React.useRef(null);
+  const contentRef = React.useRef(null);
+  const scrollPositions = React.useRef(new Map());
+
+  // 测量真实菜单高度，兼容窄屏换行、字体加载和菜单展开，不猜固定的 80px。
+  React.useLayoutEffect(() => {
+    if (!documentLayout) return;
+    const root = rootRef.current;
+    const nav = navigationRef.current;
+    if (!root) return;
+    const measure = () => root.style.setProperty('--openyida-navigation-height', `${nav?.getBoundingClientRect().height || 0}px`);
+    measure();
+    const observer = nav && window.ResizeObserver ? new window.ResizeObserver(measure) : null;
+    if (observer) observer.observe(nav);
+    window.addEventListener('resize', measure);
+    return () => {
+      if (observer) observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [documentLayout, navigation != null]);
+
+  React.useLayoutEffect(() => {
+    const viewport = contentRef.current;
+    if (documentLayout || embedded || !preserveScroll || contentKey == null || !viewport) return;
+    const position = scrollPositions.current.get(contentKey);
+    viewport.scrollTop = position?.top || 0;
+    viewport.scrollLeft = position?.left || 0;
+  }, [contentKey, documentLayout, embedded, preserveScroll]);
+
+  if (documentLayout && embedded) throw new Error('CanvasNavigationContent: iframeSrc requires workspace layout');
   return (
-    <div className="openyida-nav-layout" style={{
-      height, minHeight: 0, minWidth: 0, display: 'flex', flexDirection: 'column',
-      overflow: 'hidden', background,
+    <div ref={rootRef} className="openyida-nav-layout" data-layout={layout} style={{
+      height: documentLayout ? undefined : height, minHeight: 0, minWidth: 0,
+      display: documentLayout ? 'grid' : 'flex', flexDirection: 'column',
+      // 长页不创建第二层滚动容器；导航和 main 共享网格区域，背景可到达导航背后。
+      overflow: documentLayout ? 'visible' : 'hidden', background,
+      position: 'relative', isolation: 'isolate',
     }}>
-      {navigation != null && <div style={{ flexShrink: 0 }}>{navigation}</div>}
+      {navigation != null && <div ref={navigationRef} className="openyida-nav-header" style={{
+        flexShrink: 0, minWidth: 0, zIndex: 10,
+        ...(documentLayout ? { gridArea: '1 / 1', alignSelf: 'start', position: 'sticky', top: 0 } : {}),
+      }}>{navigation}</div>}
       <main className="openyida-nav-main" aria-label={title} style={{
-        display: 'flex', flexDirection: 'column', flex: '1 1 0', minHeight: 0,
-        minWidth: 0, overflow: 'hidden', padding: gutter, boxSizing: 'border-box',
+        display: documentLayout ? 'block' : 'flex', flexDirection: 'column',
+        flex: documentLayout ? undefined : '1 1 0', minHeight: 0,
+        minWidth: 0, overflow: documentLayout ? 'visible' : 'hidden',
+        padding: documentLayout ? 0 : gutter, boxSizing: 'border-box',
+        ...(documentLayout ? { gridArea: '1 / 1' } : {}),
       }}>
-        <div key={contentKey} className="openyida-nav-content" style={{
-          position: 'relative', flex: '1 1 0', minHeight: 0, minWidth: 0,
-          width: '100%', maxWidth, margin: '0 auto', borderRadius: radius,
-          overflow: embedded ? 'hidden' : 'auto',
+        <div key={contentKey} ref={contentRef} className="openyida-nav-content" onScroll={event => {
+          // 卸载后 DOM 的 scrollTop 可能已归零，必须在滚动时保存，不能等 effect cleanup。
+          if (!documentLayout && !embedded && preserveScroll && contentKey != null) {
+            const viewport = event.currentTarget;
+            scrollPositions.current.set(contentKey, { top: viewport.scrollTop, left: viewport.scrollLeft });
+          }
+        }} style={{
+          position: 'relative', flex: documentLayout ? undefined : '1 1 0', minHeight: 0, minWidth: 0,
+          width: '100%', maxWidth: documentLayout ? undefined : maxWidth,
+          margin: '0 auto', borderRadius: documentLayout ? 0 : radius,
+          overflow: documentLayout ? 'visible' : embedded ? 'hidden' : 'auto',
         }}>
           {embedded ? <iframe title={title} src={iframeSrc} style={{
             position: 'absolute', inset: 0, width: '100%', height: '100%',

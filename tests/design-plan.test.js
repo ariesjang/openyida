@@ -174,6 +174,12 @@ describe('design-plan materialize', () => {
     expect(design).toContain('"--color-brand1-6": "#6F4E37"');
     expect(design).toContain('buildPlanRevision: "2026-08-31-01"');
     expect(design).toContain('## 项目视觉选择');
+    // 物化产物必须携带 Fast 同样消费的规则，而不只留一个实现者可能漏读的引用。
+    const continuity = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/page-continuity.md'), 'utf8').trim();
+    expect(design).toContain(continuity);
+    expect(design).toContain('顶部导航默认贴顶通栏');
+    expect(design).toContain('初始透明，滚动后增加遮罩底色，回到顶部恢复透明');
+    expect(design.split('## 页面与导航连续性')).toHaveLength(2);
     expect(design).not.toMatch(/^themeId:/m);
     expect(design).not.toMatch(/\{\{[^}]+\}\}|<基于 --color-brand1-6/);
     expect(html).toContain('href="#overview"');

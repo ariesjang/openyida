@@ -35,7 +35,7 @@ AI 在已确定的导航方式内，结合业务模块数量、层级、切换�
 | 业务域与域内模块形成两级导航 | L 型：`platform-l-shape` | 顶部＋侧边：`custom` + `variant: mixed` |
 | 少量高频入口的移动端轻量门户或沉浸展示 | 按实际层级选顶部或侧边 | 可选底部悬浮菜单：`custom` + `variant: dock` |
 
-按已确认的业务模块和导航方式选择合适布局。自定义形态细化参考 [导航壳形态目录](../../yida-nav-shell/references/nav-shell-patterns.md)。自定义顶部未指定样式时默认浮导；侧边及顶部＋侧边在 PRD/design 中写入折叠/展开和拖拽调宽。
+按已确认的业务模块和导航方式选择合适布局。自定义形态细化参考 [导航壳形态目录](../../yida-nav-shell/references/nav-shell-patterns.md)，按 [页面与导航连续性](page-continuity.md) 确定首屏共同背景、导航占位/叠加、滚动及切换状态；顶部默认贴顶通栏，悬浮仅按明确设计选用。侧边及顶部＋侧边在 PRD/design 中写入折叠/展开和拖拽调宽。
 
 ## 写回与下游复用
 

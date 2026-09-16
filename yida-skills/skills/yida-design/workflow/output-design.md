@@ -344,6 +344,8 @@ inferred_modules:
 
 列出 hover、active、focus、loading、empty、error、disabled、selected、mobile 和 reduced motion 规则。
 
+按 [页面与导航连续性](../references/page-continuity.md) 逐页交接背景、滚动、切换/返回和异常状态；沉浸页导航叠加首屏，工作区导航占位，页内切换不创建应用导航。
+
 ## 16. 响应式
 
 定义断点和布局折叠方式。说明文字适配、工具栏换行、表格横向滚动和触控目标尺寸。

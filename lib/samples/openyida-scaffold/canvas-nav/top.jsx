@@ -1,7 +1,7 @@
 import { Menu } from 'lucide-react';
 
-/** 顶部导航默认使用浮导；floating=false 时使用贴边通栏，窄屏通过按钮展开菜单。 */
-function CanvasNav({ items = [], activeKey, onSelect, title, logo, actions, children, floating = true }) {
+/** 顶部导航默认贴边通栏；明确选择悬浮样式时传 floating=true。窄屏可展开菜单。 */
+function CanvasNav({ items = [], activeKey, onSelect, title, logo, actions, children, floating = false }) {
   const [expanded, setExpanded] = React.useState(false);
   const menuId = React.useId();
   React.useEffect(() => setExpanded(false), [activeKey]);

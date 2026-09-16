@@ -60,14 +60,16 @@ openyida get-form-config <appType> <formUuid> --json
 
 本节的 iframe 与原生表单打开规则用于计划选择复用原生页面的工作区。全码前台默认在同一页面切换业务视图、完成填写与结果展示，连接真实数据；不把默认 iframe 当作全码前台。菜单只包含该入口的有效任务，不能把后台菜单自动带入前台。
 
+先读取 [页面与导航连续性](../yida-design/references/page-continuity.md)，落实 design.md 中的共同画布、滚动归属及往返状态。导航布局与内容切换共同设计；不要只生成菜单外形。
+
 - **MUST：应用内切换保留导航壳**：点击自定义导航后，导航必须仍然可见且可继续操作；默认只切换主内容区。原生提交页、数据管理页嵌入主内容 iframe，本地工作台切换 React 内容。只有确认目标页面也承载同一套导航壳时才允许整页跳转；不能直接跳到隐藏导航的原生页面。外链和用户主动新窗口打开单独处理。见 [保留导航壳的最小示例](references/nav-shell-patterns.md#保留导航壳的最小示例)。
 
-- **MUST：内容区撑满剩余空间**：先执行 `openyida sample openyida-page-template canvas-nav-content` 并整体合并 `CanvasNavigationContent`，保持 `.openyida-nav-layout` / `.openyida-nav-content` 布局结构；顶部导航通过 `navigation` 接入，侧栏布局在右侧确定高度的内容区域使用。从确定高度的导航壳到 main、iframe 视口建立完整 flex 高度链，每个可收缩内容层设置 `min-height:0`；工作台自身滚动，原生页仅 iframe 内滚动。切换视图保持内容宽度和外侧留白连续，禁止父级 block、子级只写 `flex:1` 的无效布局。实现与验收见 [主内容撑满剩余空间](references/nav-shell-patterns.md#must主内容撑满剩余空间)。
+- **按场景选择内容布局**：先执行 `openyida sample openyida-page-template canvas-nav-content` 并整体合并 `CanvasNavigationContent`，保持 `.openyida-nav-layout` / `.openyida-nav-content` 布局结构。业务工作区使用默认 `layout="workspace"`，从壳到 main、iframe 建立完整 flex 高度链，每个可收缩层设置 `min-height:0`；工作台内容区滚动，原生页仅 iframe 内滚动。沉浸官网或连续展示页使用 `layout="document"`，导航与首屏叠在共同画布上、沿用页面滚动，不套定高内滚动工作区。顶部导航通过 `navigation` 接入，仅传菜单本身，不能再嵌一整套带 main 的导航壳。见 [连续展示页](references/nav-shell-patterns.md#连续展示页共享首屏背景) 和 [主内容撑满剩余空间](references/nav-shell-patterns.md#must主内容撑满剩余空间)。
 
-- **画布与浮导间距**：平台宿主继续消费 `--pod-page-bg-color`；自绘导航页的内部画布由 `design.md` 定义，可采用浅灰、浅彩、渐变或局部纹理，不强制跟随白色平台底色。浅色非白画布上，顶部浮导默认白色或近白半透明，卡片默认白色无框；品牌色集中于选中态和主操作，深色方案单独设计。只作用于当前页面选择器，不修改应用全局变量。根节点使用 `display:flow-root` 或 flex/grid，让浮导上边距留在根节点内。
+- **画布与间距**：宿主消费 `--pod-page-bg-color`，内部画布按 design.md 配色和材质，只作用于当前页，不改全局变量。根用 flow-root 或 flex/grid；沉浸页遵循共同背景规则，工作区按主题保证导航可读。
 
 - **先选形态，再写 UI**：根据已确认的 PRD、`design.md` 和用户参考确定布局。模块多用侧栏，模块少且内容需要宽度用顶部，两级业务用顶部＋侧边，沉浸展示可用悬浮 Dock，同模块视图用标签。已确认的选择直接沿用，不重新提问。
-- 自定义顶部导航默认推荐浮导，可按内容宽度设计为紧凑胶囊或悬浮栏；“顶部导航”不等于贴边通栏。位置、比例、留白、材质和选中态根据业务与设计实现，不由现成组件决定。此推荐只针对顶部样式，不改变已确定的导航方式。
+- 自定义顶部导航默认贴顶通栏，不默认浮导；胶囊或悬浮栏仅按明确设计选用。有首屏背景图时默认叠加背景、初始透明，滚动后增加遮罩底色，回顶恢复透明；展开菜单保持可读底色。工作区导航占位。定位方式与外观分开选择，遵循 [连续性规则](../yida-design/references/page-continuity.md)，不改变导航归属。
 - 需要布局方向和小段代码时读 [导航壳形态目录](references/nav-shell-patterns.md)。按场景设计和手写实现，不强制复制任何导航组件。已有导航符合设计时直接复用，只补缺失功能；不能仅因存在新示例而替换现有外观。
 - 自定义侧边导航（含顶部＋侧边）的 PC 端必须支持折叠/展开和拖拽调宽；展开恢复折叠前宽度，宽度变化时内容区同步调整。移动端改为可展开/收起的菜单，详见 [侧栏交互](references/nav-shell-patterns.md#侧栏交互)。
 - 菜单数量、名称、顺序、分组和入口用途来自 PRD，默认落点按当前入口任务确定；平台模式用当前访问者的 `getAccessableNavs.json` 过滤展示，独立前台必须接入真实权限适配，详见 [导航数据来源](references/nav-shell-patterns.md#导航数据来源)。数据逻辑可直接复用，不要求采用同一套 UI。
@@ -78,9 +80,10 @@ openyida get-form-config <appType> <formUuid> --json
 ## UI 和验收
 
 - 导航表达应用身份、业务层级和当前位置；选中态清晰，图标使用 `lucide-react` 或 `@ant-design/icons`，不用 emoji、字母占位或 CSS 拼图标。
-- 视觉对照 `design.md` 和用户参考检查，尤其是浮导的容器比例、留白、位置与内容关系。导航消费应用主题 token，不另注一套全局主题。
+- 视觉对照 `design.md` 和用户参考检查导航位置、比例及首屏/滚动态。导航消费应用主题 token，不另注全局主题。
 - 导航选中态已标明当前页时，内容区从业务开始；独立页头只补充对象、任务说明或操作，避免重复菜单标题。
 - 侧栏已验证折叠、恢复宽度、拖拽上下限和内容联动；顶部窄屏可展开菜单，Dock 不遮内容和主要操作。
 - 按范围验收：应用级自定义导航核验应用 `hideAppNav` 与各页 `isRenderNav=false`；仅前台菜单核验该页独立展示，并确认后台应用导航仍可用。配置均需持久化并回读；菜单可见性、选中态、内容与路由一致，深链、刷新及前进后退正常。
 - 逐项点击应用内导航，确认导航壳、当前选中项和主内容同时正确；切换后还能返回工作台。不能只验证目标页面打开成功。
+- 检查首屏、第二屏与窄屏菜单展开态，无背景断带、遮挡或双滚动；测试往返、快速连点、重复点击、刷新、前进后退、加载失败及未保存输入，按连续性规则核验状态和焦点。
 - 完整检查见 [验证清单](references/nav-shell-patterns.md#验证)。本地编译后按 `yida-publish-page` 发布并检查实际页面，编译通过不等于视觉验收通过。
