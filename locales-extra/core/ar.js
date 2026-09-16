@@ -153,6 +153,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_local_menu_binding: 'تحتاج القائمة المحلية {0} إلى صفحة مضيفة وviewKey: يجب أن يطابق sceneKey للمدخل {1} قيمة الصفحة، وأن يساوي resource اسم الصفحة name، وألا يكون viewKey فارغًا. ينطبق ذلك على جميع الأدوار.',
+    design_plan_visual_object_required: 'يجب أن يكون {0} كائنًا وليس نصًا أو مصفوفة. احتفظ بالبنية التي أنشأها init وأكمل القيم. مثال: {1}.',
     help: '\n' +
       'openyida - Yida CLI Tool\n' +
       '\n' +
@@ -1256,6 +1258,7 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_not_assembled: 'علامة القالب في السطر {0} لم تُجهّز بعد. شغّل build-canvas-theme.js ثم ترجم وانشر ملف الإخراج المنفصل. الصفحات التي تحتوي على Provider مدمج لا تحتاج إلى هذه العلامة.',
     canvas_theme_provider_missing: 'لم تُربط الصفحة قرب السطر {0} بمزوّد السمة. أعد <CanvasThemeProvider><PageContent /></CanvasThemeProvider> من YidaComp.',
     canvas_theme_root_hook: 'تُقرأ السمة قبل تفعيل مزوّدها قرب السطر {0}. انقل useCanvasThemeContext إلى PageContent واعرضه داخل CanvasThemeProvider.',
     canvas_theme_context_scope: 'تم تعريف CanvasThemeContext داخل دالة قرب السطر {0}. انقل السياق والمزوّد إلى مستوى الوحدة.',
@@ -1348,6 +1351,7 @@ module.exports = {
     canvas_compiling: '  🎨 جارٍ تجميع مصدر الصفحة المخصصة محليًا...',
     canvas_compile_done: '  ✅ تم تجميع الصفحة المخصصة!',
     canvas_compile_failed: '  ❌ فشل تجميع الصفحة المخصصة: {0}',
+    canvas_icon_export_unavailable: 'السطر {2}: مكتبة أيقونات بيئة Yida ‏{0} لا تصدّر {1}. اختر أيقونة مدعومة وأعد الترجمة. البدائل: {3}.',
     canvas_unbound_identifiers: 'يحتوي مصدر Code Canvas على معرّفات غير مصرّح بها: {0}. أضف الاستيراد أو تعريف الدالة أو Ref أو الحالة أو المتغير المحلي المفقود في الملف نفسه، واستخدم الاسم نفسه في جميع المراجع. إذا كان المعرّف مقدمًا من بيئة تشغيل غير قياسية، فاستخدم window.<name> أو parentWindow.<name> بشكل صريح وتحقق من وجوده أولًا.',
     canvas_instance_api_unavailable: 'لا يمكن لمكوّنات Code Canvas استخدام واجهات منصة JSX التالية: {0}. استخدم React hooks أو props أو جسر البيانات window.__OPENYIDA_YIDA_API__.',
     step_login: '\n🔑 Step 2: قراءة بيانات تسجيل الدخول',

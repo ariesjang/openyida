@@ -153,6 +153,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_local_menu_binding: 'स्थानीय मेनू {0} को होस्ट पेज और viewKey चाहिए: प्रवेश {1} का sceneKey पेज के sceneKey से, resource पेज के name से मेल खाए और viewKey खाली न हो। यह सभी भूमिकाओं पर लागू है।',
+    design_plan_visual_object_required: '{0} एक ऑब्जेक्ट होना चाहिए, स्ट्रिंग या ऐरे नहीं। init द्वारा बनाई संरचना बनाए रखें और मान भरें। उदाहरण: {1}।',
     help: '\n' +
       'openyida - Yida CLI Tool\n' +
       '\n' +
@@ -1256,6 +1258,7 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_not_assembled: 'पंक्ति {0} का थीम मार्कर अभी तैयार नहीं हुआ है। build-canvas-theme.js चलाएँ और अलग आउटपुट फ़ाइल को कंपाइल/प्रकाशित करें। एकीकृत Provider वाले पेजों को इस मार्कर की आवश्यकता नहीं है।',
     canvas_theme_provider_missing: 'पंक्ति {0} के पास थीम प्रदाता जुड़ा नहीं है। YidaComp से <CanvasThemeProvider><PageContent /></CanvasThemeProvider> लौटाएँ।',
     canvas_theme_root_hook: 'पंक्ति {0} के पास प्रदाता सक्रिय होने से पहले थीम पढ़ी जा रही है। useCanvasThemeContext को PageContent में ले जाएँ और उसे CanvasThemeProvider के भीतर रेंडर करें।',
     canvas_theme_context_scope: 'पंक्ति {0} के पास CanvasThemeContext फ़ंक्शन के भीतर घोषित है। संदर्भ और प्रदाता को मॉड्यूल स्तर पर घोषित करें।',
@@ -1348,6 +1351,7 @@ module.exports = {
     canvas_compiling: '  🎨 कस्टम पेज स्रोत को स्थानीय रूप से संकलित किया जा रहा है...',
     canvas_compile_done: '  ✅ कस्टम पेज संकलित!',
     canvas_compile_failed: '  ❌ कस्टम पेज संकलन विफल: {0}',
+    canvas_icon_export_unavailable: 'पंक्ति {2}: Yida रनटाइम आइकन लाइब्रेरी {0}, {1} एक्सपोर्ट नहीं करती। समर्थित आइकन चुनें और फिर से कंपाइल करें। विकल्प: {3}।',
     canvas_unbound_identifiers: 'Code Canvas स्रोत में अघोषित पहचानकर्ता हैं: {0}। उसी फ़ाइल में छूटा हुआ import, फ़ंक्शन, Ref, state या स्थानीय चर घोषित करें और सभी संदर्भों में वही नाम रखें। यदि पहचानकर्ता किसी गैर-मानक runtime से मिलता है, तो window.<name> या parentWindow.<name> से स्पष्ट रूप से पहुँचें और पहले उसके मौजूद होने की जाँच करें।',
     canvas_instance_api_unavailable: 'Code Canvas कॉम्पोनेंट इन प्लेटफ़ॉर्म JSX इंस्टेंस API का उपयोग नहीं कर सकते: {0}। React hooks, props या window.__OPENYIDA_YIDA_API__ डेटा ब्रिज का उपयोग करें।',
     step_login: '\n🔑 Step 2: लॉगिन जानकारी पढ़ें',

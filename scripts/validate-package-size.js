@@ -10,19 +10,20 @@ const path = require('path');
 // Budgets are ratchets that track legitimate content growth (12 locale packs,
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
-// Node 20/npm 10 packs the current 506 files into 1,892,319 bytes;
-// Node 26/npm 11 produces 1,871,347 bytes from the same content.
-// Round the CI measurement to the next 16 KiB boundary.
-const MAX_TARBALL_BYTES = 1856 * 1024;
-const MAX_UNPACKED_BYTES = 6320 * 1024;
-// Intake references and the shared basic-theme-token contract are packaged.
-const MAX_ENTRY_COUNT = 509;
+// Icon export checks and authoring guards add two runtime files. Node 26/npm
+// 11 packs 510 files into 1,908,652 bytes (6,644,070 unpacked). Retain the measured
+// ~21 KiB npm 10 compression overhead and round budgets to 16 KiB boundaries.
+const MAX_TARBALL_BYTES = 1888 * 1024;
+const MAX_UNPACKED_BYTES = 6496 * 1024;
+const MAX_ENTRY_COUNT = 510;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
   'bin/yida.js',
   'lib/app/create-form/batch.js',
   'lib/app/inline-css-guard.js',
+  'lib/app/canvas-icon-guard.js',
+  'lib/app/canvas-icon-exports.json',
   'lib/design-plan/preview.js',
   'lib/design-plan/entry-navigation.js',
   'yida-skills/skills/yida-app/references/entry-navigation.md',

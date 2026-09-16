@@ -38,6 +38,16 @@ beforeEach(() => {
 });
 afterEach(() => fs.rmSync(dir, { recursive: true, force: true }));
 
+test.each(['visualDirection', 'navigationStyle'])('rejects string %s before creating draft files', field => {
+  brief.visualSelection[field] = '顶部导航';
+  save();
+  expect(() => init()).toThrow(expect.objectContaining({
+    code: 'DESIGN_PLAN_VISUAL_FIELD_TYPE_INVALID',
+    details: expect.objectContaining({ path: `visualSelection.${field}`, sourcePath: briefPath }),
+  }));
+  expect(fs.existsSync(path.join(dir, 'prd', 'build-plan.json'))).toBe(false);
+});
+
 test.each(['#6F4E37', '#1677FF'])('color examples preserve the project choice %s instead of proposing a preset', primaryColor => {
   brief.visualSelection.colorStrategy = { primaryColor, primaryColorName: '项目主色', usage: '来自用户提供的品牌规范' };
   save();

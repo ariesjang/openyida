@@ -51,6 +51,32 @@ describe('entry planning and platform navigation', () => {
     expect(result.pageNavigation).toEqual([]);
     expect(result.navigationOrder).toEqual(['采购订单', '采购申请']);
   });
+  test.each(['management', 'workspace'])('%s local menus bind sceneKey, resource and viewKey together', role => {
+    const plan = planFixture();
+    const page = plan.pages.customPageDetails[0];
+    page.pageSpecHandoff = { entryMode: 'platform-shell' };
+    const entry = plan.execution.entryRecommendation.entries[0];
+    entry.role = role;
+    entry.menu = [entry.menu[0]];
+    plan.execution.entryRecommendation = { mode: 'unified', entries: [entry] };
+    expect(handoff(plan).entryRecommendation.entries[0].sceneKey).toBe('service');
+    for (const field of ['sceneKey', 'resource', 'viewKey']) {
+      const owner = field === 'sceneKey' ? entry : entry.menu[0];
+      const old = owner[field];
+      // Keep resource real but point at the wrong page, so binding validation owns the diagnostic.
+      if (field === 'resource') { owner[field] = '采购订单'; } else { delete owner[field]; }
+      expect(() => handoff(plan)).toThrow(expect.objectContaining({
+        code: 'DESIGN_PLAN_INVALID_ENTRY_NAVIGATION',
+        details: expect.objectContaining({ entryKey: entry.key, menuKey: 'mine', missingFields: expect.arrayContaining([field === 'sceneKey' ? 'entry.sceneKey' : `menu.${field}`]) }),
+      }));
+      owner[field] = old;
+    }
+  });
+  test.each([0, 1])('requires access for frontend and management leaf menus (%i)', index => {
+    const plan = planFixture();
+    delete plan.execution.entryRecommendation.entries[index].menu[0].access;
+    expect(() => handoff(plan)).toThrow(/权限依赖/);
+  });
   test('frontend-only and explicit narrow scope do not reorder platform navigation', () => {
     for (const scope of ['frontend-only', 'narrow']) {
       const plan = planFixture();

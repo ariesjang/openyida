@@ -154,6 +154,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_local_menu_binding: '本頁選單 {0} 必須關聯承載頁面和 viewKey：入口 {1} 的 sceneKey 對應頁面 sceneKey，resource 等於頁面 name，viewKey 不可空白。此規則適用於所有入口角色。',
+    design_plan_visual_object_required: '{0} 必須為物件，不能寫成字串或陣列。保留 init 產生的結構並填入值。範例：{1}。',
     help: '\n' +
       'openyida - 宜搭命令列工具\n' +
       '\n' +
@@ -1195,6 +1197,7 @@ module.exports = {
     failed: '页面规范检查失败'
   },
   publish: {
+    canvas_theme_not_assembled: '第 {0} 行的主題標記尚未組裝。請執行 build-canvas-theme.js，編譯並發佈獨立輸出檔案。已接好 Provider 的頁面不需要此標記。',
     canvas_theme_provider_missing: '第 {0} 行的頁面未接入主題容器。請在 YidaComp 中返回 <CanvasThemeProvider><PageContent /></CanvasThemeProvider>，讓業務內容讀取應用主題。',
     canvas_theme_root_hook: '第 {0} 行在主題容器生效前讀取了主題。請把 useCanvasThemeContext 移到 PageContent 中，並在 YidaComp 中用 CanvasThemeProvider 包住 <PageContent />。',
     canvas_theme_context_scope: '第 {0} 行的 CanvasThemeContext 定義在函數內。請將主題上下文和 Provider 放在模組頂層，由頁面入口包住業務元件。',
@@ -1287,6 +1290,7 @@ module.exports = {
     canvas_compiling: '  🎨 本機編譯自訂頁面源碼...',
     canvas_compile_done: '  ✅ 自訂頁面編譯完成！',
     canvas_compile_failed: '  ❌ 自訂頁面編譯失敗：{0}',
+    canvas_icon_export_unavailable: '第 {2} 行：宜搭執行階段圖示庫 {0} 未匯出 {1}。請選擇支援的圖示並重新編譯；可選替代：{3}。',
     canvas_unbound_identifiers: 'Code Canvas 原始碼存在未宣告識別字：{0}。請在同一檔案補齊 import、函式、Ref、狀態或區域變數宣告，並保持宣告與全部引用同名。若識別字由非標準執行環境提供，請改用 window.<name> 或 parentWindow.<name> 明確存取，並先檢查是否存在。',
     canvas_instance_api_unavailable: 'Code Canvas 元件不能使用平台 JSX 執行個體 API：{0}。請使用 React hooks、props 或 window.__OPENYIDA_YIDA_API__ 資料橋接。',
     step_login: '\n🔑 Step 2：讀取登入態',

@@ -153,6 +153,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_local_menu_binding: 'ローカルメニュー {0} には表示ページと viewKey が必要です。入口 {1} の sceneKey はページの sceneKey、resource はページの name と一致し、viewKey は空でない必要があります。すべての役割に適用されます。',
+    design_plan_visual_object_required: '{0} は文字列や配列ではなくオブジェクトで指定してください。init が生成した構造を維持して値を入力します。例: {1}。',
     help: '\n' +
       'openyida - Yida CLI ツール\n' +
       '\n' +
@@ -1207,6 +1209,7 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_not_assembled: '行 {0} のテーママーカーは未展開です。build-canvas-theme.js を実行し、別の出力ファイルをコンパイル・公開してください。Provider 組み込み済みのページにはマーカーは不要です。',
     canvas_theme_provider_missing: '{0} 行付近でテーマの Provider が適用されていません。YidaComp から <CanvasThemeProvider><PageContent /></CanvasThemeProvider> を返してください。',
     canvas_theme_root_hook: '{0} 行付近で Provider の適用前にテーマを参照しています。useCanvasThemeContext を PageContent に移し、CanvasThemeProvider の子として描画してください。',
     canvas_theme_context_scope: '{0} 行付近の CanvasThemeContext が関数内で定義されています。Context と Provider をモジュールのトップレベルに配置してください。',
@@ -1299,6 +1302,7 @@ module.exports = {
     canvas_compiling: '  🎨 カスタムページソースをローカルでコンパイル中...',
     canvas_compile_done: '  ✅ カスタムページのコンパイルが完了しました！',
     canvas_compile_failed: '  ❌ カスタムページのコンパイルに失敗しました：{0}',
+    canvas_icon_export_unavailable: '行 {2}: 宜搭ランタイムのアイコンライブラリ {0} は {1} をエクスポートしていません。対応するアイコンを選択し、再コンパイルしてください。代替候補: {3}。',
     canvas_unbound_identifiers: 'Code Canvas ソースに未宣言の識別子があります：{0}。同じファイルに import、関数、Ref、state、またはローカル変数の宣言を追加し、すべての参照で同じ名前を使用してください。非標準ランタイムが提供する識別子は window.<name> または parentWindow.<name> から明示的に参照し、先に存在を確認してください。',
     canvas_instance_api_unavailable: 'Code Canvas コンポーネントでは、次のプラットフォーム JSX インスタンス API を使用できません：{0}。React Hooks、props、または window.__OPENYIDA_YIDA_API__ データブリッジを使用してください。',
     step_login: '\n🔑 Step 2: ログイン情報を読み込む',

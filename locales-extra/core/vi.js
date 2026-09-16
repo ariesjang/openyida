@@ -153,6 +153,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_local_menu_binding: 'Menu nội bộ {0} cần trang chứa và viewKey: sceneKey của lối vào {1} phải khớp sceneKey của trang, resource bằng name của trang và viewKey không được trống. Áp dụng cho mọi vai trò.',
+    design_plan_visual_object_required: '{0} phải là đối tượng, không phải chuỗi hoặc mảng. Giữ cấu trúc do init tạo và điền giá trị. Ví dụ: {1}.',
     help: '\n' +
       'openyida - Yida CLI Tool\n' +
       '\n' +
@@ -1256,6 +1258,7 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_not_assembled: 'Dấu chủ đề ở dòng {0} chưa được xử lý. Chạy build-canvas-theme.js rồi biên dịch/xuất bản tệp đầu ra riêng. Trang đã tích hợp Provider không cần dấu này.',
     canvas_theme_provider_missing: 'Trang gần dòng {0} chưa được bọc bằng bộ cung cấp giao diện. Hãy trả về <CanvasThemeProvider><PageContent /></CanvasThemeProvider> từ YidaComp.',
     canvas_theme_root_hook: 'Giao diện được đọc trước khi bộ cung cấp hoạt động gần dòng {0}. Chuyển useCanvasThemeContext vào PageContent và hiển thị nó bên trong CanvasThemeProvider.',
     canvas_theme_context_scope: 'CanvasThemeContext được khai báo trong hàm gần dòng {0}. Hãy khai báo ngữ cảnh và bộ cung cấp ở cấp mô-đun.',
@@ -1348,6 +1351,7 @@ module.exports = {
     canvas_compiling: '  🎨 Đang biên dịch mã nguồn trang tùy chỉnh cục bộ...',
     canvas_compile_done: '  ✅ Đã biên dịch trang tùy chỉnh!',
     canvas_compile_failed: '  ❌ Biên dịch trang tùy chỉnh thất bại: {0}',
+    canvas_icon_export_unavailable: 'Dòng {2}: thư viện biểu tượng runtime Yida {0} không xuất {1}. Chọn biểu tượng được hỗ trợ và biên dịch lại. Gợi ý thay thế: {3}.',
     canvas_unbound_identifiers: 'Mã nguồn Code Canvas chứa định danh chưa được khai báo: {0}. Hãy bổ sung import hoặc khai báo hàm, Ref, trạng thái hay biến cục bộ trong cùng tệp và dùng cùng một tên cho mọi tham chiếu. Nếu runtime không chuẩn cung cấp định danh, hãy truy cập rõ ràng qua window.<name> hoặc parentWindow.<name> và kiểm tra sự tồn tại trước.',
     canvas_instance_api_unavailable: 'Thành phần Code Canvas không thể dùng các API phiên bản JSX của nền tảng sau: {0}. Hãy dùng React hooks, props hoặc cầu nối dữ liệu window.__OPENYIDA_YIDA_API__.',
     step_login: '\n🔑 Step 2: Đọc thông tin đăng nhập',

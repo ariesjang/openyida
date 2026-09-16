@@ -105,18 +105,34 @@ Fast（直接搭建）与 Plan（先确认方案）使用同一份入口规划�
 | 字段 | 含义和要求 |
 | --- | --- |
 | `mode` | `unified`：共用工作区；`service-management`：访客端与管理端分开；`frontend-only`：只交付前台。实施前必须选定，不能为 `undetermined` |
-| `entries[]` | 每个入口填写 `key/name/role/menu/defaultMenuKey`；访客入口还需 `sceneKey` |
+| `entries[]` | 每个入口填写 `key/name/role/menu/defaultMenuKey`；访客入口或包含 `local` 菜单的任意入口还需 `sceneKey` |
 | `role` | `service`：访客；`management`：业务管理者；`workspace`：共用工作区 |
-| `sceneKey` | 关联承载该入口的页面；service 入口必须关联 `entryMode=standalone` 的独立自定义页面 |
+| `sceneKey` | 关联唯一承载页面的顶层 `sceneKey`；service 入口必须关联 `entryMode=standalone`；management/workspace 含 local 菜单时也必须填写 |
 | `menu[]` | 分组用 `{key,label,children}`；可点击菜单用 `{key,label,resource,targetType,viewUuid?,viewKey?,access}` |
 | `resource` | 规划中的资源名称；实施时创建或查询资源，换成真实 ID |
-| `targetType` | `local`：本页业务视图，需绑定承载页面和 `viewKey`；`submission`：原生填写页；`page`：原生管理工作区；`custom`：独立自定义页面 |
+| `targetType` | `local`：本页业务视图，入口 sceneKey 关联承载页面、resource 等于页面 name、viewKey 非空；`submission`：原生填写页；`page`：原生管理工作区；`custom`：独立自定义页面 |
 | `viewUuid` | 仅用于 `page`，填写已查询到的真实视图 ID；尚未取得时省略，实施时补齐，不编造占位 ID |
-| `access[]` | `{resource,operation,dataScope,viewUuid?}`；填写需要 `OPERATE_CREATE`，打开页面或视图需要 `OPERATE_VIEW`；编辑、删除等要求另列 |
+| `access[]` | 所有身份的每个叶子菜单必填 `{resource,operation,dataScope,viewUuid?}`；填写需要 `OPERATE_CREATE`，打开页面或视图需要 `OPERATE_VIEW`；声明不等于实际授权，编辑、删除等要求另列 |
 | `dataScope` | 用业务语言写明本人、本部门或具体管理范围；实际限制由平台权限配置执行 |
 | `defaultMenuKey` | 入口打开后首先显示的可点击菜单。只有一个任务时也填写，但无需绘制菜单 UI |
 
 ## CLI 与运行时参数边界
+
+例如管理端在同一个自定义页面内切换业务视图时，承载页面为 `{ "sceneKey": "management", "name": "业务管理" }`，入口应写成：
+
+```json
+{
+  "key": "management", "name": "业务管理端", "role": "management",
+  "sceneKey": "management", "defaultMenuKey": "orders",
+  "menu": [{
+    "key": "orders", "label": "订单管理", "targetType": "local",
+    "resource": "业务管理", "viewKey": "orders",
+    "access": [{ "resource": "业务管理", "operation": "OPERATE_VIEW", "dataScope": "已授权管理范围" }]
+  }]
+}
+```
+
+上述资源必须在计划中真实存在，页面需实现 `orders` 视图；其订单数据另列真实数据资源权限。管理端直接打开原生业务页面时使用 `page`，填写时使用 `submission`，这两种情况不要求为入口新增自定义承载页面。
 
 ### 传入入口规划
 

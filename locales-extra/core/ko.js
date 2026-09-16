@@ -153,6 +153,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_local_menu_binding: '로컬 메뉴 {0}에는 호스트 페이지와 viewKey가 필요합니다. 진입점 {1}의 sceneKey는 페이지 sceneKey와, resource는 페이지 name과 일치해야 하며 viewKey는 비어 있으면 안 됩니다. 모든 역할에 적용됩니다.',
+    design_plan_visual_object_required: '{0}은 문자열이나 배열이 아닌 객체여야 합니다. init이 생성한 구조를 유지하고 값을 입력하세요. 예: {1}.',
     help: '\n' +
       'openyida - Yida CLI Tool\n' +
       '\n' +
@@ -1257,6 +1259,7 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_not_assembled: '{0}행의 테마 마커가 처리되지 않았습니다. build-canvas-theme.js를 실행하고 별도 출력 파일을 컴파일하고 게시하세요. Provider가 통합된 페이지에는 이 마커가 필요 없습니다.',
     canvas_theme_provider_missing: '{0}행 부근에 테마 Provider가 적용되지 않았습니다. YidaComp에서 <CanvasThemeProvider><PageContent /></CanvasThemeProvider>를 반환하세요.',
     canvas_theme_root_hook: '{0}행 부근에서 Provider 적용 전에 테마를 읽고 있습니다. useCanvasThemeContext를 PageContent로 옮기고 CanvasThemeProvider 안에서 렌더링하세요.',
     canvas_theme_context_scope: '{0}행 부근의 CanvasThemeContext가 함수 안에 선언되어 있습니다. Context와 Provider를 모듈 최상위에 선언하세요.',
@@ -1349,6 +1352,7 @@ module.exports = {
     canvas_compiling: '  🎨 사용자 지정 페이지 소스를 로컬에서 컴파일하는 중...',
     canvas_compile_done: '  ✅ 사용자 지정 페이지 컴파일 완료!',
     canvas_compile_failed: '  ❌ 사용자 지정 페이지 컴파일 실패: {0}',
+    canvas_icon_export_unavailable: '{2}행: Yida 런타임 아이콘 라이브러리 {0}에서 {1}을 내보내지 않습니다. 지원되는 아이콘을 선택하고 다시 컴파일하세요. 대안: {3}.',
     canvas_unbound_identifiers: 'Code Canvas 소스에 선언되지 않은 식별자가 있습니다: {0}. 같은 파일에 import, 함수, Ref, 상태 또는 지역 변수 선언을 추가하고 모든 참조에서 같은 이름을 사용하세요. 비표준 런타임이 제공하는 식별자는 window.<name> 또는 parentWindow.<name>을 통해 명시적으로 접근하고 먼저 존재 여부를 확인하세요.',
     canvas_instance_api_unavailable: 'Code Canvas 컴포넌트는 다음 플랫폼 JSX 인스턴스 API를 사용할 수 없습니다: {0}. React hooks, props 또는 window.__OPENYIDA_YIDA_API__ 데이터 브리지를 사용하세요.',
     step_login: '\n🔑 Step 2: 로그인 정보 읽기',

@@ -4,6 +4,8 @@ antd 页面用 CanvasThemeProvider 包住业务组件；图表通过 useCanvasTh
 
 ## 1. 选择接入方式
 
+`@canvas-theme-provider` 和 `.themed.canvas.jsx` 仅用于第 2 节的脚本装配路线，不是所有顶部导航、背景图或 Canvas 页面的必经步骤。已有 Provider 的页面直接编译原文件；不要重复插入 Provider 或增加标记。
+
 | 页面情况 | 操作 |
 | --- | --- |
 | 用 `sample` 生成表单抽屉、批量表格或趋势图页面 | 已接好主题，继续编写业务内容 |
@@ -68,6 +70,8 @@ node <skill-dir>/scripts/build-canvas-theme.js \
 先执行 `openyida compile <输出文件> --json`，再检查实际页面的主色、按钮状态、确认弹窗、延迟加载和换肤效果。用户要求发布时，执行 `openyida publish <输出文件> <appType> <formUuid>`。
 
 编译会检查主题容器是否挂载、入口是否提前读取主题、主题上下文是否放在模块顶层。报错包含位置和调整方法，按提示修正后再次编译。发布后实际打开页面，检查首屏和主题交互；`--health-check` 用于核对保存内容，页面能否正常运行以浏览器结果为准。
+
+原始文件仍有 `/* @canvas-theme-provider */` 时，编译和发布会报 `OPENYIDA_CANVAS_THEME_NOT_ASSEMBLED`。按第 2 节生成独立输出文件后编译该输出；不要仅删除标记掩盖尚未接入的 Provider。
 
 Context 返回 `token/status/source/revision`：
 

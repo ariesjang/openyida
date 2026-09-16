@@ -85,6 +85,8 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 
 `visualStyle` 保存项目选择和差异：
 
+在 `visual.json` 中它位于 `facts.visualStyle`。沿用 init 生成的 `forUser.visualDirection` 和 `forUser.navigationStyle` 对象，只编辑内部字段，不改成字符串或数组。`DESIGN_PLAN_VISUAL_FIELD_TYPE_INVALID` 会给出字段路径与对象示例；示例只说明结构，实际值沿用已确认的视觉选择。
+
 ```json
 {
   "forUser": {

@@ -76,6 +76,18 @@ describe('design-plan materialize', () => {
     fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
+  test.each(['visualDirection', 'navigationStyle'])('rejects non-object %s before normalization', field => {
+    for (const value of ['简洁', [], null, true]) {
+      const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
+      plan.visualStyle.forUser[field] = value;
+      expect(() => normalizePlan(plan)).toThrow(expect.objectContaining({
+        code: 'DESIGN_PLAN_VISUAL_FIELD_TYPE_INVALID',
+        details: expect.objectContaining({ path: `visualStyle.forUser.${field}`, expectedType: 'object', example: expect.any(Object) }),
+      }));
+      expect(plan.visualStyle.forUser[field]).toEqual(value);
+    }
+  });
+
   test('writes ordered business blocks once and derives the full plan without losing business differences', () => {
     const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
     const page = plan.pages.customPageDetails[0];

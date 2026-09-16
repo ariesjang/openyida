@@ -67,3 +67,15 @@ test('plain pages and comments about theme do not require a provider', () => {
   expect(compileCanvasLocal('// CanvasThemeProvider useCanvasThemeContext\nfunction YidaComp() { return <div>内容</div>; }').runtimeCode).toBeTruthy();
   expect(() => assertCanvasThemeStructure('function YidaComp( invalid')).not.toThrow();
 });
+
+test('unexpanded theme markers report assembly instructions before missing binding errors', () => {
+  expect(() => compileCanvasLocal('/* @canvas-theme-provider */\nfunction YidaComp() { return <CanvasThemeProvider><div/></CanvasThemeProvider>; }', { sourcePath: 'source.canvas.jsx' }))
+    .toThrow(expect.objectContaining({ code: 'OPENYIDA_CANVAS_THEME_NOT_ASSEMBLED',
+      details: { stage: 'canvas_compile', sourcePath: 'source.canvas.jsx', line: 1, issueType: 'unexpanded_marker' } }));
+  expect(() => compileCanvasLocal('/* @canvas-theme-provider */\nfunction YidaComp() { return <div/>; }'))
+    .toThrow(expect.objectContaining({ code: 'OPENYIDA_CANVAS_THEME_NOT_ASSEMBLED' }));
+});
+
+test('marker text in a string or explanatory comment is not an assembly placeholder', () => {
+  expect(() => compileCanvasLocal('/* Documenting @canvas-theme-provider here */\nfunction YidaComp() { return <div>{"/* @canvas-theme-provider */"}</div>; }')).not.toThrow();
+});

@@ -282,6 +282,9 @@ describe('CLI offline smoke', () => {
     const profiles = runAny(['auth', 'profiles']);
     expect(profiles.status).toBe(0);
     expect(() => JSON.parse(profiles.stdout)).not.toThrow();
+    const legacyList = runAny(['auth', 'profile', 'list', '--json']);
+    expect(legacyList.status).toBe(0);
+    expect(JSON.parse(legacyList.stdout)).toEqual(JSON.parse(profiles.stdout));
 
     const switchResult = runAny(['auth', 'profile', 'switch', '__missing_profile__', '--json']);
     expect(switchResult.status).toBe(1);
@@ -1833,7 +1836,7 @@ describe('CLI offline smoke', () => {
       kind: 'mixed',
       mutates_yida: false,
       mutates_local: true,
-      read_actions: ['status', 'profiles'],
+      read_actions: ['status', 'profiles', 'profile list'],
       mutating_actions: ['login', 'refresh', 'logout', 'profile switch'],
     });
     expect(commandById.org.side_effect).toMatchObject({
@@ -2464,6 +2467,8 @@ test('command and agent navigation policies align with AI intake decisions', () 
   expect(workflow.entry_navigation_contract).toMatchObject({
     plan_path: 'execution.entryRecommendation',
     modes: ['unified', 'service-management', 'frontend-only'],
+    local_menu_binding: expect.stringContaining('management/workspace'),
+    leaf_access_required: expect.stringContaining('Every leaf menu'),
     runtime: { default_mode: 'platform', builtin_permission_adapter: false },
   });
   expect(workflow.application_entry_policy.workbench).toMatchObject({

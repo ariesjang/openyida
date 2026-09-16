@@ -67,6 +67,19 @@ test('first assembly keeps revision 1 and still rejects reused parts by digest',
   expect(() => merge()).toThrow('旧版本');
 });
 
+test.each(['visualDirection', 'navigationStyle'])('rejects string %s with field guidance and no artifact writes', field => {
+  visual.facts.visualStyle.forUser[field] = '顶部导航';
+  save();
+  const before = [input, businessFile, visualFile].map(file => fs.readFileSync(file, 'utf8'));
+  expect(() => merge()).toThrow(expect.objectContaining({
+    code: 'DESIGN_PLAN_VISUAL_FIELD_TYPE_INVALID',
+    details: expect.objectContaining({ sourcePath: visualFile, path: `facts.visualStyle.forUser.${field}`, expectedType: 'object', receivedType: 'string' }),
+  }));
+  expect([input, businessFile, visualFile].map(file => fs.readFileSync(file, 'utf8'))).toEqual(before);
+  expect(fs.existsSync(path.join(dir, 'prd.html'))).toBe(false);
+  expect(fs.existsSync(path.join(dir, 'prd.md'))).toBe(false);
+});
+
 test('identical reassembly preserves a confirmed version and its approval', () => {
   source.meta.status = 'confirmed';
   source.meta.planState = { planConfirmed: true, presentedRevision: source.meta.revision, confirmedRevision: source.meta.revision };

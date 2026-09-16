@@ -153,6 +153,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_local_menu_binding: 'El menú local {0} requiere una página anfitriona y viewKey: sceneKey de la entrada {1} debe coincidir con el de la página, resource con su name y viewKey no puede estar vacío. Se aplica a todos los roles.',
+    design_plan_visual_object_required: '{0} debe ser un objeto, no una cadena ni una lista. Conserve la estructura generada por init y complete los valores. Ejemplo: {1}.',
     help: '\n' +
       'openyida - Yida CLI Tool\n' +
       '\n' +
@@ -1258,6 +1260,7 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_not_assembled: 'El marcador de tema de la línea {0} no está ensamblado. Ejecute build-canvas-theme.js y compile/publique el archivo de salida independiente. Las páginas con Provider integrado no necesitan este marcador.',
     canvas_theme_provider_missing: 'Falta el proveedor del tema cerca de la línea {0}. Devuelve <CanvasThemeProvider><PageContent /></CanvasThemeProvider> desde YidaComp.',
     canvas_theme_root_hook: 'El tema se lee antes de activar su proveedor cerca de la línea {0}. Mueve useCanvasThemeContext a PageContent y renderízalo dentro de CanvasThemeProvider.',
     canvas_theme_context_scope: 'CanvasThemeContext se declara dentro de una función cerca de la línea {0}. Declara el contexto y el proveedor a nivel de módulo.',
@@ -1350,6 +1353,7 @@ module.exports = {
     canvas_compiling: '  🎨 Compilando la fuente de la página personalizada localmente...',
     canvas_compile_done: '  ✅ ¡Página personalizada compilada!',
     canvas_compile_failed: '  ❌ Error al compilar la página personalizada: {0}',
+    canvas_icon_export_unavailable: 'Línea {2}: la biblioteca de iconos del entorno Yida {0} no exporta {1}. Elija un icono compatible y vuelva a compilar. Alternativas: {3}.',
     canvas_unbound_identifiers: 'El código fuente de Code Canvas contiene identificadores no declarados: {0}. Añade en el mismo archivo la importación o declaración de función, Ref, estado o variable local que falte y usa el mismo nombre en todas las referencias. Si un entorno de ejecución no estándar proporciona el identificador, accede a él explícitamente mediante window.<name> o parentWindow.<name> y comprueba antes que exista.',
     canvas_instance_api_unavailable: 'Los componentes de Code Canvas no pueden usar estas API de instancia JSX de la plataforma: {0}. Usa hooks de React, props o el puente de datos window.__OPENYIDA_YIDA_API__.',
     step_login: '\n🔑 Step 2: Leer credenciales de sesión',
