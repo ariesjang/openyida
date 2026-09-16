@@ -7,7 +7,7 @@ const http = require('http');
 const { execFile } = require('child_process');
 const { promisify } = require('util');
 const { resolveAssets } = require('../lib/asset/asset-resolve');
-const { readDesignAssetStrategy } = require('../lib/asset/asset-plan');
+const { readDesignAssetStrategy, buildAssetTasks } = require('../lib/asset/asset-plan');
 const { renderDesign, materialize } = require('../lib/design-plan/materialize');
 
 const run = promisify(execFile);
@@ -42,7 +42,7 @@ afterEach(async () => {
 });
 
 function asset(overrides = {}) {
-  return { slotId: 'home.hero', usage: 'hero', input: `${baseUrl}/image.png`, source: 'user', alt: 'Home hero', ...overrides };
+  return { slotId: 'home.hero', usage: 'hero', input: `${baseUrl}/image.png`, source: 'user', deliveryMode: 'upload', hotlinkAllowed: true, alt: 'Home hero', ...overrides };
 }
 function upload() {
   return jest.fn(async files => [{ success: true, originalPath: files[0], cdnUrl: `${baseUrl}/cdn.png` }]);
@@ -65,18 +65,60 @@ test('Plan CLI returns independent searches for slots on the same page before ap
   const task = result.assetTasks[0];
   expect(task).toMatchObject({ pageId, startWhen: 'plan_confirmed', owner: 'host_agent', searchConcurrency: 4,
     concurrencyScope: 'collection_run', resumePolicy: 'reuse_final_slots_and_remaining_round_budget',
-    runAlongside: ['app_creation', 'form_creation', 'pages_without_images'], resultWriter: 'one_per_page' });
+    dispatchMode: 'host_capability_adaptive', afterDispatch: 'continue_resource_and_page_work',
+    resumeRunning: 'attach_existing_host_task', waitPolicy: 'own_page_only_after_independent_work',
+    runAlongside: ['app_creation', 'form_creation', 'page_creation', 'pages_without_images', 'image_page_layout', 'page_data_binding', 'page_interactions'],
+    resultWriter: 'one_per_page',
+    timeBudget: { owner: 'host_agent', requestTimeoutMs: 30000, pageDeadlineMs: 180000, resume: 'keep_original_deadline' } });
   const guidance = require('../lib/asset/ai-image').getMaterialSourcingGuidance();
+  expect(task).toMatchObject(guidance.schedulingPolicy);
+  expect(task.executionContract.modes).toEqual(['background_agent', 'background_shell', 'synchronous']);
+  expect(task.executionContract.shell.qwenworkHint).toContain('Bash.run_in_background');
+  expect(task.executionContract.synchronousOrder[0]).toBe('authorized_resource_creation_or_reuse');
   expect(task.collectionPolicy).toEqual(guidance.collectionPolicy);
   expect(task.failurePolicy).toEqual(guidance.failurePolicy);
   expect(task.searches.map(search => search.slotId)).toEqual(['hero', 'room', 'garden']);
   task.searches.forEach(search => expect(search).toMatchObject({ dependsOn: [], minWidth: 1200, minHeight: 800 }));
-  expect(task.resolve).toMatchObject({ startWhen: 'page_draft_and_app_type_ready', appTypeRequired: true });
+  expect(task.resolve).toMatchObject({ startWhen: 'page_draft_ready', appTypeRequired: false, uploadRequiresAppType: true });
+  expect(task.resolve.argv).not.toContain('--app-type');
+  expect(task.resolve.uploadArgs).toEqual(['--app-type', '<appType>']);
   expect(task.resolve.argv).toContain(task.draft);
   expect(task.resolve.argv).toContain(task.manifest);
   expect(task.resolve.argv).toContain(result.outputs.design);
   expect(fs.existsSync(task.manifest)).toBe(false);
   expect(fs.existsSync(task.draft)).toBe(false);
+  expect(task.taskKey).toBe(path.resolve(task.manifest));
+  expect(task.taskState).toBe(task.manifest.replace(/\.json$/, '.task.json'));
+  expect(fs.existsSync(task.taskState)).toBe(false);
+  const running = { hostTaskId: 'host-task-123', status: 'running', deadlineAt: '2026-09-16T00:03:00Z', rounds: { hero: 1 } };
+  fs.mkdirSync(path.dirname(task.taskState), { recursive: true });
+  fs.writeFileSync(task.taskState, JSON.stringify(running));
+  const again = materialize(input);
+  expect(again.assetTasks[0].taskKey).toBe(task.taskKey);
+  expect(JSON.parse(fs.readFileSync(task.taskState, 'utf8'))).toEqual(running);
+});
+
+test('background tasks isolate page outputs and prioritize required images without changing the design', () => {
+  const design = { pages: [
+    { pageId: 'front/home', imageNeed: 'required', slots: [
+      { slotId: 'decoration', usage: 'cover', required: false },
+      { slotId: 'room', usage: 'room' },
+      { slotId: 'optional-hero', usage: 'hero', required: false },
+      { slotId: 'hero', usage: 'hero' },
+      { slotId: 'garden', usage: 'garden' },
+    ] },
+    { pageId: 'back/home', imageNeed: 'required', slots: [{ slotId: 'back-cover', usage: 'cover' }] },
+    { pageId: 'settings', imageNeed: 'none' },
+  ] };
+  const original = JSON.stringify(design);
+  const tasks = buildAssetTasks(design, dir);
+  expect(tasks).toHaveLength(2);
+  expect(tasks[0].searches.map(search => search.slotId)).toEqual(['hero', 'room', 'garden', 'optional-hero', 'decoration']);
+  expect(JSON.stringify(design)).toBe(original);
+  expect(new Set(tasks.map(task => task.taskState)).size).toBe(2);
+  expect(tasks[0].taskKey).not.toBe(buildAssetTasks(design, path.join(dir, 'another-project'))[0].taskKey);
+  expect(path.dirname(tasks[0].taskState)).toBe(path.join(dir, 'asset-manifests'));
+  tasks.forEach(task => expect(task.resolve.argv).toContain(task.pageId));
 });
 
 test.each([
@@ -250,7 +292,7 @@ test('Plan hands the full strategy to design.md and the CLI preserves it through
   const partial = JSON.parse(fs.readFileSync(manifest, 'utf8'));
   expect(partial.assetStrategy).toEqual(strategy);
   expect(partial.pages[0].materialStatus).toBe('final');
-  Object.assign(partial.assets[1], { input: `${baseUrl}/image.png`, source: 'user', alt: 'Catalog cover' });
+  Object.assign(partial.assets[1], { input: `${baseUrl}/image.png`, source: 'user', hotlinkAllowed: true, alt: 'Catalog cover' });
   fs.writeFileSync(manifest, JSON.stringify(partial));
   const result = await run(process.execPath, [cli, 'asset', 'resolve', '--input', manifest, '--manifest', manifest, '--json']);
   const final = JSON.parse(result.stdout);

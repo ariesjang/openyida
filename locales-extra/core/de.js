@@ -6,6 +6,7 @@
  */
 module.exports = {
   asset: {
+    executionReview: 'Ausführungsnachweise der Medien prüfen: {0}. Prüfen Sie Hintergrundaufträge, Geschäftsintervalle und Gründe für synchrone Ausführung.',
     localFileUnavailable: "Bilddatei nicht gefunden: {0}. Prüfen Sie das Arbeitsverzeichnis des Befehls oder verwenden Sie einen absoluten Pfad.",
     invalidStrategy: "Die Bildanforderungen müssen ein Objekt mit Bildpositionen pro Seite sein.",
   },
@@ -153,6 +154,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_local_menu_binding: 'Das lokale Menü {0} benötigt eine Trägerseite und viewKey: sceneKey des Einstiegs {1} muss dem sceneKey der Seite entsprechen, resource ihrem name; viewKey darf nicht leer sein. Dies gilt für alle Rollen.',
+    design_plan_visual_object_required: '{0} muss ein Objekt sein, keine Zeichenfolge oder Liste. Behalten Sie die von init erzeugte Struktur bei und ergänzen Sie die Werte. Beispiel: {1}.',
     help: '\n' +
       'openyida - Yida CLI Tool\n' +
       '\n' +
@@ -1256,6 +1259,11 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_path_missing_app_type: 'Zeile {0}: Im Navigationsziel fehlt appType. Nutzen Sie canvas-navigation und echte IDs für /{appType}/{pageType}/{formUuid} statt /custom/.',
+    canvas_theme_fixed_brand: 'Zeile {0}: ConfigProvider setzt eine feste Markenfarbe. Nutzen Sie canvas-theme mit aufgelösten Anwendungsfarben; CSS var gehört in DOM-Stile, nicht in antd-Farbwerte.',
+    canvas_navigation_local_platform: 'Zeile {0}: Lokale Ansichten werden durch Plattformmenüs gefiltert. Nutzen Sie mode=local oder lokalen Zustand; echte Seiten benötigen formUuid/navUuid und Berechtigungsprüfungen.',
+    canvas_navigation_document_flex: 'Zeile {0}: document verwendet Flex mit Basis null. Aktualisieren Sie canvas-nav-content: natürliche Blockhöhe für document, feste Flex-Höhe für workspace.',
+    canvas_theme_not_assembled: 'Die Themenmarkierung in Zeile {0} wurde noch nicht verarbeitet. Führen Sie build-canvas-theme.js aus und kompilieren/veröffentlichen Sie die separate Ausgabedatei. Seiten mit integriertem Provider benötigen diese Markierung nicht.',
     canvas_theme_provider_missing: 'Nahe Zeile {0} fehlt der Theme-Provider. Gib in YidaComp <CanvasThemeProvider><PageContent /></CanvasThemeProvider> zurück.',
     canvas_theme_root_hook: 'Nahe Zeile {0} wird das Theme vor dem Provider gelesen. Verschiebe useCanvasThemeContext nach PageContent und rendere es innerhalb von CanvasThemeProvider.',
     canvas_theme_context_scope: 'CanvasThemeContext ist nahe Zeile {0} in einer Funktion definiert. Definiere Kontext und Provider auf Modulebene.',
@@ -1348,6 +1356,7 @@ module.exports = {
     canvas_compiling: '  🎨 Quelle der benutzerdefinierten Seite wird lokal kompiliert...',
     canvas_compile_done: '  ✅ Benutzerdefinierte Seite kompiliert!',
     canvas_compile_failed: '  ❌ Kompilierung der benutzerdefinierten Seite fehlgeschlagen: {0}',
+    canvas_icon_export_unavailable: 'Zeile {2}: Die Yida-Laufzeitbibliothek {0} exportiert das Symbol {1} nicht. Wählen Sie ein unterstütztes Symbol und kompilieren Sie erneut. Alternativen: {3}.',
     canvas_unbound_identifiers: 'Der Code-Canvas-Quelltext enthält nicht deklarierte Bezeichner: {0}. Ergänzen Sie Import, Funktion, Ref, Status oder lokale Variable in derselben Datei und verwenden Sie für alle Verweise denselben Namen. Bezeichner einer nicht standardmäßigen Laufzeit müssen explizit über window.<name> oder parentWindow.<name> aufgerufen und zuvor auf ihre Existenz geprüft werden.',
     canvas_instance_api_unavailable: 'Code-Canvas-Komponenten können diese Plattform-JSX-Instanz-APIs nicht verwenden: {0}. Verwenden Sie React Hooks, props oder die Datenbrücke window.__OPENYIDA_YIDA_API__.',
     step_login: '\n🔑 Step 2: Anmeldedaten lesen',

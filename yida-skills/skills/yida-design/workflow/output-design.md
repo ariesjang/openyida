@@ -33,7 +33,7 @@
 
 主题准备与表单、页面开发按 [并行依赖](../../yida-app/workflow/parallel-work.md#主题与业务资源的依赖) 调度：计划或主题确认后即生成 CSS，不依赖表单或页面实现；appType 与 CSS 就绪便立即同步应用基础设置。页面先按已确认 token 开发，视觉验收再核对主题加载结果。
 
-页面背景统一使用 `--pod-page-bg-color`，卡片和面板使用 `--pod-card-bg-color`，默认回退 `--color-white`。导航归属不改变页面底色，隐藏导航不自动透明；深色或明确的应用背景通过同一平台 token 配置。Plan 和 Fast 将设计值写入 design.md 并生成 app-theme.css，Canvas 宿主、页面根和 antd 统一消费；渐变、纹理和素材作为页面局部装饰层。
+页面背景统一使用 `--pod-page-bg-color`，卡片和面板使用 `--pod-card-bg-color`，默认回退 `--color-white`；抽屉整体使用 `--pod-shell-theme-bg-color`，标题栏与正文容器透明承接，不用卡片底色铺满抽屉。导航归属不改变页面底色，隐藏导航不自动透明；深色或明确的应用背景通过同一平台 token 配置。Plan 和 Fast 将设计值写入 design.md 并生成 app-theme.css，Canvas 宿主、页面根和 antd 统一消费；渐变、纹理和素材作为页面局部装饰层。
 
 ## CLI token 契约（Fast / Plan 共用）
 
@@ -86,7 +86,7 @@ tags: [<业务领域>, <角色>, <数据形态>]
 avoid: [<不适合场景>]
 themeProfile:
   name: <主题名称>
-  themeColorSource: <user-specified / application-theme / business-inferred / template-default>
+  themeColorSource: <user-specified / application-theme / business-inferred>
   themeColorToken: <--color-brand1-6 的字面量值>
   themeDelivery: <app-custom-theme-file / current-app-theme>
   customThemeTemplate: yida-design/references/theme/app-custom-theme-template.css
@@ -343,6 +343,8 @@ inferred_modules:
 ## 15. 状态与交互
 
 列出 hover、active、focus、loading、empty、error、disabled、selected、mobile 和 reduced motion 规则。
+
+按 [页面与导航连续性](../references/page-continuity.md) 逐页交接背景、滚动、切换/返回和异常状态；沉浸页导航叠加首屏，工作区导航占位，页内切换不创建应用导航。
 
 ## 16. 响应式
 

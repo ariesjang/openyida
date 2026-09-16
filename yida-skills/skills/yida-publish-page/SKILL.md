@@ -36,6 +36,9 @@ description: 自定义页面编译发布技能；发布 YidaCodeCanvas 页面时
 - 平台 `Jsx` 组件 / `oyb.jsx` / `renderJsx` 维护源码发布前优先执行 `openyida check-page <源文件路径>` 和 `openyida compile <源文件路径>`；本技能只把它们作为发布前 guard
 - 使用 `YidaCodeCanvas` 组件实现的页面发布前必须执行 `openyida compile <源文件> --json`；CLI 会自动选择 Canvas 编译器。失败时直接按结构化 `code/message/details` 修源码并重跑同一命令，不要改用 `node -e`、`compileCanvasLocal` 或 `run_workspace_script` 绕行
 - Canvas 本地编译通过后，执行 `openyida publish <源文件> <appType> <displayPageFormUuid> --canvas --health-check`，由发布流程再次校验并写入 `runtimeCode + importedModules`
+- 主题已集成的页面直接编译发布原文件；只有使用 `/* @canvas-theme-provider */` 标记装配时才生成并发布 `.themed.canvas.jsx`。`OPENYIDA_CANVAS_THEME_NOT_ASSEMBLED` 表示误用了尚未装配的源文件，应先运行主题脚本再编译输出文件。
+- 图标报 `OPENYIDA_CANVAS_ICON_EXPORT_UNAVAILABLE` 时，按 `details.exportName`、源码行列与建议修正 import，并重新 compile；禁止换成动态全局引用绕过。校验以 CLI 内置的宜搭运行时导出清单为准；动态名称仍需组件映射与兜底。`--health-check` 的发布回读不等于浏览器渲染验收，不能据此把 `runtimeSmokeVerified: false` 报为已通过。
+- 导航报 `OPENYIDA_CANVAS_NAVIGATION_INVALID` 时，按 issueType 修正：local_platform 使用 local 页内模式或绑定真实平台资源；document_flex 重新提取 canvas-nav-content 并采用自然高度。发布后需实际检查各菜单、刷新/返回、滚动到页脚并回顶、窄屏展开；不能仅凭编译或回读认定通过。
 - Canvas 编译和发布共用主题结构检查。出现 `OPENYIDA_CANVAS_THEME_PROVIDER_INVALID` 时，按报错位置调整 Provider 和业务组件的层级，再执行原命令；发布后打开实际页面检查首屏和交互。
 - 使用 `YidaCodeCanvas` 组件实现的页面发布时，发布流程会在外层页面 `didMount` 注入 `window.__OPENYIDA_YIDA_API__` 和 `window.__OPENYIDA_UTILS__`；不要在 Canvas 源码内补写 `this.utils.yida.*` 或根级 `this.utils.*`
 - 推荐源码放在 `project/pages/src/`：使用 `YidaCodeCanvas` 组件实现的页面用 `<页面名>.canvas.jsx` / `<页面名>.canvas.tsx`；平台 `Jsx` 组件维护源码用 `<页面名>.oyd.jsx` / `<页面名>.jsx` / `<页面名>.tsx`

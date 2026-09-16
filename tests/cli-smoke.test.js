@@ -282,6 +282,9 @@ describe('CLI offline smoke', () => {
     const profiles = runAny(['auth', 'profiles']);
     expect(profiles.status).toBe(0);
     expect(() => JSON.parse(profiles.stdout)).not.toThrow();
+    const legacyList = runAny(['auth', 'profile', 'list', '--json']);
+    expect(legacyList.status).toBe(0);
+    expect(JSON.parse(legacyList.stdout)).toEqual(JSON.parse(profiles.stdout));
 
     const switchResult = runAny(['auth', 'profile', 'switch', '__missing_profile__', '--json']);
     expect(switchResult.status).toBe(1);
@@ -1664,7 +1667,7 @@ describe('CLI offline smoke', () => {
         url: '{base_url}/{appType}/custom/{formUuid}',
       },
       admin: {
-        include: 'follow_agent_capabilities_application_entry_policy',
+        include: 'default_for_complete_application',
         url: '{base_url}/{appType}/admin',
       },
       internal_artifacts: 'never_user_visible',
@@ -1833,7 +1836,7 @@ describe('CLI offline smoke', () => {
       kind: 'mixed',
       mutates_yida: false,
       mutates_local: true,
-      read_actions: ['status', 'profiles'],
+      read_actions: ['status', 'profiles', 'profile list'],
       mutating_actions: ['login', 'refresh', 'logout', 'profile switch'],
     });
     expect(commandById.org.side_effect).toMatchObject({
@@ -2451,6 +2454,18 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.navigation_policy).toContain('Include navigation in the overall Plan confirmation');
     expect(route.navigation_policy).toContain('Configure a custom frontend menu at page scope');
     expect(route.navigation_policy).toContain('Choose backend native or coding pages by task efficiency');
+    expect(route.navigation_policy).toContain('Backend coding pages in platform-shell are content-only');
+    expect(route.entry_navigation_contract.page_navigation_policy).toMatchObject({
+      platform_shell: { applicationMenuOwner: 'platform', renderApplicationMenu: false },
+      no_menu: { applicationMenuOwner: 'none', renderApplicationMenu: false },
+      discussion: { fast: expect.stringContaining('no additional navigation approval gate') },
+    });
+    expect(route.entry_navigation_contract.runtime.applies_to).toContain('Confirmed page-owned application menus only');
+
+    expect(route.navigation_policy).toContain('Persistent filters/state alone do not justify custom application navigation');
+    expect(route.navigation_policy).toContain('Custom top navigation defaults to edge-to-edge, not floating');
+    expect(route.navigation_policy).toContain('start transparent, add a surface on scroll, restore transparency at the top');
+    expect(route.navigation_policy).toContain('floating requires an explicit design');
     expect(route.navigation_policy).not.toContain('offer exactly two');
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
     expect(route.design_mode_policy).not.toContain('Confirm unresolved navigation');
@@ -2461,7 +2476,14 @@ test('command and agent navigation policies align with AI intake decisions', () 
   expect(workflow.entry_navigation_contract).toMatchObject({
     plan_path: 'execution.entryRecommendation',
     modes: ['unified', 'service-management', 'frontend-only'],
-    runtime: { default_mode: 'platform', builtin_permission_adapter: false },
+    local_menu_binding: expect.stringContaining('management/workspace'),
+    leaf_access_required: expect.stringContaining('Every leaf menu'),
+    runtime: {
+      modes: ['local', 'platform', 'independent'], default_mode: 'platform', builtin_permission_adapter: false,
+      local_policy: expect.stringContaining('no platform navigation request'),
+      platform_policy: expect.stringContaining('Every leaf binds formUuid/navUuid'),
+      layout_policy: expect.stringContaining('layout=document with natural height'),
+    },
   });
   expect(workflow.application_entry_policy.workbench).toMatchObject({
     task_url: '{base_url}/{appType}/workbench/{formUuid}', view_parameter: 'viewUuid',
@@ -2473,7 +2495,7 @@ test('command and agent navigation policies align with AI intake decisions', () 
   }
   expect(workflow.completion_contract).toContain('delivery artifact description');
   expect(workflow.completion_contract).toContain('when no delivery tool is available');
-  expect(workflow.completion_contract).toContain('frontend-only delivery includes only its verified frontend entry');
+  expect(workflow.completion_contract).toContain('frontend-only delivery includes its verified frontend entry and developer admin URL');
   expect(capabilities.recommended.default_full_app_workflow.completion_contract).toBe(workflow.completion_contract);
 });
 
@@ -2487,11 +2509,24 @@ test('plain user-facing guidance is available from manifest and both agent capab
     wording: expect.stringContaining('everyday language'),
     failures: expect.stringContaining('pending verification'),
     diagnostics: expect.stringContaining('exact technical fields and error codes'),
+    todo: {
+      templates: 'yida-skills/skills/yida-design/references/ask-human-interaction-contract.md#步骤列表与进度',
+      titles: expect.stringContaining('separate items'),
+      scope: expect.stringContaining('agreed scope'),
+      updates: expect.stringContaining('retain completed items'),
+      details: expect.stringContaining('timings internally'),
+    },
   });
   expect(summary.full_app_artifact_route.user_visible_expression_policy).toEqual(policy);
   expect(capabilities.commands.core_workflows.full_app_build.user_visible_expression_policy).toEqual(policy);
   expect(capabilities.recommended.default_full_app_workflow.user_visible_expression_policy).toEqual(policy);
   expect(fs.existsSync(path.join(ROOT, policy.reference))).toBe(true);
+  const visual = manifest.summary.core_workflows.full_app_build.visual_decision_policy;
+  expect(visual).toEqual(require('../lib/design-plan/visual-policy').getVisualDecisionPolicy());
+  expect(summary.full_app_artifact_route.visual_decision_policy).toEqual(visual);
+  expect(capabilities.commands.core_workflows.full_app_build.visual_decision_policy).toEqual(visual);
+  expect(capabilities.recommended.default_full_app_workflow.visual_decision_policy).toEqual(visual);
+  expect(fs.existsSync(path.join(ROOT, visual.reference.split('#')[0]))).toBe(true);
 });
 
 test('asset fallback and completion policies are shared by the CLI, manifest and agent summary', () => {
@@ -2509,7 +2544,13 @@ test('asset fallback and completion policies are shared by the CLI, manifest and
   expect(summary.full_app_artifact_route.optional_asset_branch.failure_policy).toEqual(policy);
   const collection = sources.guidance.collectionPolicy;
   const scheduling = sources.guidance.schedulingPolicy;
-  expect(scheduling).toMatchObject({ searchConcurrency: 4, searchUnit: 'slot', resultWriter: 'one_per_page' });
+  expect(scheduling).toMatchObject({ searchConcurrency: 4, searchUnit: 'slot', resultWriter: 'one_per_page',
+    dispatchMode: 'host_capability_adaptive', afterDispatch: 'continue_resource_and_page_work',
+    resumeRunning: 'attach_existing_host_task', waitAt: 'own_page_image_binding_and_acceptance',
+    waitPolicy: 'own_page_only_after_independent_work',
+    timeBudget: { owner: 'host_agent', requestTimeoutMs: 30000, pageDeadlineMs: 180000, startsAt: 'first_search_dispatch', resume: 'keep_original_deadline' },
+  });
+  expect(scheduling.runAlongside).toEqual(expect.arrayContaining(['page_creation', 'image_page_layout', 'page_data_binding', 'page_interactions']));
   expect(manifest.summary.core_workflows.full_app_build.optional_asset_branch.scheduling_policy).toEqual(scheduling);
   expect(summary.full_app_artifact_route.optional_asset_branch.scheduling_policy).toEqual(scheduling);
   expect(collection).toMatchObject({ maxRoundsPerPage: 2, imagesPerSlot: 1, candidatesPerSlotPerRound: 1, secondRound: 'failed_required_slots_only', roundOwner: 'host_agent' });
@@ -2587,4 +2628,17 @@ test('form recovery command contracts expose bounded recovery and compatible URL
   expect(batch.notes.join(' ')).toContain('url remains the compatible form entry');
   expect(resume.notes.join(' ')).toContain('retry missing compatible fields once');
   expect(resume.usage).toContain('create-form resume <appType> <formUuid> <fieldsJsonOrFile> [--json]');
+});
+
+test('QwenWork declares Bash background separately from synchronous Agent in both CLI capability formats', () => {
+  for (const format of ['--summary-json', '--json']) {
+    const result = JSON.parse(runOkWithEnv(['agent-capabilities', format], {
+      QWENWORK: '1', OPENYIDA_AGENT_BACKGROUND_AGENT: '0', OPENYIDA_AGENT_BACKGROUND_SHELL: '1',
+    }));
+    expect(result.asset_capabilities).toMatchObject({
+      background_agent: { available: false, source: 'environment_declaration' },
+      background_shell: { available: true, source: 'environment_declaration' },
+      execution: { selected_mode: 'background_shell', shell: { foregroundWork: expect.arrayContaining(['visual_image_review']) } },
+    });
+  }
 });

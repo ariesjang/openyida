@@ -11,7 +11,7 @@ description: Plan 模式的视觉设计分支。基于需求选择视觉方向�
 
 输入为共享的 `.cache/openyida/<项目名>/requirement-brief.json`。
 
-已有明确的完整视觉方向时直接采用；无明确偏好且不影响业务范围时，由 AI 提出方向并标记默认建议，不增加首轮问题。用户明确要求比较或选择风格时，按 [视觉方向选择](references/visual-theme-selection.md) 准备三套应用风格方案，交给 `yida-app` 统一呈现。用户确认主题前只读主题索引中的精简风格摘要，不读取候选模板全文；确认后写入一致的 `visualDirection`、`selectedTheme`、`colorStrategy` 和 `navigationStyle`，再读取选中的一份完整模板。
+已有明确的完整视觉方向时直接采用；无明确偏好且不影响业务范围时，由 AI 按[设计方向比较](../../references/style-design-selection.md#设计方向比较)完成一次内部比较，选定方向并记录依据；保持原有首轮提问范围。用户明确要求比较或选择风格时，按 [视觉方向选择](references/visual-theme-selection.md) 准备三套应用风格方案，交给 `yida-app` 统一呈现。用户确认主题前只读主题索引中的精简风格摘要，不读取候选模板全文；确认后写入一致的 `visualDirection`、`selectedTheme`、`colorStrategy` 和 `navigationStyle`，再读取选中的一份完整模板。
 
 ## 阶段二：完成页面视觉应用
 

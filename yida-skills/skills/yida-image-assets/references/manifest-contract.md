@@ -35,20 +35,21 @@ assetStrategy: {"pages":[{"pageId":"home","imageNeed":"required","slots":[{"slot
 ## 按页面执行
 
 ```bash
-openyida asset resolve --input asset-manifests/home.draft.json --manifest asset-manifests/home.json --design design.md --page-id home --app-type <真实appType> --json
+openyida asset resolve --input asset-manifests/home.draft.json --manifest asset-manifests/home.json --design design.md --page-id home --json
 ```
 
 完整应用带 `--design` 校验槽位。`--page-id` 只处理指定页；省略时处理整份清单。各页使用不同的 `--manifest` 文件，同时运行、独立交接。第二轮更新失败项 input，再将页面清单同时作为输入和输出。轮次和并发规则见 [主流程](../SKILL.md#3-最多两轮按页面并发)。
 
 独立图片可用 `--slot home.hero=<图片> --source user` 检查；这只验证传入图片，完整应用仍需设计槽位校验。
 
-## 下载与上传
+## 链接检查与上传
 
-- ≤20 MiB：上传宜搭 ImageField 附件，使用返回的公开链接。
-- >20 MiB：外链保留 input；本地图记录缺口。下载超限时停止并清理临时文件。
-- 下载失败记录缺口。格式和尺寸从下载内容读取，原图和上传结果均省去额外 URL 探测。
-- input 保留原图，url 保存最终链接，source 保留来源分类。原图内容相同时复用已有附件。
-- `--offline` 关闭联网和上传，图片保持 draft；`--upload-assets` 兼容旧命令，默认已上传。
+- `deliveryMode=auto`（默认）：允许外链的 HTTP(S) 图片经一次检查后直接使用。检查最多读取 128 KiB，核对真实格式和尺寸；内容、构图与用途由宿主看图确认。
+- `hotlinkAllowed`、`rehostAllowed` 为布尔值，分别表示允许外链展示、允许转存。搜索得到的 Unsplash/Pexels 官方图片直链默认允许外链，Unsplash 默认仅用直链。其他来源沿用已核实的转存许可，允许外链时显式填 `hotlinkAllowed=true`；明确禁止转存时填 `rehostAllowed=false`。
+- 本地图片上传宜搭附件；`deliveryMode=upload` 或命令 `--upload-assets` 请求上传允许转存的外链。上传最大 20 MiB，需要登录态和真实 appType，可通过 `--app-type` 指定或读取项目配置。
+- 上传失败或图片超出上传限制时，只有已验证且允许外链的原地址可以继续使用；其他情况记录缺口。返回验证网页、403、超时或尺寸不足的地址按失败处理。
+- input 保留原图，url 保存最终链接，source 保留来源分类；许可和 deliveryMode 随清单保留。原图内容相同时复用已有附件，上传流程直接复用下载内容的检查结果。
+- `--offline` 关闭联网和上传，图片保持 draft。
 
 ## 输出
 
@@ -60,11 +61,11 @@ openyida asset resolve --input asset-manifests/home.draft.json --manifest asset-
 | assetStrategy | 本次设计要求；重跑保留，传 --design 时以设计文件为准 |
 | pages[] | pageId、imageNeed、slotIds、materialStatus、gaps |
 | assets[] | input、url、页面/位置 ID、用途、尺寸、来源、alt、materialStatus、gaps |
-| assets[].delivery | CLI 生成的附件复用记录；yida-attachment 表示上传，external 且 reason=ASSET_TOO_LARGE 表示超限保留原地址；原样保留 |
+| assets[].delivery | CLI 生成的交付记录；yida-attachment 表示上传，external 表示已验证的直链；reason=OK_DIRECT 表示直接交付，其他 reason 保留上传失败或超限原因 |
 | gaps | 缺口及错误码，按 pageId/slotId 定位 |
 | capabilityEvidence | 宿主能力、uploadTarget、maxUploadBytes、online；cdnConfigured 是旧兼容字段 |
 
-取得公开 URL（或超限原地址）、实际尺寸和完整来源信息后，图片才为 final。页面必需位置全部 final 即可继续，可选缺口仍保留在 gaps。旧清单可继续使用，缺原始 input 时先补齐。
+取得已验证的图片直链或附件公开 URL、实际尺寸和完整来源信息后，图片才为 final。页面必需位置全部 final 即可继续，可选缺口仍保留在 gaps。旧清单可继续使用，缺原始 input 时先补齐。
 
 ## 常见缺口
 
@@ -74,7 +75,9 @@ openyida asset resolve --input asset-manifests/home.draft.json --manifest asset-
 | INVALID_IMAGE_CONTENT / NOT_IMAGE_FILE / DIMENSIONS_UNAVAILABLE | 换可读取尺寸的 PNG、JPEG、WebP 等真实图片 |
 | WIDTH_TOO_SMALL / HEIGHT_TOO_SMALL | 换更大图片 |
 | MISSING_METADATA | 补用途、alt、已取得的来源记录；获取失败则换图 |
-| ASSET_APP_TYPE_REQUIRED | 填真实 appType |
+| ASSET_APP_TYPE_REQUIRED | 上传时填真实 appType |
+| REHOST_NOT_ALLOWED | 使用允许外链的原地址，或换可转存的图片 |
+| ASSET_TOO_LARGE | 换小图；允许外链时保留已验证原地址 |
 | ASSET_TOO_LARGE_NO_ORIGINAL_URL | 补原始外链或换小图 |
 | ASSET_ATTACHMENT_URL_INVALID | 检查公开链接转换结果 |
 | ASSET_DUPLICATE_SLOT / ASSET_UNDECLARED_SLOT | 对齐设计位置 ID |

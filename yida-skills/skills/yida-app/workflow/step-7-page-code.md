@@ -2,11 +2,11 @@
 
 按 `prd.md` 和 `design.md` 实现页面。页面源码通过本地校验只表示“可发布”，不表示远端页面已更新。
 
-页面开发消费已确认的设计与 token 契约，不等待主题文件上传或页面导航配置请求。页面创建/复用取得 formUuid 后，页面导航隐藏应由独立配置任务立即执行并回读，与本步骤并行。主题任务应在 CSS 和 appType 就绪时立即更新应用设置；视觉验收前核对其回读结果，不在本步骤结束后才启动主题更新。
+页面开发消费已确认的设计与 token 契约，不等待主题文件上传或页面导航配置请求。页面创建/复用取得 formUuid 后，仅已规划独立展示或应用级自绘导航的页面执行导航隐藏并回读；平台导航管理页保留导航。配置与本步骤并行。主题任务应在 CSS 和 appType 就绪时立即更新应用设置；视觉验收前核对其回读结果，不在本步骤结束后才启动主题更新。
 
 无直接依赖的页面按 [页面并行规则](parallel-work.md#页面按实际依赖并行) 同时开发，每页只等待自身需要的资源，不按导航顺序串行。共享主题或同一已就绪表单不构成页面间依赖；当前页就绪即可进入发布步骤，导航排序等待全部页面完成。
 
-独立前台只实现本入口的菜单与任务，多视图共用同一页面时按状态或 hash 切换。全码填写直接连接真实表单/流程 API，校验、提交状态、错误处理、权限与结果刷新均要实现；第 9 条容器规则只用于明确复用原生表单的入口，不能静默替换计划中的全码交互。需要平台原生能力才能完成时，在计划说明替代方式。后台按自己的任务和导航实现，不被前台菜单影响。
+独立前台只实现本入口的菜单与任务，多视图共用同一页面时按状态或 hash 切换。全码填写直接连接真实表单/流程 API，校验、提交状态、错误处理、权限与结果刷新均要实现；第 9 条容器规则只用于明确复用原生表单的入口，不能静默替换计划中的全码交互。需要平台原生能力才能完成时，在计划说明替代方式。后台按自己的任务和导航实现，不被前台菜单影响。平台导航下的自定义后台默认只写业务内容，不渲染整份管理菜单；跨模块用平台菜单，同任务分类才用页内 Tab。派发任务时传递该页 `navigationPolicy` 与 `pageSpecHandoff`，Fast 也明确同样边界，详见[管理页面边界](../../yida-canvas-custom-page/references/navigation-and-entry-guide.md#平台导航下的管理页面)。
 
 ## 输入
 
@@ -19,11 +19,13 @@
 
 ## 操作
 
+**先接通主题与动作**：给页面实现者传入真实资源映射（appType、目标类型、formUuid/navUuid；详情另带 formInstId 的数据来源）。含 antd 控件先提取并合并 `canvas-theme`；跨页入口先提取 `canvas-navigation`，按 [动作与目标清单](../../yida-canvas-custom-page/references/navigation-and-entry-guide.md#先建立动作与目标清单) 实现。页面内 Tab 使用状态，不拼平台路由；暂缺资源的动作禁用，独立页面布局继续开发。完成后逐项核对 Tab/按钮/链接各交互状态的主题色及最终地址，不把编译通过当作换肤或跳转验收。
+
 **编码前置条件（MUST）**：新建 Canvas 页面或调整视觉时，执行页面开发的模型必须先完整读取 [canvas-style-implementation-guide.md](../../yida-canvas-custom-page/references/canvas-style-implementation-guide.md)，按 [编码前必读](../../yida-canvas-custom-page/SKILL.md#编码前必读must) 记录适用规则与落点，再写源码。派发页面任务时必须带上这个文件路径和读取要求；不能只传递设计摘要或认为主流程读过就等于页面实现者读过。
 
 先读取 `constraints.prohibitedActions`。命中 `page-source` 时，本步骤只能做 Read、编译/静态检查等只读诊断，不得 Write/Edit/Create 页面源码，也不得用脚本、格式化器或生成器间接改写；输出应明确“源码未修改”并跳过依赖源码变更的发布。未命中时才执行下列源码实现动作。
 
-当前页需要图片时，先接收此前启动的素材任务；可同时编写布局、文字和交互。尚未启动时立即执行 `use_skill("yida-image-assets", "准备当前页图片")`，其余页面继续。使用 `--design design.md --page-id <pageId> --app-type <真实appType>` 核对当前页槽位、默认并发上传宜搭图片附件，输出独立的 `asset-manifests/<pageId>.json`；超过 20 MiB 的外链保留原地址。读取 manifest 中当前页 `pages[].materialStatus`；该页为 `final` 时只使用 `assets[].materialStatus=final` 的图片。必需槽位缺口只阻塞当前页，总状态 `draft` 不阻塞其他已就绪页面。
+当前页需要图片时，先查看已有素材任务状态，同时编写布局、文字、真实数据绑定和交互。尚未启动时，按 [后台启动与接收](../../yida-image-assets/SKILL.md#后台启动与接收) 派发 `yida-image-assets`，随后继续页面开发。接图时读取所属页结果，独立工作完成后才等待该页图片。使用 `--design design.md --page-id <pageId>` 核对当前页槽位并发检查图片，允许外链就直接使用；上传时追加 `--app-type <真实appType>`。结果写入独立的 `asset-manifests/<pageId>.json`，上传失败时保留已验证且允许外链的原地址。读取 manifest 中当前页 `pages[].materialStatus`；该页为 `final` 时只使用 `assets[].materialStatus=final` 的图片。必需槽位缺口只阻塞当前页接图与验收，总状态 `draft` 不阻塞其他已就绪页面。
 
 1. 自定义页面开发执行 `use_skill("yida-canvas-custom-page", "生成当前页面源码")`。根据 PRD 和 `design.md` 直接编写 `.canvas.jsx` / `.canvas.tsx`；允许从空文件实现完整 UI。内置整页示例按需用于理解数据接入和导航；表单抽屉片段必须按第 9 条整体合并，不要求复制整页，也不能用示例默认外观替代已确认的设计。已有符合设计的页面可继续迭代。
 2. PRD 或页面名包含看板、工作台、驾驶舱、Dashboard 时，必须执行 `use_skill("yida-dashboard", "实现真实业务看板")`。
@@ -59,13 +61,15 @@ Plan 模式下，业务方案或视觉方案变化时，由对应技能更新 `b
 
 ## Checklist
 
+- [ ] 独立前台需要管理员入口时，已用 canvas-admin-entry 对接当前应用访问者身份与真实业务工作台；普通/匿名/未知身份隐藏，未复制 CLI 管理员名单或跳转开发后台；
 - [ ] 页面实现已读取 PRD 和 `design.md`；
 - [ ] 需要图片时只使用 manifest 中已验证的素材；
 - [ ] 新建页面或调整视觉前，实际实现者已完整读取 `canvas-style-implementation-guide.md`；检查记录包含文件路径、适用章节和页面落点，工具读取结果未遗漏截断部分；仅改数据逻辑时说明不适用原因；
 - [ ] 页面没有默认自绘应用级侧边导航 / 顶部导航；如有页面内自绘导航，已有用户显式要求和 `yida-nav-shell` 依据；
-- [ ] 自定义导航已提取 `canvas-nav-content` 并合并 `CanvasNavigationContent`；源码和 DOM 存在 `.openyida-nav-layout`、`.openyida-nav-content`，且实际测量内容撑满剩余空间、iframe 与视口等高、底部按钮可到达；只加类名不算通过；
+- [ ] 自定义导航已提取 `canvas-nav-content` 并合并 `CanvasNavigationContent`；业务工作区使用 workspace，实际测量内容撑满剩余空间、iframe 与视口等高；连续展示页使用 document，背景覆盖导航背后、内容留实测安全区、沿用页面滚动；源码和 DOM 存在 `.openyida-nav-layout`、`.openyida-nav-content`，只加类名不算通过；
 - [ ] 自定义应用导航默认只切主内容区；原生提交/管理入口嵌入 iframe，整页跳转仅用于已确认保留同一导航壳的目标，不直接离开到无导航的原生页面；
-- [ ] 自定义导航页已明确画布、浮导与卡片搭配；浅色非白或渐变画布默认白色浮导、白色无框卡片，局部背景未修改平台宿主或全局变量；
+- [ ] 自定义导航页已明确画布、导航与卡片搭配；沉浸首屏与导航共同构图，首屏、第二屏和移动菜单的文字均可读；局部背景未修改平台宿主或全局变量；
+- [ ] 已按 [页面与导航连续性](../../yida-design/references/page-continuity.md) 实现锚点、tab、菜单和列表详情往返：壳保持挂载，URL/选中态/内容一致，加载失败不清空整页，快速切换不串数据，返回状态与未保存内容按设计处理；
 - [ ] 页面数据优先接真实表单；
 - [ ] 看板/工作台/驾驶舱已加载 `yida-dashboard`，读取表单数据时已加载 `yida-canvas-data-binding`；
 - [ ] Canvas 页面消费 `window.__OPENYIDA_YIDA_API__` / `window.__OPENYIDA_UTILS__`，没有直接调用 `this.utils.*`；

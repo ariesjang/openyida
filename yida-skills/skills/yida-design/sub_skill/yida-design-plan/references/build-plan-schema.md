@@ -8,6 +8,8 @@
 
 `schemaVersion=2.0` 时，下文中的摘要、索引字段和标准规则可以不在源 JSON 中出现，由 materialize 确定性补齐；补齐后的完整逻辑结构仍遵守本文约束，派生产物完整度不变。
 
+页面导航策略是[紧凑契约中的派生输出](build-plan-compact-schema.md#派生的页面导航策略)：`pages[].navigationPolicy` 仅存在于 PRD 实施交接，不作为本源 JSON 或 pageSpecHandoff 的输入；旧计划同样从导航归属派生。
+
 ## 顶层结构
 
 ```json
@@ -156,9 +158,9 @@
 `meta.revision` 是四份产物共享的版本标识，`meta.status` 是当前状态，`meta.planState` 记录展示与确认事实。状态更新遵守 [`ask_human` 交互契约](../../../references/ask-human-interaction-contract.md)。
 
 - `draft`：当前版本正在生成或调整。
-- `awaiting_confirmation`：当前版本已通过会话摘要和 `build-plan.html` 展示，`presentedRevision=meta.revision`。
+- `awaiting_confirmation`：当前版本准备确认；展示成功后写回 `presentedRevision=meta.revision`，不能仅凭 status 判断已展示。
 - `confirmed`：用户已在最终确认交互中确认，`confirmedRevision=meta.revision`、`planConfirmed=true`。
-- 业务方案或视觉方案变化时生成新的 `meta.revision`，并清空旧确认信息；素材进度更新保留版本与已有确认，字段规则见紧凑计划契约。
+- 未展示草稿补全保留版本；已展示/确认方案实质变化才升版并清空确认。相同内容及素材进度不升版；旧文件缺 planState 时保守升版。
 - 只有 `meta.status=confirmed`、`planConfirmed=true` 且 `meta.revision=presentedRevision=confirmedRevision` 时，应用生成链路才能消费该计划。
 
 ## overview

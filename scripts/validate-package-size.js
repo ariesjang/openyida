@@ -10,21 +10,32 @@ const path = require('path');
 // Budgets are ratchets that track legitimate content growth (12 locale packs,
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
-// Node 20/npm 10 packs the current 506 files into 1,892,319 bytes;
-// Node 26/npm 11 produces 1,871,347 bytes from the same content.
-// Round the CI measurement to the next 16 KiB boundary.
-const MAX_TARBALL_BYTES = 1856 * 1024;
-const MAX_UNPACKED_BYTES = 6320 * 1024;
-// Intake references and the shared basic-theme-token contract are packaged.
-const MAX_ENTRY_COUNT = 509;
+// State recovery adds a sample and two skill references (3 published files).
+// Node 26/npm 11 measures 1,944,066 packed / 6,738,306 unpacked bytes in 520 files.
+// Retain ~21 KiB npm 10 compression overhead; round budgets to 16 KiB boundaries.
+const MAX_TARBALL_BYTES = 1920 * 1024;
+const MAX_UNPACKED_BYTES = 6592 * 1024;
+const MAX_ENTRY_COUNT = 520;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
   'bin/yida.js',
   'lib/app/create-form/batch.js',
+  'lib/app/application-entry-urls.js',
   'lib/app/inline-css-guard.js',
+  'lib/app/canvas-icon-guard.js',
+  'lib/app/canvas-navigation-guard.js',
+  'lib/app/canvas-path-guard.js',
+  'lib/samples/openyida-scaffold/canvas-navigation.jsx',
+  'lib/samples/openyida-scaffold/canvas-admin-entry.jsx',
+  'lib/samples/openyida-scaffold/canvas-view-state.jsx',
+  'yida-skills/skills/yida-canvas-custom-page/references/view-state-recovery.md',
+  'yida-skills/skills/yida-canvas-data-binding/references/business-action-permissions.md',
+  'lib/asset/asset-execution.js',
+  'lib/app/canvas-icon-exports.json',
   'lib/design-plan/preview.js',
   'lib/design-plan/entry-navigation.js',
+  'lib/design-plan/navigation-policy.js',
   'yida-skills/skills/yida-app/references/entry-navigation.md',
   'yida-skills/skills/yida-app/workflow/incremental-preview.md',
   'yida-skills/skills/yida-create-form-page/references/batch-forms.md',

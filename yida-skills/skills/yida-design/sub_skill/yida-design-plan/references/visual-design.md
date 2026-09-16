@@ -50,6 +50,8 @@ Step 4 不重新发起常规视觉 `ask_human`。页面规划新暴露品牌素�
 
 ### 导航背景
 
+按 [页面与导航连续性](../../../references/page-continuity.md) 在 pageApplications.visualApplication/surface/states 写明布局和往返状态；materialize 同步规则到 design.md。导航明暗不决定占位/叠加。
+
 `--pod-shell-theme-bg-color` 保存应用根层的默认背景。CSS 生成时，平台浅色导航绑定 `--color-brand1-3`，深色导航绑定 `--color-brand1-5`，白色和灰色模式保留各自背景。各模式的页面标题栏使用对应导航背景，切换模式时保持一致。
 
 ## 页面级视觉应用
