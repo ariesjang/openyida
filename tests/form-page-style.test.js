@@ -10,14 +10,12 @@ describe('新建表单 Body 背景', () => {
     ['CLI 创建', () => createForm.buildFormSchema(...args)],
     ['离线编译', () => formCompiler.buildFormSchema(...args)],
     ['空表单', () => formCompiler.buildEmptyFormSchema()],
-  ])('%s 同时生成透明 pageStyle 和新旧主题 CSS', (name, build) => {
+  ])('%s 统一生成透明背景', (name, build) => {
     const schema = JSON.parse(JSON.stringify(build()));
     const page = schema.pages[0].componentsTree[0];
 
     expect(page.props.pageStyle).toEqual({ backgroundColor: 'transparent' });
-    expect(page.css).toBe(
-      'body:not(.pod-premium){background-color:#f2f3f5}body.pod-premium{background-color:transparent}'
-    );
+    expect(page.css).toBe('body{background-color:transparent}');
     expect(page.props.contentBgColor).toBe('white');
     expect(page.props.contentBgColorMobile).toBe('white');
   });
