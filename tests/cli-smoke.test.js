@@ -2487,6 +2487,13 @@ test('plain user-facing guidance is available from manifest and both agent capab
     wording: expect.stringContaining('everyday language'),
     failures: expect.stringContaining('pending verification'),
     diagnostics: expect.stringContaining('exact technical fields and error codes'),
+    todo: {
+      templates: 'yida-skills/skills/yida-design/references/ask-human-interaction-contract.md#步骤列表与进度',
+      titles: expect.stringContaining('separate items'),
+      scope: expect.stringContaining('agreed scope'),
+      updates: expect.stringContaining('retain completed items'),
+      details: expect.stringContaining('timings internally'),
+    },
   });
   expect(summary.full_app_artifact_route.user_visible_expression_policy).toEqual(policy);
   expect(capabilities.commands.core_workflows.full_app_build.user_visible_expression_policy).toEqual(policy);
@@ -2509,7 +2516,13 @@ test('asset fallback and completion policies are shared by the CLI, manifest and
   expect(summary.full_app_artifact_route.optional_asset_branch.failure_policy).toEqual(policy);
   const collection = sources.guidance.collectionPolicy;
   const scheduling = sources.guidance.schedulingPolicy;
-  expect(scheduling).toMatchObject({ searchConcurrency: 4, searchUnit: 'slot', resultWriter: 'one_per_page' });
+  expect(scheduling).toMatchObject({ searchConcurrency: 4, searchUnit: 'slot', resultWriter: 'one_per_page',
+    dispatchMode: 'host_background_task', afterDispatch: 'continue_resource_and_page_work',
+    resumeRunning: 'attach_existing_host_task', waitAt: 'own_page_image_binding_and_acceptance',
+    waitPolicy: 'own_page_only_after_independent_work',
+    timeBudget: { owner: 'host_agent', requestTimeoutMs: 30000, pageDeadlineMs: 180000, startsAt: 'first_search_dispatch', resume: 'keep_original_deadline' },
+  });
+  expect(scheduling.runAlongside).toEqual(expect.arrayContaining(['page_creation', 'image_page_layout', 'page_data_binding', 'page_interactions']));
   expect(manifest.summary.core_workflows.full_app_build.optional_asset_branch.scheduling_policy).toEqual(scheduling);
   expect(summary.full_app_artifact_route.optional_asset_branch.scheduling_policy).toEqual(scheduling);
   expect(collection).toMatchObject({ maxRoundsPerPage: 2, imagesPerSlot: 1, candidatesPerSlotPerRound: 1, secondRound: 'failed_required_slots_only', roundOwner: 'host_agent' });

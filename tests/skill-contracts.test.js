@@ -45,7 +45,11 @@ describe('OpenYida skill contracts', () => {
     expect(app).toContain('design.md.assetStrategy');
     expect(step2).toMatch(/商品目录[^\n]+`required`/);
     expect(step2).toMatch(/库存流水[^\n]+`none`/);
-    expect(step7).toContain('use_skill("yida-image-assets"');
+    expect(step7).toContain('../../yida-image-assets/SKILL.md#后台启动与接收');
+    expect(step7).toContain('派发 `yida-image-assets`，随后继续页面开发');
+    expect(imageAssets).toContain('## 后台启动与接收');
+    expect(imageAssets).toContain('hostTaskId');
+    expect(imageAssets).toContain('恢复任务沿用原截止时间');
     expect(imageAssets).toContain('required');
     expect(imageAssets).toContain('beneficial');
     expect(imageAssets).toContain('none');

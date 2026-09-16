@@ -46,7 +46,7 @@ HTML 保留“需求总览、数据模型、业务流程、页面规划”四章
 - `meta.planState.planConfirmed=true`
 - `meta.revision=presentedRevision=confirmedRevision`
 
-收到 `confirm_build`（确认并开始搭建）且回传 revision 等于展示 revision 后，直接进入同版本资源实施。确认结果保存在运行时交接上下文。立即按同版本物化结果的 `assetTasks` 启动素材任务，同时进入应用和表单创建；调度见 [素材与页面同时推进](../parallel-work.md#素材与页面同时推进)。后续素材进度更新保留该确认，业务方案或视觉方案变更按下一节处理。`explicitScope.allowInferredResources=false` 时也不执行主题 CSS、应用设置或导航交接，只创建范围内资源并回读、交付。
+收到 `confirm_build`（确认并开始搭建）且回传 revision 等于展示 revision 后，直接进入同版本资源实施。确认结果保存在运行时交接上下文。立即按同版本物化结果的 `assetTasks` 派发后台素材任务，记录真实任务编号后立即继续应用、表单和页面创建；调度见 [素材与页面同时推进](../parallel-work.md#素材与页面同时推进)。后续素材进度更新保留该确认，业务方案或视觉方案变更按下一节处理。`explicitScope.allowInferredResources=false` 时也不执行主题 CSS、应用设置或导航交接，只创建范围内资源并回读、交付。
 
 ## 4. 处理调整
 
