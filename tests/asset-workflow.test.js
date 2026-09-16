@@ -42,7 +42,7 @@ afterEach(async () => {
 });
 
 function asset(overrides = {}) {
-  return { slotId: 'home.hero', usage: 'hero', input: `${baseUrl}/image.png`, source: 'user', alt: 'Home hero', ...overrides };
+  return { slotId: 'home.hero', usage: 'hero', input: `${baseUrl}/image.png`, source: 'user', deliveryMode: 'upload', hotlinkAllowed: true, alt: 'Home hero', ...overrides };
 }
 function upload() {
   return jest.fn(async files => [{ success: true, originalPath: files[0], cdnUrl: `${baseUrl}/cdn.png` }]);
@@ -71,7 +71,9 @@ test('Plan CLI returns independent searches for slots on the same page before ap
   expect(task.failurePolicy).toEqual(guidance.failurePolicy);
   expect(task.searches.map(search => search.slotId)).toEqual(['hero', 'room', 'garden']);
   task.searches.forEach(search => expect(search).toMatchObject({ dependsOn: [], minWidth: 1200, minHeight: 800 }));
-  expect(task.resolve).toMatchObject({ startWhen: 'page_draft_and_app_type_ready', appTypeRequired: true });
+  expect(task.resolve).toMatchObject({ startWhen: 'page_draft_ready', appTypeRequired: false, uploadRequiresAppType: true });
+  expect(task.resolve.argv).not.toContain('--app-type');
+  expect(task.resolve.uploadArgs).toEqual(['--app-type', '<appType>']);
   expect(task.resolve.argv).toContain(task.draft);
   expect(task.resolve.argv).toContain(task.manifest);
   expect(task.resolve.argv).toContain(result.outputs.design);
@@ -250,7 +252,7 @@ test('Plan hands the full strategy to design.md and the CLI preserves it through
   const partial = JSON.parse(fs.readFileSync(manifest, 'utf8'));
   expect(partial.assetStrategy).toEqual(strategy);
   expect(partial.pages[0].materialStatus).toBe('final');
-  Object.assign(partial.assets[1], { input: `${baseUrl}/image.png`, source: 'user', alt: 'Catalog cover' });
+  Object.assign(partial.assets[1], { input: `${baseUrl}/image.png`, source: 'user', hotlinkAllowed: true, alt: 'Catalog cover' });
   fs.writeFileSync(manifest, JSON.stringify(partial));
   const result = await run(process.execPath, [cli, 'asset', 'resolve', '--input', manifest, '--manifest', manifest, '--json']);
   const final = JSON.parse(result.stdout);

@@ -68,7 +68,7 @@ Plan 分支从已加载 `yida-app` 的 Available Files 读取精确路径 `workf
 - 门户、工作台、档案、知识库和引导页有图片槽位时为 `beneficial`；
 - 表单、审批、台账、设置和库存流水默认 `none`。
 
-Fast 设计就绪后按 [素材调度](parallel-work.md#素材与页面同时推进) 启动 `yida-image-assets`，主流程继续创建应用和表单。Plan 在方案确认后启动同一流程。各页及同页各图片位置并发搜索，每个位置一张、最多两轮。每页草稿和真实 appType 就绪即执行 `asset resolve --design design.md --page-id <pageId> --app-type <真实appType>`，写入独立清单；页面按自身状态接图并验收。
+Fast 设计就绪后按 [素材调度](parallel-work.md#素材与页面同时推进) 启动 `yida-image-assets`，主流程继续创建应用和表单。Plan 在方案确认后启动同一流程。各页及同页各图片位置并发搜索，每个位置一张、最多两轮。每页草稿就绪即执行 `asset resolve --design design.md --page-id <pageId>`；允许外链的图片直接交付，上传时追加 `--app-type <真实appType>`，写入独立清单；页面按自身状态接图并验收。
 
 ## 主题文件实现指令
 

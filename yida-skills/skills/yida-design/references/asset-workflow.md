@@ -19,4 +19,4 @@
 | `openyida asset resolve --input <草稿> --manifest <页面清单> --design <design.md> --page-id <pageId> --json` | 并发处理当前页槽位并写清单 |
 | `openyida asset resolve --slot <slotId>=<路径或URL> --json` | 快速检查单个槽位 |
 
-`--offline` 仅做离线检查；默认上传宜搭附件，`--upload-assets` 兼容旧命令。尺寸和来源规则见 [素材技能](../../yida-image-assets/SKILL.md)。
+允许外链的图片检查后直接交付，页面草稿就绪即可处理。`--upload-assets` 请求上传可转存的图片，上传时使用真实 appType；`--offline` 仅做离线检查。尺寸和来源规则见 [素材技能](../../yida-image-assets/SKILL.md)。

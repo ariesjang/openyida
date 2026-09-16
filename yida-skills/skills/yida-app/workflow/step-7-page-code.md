@@ -23,7 +23,7 @@
 
 先读取 `constraints.prohibitedActions`。命中 `page-source` 时，本步骤只能做 Read、编译/静态检查等只读诊断，不得 Write/Edit/Create 页面源码，也不得用脚本、格式化器或生成器间接改写；输出应明确“源码未修改”并跳过依赖源码变更的发布。未命中时才执行下列源码实现动作。
 
-当前页需要图片时，先接收此前启动的素材任务；可同时编写布局、文字和交互。尚未启动时立即执行 `use_skill("yida-image-assets", "准备当前页图片")`，其余页面继续。使用 `--design design.md --page-id <pageId> --app-type <真实appType>` 核对当前页槽位、默认并发上传宜搭图片附件，输出独立的 `asset-manifests/<pageId>.json`；超过 20 MiB 的外链保留原地址。读取 manifest 中当前页 `pages[].materialStatus`；该页为 `final` 时只使用 `assets[].materialStatus=final` 的图片。必需槽位缺口只阻塞当前页，总状态 `draft` 不阻塞其他已就绪页面。
+当前页需要图片时，先接收此前启动的素材任务；可同时编写布局、文字和交互。尚未启动时立即执行 `use_skill("yida-image-assets", "准备当前页图片")`，其余页面继续。使用 `--design design.md --page-id <pageId>` 核对当前页槽位并发检查图片，允许外链就直接使用；上传时追加 `--app-type <真实appType>`。结果写入独立的 `asset-manifests/<pageId>.json`，上传失败时保留已验证且允许外链的原地址。读取 manifest 中当前页 `pages[].materialStatus`；该页为 `final` 时只使用 `assets[].materialStatus=final` 的图片。必需槽位缺口只阻塞当前页，总状态 `draft` 不阻塞其他已就绪页面。
 
 1. 自定义页面开发执行 `use_skill("yida-canvas-custom-page", "生成当前页面源码")`。根据 PRD 和 `design.md` 直接编写 `.canvas.jsx` / `.canvas.tsx`；允许从空文件实现完整 UI。内置整页示例按需用于理解数据接入和导航；表单抽屉片段必须按第 9 条整体合并，不要求复制整页，也不能用示例默认外观替代已确认的设计。已有符合设计的页面可继续迭代。
 2. PRD 或页面名包含看板、工作台、驾驶舱、Dashboard 时，必须执行 `use_skill("yida-dashboard", "实现真实业务看板")`。
