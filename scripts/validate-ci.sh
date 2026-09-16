@@ -29,6 +29,10 @@ echo "=== Step 5: Validate generated command docs ==="
 npm run check:docs
 
 echo ""
+echo "=== Validate current version release notes ==="
+npm run check:changelog
+
+echo ""
 echo "=== Step 6: Validate i18n locale parity (ratchet) ==="
 npm run check:i18n
 
