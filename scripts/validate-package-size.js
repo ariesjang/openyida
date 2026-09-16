@@ -10,9 +10,10 @@ const path = require('path');
 // Budgets are ratchets that track legitimate content growth (12 locale packs,
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
-// Includes scoped navigation, parallel asset tasks and bounded form recovery.
-// Merged package: 6,455,693 unpacked bytes; rounded to the next 16 KiB boundary.
-const MAX_TARBALL_BYTES = 1840 * 1024;
+// Node 20/npm 10 packs the current 506 files into 1,892,319 bytes;
+// Node 26/npm 11 produces 1,871,347 bytes from the same content.
+// Round the CI measurement to the next 16 KiB boundary.
+const MAX_TARBALL_BYTES = 1856 * 1024;
 const MAX_UNPACKED_BYTES = 6320 * 1024;
 // Intake references and the shared basic-theme-token contract are packaged.
 const MAX_ENTRY_COUNT = 509;
@@ -71,6 +72,20 @@ function formatBytes(bytes) {
 
 function sizeLimitMessage(label, actual, limit) {
   return `${label} is ${formatBytes(actual)} (${actual} bytes), above ${formatBytes(limit)} (${limit} bytes) by ${actual - limit} bytes`;
+}
+
+function getPackageBudgetErrors(pack) {
+  const errors = [];
+  if (pack.size > MAX_TARBALL_BYTES) {
+    errors.push(sizeLimitMessage('tarball', pack.size, MAX_TARBALL_BYTES));
+  }
+  if (pack.unpackedSize > MAX_UNPACKED_BYTES) {
+    errors.push(sizeLimitMessage('unpacked package', pack.unpackedSize, MAX_UNPACKED_BYTES));
+  }
+  if (pack.entryCount > MAX_ENTRY_COUNT) {
+    errors.push(`package has ${pack.entryCount} files, above ${MAX_ENTRY_COUNT}`);
+  }
+  return errors;
 }
 
 function fail(message) {
@@ -184,19 +199,13 @@ function validatePublishedScriptRequires(packagePaths) {
 
 function run() {
   const pack = runNpmPackDryRun();
+  console.log(`Package measurements (Node ${process.version}): ${pack.size} tarball bytes, ${pack.unpackedSize} unpacked bytes, ${pack.entryCount} files`);
   const files = pack.files || [];
   validatePackageContents(files);
   const largestFiles = validateLargestFiles(files);
 
-  if (pack.size > MAX_TARBALL_BYTES) {
-    fail(sizeLimitMessage('tarball', pack.size, MAX_TARBALL_BYTES));
-  }
-  if (pack.unpackedSize > MAX_UNPACKED_BYTES) {
-    fail(sizeLimitMessage('unpacked package', pack.unpackedSize, MAX_UNPACKED_BYTES));
-  }
-  if (pack.entryCount > MAX_ENTRY_COUNT) {
-    fail(`package has ${pack.entryCount} files, above ${MAX_ENTRY_COUNT}`);
-  }
+  const budgetErrors = getPackageBudgetErrors(pack);
+  if (budgetErrors.length) {fail(budgetErrors.join('\n  error '));}
 
   console.log(
     `Package size OK: ${formatBytes(pack.size)} tarball, ${formatBytes(pack.unpackedSize)} unpacked, ${pack.entryCount} files`
@@ -204,4 +213,6 @@ function run() {
   console.log('Largest files: ' + largestFiles.join(', '));
 }
 
-run();
+if (require.main === module) {run();}
+
+module.exports = { getPackageBudgetErrors, MAX_TARBALL_BYTES, MAX_UNPACKED_BYTES, MAX_ENTRY_COUNT };

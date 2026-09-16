@@ -650,9 +650,13 @@ npx clawhub@latest install nicky1108/yida-app
 ```bash
 git clone https://github.com/openyida/openyida.git
 cd openyida
-npm install
+nvm install
+nvm use
+npm ci --ignore-scripts
 npm run check:ci
 ```
+
+Use the Node.js version in `.nvmrc` to match CI validation. If you do not use nvm, install that version directly.
 
 Useful checks:
 
