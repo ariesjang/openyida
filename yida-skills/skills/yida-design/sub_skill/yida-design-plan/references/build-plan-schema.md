@@ -8,6 +8,8 @@
 
 `schemaVersion=2.0` 时，下文中的摘要、索引字段和标准规则可以不在源 JSON 中出现，由 materialize 确定性补齐；补齐后的完整逻辑结构仍遵守本文约束，派生产物完整度不变。
 
+页面导航策略是[紧凑契约中的派生输出](build-plan-compact-schema.md#派生的页面导航策略)：`pages[].navigationPolicy` 仅存在于 PRD 实施交接，不作为本源 JSON 或 pageSpecHandoff 的输入；旧计划同样从导航归属派生。
+
 ## 顶层结构
 
 ```json

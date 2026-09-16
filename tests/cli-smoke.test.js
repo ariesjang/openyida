@@ -2455,6 +2455,13 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.navigation_policy).toContain('Configure a custom frontend menu at page scope');
     expect(route.navigation_policy).toContain('Choose backend native or coding pages by task efficiency');
     expect(route.navigation_policy).toContain('Backend coding pages in platform-shell are content-only');
+    expect(route.entry_navigation_contract.page_navigation_policy).toMatchObject({
+      platform_shell: { applicationMenuOwner: 'platform', renderApplicationMenu: false },
+      no_menu: { applicationMenuOwner: 'none', renderApplicationMenu: false },
+      discussion: { fast: expect.stringContaining('no additional navigation approval gate') },
+    });
+    expect(route.entry_navigation_contract.runtime.applies_to).toContain('Confirmed page-owned application menus only');
+
     expect(route.navigation_policy).toContain('Persistent filters/state alone do not justify custom application navigation');
     expect(route.navigation_policy).toContain('Custom top navigation defaults to edge-to-edge, not floating');
     expect(route.navigation_policy).toContain('start transparent, add a surface on scroll, restore transparency at the top');

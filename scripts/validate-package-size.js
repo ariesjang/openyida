@@ -11,13 +11,12 @@ const path = require('path');
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
 // Asset dispatch, navigation/admin-entry samples, source guards and app URL
-// output add runtime/sample files. Node 26/npm 11 measures
-// Navigation ownership handoff and shared authoring rules bring this to
-// 1,936,087 packed / 6,718,262 unpacked bytes across 516 files.
+// output add runtime/sample files. With the shared navigation policy contract,
+// Node 26/npm 11 measures 1,938,355 packed / 6,724,711 unpacked bytes in 517 files.
 // Retain ~21 KiB npm 10 compression overhead; round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 1920 * 1024;
 const MAX_UNPACKED_BYTES = 6576 * 1024;
-const MAX_ENTRY_COUNT = 516;
+const MAX_ENTRY_COUNT = 517;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -34,6 +33,7 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/app/canvas-icon-exports.json',
   'lib/design-plan/preview.js',
   'lib/design-plan/entry-navigation.js',
+  'lib/design-plan/navigation-policy.js',
   'yida-skills/skills/yida-app/references/entry-navigation.md',
   'yida-skills/skills/yida-app/workflow/incremental-preview.md',
   'yida-skills/skills/yida-create-form-page/references/batch-forms.md',

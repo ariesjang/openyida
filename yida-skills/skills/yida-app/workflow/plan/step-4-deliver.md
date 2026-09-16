@@ -34,7 +34,7 @@ HTML 使用预置模板，保留需求总览、数据模型、业务流程、页
 
 按 [用户交互契约](../../../yida-design/references/ask-human-interaction-contract.md) 执行：
 
-1. 在会话中展示“当前方案”，并用 3–7 条业务摘要说明方案内容。
+1. 在会话中展示“当前方案”，并用 3–7 条业务摘要说明方案内容；有前后台时说明各入口导航归属，平台导航管理页只实现业务内容。导航随整体方案确认，不另设技术选型确认。
 2. 实际调用 `ask_human` 创建结构化提问。调用对象严格采用交互契约中的唯一 payload schema；`attachments` 携带 `name: "build-plan.html"`、`path: "prd/<项目名>/build-plan.html"`，`revision` 使用当前 `meta.revision`，`options` 固定为 `confirm_build` 和 `continue_editing`。一次成功调用同时建立方案展示、版本绑定和最终选择。
 3. 结构化交互成功创建后将 `meta.planState.presentedRevision=meta.revision` 写回源 JSON，仅保存展示事实，不重新物化。询问“确认并开始搭建”或“继续调整”，提交时由宿主原样回传 revision，将确认结果绑定到本次展示版本。用户可见标题、摘要、附件名称与确认问题统一使用“搭建方案”或“当前方案”，不展示修订序号。内部 revision、展示记录和确认失效机制照常维护。
 

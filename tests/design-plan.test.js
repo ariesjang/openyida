@@ -358,6 +358,23 @@ describe('design-plan materialize', () => {
       });
       expect(handoff.acceptanceCriteria).toContain('采购工作台只实现业务内容，同任务分类可用页内 Tab，跨模块使用平台菜单；实际管理入口无重复导航');
       expect(design).toContain('跨模块切换交给平台菜单，不重复自绘管理导航');
+      expect(html).toContain('只实现业务内容；跨模块使用平台菜单，同任务分类可用页内 Tab');
+    }
+  });
+
+  test('standalone without a planned menu keeps no-menu policy in PRD, design and HTML', () => {
+    const plan = compactV2(JSON.parse(fs.readFileSync(FIXTURE, 'utf8')));
+    plan.execution = { appConfig: { navigationType: 'platform-side' } };
+    plan.pages.customPageDetails[0].pageSpecHandoff = { entryMode: 'standalone' };
+    const input = path.join(tempDir, 'build-plan.json');
+    fs.writeFileSync(input, JSON.stringify(plan));
+    materialize(input);
+    const prd = fs.readFileSync(path.join(tempDir, 'prd.md'), 'utf8');
+    const handoff = JSON.parse(prd.match(/```json\n([\s\S]*?)\n```/)[1]);
+    expect(handoff.pages[0].navigationPolicy.applicationMenuOwner).toBe('none');
+    expect(handoff.pages[0].navigationPolicy.renderApplicationMenu).toBe(false);
+    for (const file of ['prd.md', 'design.md', 'build-plan.html']) {
+      expect(fs.readFileSync(path.join(tempDir, file), 'utf8')).toContain('未规划应用菜单，仅实现业务内容');
     }
   });
 

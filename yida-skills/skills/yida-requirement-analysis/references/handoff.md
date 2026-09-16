@@ -55,6 +55,8 @@ PRD 将 userTasks 与入口建议转为页面的访问路径、任务和权限�
 - `pageScenes[].pageSpecHandoff.entryMode`：平台工作区为 `platform-shell`，独立入口为 `standalone`。
 - 独立入口的 `pageScenes[].pageSpecHandoff.navigation` 仅含菜单字段：`{type:"custom",variant:"top",reason:"员工只需报修与查询"}`，variant 支持 top/side/mixed/dock；无菜单时为 `{type:"none",reason:"单步办理"}`；省略时沿用既有页面契约。
 
+管理端采用自定义页面也默认使用 `platform-shell`；其 menu 描述平台任务，不直接渲染为页面导航。只读交接中的 `navigationPolicy` 由 CLI 派生，不写回 brief 或 pageSpecHandoff。导航按[方案讨论与确认](../../yida-design/references/navigation-decision.md#方案讨论与确认)随业务方案说明。
+
 例如：报修前台为 standalone + custom，维修工作区为根级 platform-side。Plan 初始化保留 pageSpecHandoff，PRD、design 和计划分别展示各入口方案。导航执行和验证按 [导航壳配置](../../yida-nav-shell/SKILL.md#必做配置) 完成；页面访问范围和数据权限按用户要求独立配置。
 
 规划阶段按 [访问态入口契约](../../yida-app/references/entry-navigation.md) 补齐 entryRecommendation.entries 的 role、menu、defaultMenuKey 和权限依赖。Plan 初始化保留建议并要求业务片段补齐；Fast PRD 使用同一结构。

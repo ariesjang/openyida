@@ -48,6 +48,8 @@
 
 `build-manifest.json` 与 Step 2 的 `requirement-brief.json`、`prd.md`、`design.md` 一样只供内部编排和验收使用。不得把它们登记为用户可见附件或下载卡片。若 final 将概述 seed records，manifest 中为每个资源分别记录实际写入数、query 抽查数和核验状态；未知值保持未知，不得从其他资源推导。
 
+平台导航管理页需另外从实际 workbench 入口核对没有重复跨模块菜单；将页面配置回读与视觉检查分开记录，未打开页面时标记视觉待验证，不把 build-manifest 资源齐全或编译成功当作导航验收。
+
 资源检查只消费 `display-page`、`normal-form`、`process-form` 资源项；不检查字段、必填、选项、seed records、导航顺序、表单 Schema、页面发布内容、截图或视觉体验。
 
 最小示例：

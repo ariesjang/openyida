@@ -126,6 +126,18 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 | `interactionStates` | 对象，键为 empty/loading/error/formEntry/detail，值为非空业务说明；例如 `{"empty":"展示空态和新建入口","error":"保留输入并提示失败原因"}` |
 | `acceptanceCriteria` | 项目特有的业务验收条件，非空文本数组；CLI 与按资源生成的通用检查合并并去重 |
 
+### 派生的页面导航策略
+
+PRD 实施交接中的 `pages[].navigationPolicy` 与 `pageSpecHandoff` 同级，由 CLI 生成，不是 build-plan.json、business.json、brief 或 page-spec.json 的输入字段。派发页面任务时一并传递；Fast 在 PRD/design.md 明确同样边界。
+
+| 条件 | applicationMenuOwner | pageLayout | renderApplicationMenu | localTabs |
+| --- | --- | --- | --- | --- |
+| platform-shell | platform | content-only | false | same-task-only |
+| standalone 且显式 custom 菜单，或沿用应用级 custom | page | standalone | true | planned-views |
+| standalone 显式 none，或未规划菜单且应用保留平台导航 | none | standalone | false | same-task-only |
+
+`duplicatePlatformMenu` 始终为 false；显式 none 优先于应用级 custom。策略描述实现约束，不代表线上导航已配置或已通过视觉验收。实际菜单过滤的 `mode=platform` 仅指自绘菜单的数据来源，不表示平台工作区应再渲染菜单。
+
 源 JSON 保留项目事实；派生后的 PRD 包含完整 11 章业务与实施交接，HTML 展示同一套业务内容。
 
 ## 调整与确认

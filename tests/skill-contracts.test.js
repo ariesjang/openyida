@@ -37,6 +37,16 @@ describe('OpenYida skill contracts', () => {
     expect(step7).toContain('平台导航管理页保留导航');
     expect(step7).toContain('Fast 也明确同样边界');
     expect(step7).not.toContain('页面导航隐藏应由独立配置任务立即执行');
+    const decision = readSkill('yida-skills/skills/yida-design/references/navigation-decision.md');
+    expect(decision).toContain('## 方案讨论与确认');
+    expect(decision).toContain('不新增导航审批环节');
+    const parallel = readSkill('yida-skills/skills/yida-app/workflow/parallel-work.md');
+    expect(parallel).toContain('平台导航管理页保留导航，不加入隐藏队列');
+    const schema = readSkill('yida-skills/skills/yida-design/sub_skill/yida-design-plan/references/build-plan-compact-schema.md');
+    expect(schema).toContain('不是 build-plan.json、business.json、brief 或 page-spec.json 的输入字段');
+    expect(schema).toContain('standalone 显式 none，或未规划菜单且应用保留平台导航');
+    expect(readSkill('yida-skills/skills/yida-custom-page/SKILL.md')).toContain('#平台导航下的管理页面');
+
     for (const file of [
       'yida-skills/skills/yida-canvas-custom-page/SKILL.md',
       'yida-skills/skills/yida-canvas-custom-page/references/page-generation-guide.md',
