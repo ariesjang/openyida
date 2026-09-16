@@ -12,10 +12,11 @@ const path = require('path');
 // per-file cap stays fixed to catch accidental large-blob embeds.
 // Asset dispatch, navigation/admin-entry samples, source guards and app URL
 // output add runtime/sample files. Node 26/npm 11 measures
-// 1,933,768 packed / 6,711,457 unpacked bytes across 516 files.
+// Navigation ownership handoff and shared authoring rules bring this to
+// 1,936,087 packed / 6,718,262 unpacked bytes across 516 files.
 // Retain ~21 KiB npm 10 compression overhead; round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 1920 * 1024;
-const MAX_UNPACKED_BYTES = 6560 * 1024;
+const MAX_UNPACKED_BYTES = 6576 * 1024;
 const MAX_ENTRY_COUNT = 516;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 

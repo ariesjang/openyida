@@ -8,6 +8,8 @@ CLI 将 Canvas 宿主的 `contentBgColor`、`pageStyle.backgroundColor`、`conte
 
 ## 导航、画布与切换
 
+先按[管理页面边界](navigation-and-entry-guide.md#平台导航下的管理页面)确认本页是否拥有导航。平台导航管理页只实现业务内容，不套带菜单的内容壳；以下自绘导航的背景与切换规则仅适用于已确认的独立入口或应用级自绘导航。
+
 按 [页面与导航连续性](../../yida-design/references/page-continuity.md) 实现共同背景、滚动和切换；沉浸展示页不套业务工作区。加载/错误保留导航和画布，验收首屏、第二屏和窄屏菜单。
 
 ## 嵌入页面的宿主高度

@@ -349,7 +349,16 @@ describe('design-plan materialize', () => {
       expect(handoff.pageNavigation.every(page => page.isRenderNav === false)).toBe(true);
       expect(handoff.pages[0].pageSpecHandoff.entryMode).toBe('standalone');
       expect(html).toContain('<h3>页面导航</h3>');
-    } else {expect(handoff.pageNavigation).toEqual([]);}
+      expect(handoff.pages[0].navigationPolicy).toMatchObject({ applicationMenuOwner: 'page', renderApplicationMenu: true, pageLayout: 'standalone' });
+    } else {
+      expect(handoff.pageNavigation).toEqual([]);
+      expect(handoff.pages[0].navigationPolicy).toEqual({
+        applicationMenuOwner: 'platform', pageLayout: 'content-only', renderApplicationMenu: false,
+        localTabs: 'same-task-only', duplicatePlatformMenu: false,
+      });
+      expect(handoff.acceptanceCriteria).toContain('采购工作台只实现业务内容，同任务分类可用页内 Tab，跨模块使用平台菜单；实际管理入口无重复导航');
+      expect(design).toContain('跨模块切换交给平台菜单，不重复自绘管理导航');
+    }
   });
 
   test('custom navigation includes all business pages and extra reports despite blueprint ordering', () => {
@@ -424,6 +433,8 @@ describe('design-plan materialize', () => {
     expect(handoff.pageNavigation).toEqual([{ name: front.name, type: 'display-page', isRenderNav: false }]);
     expect(handoff.pages[0].pageSpecHandoff.entryMode).toBe('platform-shell');
     expect(handoff.pages[1].pageSpecHandoff.navigation).toEqual(front.pageSpecHandoff.navigation);
+    expect(handoff.pages[0].navigationPolicy.renderApplicationMenu).toBe(false);
+    expect(handoff.pages[1].navigationPolicy.renderApplicationMenu).toBe(true);
     expect(handoff.resourceBlueprint.filter(item => item.type !== 'display-page')).toHaveLength(plan.dataModels.length);
     for (const file of ['prd.md', 'design.md', 'build-plan.html']) {
       const content = fs.readFileSync(path.join(tempDir, file), 'utf8');
@@ -435,6 +446,7 @@ describe('design-plan materialize', () => {
     expect(fs.readFileSync(path.join(tempDir, 'build-plan.html'), 'utf8')).toContain('不设菜单');
     const updated = JSON.parse(fs.readFileSync(path.join(tempDir, 'prd.md'), 'utf8').match(/```json\n([\s\S]*?)\n```/)[1]);
     expect(updated.appConfig.hideAppNav).toBe('n');
+    expect(updated.pages[1].navigationPolicy).toMatchObject({ applicationMenuOwner: 'none', renderApplicationMenu: false });
   });
 
   test.each([

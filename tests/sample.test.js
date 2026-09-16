@@ -36,6 +36,7 @@ describe('sample templates', () => {
     const output = path.join(tmpDir, `nav-${layout}.jsx`);
     await run(['openyida-page-template', `canvas-nav-${layout}`, '--output', output]);
     const fragment = fs.readFileSync(output, 'utf8');
+    expect(consoleErrorSpy.mock.calls.flat().join(' ')).toContain('平台导航页默认只实现业务内容');
     const component = layout === 'tabs' ? 'CanvasTabs' : 'CanvasNav';
     const result = compileCanvasLocal(`${fragment}\nfunction YidaComp() { return <${component} items={[]} activeKey="home" onSelect={() => {}}><p>已有业务内容</p></${component}>; }`);
     expect(JSON.parse(result.importedModules)).toEqual(['side', 'top', 'mixed'].includes(layout) ? ['lucide-react', 'react'] : ['react']);

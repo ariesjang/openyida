@@ -47,7 +47,8 @@ openyida nav-group auto-order <appType>
 
 4. 同一搭建 Run 不得同时执行显式排序与自动排序，不生成逐项 `move` 的 Bash/Python 循环。
 5. 平台菜单按业务管理任务排序；默认进入高频管理列表，有明确概览需求才将管理概览放前。独立前台菜单单独组织，不自动把前台首页置顶。双入口优先消费 entryRecommendation 派生的 navigationOrder；frontend-only 不执行平台导航排序。
-6. 本步骤配置宜搭平台导航，不要求页面源码实现侧边栏或顶部应用导航；只有 PRD 已规划该入口自己的菜单时才实现，不因平台排序再回头补导航壳。
+6. 从真实管理端链接检查平台菜单与页面内容：只保留一套跨模块导航，同任务 Tab 和上下文业务动作可保留。重复时修正页面源码，不通过隐藏平台导航掩盖问题。
+7. 本步骤配置宜搭平台导航，不要求页面源码实现侧边栏或顶部应用导航；只有 PRD 已规划该入口自己的菜单时才实现，不因平台排序再回头补导航壳。
 7. 本轮任一页面 `entryMode=standalone` 时，Step 6 已在取得页面 ID 后隐藏页面导航；发布和健康检查通过后执行 `openyida get-form-config <appType> <displayPageFormUuid> --json` 核对。配置缺失或变化时才执行 `openyida update-form-config <appType> <displayPageFormUuid> false "<页面标题>"` 并再次回读。只有回读明确为 `isRenderNav=false` 时，才把干净的 `{base_url}/{appType}/custom/{displayPageFormUuid}` 交给 Step 9 作为独立业务入口；写入或回读失败时只保留工作台入口，不用 `?isRenderNav=false` 猜测成功。
 8. 主页面 `entryMode=platform-shell` 或缺失时，不修改页面导航配置，也不输出独立业务入口。
 

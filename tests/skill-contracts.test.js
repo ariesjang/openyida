@@ -28,6 +28,23 @@ function isSampleRoutingGuidanceFile(file) {
 }
 
 describe('OpenYida skill contracts', () => {
+  test('platform workspace pages keep cross-module navigation with the host in Fast and Plan', () => {
+    const guide = readSkill('yida-skills/skills/yida-canvas-custom-page/references/navigation-and-entry-guide.md');
+    expect(guide).toContain('即便使用 React 状态切换');
+    expect(guide).toContain('同一任务');
+    expect(guide).toContain('pages[].navigationPolicy');
+    const step7 = readSkill('yida-skills/skills/yida-app/workflow/step-7-page-code.md');
+    expect(step7).toContain('平台导航管理页保留导航');
+    expect(step7).toContain('Fast 也明确同样边界');
+    expect(step7).not.toContain('页面导航隐藏应由独立配置任务立即执行');
+    for (const file of [
+      'yida-skills/skills/yida-canvas-custom-page/SKILL.md',
+      'yida-skills/skills/yida-canvas-custom-page/references/page-generation-guide.md',
+      'yida-skills/skills/yida-canvas-custom-page/references/canvas-style-implementation-guide.md',
+      'yida-skills/skills/yida-nav-shell/SKILL.md',
+    ]) { expect(readSkill(file)).toContain('#平台导航下的管理页面'); }
+  });
+
   test('image assets are an optional page-level branch with host capability evidence', () => {
     const root = readSkill('yida-skills/SKILL.md');
     const app = readSkill('yida-skills/skills/yida-app/SKILL.md');

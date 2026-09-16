@@ -12,6 +12,8 @@
 
 PRD 写有 `pageSpecHandoff` 时，可以把 `pageSpecHandoff` 转成 `page-spec.json`；其中 `entryMode`、`navigation`（只作用于当前入口）、`pageStructure`、`scene`、`contentBlocks`、`themeSummary`、`designFile`、`designRefs`、`dataBinding` 和 `primaryAction` 是页面实现的业务输入。随后必须读取 `designFile` 指向的 `design.md`，用 `designRefs` 找到 `visualScaffold`、`backgroundLayer`、`surfaceMaterial`、`surfaceContrast`、`colorRoles`、`depthRule`、`roundedRule`、`densityRule`、`breathingRule`、组件和状态规则。
 
+平台导航管理页默认生成纯业务内容，跨模块菜单由平台负责；不要从 `entryRecommendation.menu` 再生成页面侧栏或模块 Tabs。Plan 的 `pages[].navigationPolicy` 与 `pageSpecHandoff` 一并作为实现上下文，Fast 同样记录导航归属；详见[管理页面边界](navigation-and-entry-guide.md#平台导航下的管理页面)。
+
 ## Source Of Truth
 
 业务按 `prd.md` 实现，视觉按 `design.md` 实现。手写页面可直接使用这两份文件；使用生成器时，先整理 `page-spec.json`：

@@ -25,6 +25,8 @@ description: 为应用或独立前台页面制作自己的导航菜单时使用�
 - 不要用 `isRenderNav=false` 代替 `hideAppNav`。
 - 不要让平台应用导航和自绘应用级导航同时出现。
 
+平台导航下的管理页只实现业务内容，不默认使用本技能或导航壳片段；同任务分类使用页内 Tab，跨模块由平台菜单切换。管理入口的任务清单不等于页面菜单，详见[管理页面边界](../yida-canvas-custom-page/references/navigation-and-entry-guide.md#平台导航下的管理页面)。
+
 ## 必做配置
 
 先读 PRD 的应用 `navigationType` 与当前页 `pageSpecHandoff.entryMode/navigation`，分别处理：

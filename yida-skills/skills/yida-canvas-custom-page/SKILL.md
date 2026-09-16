@@ -7,6 +7,8 @@ description: 宜搭自定义页面开发规范，使用 `YidaCodeCanvas` 组件�
 
 ## 编码前必读（MUST）
 
+先确认导航归属：使用平台导航的管理端自定义页面默认只实现业务内容，同任务可用页内 Tab，跨模块由平台菜单切换。编码前按[管理页面边界](references/navigation-and-entry-guide.md#平台导航下的管理页面)核对，不把后台任务清单或前台菜单复制为第二套导航。
+
 先确定控件与动作的接入方式，再写业务 JSX：使用 antd 时先读取并合并 [标准主题桥](references/canvas-theme-provider.md)，所有 Button、Tabs、Segmented、链接与弹层放在同一主题子树；普通 DOM 控件直接消费应用 CSS 变量。需要跨页按钮或链接时，先按 [入口契约](references/navigation-and-entry-guide.md#先建立动作与目标清单) 提取 `canvas-navigation`，填写真实资源 ID 和目标类型。本页 Tab 用状态或 hash；按钮点击和链接 href 共用同一个 URL 构造函数。缺少目标资源时保留布局并禁用该入口，不猜地址。
 
 新建页面或调整视觉前，完整读取 [canvas-style-implementation-guide.md](references/canvas-style-implementation-guide.md)，结合当前 PRD 和 `design.md` 实现。读取结果被截断时分段读完；同一任务已读完且文件未变时可复用。仅修改数据逻辑时可跳过，并记录原因。
