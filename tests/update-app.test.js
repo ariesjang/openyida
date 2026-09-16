@@ -1,6 +1,7 @@
 'use strict';
 
 const querystring = require('querystring');
+const { buildCommandManifest } = require('../lib/core/command-manifest');
 
 const {
   assertPresetThemeKey,
@@ -24,6 +25,26 @@ const {
 } = require('../lib/app/update-app');
 
 describe('update-app helpers', () => {
+  test('manifest covers every parsed option and alias with matching values', () => {
+    const command = buildCommandManifest().commands.find(entry => entry.id === 'update-app');
+    expect(command.args.find(arg => arg.name === 'appType')).toMatchObject({ required: true, source: 'positional', position: 0 });
+    const options = command.args.filter(arg => arg.source === 'option');
+    const parserOptions = [...parseArgs.toString().matchAll(/case '([^']+)':/g)].map(match => match[1]);
+    expect(options.flatMap(arg => arg.builder_options).sort()).toEqual(parserOptions.sort());
+    const values = {
+      name: '测试应用', desc: '业务说明', icon: 'xian-yingyong', iconColor: '#0089FF',
+      colour: 'custom', themeColor: '#123456', themeFile: './app-theme.css',
+      navTheme: 'white', logoSource: 'appIcon', layoutDirection: 'side',
+    };
+    for (const arg of options) {
+      const boolean = arg.type === 'boolean';
+      const expected = boolean ? { hideAppNav: arg.name === 'hideAppNav' ? 'y' : 'n' } : { [arg.name]: values[arg.name] };
+      if (!boolean) { expect(values).toHaveProperty(arg.name); }
+      for (const option of arg.builder_options) {
+        expect(parseArgs(['APP_1', option, ...(boolean ? [] : [values[arg.name]])])).toMatchObject({ appType: 'APP_1', ...expected });
+      }
+    }
+  });
   test('colour accepts only platform keys or custom, never CSS colors or invented keys', () => {
     ['podBlue', 'podGreen', 'podOrange', 'black', 'custom'].forEach((key) => expect(() => assertAppThemeKey(key)).not.toThrow());
     ['#C89B5A', 'rgb(200,155,90)', 'desertWarm', 'podBXXXX'].forEach((key) => expect(() => assertAppThemeKey(key)).toThrow());
