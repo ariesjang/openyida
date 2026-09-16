@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "चित्र फ़ाइल नहीं मिली: {0}। कमांड की कार्य निर्देशिका जाँचें या पूर्ण पथ दें।",
+    invalidStrategy: "चित्र आवश्यकताएँ एक ऑब्जेक्ट में दें, जिसमें हर पृष्ठ के चित्र स्थान हों।",
+  },
   help: {
     subtitle: 'Yida के लिए AI-संचालित लो-कोड विकास उपकरण',
     usage: 'उपयोग:',
@@ -22,6 +26,7 @@ module.exports = {
     cmd_create_app: 'Yida ऐप बनाएं',
     cmd_design_plan_preview: 'मॉड्यूल के अनुसार योजना का मसौदा अपडेट करें',
     design_plan_preview_invalid: 'मसौदा अपडेट विफल; त्रुटि विवरण देखें',
+    cmd_design_plan_catalog: 'योजना के लिए उपलब्ध थीम और पेज पैटर्न दिखाएँ',
     cmd_design_plan_init: 'पुष्टि की गई आवश्यकताओं से योजना का मसौदा बनाएँ',
     cmd_design_plan_materialize: 'build-plan.json से योजना आउटपुट बनाएं और जाँचें',
     cmd_design_plan_patch: 'फ़ील्ड पथ से योजना बदलें और पुरानी पुष्टि अमान्य करें',
@@ -1251,6 +1256,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: 'पंक्ति {0} के पास थीम प्रदाता जुड़ा नहीं है। YidaComp से <CanvasThemeProvider><PageContent /></CanvasThemeProvider> लौटाएँ।',
+    canvas_theme_root_hook: 'पंक्ति {0} के पास प्रदाता सक्रिय होने से पहले थीम पढ़ी जा रही है। useCanvasThemeContext को PageContent में ले जाएँ और उसे CanvasThemeProvider के भीतर रेंडर करें।',
+    canvas_theme_context_scope: 'पंक्ति {0} के पास CanvasThemeContext फ़ंक्शन के भीतर घोषित है। संदर्भ और प्रदाता को मॉड्यूल स्तर पर घोषित करें।',
     canvas_inline_css_invalid: 'पंक्ति {0} के पास CSS में अधूरा या बेमेल कोष्ठक, स्ट्रिंग या टिप्पणी है। प्रकाशित करने से पहले ठीक करें।',
     title: '  yida-publish - Yida पेज प्रकाशन टूल',
     platform: '  प्लेटफ़ॉर्म: {0}',

@@ -36,6 +36,7 @@ description: 自定义页面编译发布技能；发布 YidaCodeCanvas 页面时
 - 平台 `Jsx` 组件 / `oyb.jsx` / `renderJsx` 维护源码发布前优先执行 `openyida check-page <源文件路径>` 和 `openyida compile <源文件路径>`；本技能只把它们作为发布前 guard
 - 使用 `YidaCodeCanvas` 组件实现的页面发布前必须执行 `openyida compile <源文件> --json`；CLI 会自动选择 Canvas 编译器。失败时直接按结构化 `code/message/details` 修源码并重跑同一命令，不要改用 `node -e`、`compileCanvasLocal` 或 `run_workspace_script` 绕行
 - Canvas 本地编译通过后，执行 `openyida publish <源文件> <appType> <displayPageFormUuid> --canvas --health-check`，由发布流程再次校验并写入 `runtimeCode + importedModules`
+- Canvas 编译和发布共用主题结构检查。出现 `OPENYIDA_CANVAS_THEME_PROVIDER_INVALID` 时，按报错位置调整 Provider 和业务组件的层级，再执行原命令；发布后打开实际页面检查首屏和交互。
 - 使用 `YidaCodeCanvas` 组件实现的页面发布时，发布流程会在外层页面 `didMount` 注入 `window.__OPENYIDA_YIDA_API__` 和 `window.__OPENYIDA_UTILS__`；不要在 Canvas 源码内补写 `this.utils.yida.*` 或根级 `this.utils.*`
 - 推荐源码放在 `project/pages/src/`：使用 `YidaCodeCanvas` 组件实现的页面用 `<页面名>.canvas.jsx` / `<页面名>.canvas.tsx`；平台 `Jsx` 组件维护源码用 `<页面名>.oyd.jsx` / `<页面名>.jsx` / `<页面名>.tsx`
 - 发布前注意 CLI 会检查 `<workspace>/project/pages/src/` 与 `<workspace>/projects/<id>/artifacts/` 中同名源码是否内容不一致；出现警告时必须确认实际要发布哪一份

@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "画像ファイルが見つかりません：{0}。コマンドの作業ディレクトリを確認するか、絶対パスを指定してください。",
+    invalidStrategy: "画像の要件は、ページごとの画像の配置を記述したオブジェクトで指定してください。",
+  },
   help: {
     subtitle: '宜搭ローコード AI 開発ツール',
     usage: '使用方法:',
@@ -22,6 +26,7 @@ module.exports = {
     cmd_create_app: '宜搭アプリを作成',
     cmd_design_plan_preview: 'モジュールごとに計画草稿を更新',
     design_plan_preview_invalid: '草稿の更新に失敗しました。詳細を確認してください',
+    cmd_design_plan_catalog: '計画に利用できるテーマとページパターンを一覧表示',
     cmd_design_plan_init: '確認済みの要件から計画の下書きを作成',
     cmd_design_plan_materialize: 'build-plan.json から設計計画成果物を生成・検証',
     cmd_design_plan_patch: 'フィールドパスで計画を更新し以前の確認を無効化',
@@ -1202,6 +1207,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: '{0} 行付近でテーマの Provider が適用されていません。YidaComp から <CanvasThemeProvider><PageContent /></CanvasThemeProvider> を返してください。',
+    canvas_theme_root_hook: '{0} 行付近で Provider の適用前にテーマを参照しています。useCanvasThemeContext を PageContent に移し、CanvasThemeProvider の子として描画してください。',
+    canvas_theme_context_scope: '{0} 行付近の CanvasThemeContext が関数内で定義されています。Context と Provider をモジュールのトップレベルに配置してください。',
     canvas_inline_css_invalid: '{0} 行付近の CSS に閉じていない、または対応しない括弧、文字列、コメントがあります。公開前に修正してください。',
     title: '  yida-publish - Yida ページ公開ツール',
     platform: '  プラットフォーム: {0}',

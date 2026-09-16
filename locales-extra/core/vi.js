@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "Không tìm thấy tệp ảnh: {0}. Kiểm tra thư mục làm việc của lệnh hoặc dùng đường dẫn tuyệt đối.",
+    invalidStrategy: "Yêu cầu về ảnh phải là một đối tượng liệt kê vị trí ảnh theo từng trang.",
+  },
   help: {
     subtitle: 'Công cụ phát triển AI low-code cho Yida',
     usage: 'Cách dùng:',
@@ -22,6 +26,7 @@ module.exports = {
     cmd_create_app: 'Tạo ứng dụng Yida',
     cmd_design_plan_preview: 'Cập nhật bản nháp theo mô-đun',
     design_plan_preview_invalid: 'Cập nhật bản nháp thất bại; kiểm tra chi tiết lỗi',
+    cmd_design_plan_catalog: 'Liệt kê chủ đề và mẫu trang có sẵn để lập kế hoạch',
     cmd_design_plan_init: 'Khởi tạo bản nháp kế hoạch từ yêu cầu đã xác nhận',
     cmd_design_plan_materialize: 'Tạo và xác thực sản phẩm từ build-plan.json',
     cmd_design_plan_patch: 'Sửa kế hoạch theo đường dẫn và vô hiệu xác nhận trước',
@@ -1251,6 +1256,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: 'Trang gần dòng {0} chưa được bọc bằng bộ cung cấp giao diện. Hãy trả về <CanvasThemeProvider><PageContent /></CanvasThemeProvider> từ YidaComp.',
+    canvas_theme_root_hook: 'Giao diện được đọc trước khi bộ cung cấp hoạt động gần dòng {0}. Chuyển useCanvasThemeContext vào PageContent và hiển thị nó bên trong CanvasThemeProvider.',
+    canvas_theme_context_scope: 'CanvasThemeContext được khai báo trong hàm gần dòng {0}. Hãy khai báo ngữ cảnh và bộ cung cấp ở cấp mô-đun.',
     canvas_inline_css_invalid: 'CSS gần dòng {0} có dấu ngoặc, chuỗi hoặc chú thích chưa đóng hoặc không khớp. Hãy sửa trước khi xuất bản.',
     title: '  yida-publish - Công cụ xuất bản trang Yida',
     platform: '  Nền tảng: {0}',

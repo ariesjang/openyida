@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "No se encontró la imagen: {0}. Comprueba el directorio de trabajo del comando o usa una ruta absoluta.",
+    invalidStrategy: "Los requisitos de imágenes deben ser un objeto con las posiciones de imágenes por página.",
+  },
   help: {
     subtitle: 'Herramienta de desarrollo IA low-code para Yida',
     usage: 'Uso:',
@@ -22,6 +26,7 @@ module.exports = {
     cmd_create_app: 'Crear una aplicación Yida',
     cmd_design_plan_preview: 'Actualizar borradores por módulo',
     design_plan_preview_invalid: 'Error al actualizar el borrador; revise los detalles',
+    cmd_design_plan_catalog: 'Mostrar temas y patrones de página disponibles para la planificación',
     cmd_design_plan_init: 'Crear un borrador del plan a partir de requisitos confirmados',
     cmd_design_plan_materialize: 'Generar y validar artefactos desde build-plan.json',
     cmd_design_plan_patch: 'Modificar el plan por ruta e invalidar la confirmación previa',
@@ -1253,6 +1258,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: 'Falta el proveedor del tema cerca de la línea {0}. Devuelve <CanvasThemeProvider><PageContent /></CanvasThemeProvider> desde YidaComp.',
+    canvas_theme_root_hook: 'El tema se lee antes de activar su proveedor cerca de la línea {0}. Mueve useCanvasThemeContext a PageContent y renderízalo dentro de CanvasThemeProvider.',
+    canvas_theme_context_scope: 'CanvasThemeContext se declara dentro de una función cerca de la línea {0}. Declara el contexto y el proveedor a nivel de módulo.',
     canvas_inline_css_invalid: 'El CSS cerca de la línea {0} contiene un delimitador, cadena o comentario sin cerrar o incorrecto. Corrígelo antes de publicar.',
     title: '  yida-publish - Herramienta de publicación de páginas Yida',
     platform: '  Plataforma: {0}',

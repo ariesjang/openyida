@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { assembleApplicationTheme } = require('../yida-skills/skills/yida-canvas-custom-page/scripts/build-canvas-theme');
 
 const {
   compileCanvas,
@@ -1052,7 +1053,7 @@ describe('compileCanvasLocal', () => {
       'yida-rechart',
       'trend-combo.canvas.jsx'
     );
-    const src = fs.readFileSync(templatePath, 'utf8');
+    const src = assembleApplicationTheme(fs.readFileSync(templatePath, 'utf8'));
     const { runtimeCode, importedModules } = compileCanvasLocal(src, { sourcePath: templatePath });
 
     expect(JSON.parse(importedModules)).toEqual(['antd', 'react', 'recharts']);
@@ -1070,7 +1071,7 @@ describe('compileCanvasLocal', () => {
       'yida-canvas-table-form',
       'table-form-batch-submit.canvas.jsx'
     );
-    const src = fs.readFileSync(templatePath, 'utf8');
+    const src = assembleApplicationTheme(fs.readFileSync(templatePath, 'utf8'));
     const { runtimeCode, importedModules } = compileCanvasLocal(src, { sourcePath: templatePath });
 
     expect(JSON.parse(importedModules)).toEqual(['antd', 'dayjs', 'react']);
@@ -1089,14 +1090,14 @@ describe('compileCanvasLocal', () => {
       'openyida-scaffold',
       'canvas-form-drawer.canvas.jsx'
     );
-    const src = fs.readFileSync(templatePath, 'utf8');
+    const src = assembleApplicationTheme(fs.readFileSync(templatePath, 'utf8'));
     const { runtimeCode, importedModules } = compileCanvasLocal(src, { sourcePath: templatePath });
 
     expect(JSON.parse(importedModules)).toEqual(['antd', 'lucide-react', 'react']);
     expect(runtimeCode).toMatch(/window\.antd/);
     expect(runtimeCode).toMatch(/window\.LucideReact/);
     expect(runtimeCode).toContain('FormOpenContainer');
-    expect(runtimeCode).toContain('readCanvasTheme');
+    expect(runtimeCode).toContain('resolveCanvasTheme');
     expect(src).toContain('min-height: 100vh');
     expect(src).toContain('background: var(--pod-page-bg-color, var(--color-white, #fff))');
     expect(src).toContain('background: var(--pod-card-bg-color, var(--color-white, #fff))');

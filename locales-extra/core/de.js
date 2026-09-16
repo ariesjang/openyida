@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "Bilddatei nicht gefunden: {0}. Prüfen Sie das Arbeitsverzeichnis des Befehls oder verwenden Sie einen absoluten Pfad.",
+    invalidStrategy: "Die Bildanforderungen müssen ein Objekt mit Bildpositionen pro Seite sein.",
+  },
   help: {
     subtitle: 'KI-gestütztes Low-Code-Entwicklungstool für Yida',
     usage: 'Verwendung:',
@@ -22,6 +26,7 @@ module.exports = {
     cmd_create_app: 'Yida-App erstellen',
     cmd_design_plan_preview: 'Planentwürfe pro Modul aktualisieren',
     design_plan_preview_invalid: 'Entwurfsaktualisierung fehlgeschlagen; Details prüfen',
+    cmd_design_plan_catalog: 'Verfügbare Planungsthemen und Seitenmuster auflisten',
     cmd_design_plan_init: 'Planentwurf aus bestätigten Anforderungen erstellen',
     cmd_design_plan_materialize: 'Planartefakte aus build-plan.json erzeugen und validieren',
     cmd_design_plan_patch: 'Plan per Feldpfad ändern und frühere Bestätigung verwerfen',
@@ -1251,6 +1256,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: 'Nahe Zeile {0} fehlt der Theme-Provider. Gib in YidaComp <CanvasThemeProvider><PageContent /></CanvasThemeProvider> zurück.',
+    canvas_theme_root_hook: 'Nahe Zeile {0} wird das Theme vor dem Provider gelesen. Verschiebe useCanvasThemeContext nach PageContent und rendere es innerhalb von CanvasThemeProvider.',
+    canvas_theme_context_scope: 'CanvasThemeContext ist nahe Zeile {0} in einer Funktion definiert. Definiere Kontext und Provider auf Modulebene.',
     canvas_inline_css_invalid: 'Inline-CSS nahe Zeile {0} enthält eine nicht geschlossene oder unpassende Klammer, Zeichenfolge oder einen Kommentar. Vor Veröffentlichung korrigieren.',
     title: '  yida-publish - Yida-Seitenveröffentlichungstool',
     platform: '  Plattform: {0}',

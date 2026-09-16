@@ -10,19 +10,18 @@
 
 结构化实现工具提供可编译运行时结构、数据桥、主题变量和基础 primitives。真实业务页结合 `prd.md` 落地业务化区块顺序、数据和文案，结合 `design.md` 落地信息层级、局部构图和样式节奏。
 
-PRD 写有 `pageSpecHandoff` 时，可以把 `pageSpecHandoff` 转成 `page-spec.json`；其中 `pageStructure`、`scene`、`contentBlocks`、`themeSummary`、`designFile`、`designRefs`、`dataBinding` 和 `primaryAction` 是页面实现的业务输入。随后必须读取 `designFile` 指向的 `design.md`，用 `designRefs` 找到 `visualScaffold`、`backgroundLayer`、`surfaceMaterial`、`surfaceContrast`、`colorRoles`、`depthRule`、`roundedRule`、`densityRule`、`breathingRule`、组件和状态规则。
+PRD 写有 `pageSpecHandoff` 时，可以把 `pageSpecHandoff` 转成 `page-spec.json`；其中 `entryMode`、`navigation`（只作用于当前入口）、`pageStructure`、`scene`、`contentBlocks`、`themeSummary`、`designFile`、`designRefs`、`dataBinding` 和 `primaryAction` 是页面实现的业务输入。随后必须读取 `designFile` 指向的 `design.md`，用 `designRefs` 找到 `visualScaffold`、`backgroundLayer`、`surfaceMaterial`、`surfaceContrast`、`colorRoles`、`depthRule`、`roundedRule`、`densityRule`、`breathingRule`、组件和状态规则。
 
 ## Source Of Truth
 
-`prd.md` 和 `design.md` 是唯一设计事实源。`page-spec.json` 只是页面实现阶段的派生文件，用于喂给生成器或保存一次稳定交接，不是第三份设计文件。
+业务按 `prd.md` 实现，视觉按 `design.md` 实现。手写页面可直接使用这两份文件；使用生成器时，先整理 `page-spec.json`：
 
-- `page-spec.json` 必须由当前 `prd.md + design.md` 派生，不允许凭空新增视觉规则、页面结构或业务功能。
-- `page-spec.json` 不复制 `visualScaffold`、`surfaceMap`、`componentRecipe`、tokens、完整色盘或组件规则；只保存 `designFile/designRefs` 和与 design.md 一致的 `themeSummary`。
-- spec 必须包含 `sourceOfTruth.prdFile`、`sourceOfTruth.designFile`、`sourceOfTruth.designRefs` 和 `sourceOfTruth.conflictPolicy = "prd-design-win"`。
-- spec 与 PRD/design.md 冲突时，以 PRD/design.md 为准，重新生成 spec；不要修改 PRD/design.md 来迎合旧 spec。
-- 手写页面且结构清楚时可以跳过 `page-spec.json`，但源码实现备注必须能说明已读取 `prd.md` 和 `design.md`。
+- 业务字段来自当前 PRD。
+- 视觉部分保存 `designFile/designRefs` 和一致的 `themeSummary`，完整视觉规则从 design.md 读取。
+- `sourceOfTruth` 填写 `prdFile`、`designFile`、`designRefs` 和 `conflictPolicy = "prd-design-win"`。
+- spec 与 PRD/design.md 冲突时，按这两份文件重新生成 spec。
 
-实现阶段不再从 PRD 里反推视觉，也不直接读取 `references/style-designs/`。该目录只在 yida-design 阶段提供 `design.md` 结构模板；`YidaCodeCanvas` 组件实现只遵守当前项目的 `design.md`。工作台/业务首页通常需要圆润紧凑状态摘要、高频动作、待办/动态/最近记录和右侧上下文；实现阶段用这些结构替代“4 个等宽大 KPI 白卡 + 图标快捷卡 + 大空态白卡”。列表/管理页通常需要顶部视觉区、搜索筛选区、左侧列表或表格、右侧详情预览、错误/空态下一步动作；实现阶段用这些结构替代单个渐变标题、单个指标卡和大块空白提示。工作台、首页、门户、看板、展示页和业务入口页推荐落地 8-10 个有业务目的的区块以上；区块可以紧凑组合，不能用重复 KPI 卡、重复快捷入口或大空白卡凑数；KPI 子项、快捷入口子项和列表行不计入区块数量。窄场景或用户要求精简时可以更少，不应因此阻塞实现。
+按页面任务组织内容：工作台通常包含状态摘要、高频动作、待办、动态和上下文信息；列表页通常包含搜索筛选、列表或表格、详情预览，以及空态和错误时的下一步操作。工作台、首页、门户、看板和展示页推荐 8-10 个有业务目的的区块，窄场景或精简需求按实际任务减少。KPI 子项、快捷入口子项和列表行计入各自所属区块。
 
 如果当前 `design.md` 缺少 `roundedRule`、`densityRule` 或 `breathingRule`，先回写设计文件再实现。默认业务页应写清卡片 padding >20px、卡片 gap <20px、卡片圆角 0-32px；状态摘要、任务列表、动作条和空态保持紧凑，不得用额外 margin、超宽空状态框或空白高度制造“高级感”。
 
@@ -80,6 +79,8 @@ design.md 存在“项目配色适配”时先应用该节，它高于模板默�
 
 ### 导航生成规则
 
+先读应用 navigationType 和当前页 pageSpecHandoff。前台 standalone + navigation.custom 只自绘当前入口菜单，不修改 appBlueprint.hideAppNav；后台继续使用平台导航。以下 iframe/原生提交默认只适用于复用原生页面的工作区；前台全码填写与查询直接实现并接入真实数据。
+
 自定义导航按 PRD 和 `design.md` 直接实现；参考 [导航壳形态目录](../../yida-nav-shell/references/nav-shell-patterns.md) 的场景与骨架，UI 示例按需查阅。顶部默认浮导；侧边及混合布局支持折叠、恢复宽度和拖拽调宽。菜单同时记录入口用途和打开方式：管理走 workbench，填写走 submission；本页视图切状态，保留导航的表单入口更新主内容 iframe，跨页入口默认当前标签跳转。页面内新增/详情按钮沿用 FormOpenContainer。
 
 完整地址通过数据桥使用 `router.push(href, params, false, true)`；省略 URL 模式的自动识别只作兼容，详见 [路由模式与数据桥兜底](../../yida-nav-shell/references/nav-shell-patterns.md#路由模式与数据桥兜底)。导航显示参数不控制是否新开标签。
@@ -88,8 +89,8 @@ design.md 存在“项目配色适配”时先应用该节，它高于模板默�
 | --- | --- | --- |
 | 普通自定义页、工作台、门户、看板、首页 | 不写 `hideAppNav` | 保留平台应用导航 |
 | 页面内 tab、分段筛选、内容区快捷入口 | 不写 `hideAppNav` | 保留平台应用导航 |
-| 自定义页顶部导航、侧边导航、导航壳、自绘应用级导航 | 写 `appBlueprint.hideAppNav: 'y'` | 执行 `openyida update-app <appType> --hide-app-nav` |
-| 页面隐藏导航、无导航全屏、`isRenderNav=false` | 写 `appBlueprint.renderNav: false` | 执行 `openyida update-form-config <appType> <formUuid> false "<页面标题>"` |
+| 整个应用的顶部导航、侧边导航、导航壳、自绘应用级导航 | 写 `appBlueprint.hideAppNav: 'y'` | 执行 `openyida update-app <appType> --hide-app-nav` |
+| 独立前台菜单、页面隐藏导航、无导航全屏、`isRenderNav=false` | 写 `appBlueprint.renderNav: false` | 执行 `openyida update-form-config <appType> <formUuid> false "<页面标题>"` |
 
 两条规则必须分开：`hideAppNav` 控制应用导航，`renderNav/isRenderNav=false` 控制页面导航。其他自定义页默认不调用 `update-app --hide-app-nav`。
 
@@ -106,13 +107,13 @@ design.md 存在“项目配色适配”时先应用该节，它高于模板默�
 
 ## 官网与品牌页素材
 
-按 `design.md.assetStrategy` 调用 `yida-image-assets`。读取 `asset-manifest.json` 中当前页面 `pages[].materialStatus`；当前页为 `final` 时，只读取该页 `assets[].materialStatus=final` 的图片 URL。总状态为 `draft` 不阻塞已就绪的页面；不手拼 URL，也不内嵌 data URI。
+按 `design.md.assetStrategy` 调用 `yida-image-assets`。读取当前页的 `asset-manifests/<pageId>.json`（已有项目可用总清单 `asset-manifest.json`）中 `pages[].materialStatus`；当前页为 `final` 时，只读取该页 `assets[].materialStatus=final` 的图片 URL。总状态为 `draft` 不阻塞已就绪的页面；不手拼 URL，也不内嵌 data URI。
 
 联网搜图仅使用 Unsplash/Pexels。Unsplash 保留 API 热链和署名；Pexels 保留来源页和摄影师信息。
 
 ## 主题实现
 
-新 antd 页面按 [CanvasThemeProvider 指南](canvas-theme-provider.md) 装配主题；只编译和发布装配后的文件。纯 DOM 页面不需要 Provider；旧 hook 页面按该指南迁移，不能重复接入。
+antd 页面按 [CanvasThemeProvider 指南](canvas-theme-provider.md) 统一接入主题，编译和发布装配后的文件。纯 DOM 页面直接使用应用 CSS 变量。
 
 主题色决策来自 `yida-design` 的 `design.md`。`app-theme.css` 只在应用级配置，由平台统一作用于整个应用。
 

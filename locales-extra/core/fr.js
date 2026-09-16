@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "Image introuvable : {0}. Vérifiez le répertoire de travail de la commande ou utilisez un chemin absolu.",
+    invalidStrategy: "Les besoins en images doivent être un objet indiquant les emplacements par page.",
+  },
   help: {
     subtitle: 'Outil de développement IA low-code pour Yida',
     usage: 'Utilisation :',
@@ -22,6 +26,7 @@ module.exports = {
     cmd_create_app: 'Créer une application Yida',
     cmd_design_plan_preview: 'Actualiser le brouillon par module',
     design_plan_preview_invalid: 'Échec de mise à jour du brouillon ; consultez les détails',
+    cmd_design_plan_catalog: 'Lister les thèmes et modèles de page disponibles pour la planification',
     cmd_design_plan_init: 'Créer un brouillon de plan à partir des besoins confirmés',
     cmd_design_plan_materialize: 'Générer et valider les livrables depuis build-plan.json',
     cmd_design_plan_patch: 'Modifier le plan par chemin et invalider la confirmation précédente',
@@ -1253,6 +1258,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: 'Le fournisseur de thème manque près de la ligne {0}. Retournez <CanvasThemeProvider><PageContent /></CanvasThemeProvider> depuis YidaComp.',
+    canvas_theme_root_hook: 'Le thème est lu avant son fournisseur près de la ligne {0}. Déplacez useCanvasThemeContext dans PageContent et affichez ce composant dans CanvasThemeProvider.',
+    canvas_theme_context_scope: 'CanvasThemeContext est déclaré dans une fonction près de la ligne {0}. Déclarez le contexte et le fournisseur au niveau du module.',
     canvas_inline_css_invalid: 'Le CSS près de la ligne {0} contient un délimiteur, une chaîne ou un commentaire non fermé ou incorrect. Corrigez avant publication.',
     title: '  yida-publish - Outil de publication de page Yida',
     platform: '  Plateforme : {0}',

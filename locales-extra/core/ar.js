@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "ملف الصورة غير موجود: {0}. تحقق من مجلد عمل الأمر أو استخدم مسارًا مطلقًا.",
+    invalidStrategy: "يجب أن تكون متطلبات الصور كائنًا يحدد مواضع الصور حسب الصفحة.",
+  },
   help: {
     subtitle: 'أداة تطوير الذكاء الاصطناعي منخفضة الكود لـ Yida',
     usage: 'الاستخدام:',
@@ -22,6 +26,7 @@ module.exports = {
     cmd_create_app: 'إنشاء تطبيق Yida',
     cmd_design_plan_preview: 'تحديث مسودة الخطة حسب الوحدة',
     design_plan_preview_invalid: 'فشل تحديث المسودة؛ تحقق من تفاصيل الخطأ',
+    cmd_design_plan_catalog: 'عرض السمات وأنماط الصفحات المتاحة للتخطيط',
     cmd_design_plan_init: 'تهيئة مسودة خطة من المتطلبات المؤكدة',
     cmd_design_plan_materialize: 'إنشاء مخرجات الخطة والتحقق منها من build-plan.json',
     cmd_design_plan_patch: 'تعديل الخطة حسب مسار الحقل وإبطال التأكيد السابق',
@@ -1251,6 +1256,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: 'لم تُربط الصفحة قرب السطر {0} بمزوّد السمة. أعد <CanvasThemeProvider><PageContent /></CanvasThemeProvider> من YidaComp.',
+    canvas_theme_root_hook: 'تُقرأ السمة قبل تفعيل مزوّدها قرب السطر {0}. انقل useCanvasThemeContext إلى PageContent واعرضه داخل CanvasThemeProvider.',
+    canvas_theme_context_scope: 'تم تعريف CanvasThemeContext داخل دالة قرب السطر {0}. انقل السياق والمزوّد إلى مستوى الوحدة.',
     canvas_inline_css_invalid: 'يحتوي CSS قرب السطر {0} على قوس أو نص أو تعليق غير مغلق أو غير متطابق. أصلحه قبل النشر.',
     title: '  yida-publish - أداة نشر صفحات Yida',
     platform: '  المنصة: {0}',

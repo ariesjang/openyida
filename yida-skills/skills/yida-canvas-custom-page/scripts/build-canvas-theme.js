@@ -59,9 +59,26 @@ function buildProvider(css, url) {
     sha256: crypto.createHash('sha256').update(css).digest('hex'),
     tokens: readThemeSnapshot(css),
   };
-  const template = fs.readFileSync(path.join(__dirname, 'canvas-theme-provider.template.jsx'), 'utf8');
+  return renderProvider(source);
+}
+
+function renderProvider(source, includeImports = true) {
+  let template = fs.readFileSync(path.join(__dirname, 'canvas-theme-provider.template.jsx'), 'utf8');
+  if (!includeImports) {template = template.slice(template.indexOf('const CANVAS_THEME_SOURCE'));}
   // Keep generated source safe to embed in HTML and compatible with Canvas compilation.
   return template.replace('__CANVAS_THEME_SOURCE__', JSON.stringify(source).replace(/</g, '\\u003c'));
+}
+
+function buildApplicationProvider(includeImports = true) {
+  return renderProvider({ url: '', sha256: '', tokens: {} }, includeImports);
+}
+
+function assembleApplicationTheme(source) {
+  const marker = '/* @canvas-application-theme */';
+  const parts = source.split(marker);
+  if (parts.length === 1) {return source;}
+  if (parts.length !== 2) {throw new Error('Sample must contain exactly one application theme marker');}
+  return parts.join(buildApplicationProvider(false));
 }
 
 function run(args) {
@@ -119,4 +136,4 @@ if (require.main === module) {
     process.exitCode = 1;
   }
 }
-module.exports = { readThemeSnapshot, buildProvider, run };
+module.exports = { readThemeSnapshot, buildProvider, buildApplicationProvider, assembleApplicationTheme, run };

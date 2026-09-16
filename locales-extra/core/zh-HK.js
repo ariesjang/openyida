@@ -5,6 +5,10 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  asset: {
+    localFileUnavailable: "找不到圖片檔案：{0}。請檢查指令工作目錄，或使用絕對路徑。",
+    invalidStrategy: "圖片要求應填寫為物件，按頁面列出圖片位置。",
+  },
   help: {
     subtitle: '宜搭低程式碼 AI 開發工具',
     usage: '用法:',
@@ -22,6 +26,7 @@ module.exports = {
     cmd_create_app: '建立宜搭應用程式',
     cmd_design_plan_preview: '按模組更新方案草稿',
     design_plan_preview_invalid: '方案草稿更新失敗，請檢查錯誤詳情',
+    cmd_design_plan_catalog: '查詢規劃可用的主題與頁面模式',
     cmd_design_plan_init: '從已確認需求初始化計劃草稿',
     cmd_design_plan_materialize: '從 build-plan.json 產生並校驗搭建計畫產物',
     cmd_design_plan_patch: '按欄位路徑調整搭建計畫並使舊確認失效',
@@ -1190,6 +1195,9 @@ module.exports = {
     failed: '页面规范检查失败'
   },
   publish: {
+    canvas_theme_provider_missing: '第 {0} 行的頁面未接入主題容器。請在 YidaComp 中返回 <CanvasThemeProvider><PageContent /></CanvasThemeProvider>，讓業務內容讀取應用主題。',
+    canvas_theme_root_hook: '第 {0} 行在主題容器生效前讀取了主題。請把 useCanvasThemeContext 移到 PageContent 中，並在 YidaComp 中用 CanvasThemeProvider 包住 <PageContent />。',
+    canvas_theme_context_scope: '第 {0} 行的 CanvasThemeContext 定義在函數內。請將主題上下文和 Provider 放在模組頂層，由頁面入口包住業務元件。',
     canvas_inline_css_invalid: '第 {0} 行附近的內嵌 CSS 存在未閉合或不匹配的括號、字串或註解，請修復後再發佈。',
     title: '  yida-publish - 宜搭頁面發布工具',
     platform: '  平台位址：{0}',
