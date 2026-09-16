@@ -8,11 +8,14 @@ const { spawnSync } = require('child_process');
 const SKILL = path.resolve(__dirname, '../yida-skills/skills/yida-design/sub_skill/yida-design-plan');
 const THEMES = path.join(SKILL, 'templates/design-themes');
 
-test('all shipped themes pass the full template contract', () => {
-  const result = spawnSync('python3', [path.join(SKILL, 'scripts/validate_design_themes.py')], { encoding: 'utf8' });
+test.each(['utf-8', 'cp1252'])('all shipped themes pass the full template contract with inherited %s encoding', encoding => {
+  const result = spawnSync('python3', [path.join(SKILL, 'scripts/validate_design_themes.py')], {
+    encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: encoding },
+  });
   expect({ status: result.status, error: result.stderr, failures: result.stdout.includes('校验失败') }).toEqual({
     status: 0, error: '', failures: false,
   });
+  expect(result.stdout).toContain('主题索引与完整 design.md 模板校验通过。');
 });
 
 test('theme validator checks base-token references and fixed typography and spacing', () => {
@@ -34,7 +37,9 @@ test('theme validator checks base-token references and fixed typography and spac
     const original = fs.readFileSync(path.join(SKILL, relative), 'utf8');
     const validate = content => {
       fs.writeFileSync(path.join(skill, relative), content);
-      return spawnSync('python3', [path.join(SKILL, 'scripts/validate_design_themes.py'), '--skill-root', skill], { encoding: 'utf8' });
+      return spawnSync('python3', [path.join(SKILL, 'scripts/validate_design_themes.py'), '--skill-root', skill], {
+        encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'cp1252' },
+      });
     };
     expect(validate(original).status).toBe(0);
     const alias = validate(original + '\n组件消费 var(--oyd-obsolete-panel)。\n');

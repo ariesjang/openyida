@@ -24,7 +24,7 @@ openyida design-plan materialize prd/<项目名>/build-plan.json --from-preview 
 
 CLI 完整校验后一起保存源计划、`prd.md`、`design.md`、`build-plan.html` 和 `app-theme.css`。HTML 使用预置模板，业务内容与 PRD 一致。
 
-标准首版的生成入口是 init 返回的 `materialize.command`。成功 JSON 中的 `outputs.html` 和 `revision` 直接构成下一步结构化确认的附件与版本输入。按模块更新过的草稿使用本节单列的 `--from-preview` 命令；诊断使用下方 `--check` 命令。
+标准首版的生成入口是 init 返回的 `materialize.command`，按 `materialize.shell` 执行：Windows 使用 PowerShell，macOS/Linux 使用 sh、bash 或 zsh。成功 JSON 中的 `outputs.html` 和 `revision` 直接构成下一步结构化确认的附件与版本输入。按模块更新过的草稿使用本节单列的 `--from-preview` 命令；诊断使用下方 `--check` 命令。
 
 完整文件的职责与版本规则见 [完整文件合并](../parallel-work.md#plan-的-cli-交接)。直接维护源计划时先设 `meta.status=awaiting_confirmation`，再执行 `openyida design-plan materialize prd/<项目名>/build-plan.json --json`；仅做诊断时使用 `openyida design-plan materialize prd/<项目名>/build-plan.json --check --json`。正常生成已经包含完整校验，不先运行一次 --check 再重复生成。
 

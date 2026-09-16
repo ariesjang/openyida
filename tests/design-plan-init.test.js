@@ -326,7 +326,7 @@ test('collects interaction state format errors alongside other missing facts', (
 });
 
 test('returned materialize command handles spaces, quotes and shell expressions in paths', () => {
-  const { execFileSync } = require('child_process');
+  const { spawnSync } = require('child_process');
   const result = initialize(briefPath, { themeId: 'airy-modular-clarity', outputDir: path.join(dir, "plan ' $(touch unwanted)") });
   const source = fixture();
   source.pages.customPageDetails[0].pageId = 'dashboard';
@@ -336,9 +336,20 @@ test('returned materialize command handles spaces, quotes and shell expressions 
   business.ready = true;
   business.facts = { overview: source.overview, dataModels: source.dataModels, businessFlows: source.businessFlows, pages: source.pages };
   fs.writeFileSync(result.preparedInputs.business, JSON.stringify(business));
-  const output = JSON.parse(execFileSync('/bin/sh', ['-c', 'openyida() { "$NODE_EXEC" "$YIDA_BIN" "$@"; }\n' + result.materialize.command], {
+  const windows = process.platform === 'win32';
+  expect(result.materialize.shell).toBe(windows ? 'powershell' : 'posix');
+  const executable = windows ? 'powershell.exe' : '/bin/sh';
+  const args = windows
+    ? ['-NoProfile', '-NonInteractive', '-Command', 'function openyida { & $env:NODE_EXEC $env:YIDA_BIN @args }\n' + result.materialize.command]
+    : ['-c', 'openyida() { "$NODE_EXEC" "$YIDA_BIN" "$@"; }\n' + result.materialize.command];
+  const execution = spawnSync(executable, args, {
     cwd: dir, encoding: 'utf8', env: { ...process.env, OPENYIDA_SKIP_UPDATE_CHECK: '1', NODE_EXEC: process.execPath, YIDA_BIN: path.resolve(__dirname, '../bin/yida.js') },
-  }));
+  });
+  // Keep child-process Error objects out of Jest worker IPC (ENOENT can be circular).
+  if (execution.error || execution.status !== 0) {
+    throw new Error(`${executable}: ${execution.error?.message || execution.stderr || execution.stdout} (exit ${execution.status})`);
+  }
+  const output = JSON.parse(execution.stdout);
   expect(output.success).toBe(true);
   expect(fs.existsSync(output.outputs.html)).toBe(true);
   expect(fs.existsSync(path.join(dir, 'unwanted'))).toBe(false);
