@@ -40,6 +40,20 @@ test('does not guess a landing page or route back to the current front page', ()
   expect(context.buildCanvasWorkbenchEntry({ appType: 'APP_current', workbenchFormUuid: 'FORM-front' })).toBeNull();
   expect(context.buildCanvasWorkbenchEntry({ appType: 'APP_current', useDefaultWorkbench: true }).targetType).toBe('app');
 });
+test('supports pageConfig access pages without weakening app identity checks', () => {
+  context.window.g_config = {};
+  context.window.pageConfig = { appType: 'APP_current', formUuid: 'FORM-front' };
+  expect(context.readCanvasAppAdmin('APP_current').status).toBe('allowed');
+  expect(context.buildCanvasWorkbenchEntry({ appType: 'APP_current', workbenchFormUuid: 'FORM-front' })).toBeNull();
+  context.window.loginUser.isAppAdmin = 'n';
+  expect(context.readCanvasAppAdmin('APP_current').status).toBe('denied');
+  context.window.loginUser.isAppAdmin = 'y';
+  context.window.g_config.appType = 'APP_other';
+  expect(context.readCanvasAppAdmin('APP_current').status).toBe('unknown');
+  context.window.g_config.appType = 'APP_current';
+  context.window.pageConfig.appType = 'APP_other';
+  expect(context.readCanvasAppAdmin('APP_current').status).toBe('unknown');
+});
 test('workbench links drop visitor display flags and retain explicit business context', () => {
   const entry = context.buildCanvasWorkbenchEntry({ appType: 'APP_current', workbenchFormUuid: 'FORM-management', viewUuid: 'view-real', params: { isRenderNav: false, iframe: true, hideLeftNav: true, 'navConfig.layout': '1180', corpid: 'corp', locale: 'zh_CN' } });
   expect(entry).toEqual({ targetType: 'page', appType: 'APP_current', formUuid: 'FORM-management', params: { corpid: 'corp', locale: 'zh_CN', viewUuid: 'view-real' } });
@@ -52,6 +66,7 @@ test('button uses the business-workbench route and rechecks identity at click ti
   const button = context.CanvasAdminWorkbenchButton({ appType: 'APP_current', workbenchFormUuid: 'FORM-management' });
   expect(button.children).toEqual(['业务工作台']);
   expect(button.props.href).toContain('/APP_current/workbench/FORM-management');
+  expect(button.props.style.color).toBe('var(--color-text1-4, inherit)');
   const event = { button: 0, preventDefault: jest.fn() };
   button.props.onClick(event);
   expect(navigate).toHaveBeenCalledTimes(1);
