@@ -1256,6 +1256,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: 'Nahe Zeile {0} fehlt der Theme-Provider. Gib in YidaComp <CanvasThemeProvider><PageContent /></CanvasThemeProvider> zurück.',
+    canvas_theme_root_hook: 'Nahe Zeile {0} wird das Theme vor dem Provider gelesen. Verschiebe useCanvasThemeContext nach PageContent und rendere es innerhalb von CanvasThemeProvider.',
+    canvas_theme_context_scope: 'CanvasThemeContext ist nahe Zeile {0} in einer Funktion definiert. Definiere Kontext und Provider auf Modulebene.',
     canvas_inline_css_invalid: 'Inline-CSS nahe Zeile {0} enthält eine nicht geschlossene oder unpassende Klammer, Zeichenfolge oder einen Kommentar. Vor Veröffentlichung korrigieren.',
     title: '  yida-publish - Yida-Seitenveröffentlichungstool',
     platform: '  Plattform: {0}',

@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 问题修复
 
 - 修复部分配色要求未正确应用，以及页面编辑错误提示不完整的问题。
+- 发布前检查页面主题是否正确接入，提前提示修正方法，减少页面打开时报错的情况。
 
 ### 升级说明
 

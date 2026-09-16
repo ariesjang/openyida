@@ -146,6 +146,23 @@ export default function Page() {
     exitSpy.mockRestore();
   });
 
+  test('rejects a missing Canvas theme provider before any HTTP request even with force and skip-lint', async () => {
+    const { buildApplicationProvider } = require('../yida-skills/skills/yida-canvas-custom-page/scripts/build-canvas-theme');
+    const sourcePath = path.join(workspace, 'theme.canvas.jsx');
+    fs.writeFileSync(sourcePath, buildApplicationProvider() + `
+      function PageContent() { const { token } = useCanvasThemeContext(); return <div style={{color: token.colorText}}>经营指标</div>; }
+      function YidaComp() { return <PageContent />; }
+    `);
+    const requestSpy = jest.spyOn(https, 'request').mockImplementation(() => { throw new Error('Unexpected HTTP request'); });
+    try {
+      await expect(publishPage([sourcePath, 'APP_XXX', 'FORM-PAGE', '--canvas', '--force', '--skip-lint', '--no-open']))
+        .rejects.toMatchObject({ code: 'OPENYIDA_CANVAS_THEME_PROVIDER_INVALID', details: { issueType: 'provider_missing' } });
+      expect(requestSpy).not.toHaveBeenCalled();
+    } finally {
+      requestSpy.mockRestore();
+    }
+  });
+
   test('suggests pages/src path when cwd is already the OpenYida project directory', () => {
     const sourceDir = path.join(workspace, 'pages', 'src');
     fs.mkdirSync(sourceDir, { recursive: true });

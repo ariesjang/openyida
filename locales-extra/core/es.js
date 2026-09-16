@@ -1258,6 +1258,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: 'Falta el proveedor del tema cerca de la línea {0}. Devuelve <CanvasThemeProvider><PageContent /></CanvasThemeProvider> desde YidaComp.',
+    canvas_theme_root_hook: 'El tema se lee antes de activar su proveedor cerca de la línea {0}. Mueve useCanvasThemeContext a PageContent y renderízalo dentro de CanvasThemeProvider.',
+    canvas_theme_context_scope: 'CanvasThemeContext se declara dentro de una función cerca de la línea {0}. Declara el contexto y el proveedor a nivel de módulo.',
     canvas_inline_css_invalid: 'El CSS cerca de la línea {0} contiene un delimitador, cadena o comentario sin cerrar o incorrecto. Corrígelo antes de publicar.',
     title: '  yida-publish - Herramienta de publicación de páginas Yida',
     platform: '  Plataforma: {0}',

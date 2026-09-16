@@ -1257,6 +1257,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: '{0}행 부근에 테마 Provider가 적용되지 않았습니다. YidaComp에서 <CanvasThemeProvider><PageContent /></CanvasThemeProvider>를 반환하세요.',
+    canvas_theme_root_hook: '{0}행 부근에서 Provider 적용 전에 테마를 읽고 있습니다. useCanvasThemeContext를 PageContent로 옮기고 CanvasThemeProvider 안에서 렌더링하세요.',
+    canvas_theme_context_scope: '{0}행 부근의 CanvasThemeContext가 함수 안에 선언되어 있습니다. Context와 Provider를 모듈 최상위에 선언하세요.',
     canvas_inline_css_invalid: '{0}행 부근 CSS에 닫히지 않거나 일치하지 않는 괄호, 문자열 또는 주석이 있습니다. 게시 전에 수정하세요.',
     title: '  yida-publish - Yida 페이지 배포 도구',
     platform: '  플랫폼: {0}',

@@ -17,6 +17,8 @@ openyida sample openyida-page-template canvas-theme --output <项目目录>/canv
 
 将片段与业务代码合并到同一 Canvas 文件，React 和 ConfigProvider 的 import 各保留一份。把业务内容放进 PageContent，在 YidaComp 中用 CanvasThemeProvider 包住 PageContent。已有页面用它替换自带的主题 hook 和配色 ConfigProvider。
 
+组件结构固定为 `YidaComp → CanvasThemeProvider → PageContent`。主题上下文和 Provider 定义放在模块顶层；`useCanvasThemeContext()` 放在 PageContent 或其子组件中；通过 `<PageContent />` 渲染业务内容。
+
 ## 2. 用本地主题文件生成页面
 
 先按 design.md 准备 app-theme.css。应用主题使用 `openyida update-app <appType> --theme-file <app-theme.css>` 上传保存；页面由平台加载该 CSS。
@@ -28,7 +30,8 @@ openyida sample openyida-page-template canvas-theme --output <项目目录>/canv
 import { Button } from 'antd';
 
 function PageContent() {
-  return <Button type="primary">新增</Button>;
+  const { token } = useCanvasThemeContext();
+  return <section style={{ color: token.colorText }}><Button type="primary">新增</Button></section>;
 }
 function YidaComp() {
   return <CanvasThemeProvider><PageContent /></CanvasThemeProvider>;
@@ -63,6 +66,8 @@ node <skill-dir>/scripts/build-canvas-theme.js \
 ## 4. 检查主题和发布结果
 
 先执行 `openyida compile <输出文件> --json`，再检查实际页面的主色、按钮状态、确认弹窗、延迟加载和换肤效果。用户要求发布时，执行 `openyida publish <输出文件> <appType> <formUuid>`。
+
+编译会检查主题容器是否挂载、入口是否提前读取主题、主题上下文是否放在模块顶层。报错包含位置和调整方法，按提示修正后再次编译。发布后实际打开页面，检查首屏和主题交互；`--health-check` 用于核对保存内容，页面能否正常运行以浏览器结果为准。
 
 Context 返回 `token/status/source/revision`：
 

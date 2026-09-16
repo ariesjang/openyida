@@ -1256,6 +1256,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: 'पंक्ति {0} के पास थीम प्रदाता जुड़ा नहीं है। YidaComp से <CanvasThemeProvider><PageContent /></CanvasThemeProvider> लौटाएँ।',
+    canvas_theme_root_hook: 'पंक्ति {0} के पास प्रदाता सक्रिय होने से पहले थीम पढ़ी जा रही है। useCanvasThemeContext को PageContent में ले जाएँ और उसे CanvasThemeProvider के भीतर रेंडर करें।',
+    canvas_theme_context_scope: 'पंक्ति {0} के पास CanvasThemeContext फ़ंक्शन के भीतर घोषित है। संदर्भ और प्रदाता को मॉड्यूल स्तर पर घोषित करें।',
     canvas_inline_css_invalid: 'पंक्ति {0} के पास CSS में अधूरा या बेमेल कोष्ठक, स्ट्रिंग या टिप्पणी है। प्रकाशित करने से पहले ठीक करें।',
     title: '  yida-publish - Yida पेज प्रकाशन टूल',
     platform: '  प्लेटफ़ॉर्म: {0}',

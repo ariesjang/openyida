@@ -1256,6 +1256,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: 'لم تُربط الصفحة قرب السطر {0} بمزوّد السمة. أعد <CanvasThemeProvider><PageContent /></CanvasThemeProvider> من YidaComp.',
+    canvas_theme_root_hook: 'تُقرأ السمة قبل تفعيل مزوّدها قرب السطر {0}. انقل useCanvasThemeContext إلى PageContent واعرضه داخل CanvasThemeProvider.',
+    canvas_theme_context_scope: 'تم تعريف CanvasThemeContext داخل دالة قرب السطر {0}. انقل السياق والمزوّد إلى مستوى الوحدة.',
     canvas_inline_css_invalid: 'يحتوي CSS قرب السطر {0} على قوس أو نص أو تعليق غير مغلق أو غير متطابق. أصلحه قبل النشر.',
     title: '  yida-publish - أداة نشر صفحات Yida',
     platform: '  المنصة: {0}',

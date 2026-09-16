@@ -134,6 +134,8 @@ function setNavigationTitle(title) {
 
 antd 页面使用 CanvasThemeProvider，图表通过 useCanvasThemeContext 取色。`sample` 输出的表单抽屉、批量表格和趋势图页面已接好主题；其他页面按 [主题接入步骤](references/canvas-theme-provider.md) 操作。
 
+页面入口按 `YidaComp → CanvasThemeProvider → PageContent` 组织，主题 hook 放在 PageContent 或其子组件内。编译通过后，打开实际页面检查首屏、主题和交互。
+
 ## 接入真实数据
 
 - 完整应用或真实交付页先解析真实 `appType/formUuid/fieldId`，并在 `page-spec.json` 写入 `dataBinding.mode=form`。

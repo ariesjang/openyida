@@ -1207,6 +1207,9 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_theme_provider_missing: '{0} 行付近でテーマの Provider が適用されていません。YidaComp から <CanvasThemeProvider><PageContent /></CanvasThemeProvider> を返してください。',
+    canvas_theme_root_hook: '{0} 行付近で Provider の適用前にテーマを参照しています。useCanvasThemeContext を PageContent に移し、CanvasThemeProvider の子として描画してください。',
+    canvas_theme_context_scope: '{0} 行付近の CanvasThemeContext が関数内で定義されています。Context と Provider をモジュールのトップレベルに配置してください。',
     canvas_inline_css_invalid: '{0} 行付近の CSS に閉じていない、または対応しない括弧、文字列、コメントがあります。公開前に修正してください。',
     title: '  yida-publish - Yida ページ公開ツール',
     platform: '  プラットフォーム: {0}',

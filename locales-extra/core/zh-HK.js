@@ -1195,6 +1195,9 @@ module.exports = {
     failed: '页面规范检查失败'
   },
   publish: {
+    canvas_theme_provider_missing: '第 {0} 行的頁面未接入主題容器。請在 YidaComp 中返回 <CanvasThemeProvider><PageContent /></CanvasThemeProvider>，讓業務內容讀取應用主題。',
+    canvas_theme_root_hook: '第 {0} 行在主題容器生效前讀取了主題。請把 useCanvasThemeContext 移到 PageContent 中，並在 YidaComp 中用 CanvasThemeProvider 包住 <PageContent />。',
+    canvas_theme_context_scope: '第 {0} 行的 CanvasThemeContext 定義在函數內。請將主題上下文和 Provider 放在模組頂層，由頁面入口包住業務元件。',
     canvas_inline_css_invalid: '第 {0} 行附近的內嵌 CSS 存在未閉合或不匹配的括號、字串或註解，請修復後再發佈。',
     title: '  yida-publish - 宜搭頁面發布工具',
     platform: '  平台位址：{0}',
