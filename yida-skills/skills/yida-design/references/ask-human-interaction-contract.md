@@ -100,7 +100,7 @@
 | 进入 Step、加载分支、返回上层流程 | 说明下一项业务动作；没有用户价值时省略 |
 | 缺口、阻塞项、对焦 | 还需要确认的关键信息 |
 | `required`、`missingSlots`、`writeBackPath`、`reason` | 仅内部使用，不展示 |
-| `meta.revision`、`meta.status`、`planState` | 当前这版方案或第 N 版方案 |
+| `meta.revision`、`meta.status`、`planState` | 当前方案（不显示修订序号） |
 | `hideAppNav=y`、`isRenderNav=false` | 隐藏平台导航，使用自定义导航或独立页面入口；按当前导航方案描述 |
 | `appType`、`formUuid`、接口参数、CLI 选项 | 使用应用名、页面名及对应业务动作描述 |
 
@@ -158,7 +158,7 @@ Fast / Plan 是面向用户的模式名称，仅在首轮澄清后的模式路�
 
 Plan Design 完成当前版本后，按以下顺序与用户交互：
 
-1. 在会话中使用“当前这版方案”或“第 N 版方案”，给出 3-7 条业务摘要；原始 `meta.revision` 仅用于内部状态绑定。
+1. 在会话中使用“搭建方案”或“当前方案”，给出 3-7 条业务摘要。用户可见的 PRD / HTML 标题、摘要、附件名称和确认问题都不展示修订序号或原始 `meta.revision`；修订标识仅保留在内部元数据和确认字段中。
 2. 在“最新搭建计划确认”的同一次 `ask_human` 中，通过 `attachments` 展示可打开的 `prd/<项目名>/build-plan.html`，并以 `revision` 绑定当前 `meta.revision`。
 3. 结构化交互成功创建后将 `meta.planState.presentedRevision=meta.revision` 写回源 JSON，不再物化；awaiting_confirmation 在生成前写入。
 4. 提供“确认并开始搭建”和“继续调整”两个选择，并等待用户回答。
@@ -171,7 +171,7 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 
 ```json
 {
-  "question": "是否按当前这版方案开始搭建？",
+  "question": "是否按当前方案开始搭建？",
   "title": "确认整体方案",
   "options": [
     {

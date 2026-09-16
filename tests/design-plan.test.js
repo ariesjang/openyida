@@ -196,6 +196,8 @@ describe('design-plan materialize', () => {
     expect(design).not.toMatch(/\{\{[^}]+\}\}|<基于 --color-brand1-6/);
     expect(html).toContain('href="#overview"');
     expect(html).toContain('href="#pages"');
+    expect(html).not.toContain(result.revision);
+    expect(html).not.toMatch(/第\s*\d+\s*版|buildPlanRevision/);
   });
 
   test('renders Chinese artifacts over UTF-8 pipes even with inherited Windows encoding', () => {
@@ -1042,7 +1044,8 @@ describe('Plan contract and file consistency', () => {
     await run(['materialize', input, '--check', '--json']);
     expect(JSON.parse(log.mock.calls[0][0]).revision).toBe(read().meta.revision);
     const workflow = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-app/workflow/plan/step-4-deliver.md'), 'utf8');
-    expect(workflow).toContain('展示“当前这版方案”');
+    expect(workflow).toContain('展示“当前方案”');
+    expect(workflow).not.toContain('第 N 版方案');
     expect(workflow).not.toContain('展示当前 revision');
     expect(workflow).toContain('presentedRevision=meta.revision');
   });
@@ -1103,7 +1106,7 @@ describe('Plan contract and file consistency', () => {
       'submitLabel',
       'title',
     ]);
-    expect(payload.question).toBe('是否按当前这版方案开始搭建？');
+    expect(payload.question).toBe('是否按当前方案开始搭建？');
     expect(payload.options.map(option => option.value)).toEqual([
       'confirm_build',
       'continue_editing',
@@ -1116,6 +1119,7 @@ describe('Plan contract and file consistency', () => {
       },
     ]);
     expect(payload.revision).toBe('{revision}');
+    expect([payload.title, payload.question, ...payload.attachments.map(item => item.name)].join(' ')).not.toMatch(/第\s*(?:N|\d+)\s*版|\{revision\}/);
     expect(payload.submitLabel).toBeTruthy();
     expect(JSON.stringify(payload)).not.toMatch(
       /"(?:fields|text|textarea)"\s*:|调整说明/,

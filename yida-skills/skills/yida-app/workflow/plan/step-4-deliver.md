@@ -24,7 +24,7 @@ openyida design-plan materialize prd/<项目名>/build-plan.json --from-preview 
 
 CLI 完整校验后一起保存源计划、`prd.md`、`design.md`、`build-plan.html` 和 `app-theme.css`。
 
-执行 init 返回的 `materialize.command`，使用其 `materialize.shell`：Windows 为 PowerShell，其他平台为 POSIX shell。成功结果的 `outputs.html`、`revision` 直接用于展示确认。片段职责见 [完整文件合并](../parallel-work.md#plan-的-cli-交接)。直接维护源 JSON 时先设 status=awaiting_confirmation，再运行 `openyida design-plan materialize prd/<项目名>/build-plan.json --json`；诊断加 `--check --json`，正常生成不重复预检。
+执行 init 返回的 `materialize.command`，使用其 `materialize.shell`：Windows 为 PowerShell，其他平台为 POSIX shell。成功结果的 `outputs.html` 用于展示方案，`revision` 仅用于内部确认绑定，不透出给用户。片段职责见 [完整文件合并](../parallel-work.md#plan-的-cli-交接)。直接维护源 JSON 时先设 status=awaiting_confirmation，再运行 `openyida design-plan materialize prd/<项目名>/build-plan.json --json`；诊断加 `--check --json`，正常生成不重复预检。
 
 HTML 使用预置模板，保留需求总览、数据模型、业务流程、页面规划四章；整体视觉在总览、逐页视觉在详情，业务与 PRD 一致。见 [HTML 内容契约](../../../yida-design/sub_skill/yida-design-plan/assets/README.md#需求总览中的视觉信息)。
 
@@ -34,9 +34,9 @@ HTML 使用预置模板，保留需求总览、数据模型、业务流程、页
 
 按 [用户交互契约](../../../yida-design/references/ask-human-interaction-contract.md) 执行：
 
-1. 在会话中展示“当前这版方案”，并用 3–7 条业务摘要说明方案内容。
+1. 在会话中展示“当前方案”，并用 3–7 条业务摘要说明方案内容。
 2. 实际调用 `ask_human` 创建结构化提问。调用对象严格采用交互契约中的唯一 payload schema；`attachments` 携带 `name: "build-plan.html"`、`path: "prd/<项目名>/build-plan.html"`，`revision` 使用当前 `meta.revision`，`options` 固定为 `confirm_build` 和 `continue_editing`。一次成功调用同时建立方案展示、版本绑定和最终选择。
-3. 结构化交互成功创建后将 `meta.planState.presentedRevision=meta.revision` 写回源 JSON，仅保存展示事实，不重新物化。询问“确认并开始搭建”或“继续调整”，提交时由宿主原样回传 revision，将确认结果绑定到本次展示版本。用户可见版本称为“第 N 版方案”，展示序号与内部 revision 绑定。
+3. 结构化交互成功创建后将 `meta.planState.presentedRevision=meta.revision` 写回源 JSON，仅保存展示事实，不重新物化。询问“确认并开始搭建”或“继续调整”，提交时由宿主原样回传 revision，将确认结果绑定到本次展示版本。用户可见标题、摘要、附件名称与确认问题统一使用“搭建方案”或“当前方案”，不展示修订序号。内部 revision、展示记录和确认失效机制照常维护。
 
 只有以下条件同时成立才交接；它们由本轮 ask_human 请求和回传在运行时判定，确认结果可保留在运行时，但展示版本必须写回源文件：
 
