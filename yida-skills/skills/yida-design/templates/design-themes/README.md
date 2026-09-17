@@ -63,4 +63,6 @@ npm run check:skills
 
 校验器只依赖 Python 3.9+ 标准库；`check:skills` 自动尝试 `python3`、`python`、Windows 的 `py -3`，找不到可用解释器时明确失败，不能跳过。`check:ci` 已包含 `check:skills`。
 
+`check:skills` 还通过 CLI 的公共主题校验检查 `references/theme/app-custom-theme-template.css`，包括括号、字符串和注释闭合、品牌色阶及受限内容。主题生成测试检查 15 套主题的 token 位于顶层 `:root`，并保留白色、灰色导航的变量引用与回退链；不能用正则匹配到变量代替作用域验证。
+
 校验覆盖索引与模板一一对应、ID 和路径安全、五章节与四个项目占位符、分组变量声明、固定值、同源关系、未知与循环引用。测试使用真实共享库，并以缺失字段、非法路径、固定值漂移和错误引用等坏样例验证错误能被拦截。

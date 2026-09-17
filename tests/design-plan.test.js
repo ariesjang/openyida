@@ -792,7 +792,9 @@ describe('design-plan materialize', () => {
         : scope(template, mode).match(/--pod-shell-theme-bg-color:\s*([^;]+);/)[1];
       const scoped = scope(css, mode);
       expect(scoped).toContain(`--pod-shell-theme-bg-color: ${background};`);
-      expect(scoped).toContain(`--pod-page-header-bg-color: ${background};`);
+      const headerBackground = mode === tone ? background
+        : scope(template, mode).match(/--pod-page-header-bg-color:\s*([^;]+);/)[1];
+      expect(scoped).toContain(`--pod-page-header-bg-color: ${headerBackground};`);
     }
     // Changing the primary color updates the selected theme palette and keeps other modes.
     plan.visualStyle.forUser.colorStrategy.primaryColor = '#1677FF';

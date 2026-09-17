@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-design');
 const { renderDesign } = require('../lib/design-plan/materialize');
+const { validateThemeCssContent } = require('../lib/app/custom-theme');
 const fixture = require('./fixtures/design-plan.json');
 const template = fs.readFileSync(path.join(__dirname,
   '../yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
@@ -23,6 +24,7 @@ function design(themeId, tone, primaryColor = '#6F4E37') {
 // Resolve the public template's root inheritance and equal-specificity mode
 // rules in source order, including its second :root.
 function cascade(css, navigation, tone = navigation) {
+  validateThemeCssContent(css);
   const values = {};
   const blocks = [...css.matchAll(/(^:root|^\.pod-premium\.(?:nav|is)-(?:light|dark|white|gray))\s*\{([^}]*)\}/gm)];
   for (const [, , body] of blocks.filter(match => match[1] === ':root')) {
@@ -49,7 +51,11 @@ test.each([
   const inactive = cascade(css, other);
   const defaults = cascade(template, other);
   for (const name of navigationNames) {expect(inactive[name]).toBe(defaults[name]);}
-  expect(cascade(css, 'white', 'light')['--pod-shell-theme-bg-color']).toBe('#fff');
+  for (const mode of ['white', 'gray']) {
+    for (const name of ['--pod-shell-theme-bg-color', '--pod-page-header-bg-color']) {
+      expect(cascade(css, mode, 'light')[name]).toBe(cascade(template, mode, 'light')[name]);
+    }
+  }
   expect(applyDesignTokens(css, markdown)).toBe(css);
   expect(applyDesignTokens(css, markdown, markdown)).toBe(css);
 });

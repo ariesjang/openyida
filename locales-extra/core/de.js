@@ -6,13 +6,14 @@
  */
 module.exports = {
   design_document: {
+    theme_css_invalid: 'Das Theme-CSS enthält nahe Zeile {0} eine nicht geschlossene oder falsch gepaarte Klammer, Zeichenfolge oder einen Kommentar. Bitte korrigieren und erneut versuchen.',
     invalid: 'Designprüfung fehlgeschlagen: {0} ({1})',
     yaml: 'Das Frontmatter des Designdokuments ist kein gültiges YAML',
     token_value: 'Token {0} muss ein aufgelöster einzeiliger CSS-Wert sein',
     token_conflict: 'Token {0} enthält doppelte oder widersprüchliche Werte',
     tokens_required: 'design.md benötigt ein Frontmatter mit Tokens',
     brand_required: 'In design.md fehlen Marken-Tokens: {0}',
-    usage: 'Verwendung: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    usage: 'Verwendung: openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]',
     read_error: 'Datei zur Designprüfung kann nicht gelesen werden: {0}',
     checked: 'Designprüfung erfolgreich: {0}; {1} Seiten, {2} Tokens',
   },

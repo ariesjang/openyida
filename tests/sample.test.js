@@ -638,7 +638,13 @@ describe('application theme from design.md', () => {
     expect(css).toContain('--color-brand1-6: #315BCC;');
     expect(css).toContain('--pod-card-border-radius: 16px;');
     expect(css).not.toContain('rgba(155, 136, 121, 1)');
-    expect(structure(css)).toBe(structure(template));
+    // The current base template omits derived brand aliases; generation adds them globally.
+    const root = css.match(/^:root\s*\{([^{}]*)\}/m)[1];
+    for (const name of ['--color-brand-1', '--color-brand-2', '--color-brand-3', '--color-brand-4', '--color-group']) {
+      expect(root).toContain(`${name}:`);
+    }
+    const withoutAliases = css.replace(/^[ \t]*--(?:color-brand-[1-4]|color-group)\s*:[^;]+;\n/gm, '');
+    expect(structure(withoutAliases)).toBe(structure(template));
     expect(css.match(/--color-error[^;]+;/g)).toEqual(template.match(/--color-error[^;]+;/g));
   });
 
@@ -649,6 +655,12 @@ describe('application theme from design.md', () => {
     plan.visualStyle.tokens = { '--pod-card-border-radius': '16px' };
     const design = renderDesign(plan);
     const css = applyDesignTokens(template, design);
+    const root = css.match(/^:root\s*\{([^{}]*)\}/m)[1];
+    const rootTokens = Object.fromEntries([...root.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)]
+      .map(([, name, value]) => [name, value.trim()]));
+    for (const [name, value] of Object.entries(readDesignTokens(design))) {
+      expect(rootTokens[name]).toBe(value);
+    }
     expect(readDesignTokens(design)['--pod-card-border-radius']).toBe('16px');
     expect(css).toContain('--pod-card-border-radius: 16px;');
     expect(css).toContain('--color-brand1-6: #6F4E37;');
@@ -701,6 +713,47 @@ describe('application theme from design.md', () => {
       expect(fs.readFileSync(css, 'utf8')).toContain('--color-brand1-6: #8844AA;');
     } finally {
       err.mockRestore(); log.mockRestore(); fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test.each([false, true])('CLI rejects damaged existing CSS without changing files (design changed: %s)', async changed => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-theme-structure-'));
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const err = jest.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const design = path.join(dir, 'design.md');
+      const css = path.join(dir, 'app-theme.css');
+      const snapshot = `${css}.tokens.md`;
+      const apply = () => run(['yida-design', 'app-theme', '--design-file', design, '--output', css]);
+      fs.writeFileSync(design, fastDesign);
+      await apply();
+      // Reproduce the missing first root closure, with otherwise valid downstream rules.
+      const broken = fs.readFileSync(css, 'utf8').replace(/^\}/m, '');
+      fs.writeFileSync(css, broken);
+      if (changed) {fs.writeFileSync(design, fastDesign.replace('16px', '18px'));}
+      const before = [css, snapshot].map(file => fs.readFileSync(file, 'utf8'));
+      await expect(apply()).rejects.toMatchObject({ code: 'THEME_CSS_STRUCTURE_INVALID' });
+      expect([css, snapshot].map(file => fs.readFileSync(file, 'utf8'))).toEqual(before);
+    } finally {
+      err.mockRestore(); log.mockRestore(); fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test('template-only export rejects damaged source CSS before writing', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-theme-template-'));
+    const output = path.join(dir, 'app-theme.css');
+    const read = fs.readFileSync;
+    const spy = jest.spyOn(fs, 'readFileSync').mockImplementation((file, ...args) => {
+      const content = read(file, ...args);
+      return String(file).endsWith('app-custom-theme-template.css') ? content.replace(/^\}/m, '') : content;
+    });
+    try {
+      await expect(run(['yida-design', 'app-theme', '--output', output]))
+        .rejects.toMatchObject({ code: 'THEME_CSS_STRUCTURE_INVALID' });
+      expect(fs.existsSync(output)).toBe(false);
+      expect(fs.existsSync(`${output}.tokens.md`)).toBe(false);
+    } finally {
+      spy.mockRestore(); fs.rmSync(dir, { recursive: true, force: true });
     }
   });
 

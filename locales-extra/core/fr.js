@@ -6,13 +6,14 @@
  */
 module.exports = {
   design_document: {
+    theme_css_invalid: 'Le CSS du thème contient un délimiteur, une chaîne ou un commentaire non fermé ou mal apparié près de la ligne {0}. Corrigez puis réessayez.',
     invalid: 'Échec de la validation du design : {0} ({1})',
     yaml: 'Le frontmatter du document de design n’est pas un YAML valide',
     token_value: 'Le jeton {0} doit être une valeur CSS résolue sur une seule ligne',
     token_conflict: 'Le jeton {0} contient des valeurs dupliquées ou contradictoires',
     tokens_required: 'design.md doit contenir un frontmatter avec des jetons',
     brand_required: 'Jetons de marque manquants dans design.md : {0}',
-    usage: 'Utilisation: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    usage: 'Utilisation: openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]',
     read_error: 'Impossible de lire le fichier de validation du design : {0}',
     checked: 'Validation du design réussie : {0} ; {1} pages, {2} jetons',
   },

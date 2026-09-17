@@ -10,17 +10,17 @@
  *
  * AI 使用说明：
  * 1. 先在 design.md 确定主题色，再执行 openyida sample yida-design app-theme
- *    --output <app-theme.css> 复制本模板。
- * 2. 按主题色修改对应 token；严禁重新生成或覆盖整份 CSS。
- * 3. 本模板默认呈现大圆角与 coffee 咖啡色主题；
- *    yida-design 按当前业务的 design.md 调整配色。
+ *    --design-file <design.md> --output <app-theme.css> 生成主题。
+ * 2. 修改 design.md 后重跑同一命令，CLI 增量更新 token 并保留其他定制。
+ *    省略 --design-file 会重置模板，不用于保留已有定制的更新。
+ * 3. 本模板默认品牌种子为 coffee 咖啡色；最终配色和圆角以 design.md 的 tokens 为准。
  * 4. 应用品牌色阶只使用平台实际生成的 --color-brand1-1、2、3、5、6、9、10；
- *    --color-brand-1 至 --color-brand-4 和 --color-group 也必须保留并成套修改，不要补造 4、7、8。
+ *    CLI 同时生成 --color-brand-1 至 --color-brand-4 和 --color-group，不要补造 4、7、8。
  * 5. 若 design.md 选择其他主色，必须同步替换品牌色阶、基础色阶、图表色组，以及模板中按钮、
  *    表单、选中态、导航、日期组件等品牌相关直接色值；成功、警告、错误、通知等语义色保持独立。
- * 6. 默认保留页面/卡片/抽屉 20px、组件 8-12px、按钮胶囊形的大圆角层级；
- *    只有 design.md 明确给出其他 roundedRule 时才成套调整。
- * 7. 保留变量名和 nav/light/dark 选择器结构。
+ * 6. 页面、卡片、抽屉和控件通过变量引用继承项目圆角，不强制所有主题使用大圆角。
+ * 7. 保留变量名、顶层 :root 及导航明暗作用域；白色、灰色模式保留背景回退链。
+ *    CLI 在生成前后和上传前检查 CSS 结构闭合，失败时修复源文件后重试。
  */
 
 :root {
@@ -345,7 +345,7 @@
   --page-bg: var(--pod-page-bg-color, #fff);
   --card-bg: var(--pod-card-bg-color, #fff);
   --popup-bg: var(--color-fill1-5, #fff);
-
+}
 
 /* 白色导航背景与白色卡片相邻时，用描边保留卡片层级。 */
 .pod-premium.nav-white,

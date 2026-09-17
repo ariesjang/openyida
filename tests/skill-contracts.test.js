@@ -1444,10 +1444,12 @@ describe('OpenYida skill contracts', () => {
     for (const index of [4, 7, 8]) {
       expect(customThemeTemplate).not.toMatch(new RegExp(`--color-brand1-${index}\\s*:`));
     }
-    expect(customThemeTemplate).toContain('默认呈现大圆角与 coffee 咖啡色主题');
+    expect(customThemeTemplate).toContain('最终配色和圆角以 design.md 的 tokens 为准');
+    expect(customThemeTemplate).toContain('--design-file <design.md> --output <app-theme.css>');
     expect(customThemeTemplate).toContain('不要补造 4、7、8');
     expect(customThemeTemplate).toContain('--pod-default-border-radius: 20px;');
-    expect(customThemeTemplate).toContain('--pod-page-border-radius: 20px;');
+    expect(customThemeTemplate).toContain('--pod-page-border-radius: var(--pod-xl-border-radius, 20px);');
+    expect(customThemeTemplate).toContain('--pod-xl-border-radius: var(--corner-5);');
     expect(customThemeTemplate).toContain('--color-brand1-5: rgba(52, 50, 44, 1);');
     expect(customThemeTemplate).not.toContain('openyida create-app');
     expect(customThemeTemplate).not.toContain('openyida update-app');

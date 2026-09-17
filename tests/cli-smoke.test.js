@@ -2528,6 +2528,8 @@ test('plain user-facing guidance is available from manifest and both agent capab
   expect(capabilities.commands.core_workflows.full_app_build.visual_decision_policy).toEqual(visual);
   expect(capabilities.recommended.default_full_app_workflow.visual_decision_policy).toEqual(visual);
   expect(fs.existsSync(path.join(ROOT, visual.reference.split('#')[0]))).toBe(true);
+  expect(visual.reference).toBe('yida-skills/skills/yida-design/references/theme-selection.md#设计方向比较');
+  expect(fs.readFileSync(path.join(ROOT, visual.reference.split('#')[0]), 'utf8')).toContain('## 设计方向比较');
 });
 
 test('asset fallback and completion policies are shared by the CLI, manifest and agent summary', () => {
@@ -2621,9 +2623,14 @@ test('Plan CLI and design-file sample work locally without a login', () => {
     runOk(['sample', 'yida-design', 'app-theme', '--design-file', path.join(dir, 'design.md'), '--output', cssPath]);
     const css = fs.readFileSync(cssPath, 'utf8');
     expect(css).toContain('--pod-card-border-radius: 16px');
-    for (const [tone, background] of Object.entries({ dark: tokens['--pod-shell-theme-bg-color'], white: '#fff', gray: '#f0f2f5' })) {
-      const block = css.match(new RegExp(`\\.pod-premium\\.nav-${tone}\\s*\\{([^}]+)\\}`))[1];
+    const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
+    const scope = (source, tone) => source.match(new RegExp(`\\.pod-premium\\.nav-${tone}\\s*\\{([^}]+)\\}`))[1];
+    for (const tone of ['dark', 'white', 'gray']) {
+      const background = tone === 'dark' ? tokens['--pod-shell-theme-bg-color']
+        : scope(template, tone).match(/--pod-shell-theme-bg-color:\s*([^;]+);/)[1];
+      const block = scope(css, tone);
       expect(block).toContain(`--pod-shell-theme-bg-color: ${background};`);
+      if (tone !== 'dark') {expect(block).toBe(scope(template, tone));}
     }
   } finally {fs.rmSync(dir, { recursive: true, force: true });}
 });

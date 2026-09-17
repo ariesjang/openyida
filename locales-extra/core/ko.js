@@ -6,13 +6,14 @@
  */
 module.exports = {
   design_document: {
+    theme_css_invalid: '테마 CSS의 {0}행 근처에 닫히지 않았거나 짝이 맞지 않는 괄호, 문자열 또는 주석이 있습니다. 수정 후 다시 시도하세요.',
     invalid: '디자인 검증 실패: {0} ({1})',
     yaml: '디자인 문서의 frontmatter가 올바른 YAML이 아닙니다',
     token_value: '토큰 {0}에는 확정된 한 줄 CSS 값이 필요합니다',
     token_conflict: '토큰 {0}에 중복되거나 충돌하는 값이 있습니다',
     tokens_required: 'design.md에 토큰을 포함한 frontmatter가 없습니다',
     brand_required: 'design.md에 브랜드 토큰이 없습니다: {0}',
-    usage: '사용법: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    usage: '사용법: openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]',
     read_error: '디자인 검증 파일을 읽을 수 없습니다: {0}',
     checked: '디자인 검증 통과: {0}, 페이지 {1}개, 토큰 {2}개',
   },

@@ -6,13 +6,14 @@
  */
 module.exports = {
   design_document: {
+    theme_css_invalid: 'CSS giao diện gần dòng {0} có dấu ngoặc, chuỗi hoặc chú thích chưa đóng hoặc không khớp. Hãy sửa rồi thử lại.',
     invalid: 'Xác thực thiết kế thất bại: {0} ({1})',
     yaml: 'Frontmatter của tài liệu thiết kế không phải YAML hợp lệ',
     token_value: 'Token {0} phải là giá trị CSS đã xác định trên một dòng',
     token_conflict: 'Token {0} có giá trị trùng lặp hoặc xung đột',
     tokens_required: 'design.md cần có frontmatter chứa token',
     brand_required: 'design.md thiếu token thương hiệu: {0}',
-    usage: 'Cách dùng: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    usage: 'Cách dùng: openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]',
     read_error: 'Không thể đọc tệp xác thực thiết kế: {0}',
     checked: 'Xác thực thiết kế thành công: {0}; {1} trang, {2} token',
   },

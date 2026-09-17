@@ -236,7 +236,69 @@ test('native-form-only designs and exported bundles are valid', () => {
   value.metadata.assetStrategy.pages = [];
   value.body = value.body.slice(0, value.body.indexOf('<a id="page-workbench">'));
   expect(check(value, { prdMarkdown: prd('prd/project/design.md', []) }).pages).toEqual([]);
-  expect(check(fixture(), { prdMarkdown: prd(), designFile: '/tmp/export/design.md' }).success).toBe(true);
+  const baseDir = path.join(os.tmpdir(), 'export');
+  expect(check(fixture(), { prdMarkdown: prd(), designFile: path.join(baseDir, 'prd/研发/design.md'), baseDir }).success).toBe(true);
+  expectIssue(() => check(fixture(), { prdMarkdown: prd(), designFile: path.join(baseDir, 'design.md'), baseDir }), 'DESIGN_FILE_MISMATCH');
+});
+
+test('document locations use the working directory by default and check absolute references too', () => {
+  const designFile = path.resolve('prd/研发/design.md');
+  expect(check(fixture(), { prdMarkdown: prd(), designFile }).success).toBe(true);
+  expect(check(fixture(), { prdMarkdown: prd(designFile), designFile }).success).toBe(true);
+  expect(check(fixture(), { prdMarkdown: prd('prd/研发/../研发/design.md'), designFile }).success).toBe(true);
+  for (const other of ['prd/another-project/nonexistent.md', path.resolve('prd/other/design.md')]) {
+    expectIssue(() => check(fixture(), { prdMarkdown: prd(other), designFile }), 'DESIGN_FILE_MISMATCH');
+  }
+});
+
+test.each(['Plan', 'Fast'])('CLI checks %s relative paths by default and supports explicit project roots', format => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-design-paths-'));
+  try {
+    const project = path.join(dir, 'project');
+    const designPath = path.join(project, 'prd/研发/design.md');
+    const prdPath = path.join(project, 'prd/研发/prd.md');
+    fs.mkdirSync(path.dirname(designPath), { recursive: true });
+    fs.writeFileSync(designPath, serializeDesignDocument(fixture()));
+    const writePrd = reference => fs.writeFileSync(prdPath, format === 'Plan' ? prd(reference)
+      : fastPrd().replace('prd/研发/design.md', reference));
+    const invoke = (cwd, extra = []) => spawnSync(process.execPath, [path.join(ROOT, 'bin/yida.js'), 'check-design',
+      path.relative(cwd, designPath), '--prd', path.relative(cwd, prdPath), '--json', ...extra], {
+      cwd, encoding: 'utf8', env: { ...process.env, CI: '1', OPENYIDA_LANG: 'zh' },
+    });
+    const mismatch = result => {
+      expect(result.status).toBe(1);
+      expect(JSON.parse(result.stdout || result.stderr)).toMatchObject({
+        success: false, errorCode: 'DESIGN_DOCUMENT_INVALID',
+        details: expect.objectContaining({ issue: 'DESIGN_FILE_MISMATCH' }),
+      });
+    };
+    writePrd('prd/研发/design.md');
+    expect(invoke(project).status).toBe(0);
+    mismatch(invoke(dir));
+    const explicit = invoke(dir, ['--base-dir', 'project']);
+    expect(explicit.status).toBe(0);
+    expect(JSON.parse(explicit.stdout)).toMatchObject({ success: true, prdChecked: true, baseDir: fs.realpathSync(project) });
+    fs.symlinkSync(project, path.join(dir, 'linked-project'), 'junction');
+    expect(invoke(dir, ['--base-dir', 'linked-project']).status).toBe(0);
+    mismatch(invoke(dir, ['--base-dir', 'wrong-root']));
+    // Both missing paths and another existing file must fail, even with identical contents.
+    const other = path.join(project, 'prd/other/design.md');
+    fs.mkdirSync(path.dirname(other), { recursive: true });
+    fs.copyFileSync(designPath, other);
+    for (const reference of ['prd/another-project/nonexistent.md', 'prd/other/design.md', other]) {
+      writePrd(reference);
+      mismatch(invoke(project));
+      mismatch(invoke(dir, ['--base-dir', project]));
+    }
+    writePrd(designPath);
+    expect(invoke(dir).status).toBe(0);
+    for (const args of [['--base-dir'], ['--base-dir', project, '--base-dir', project]]) {
+      const invalid = invoke(dir, args);
+      expect(invalid.status).toBe(1);
+    }
+    expect(fs.readFileSync(designPath, 'utf8')).toBe(serializeDesignDocument(fixture()));
+    expect(fs.readdirSync(path.dirname(designPath)).sort()).toEqual(['design.md', 'prd.md']);
+  } finally {fs.rmSync(dir, { recursive: true, force: true });}
 });
 
 test('check-design CLI validates local documents without writing and returns structured failures', () => {

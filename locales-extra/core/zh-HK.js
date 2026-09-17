@@ -6,13 +6,14 @@
  */
 module.exports = {
   design_document: {
+    theme_css_invalid: '主題 CSS 第 {0} 行附近存在未閉合或不匹配的括號、字串或註解，請修正後重試。',
     invalid: '設計文件驗證失敗：{0}（{1}）',
     yaml: '設計文件 frontmatter 不是有效的 YAML',
     token_value: 'token {0} 必須是已確定的單行 CSS 值',
     token_conflict: 'token {0} 存在重複或衝突值',
     tokens_required: 'design.md 缺少包含 token 的 frontmatter',
     brand_required: 'design.md 缺少品牌 token：{0}',
-    usage: '用法: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    usage: '用法: openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]',
     read_error: '無法讀取設計檢查文件：{0}',
     checked: '設計文件驗證通過：{0}；{1} 個頁面，{2} 個 token',
   },

@@ -6,13 +6,14 @@
  */
 module.exports = {
   design_document: {
+    theme_css_invalid: 'テーマ CSS の {0} 行付近に、閉じられていないか対応しない括弧、文字列、コメントがあります。修正して再試行してください。',
     invalid: 'デザイン検証に失敗しました：{0}（{1}）',
     yaml: 'デザイン文書の frontmatter は有効な YAML ではありません',
     token_value: 'トークン {0} には確定した1行の CSS 値が必要です',
     token_conflict: 'トークン {0} に重複または競合する値があります',
     tokens_required: 'design.md にトークンを含む frontmatter がありません',
     brand_required: 'design.md にブランドトークンがありません：{0}',
-    usage: '使用方法: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    usage: '使用方法: openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]',
     read_error: 'デザイン検証ファイルを読み取れません：{0}',
     checked: 'デザイン検証に成功しました：{0}、{1} ページ、{2} トークン',
   },

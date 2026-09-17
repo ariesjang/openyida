@@ -6,13 +6,14 @@
  */
 module.exports = {
   design_document: {
+    theme_css_invalid: 'थीम CSS में पंक्ति {0} के पास कोई बंद न किया गया या बेमेल कोष्ठक, स्ट्रिंग या टिप्पणी है। सुधार कर फिर प्रयास करें।',
     invalid: 'डिज़ाइन सत्यापन विफल: {0} ({1})',
     yaml: 'डिज़ाइन दस्तावेज़ का frontmatter मान्य YAML नहीं है',
     token_value: 'टोकन {0} का मान निर्धारित एकल-पंक्ति CSS मान होना चाहिए',
     token_conflict: 'टोकन {0} में दोहराए गए या विरोधी मान हैं',
     tokens_required: 'design.md में टोकन वाला frontmatter आवश्यक है',
     brand_required: 'design.md में ब्रांड टोकन मौजूद नहीं हैं: {0}',
-    usage: 'उपयोग: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    usage: 'उपयोग: openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]',
     read_error: 'डिज़ाइन सत्यापन फ़ाइल नहीं पढ़ी जा सकती: {0}',
     checked: 'डिज़ाइन सत्यापन सफल: {0}; {1} पृष्ठ, {2} टोकन',
   },

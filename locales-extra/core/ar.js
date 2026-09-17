@@ -6,13 +6,14 @@
  */
 module.exports = {
   design_document: {
+    theme_css_invalid: 'يحتوي CSS للسمة قرب السطر {0} على قوس أو سلسلة نصية أو تعليق غير مغلق أو غير متطابق. أصلحه ثم أعد المحاولة.',
     invalid: 'فشل التحقق من التصميم: {0} ({1})',
     yaml: 'بيانات frontmatter في مستند التصميم ليست YAML صالحًا',
     token_value: 'يجب أن يكون الرمز {0} قيمة CSS محددة في سطر واحد',
     token_conflict: 'يحتوي الرمز {0} على قيم مكررة أو متعارضة',
     tokens_required: 'يتطلب design.md بيانات frontmatter تحتوي على الرموز',
     brand_required: 'يفتقد design.md رموز العلامة التجارية: {0}',
-    usage: 'الاستخدام: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    usage: 'الاستخدام: openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]',
     read_error: 'تعذرت قراءة ملف التحقق من التصميم: {0}',
     checked: 'نجح التحقق من التصميم: {0}؛ {1} صفحات، {2} رموز',
   },

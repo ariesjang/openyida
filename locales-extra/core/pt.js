@@ -6,13 +6,14 @@
  */
 module.exports = {
   design_document: {
+    theme_css_invalid: 'O CSS do tema contém um delimitador, uma string ou um comentário não fechado ou incompatível perto da linha {0}. Corrija e tente novamente.',
     invalid: 'Falha na validação do design: {0} ({1})',
     yaml: 'O frontmatter do documento de design não é YAML válido',
     token_value: 'O token {0} deve ser um valor CSS resolvido em uma única linha',
     token_conflict: 'O token {0} tem valores duplicados ou conflitantes',
     tokens_required: 'design.md requer um frontmatter contendo tokens',
     brand_required: 'Faltam tokens de marca em design.md: {0}',
-    usage: 'Uso: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    usage: 'Uso: openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]',
     read_error: 'Não foi possível ler o arquivo de validação do design: {0}',
     checked: 'Validação do design aprovada: {0}; {1} páginas, {2} tokens',
   },

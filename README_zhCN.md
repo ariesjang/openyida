@@ -309,7 +309,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida aggregate-table <list\|create-empty\|inspect\|preview\|save\|publish\|status> <appType> ...` | 管理聚合表（virtualView） |
 | `openyida get-schema <appType> <formUuid\|--all> [--summary-json\|--field-map-json\|--analysis-json]` | 获取单个或全部表单 Schema |
 | `openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]` | 检查 PRD 页面/资源数量风险 |
-| `openyida check-design <design.md> [--prd <prd.md>] [--json]` | 检查设计文档、主题变量与 PRD 交接 |
+| `openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]` | 检查设计文档、主题变量与 PRD 交接 |
 | `openyida er <appType> [--format mermaid\|json] [--output file] [--include-system] [--include-pages]` | 导出应用实体关系图 |
 | `openyida create-page <appType> "<name>" [--mode dashboard] [--hide-nav] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | 创建自定义展示页面 |
 | `openyida build-page <sourceFile> [--output file\|--write]` | 构建宜搭兼容页面源码 |

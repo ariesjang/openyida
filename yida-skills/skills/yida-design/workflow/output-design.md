@@ -126,6 +126,8 @@ Plan 使用 `colorStrategy.surfaceTone` 与 `visualStyle.tokens` 记录配色意
 
 Fast 或单独更新主题时，执行 `openyida sample yida-design app-theme --output .cache/openyida/<项目名>/app-theme.css --design-file prd/<项目名>/design.md`。首次从公共模板生成；已有 CSS 只更新设计中变化的 token，保留其他 token 和自定义样式。CLI 自动保存更新记录，内容相同时跳过写入，写入失败回滚。省略 `--design-file` 会用公共模板重置目标 CSS。
 
+主题生成前校验输入 CSS 的括号、字符串和注释闭合，生成后与上传前复用同一检查；纯模板导出也须通过。出现 `THEME_CSS_STRUCTURE_INVALID` 时按错误行修复源模板或已有 CSS，再重试；生成失败保留原 CSS 和 token 更新记录，不能靠重置模板覆盖已有定制。新增全局及页面语义 token 写入顶层 `:root`；白色、灰色导航保留公共模板中的背景变量及回退链，不要求改成固定色值。
+
 主题文件只能由上述 OpenYida CLI 契约生成或更新。不得另写 Python、Node、Shell 或 `run_workspace_script` 临时脚本来生成、复制、整文件重写、正则替换或 retheme 主题 CSS；校验脚本只能读取并报告问题，不能改写主题文件。需要调整 CLI 未覆盖的精确 classname 覆盖时，只允许在现有文件末尾做小范围编辑，并重新通过 `update-app --theme-file` 上传完整文件。
 
 Plan 修改 `visualStyle.tokens` 并按模块更新草稿，最终由 `materialize` 同时生成设计文档和主题 CSS，使用返回的 `outputs.theme`。Fast 由 `yida-design` 直接维护 `design.md`。应用阶段由 `yida-app` 使用 `--theme-file` 应用同一份产物。
@@ -146,7 +148,11 @@ PRD 已就绪时带上关联校验；并行生成 PRD 时先做单文件校验�
 openyida check-design prd/<项目名>/design.md --prd prd/<项目名>/prd.md --json
 ```
 
+PRD 的相对 `designFile` 默认相对命令的当前工作目录解析，必须指向本次检查的设计文件；绝对路径也会核对。若从其他目录检查项目或导出包，传 `--base-dir <项目根目录>` 指定 PRD 引用的根目录。命令行中的设计文件和 `--prd` 路径仍相对当前工作目录解析。导出包须保留 PRD 中声明的目录结构，或更新引用为实际位置；不因文件名相同或属于导出包而跳过检查。路径不一致返回 `DESIGN_FILE_MISMATCH`，修正引用或根目录后再交接。
+
 Plan 物化内部使用同一校验，不另维护宽松标准。校验覆盖格式、变量、定位引用和跨文档一致性；真实界面的视觉、数据、交互与可访问性仍按 [页面质量门禁](../references/page-quality-gates.md) 检查。
+
+`check-design` 检查设计文档，不读取主题 CSS；CSS 结构检查由主题生成和 `update-app --theme-file` 执行。结构检查不等于完整 CSS 语义或浏览器效果验证。
 
 页面实现交给 `yida-canvas-custom-page`。
 

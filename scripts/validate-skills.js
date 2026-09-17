@@ -450,6 +450,12 @@ function validateMarkdownLinks(markdownFile) {
 }
 
 function validateSharedDesignThemes() {
+  const cssTemplate = path.join(SKILLS_DIR, 'yida-design/references/theme/app-custom-theme-template.css');
+  try {
+    require('../lib/app/custom-theme').validateThemeCssContent(fs.readFileSync(cssTemplate, 'utf8'));
+  } catch (error) {
+    errors.push(toRelative(cssTemplate) + ': ' + error.message);
+  }
   const validator = path.join(SKILLS_DIR, 'yida-design/scripts/validate_design_themes.py');
   const candidates = [['python3', []], ['python', []], ['py', ['-3']]];
   for (const [command, prefix] of candidates) {

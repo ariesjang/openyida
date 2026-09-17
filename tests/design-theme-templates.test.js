@@ -138,3 +138,27 @@ test('check:skills reports missing Python instead of silently skipping the contr
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('check:skills rejects a missing public CSS root closure', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-invalid-theme-css-'));
+  try {
+    const preload = path.join(dir, 'broken-css.cjs');
+    const cssFile = path.join(SKILL, 'references/theme/app-custom-theme-template.css');
+    // Inject a damaged read in the subprocess; leave the real skill template untouched.
+    fs.writeFileSync(preload, `
+      const fs = require('fs');
+      const original = fs.readFileSync;
+      fs.readFileSync = function(file, ...args) {
+        const content = original.call(this, file, ...args);
+        return String(file) === ${JSON.stringify(cssFile)} ? content.replace(/^\\}/m, '') : content;
+      };
+    `);
+    const result = spawnSync(process.execPath, ['--require', preload, path.join(ROOT, 'scripts/validate-skills.js')], {
+      encoding: 'utf8',
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('app-custom-theme-template.css');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
