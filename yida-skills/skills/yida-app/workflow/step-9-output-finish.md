@@ -44,9 +44,19 @@
 
 ## 登记应用访问入口
 
-完整应用搭建完成并通过上述入口回读后，将本轮范围内已验证的前台和业务工作台地址登记到应用配置，使应用卡片可以直接访问。先执行 `openyida app-entry get <appType>` 查看已有入口，再执行 `openyida app-entry set <appType> --frontend <已验证前台URL> --management <已验证业务工作台URL>`；只传本轮需要登记的选项。命令内部执行版本校验、局部更新和保存后回读，输出 `urls` 供交付使用。
+前台与业务工作台是两个独立可选的入口，不是完整应用必须填满的字段。完整应用搭建完成后，根据本轮实际业务场景、用户确认的交付范围和入口回读证据决定是否登记，使应用卡片可以直接访问；不能只因为 CLI 返回了 `appUrl` / `workbenchUrl` 就自动登记为业务工作台。
+
+有需要登记的入口时，先执行 `openyida app-entry get <appType>` 查看已有配置，再按以下情况调用。命令内部执行版本校验、局部更新和保存后回读，输出 `urls` 供交付使用。
+
+| 本轮实际场景 | 登记方式 |
+| --- | --- |
+| 只有已验证的前台入口，例如公开展示或用户提交页面 | `openyida app-entry set <appType> --frontend <已验证前台完整URL>` |
+| 只有已验证的业务管理入口，例如内部管理工作区 | `openyida app-entry set <appType> --management <已验证业务管理完整URL>` |
+| 两类入口均在交付范围内，且各自验证通过 | `openyida app-entry set <appType> --frontend <已验证前台完整URL> --management <已验证业务管理完整URL>` |
+| 两类入口均不适用或尚未验证 | 不执行 `app-entry set`；不传空字符串、`null`、占位 URL，不为了补齐配置创建页面或拼接工作台链接 |
 
 - 前台地址必须来自已发布页面的成功返回及回读；独立前台仍需核验 `isRenderNav=false`。
+- 已验证的公开地址按完整 URL 原样登记，保留所选入口的域名、路径和有效参数；不能替换成需要登录的长链接，也不能为了登记而自动开启公开访问。
 - 业务工作台使用已验证的访问态 URL，不能登记 `/admin` 或设计器地址。
 - 单页、表单、流程等局部修改不自动覆盖应用入口。只搭前台时不传 `--management`；缺省值保留原配置。
 - 仅在用户明确移除入口时使用 `--clear-frontend` 或 `--clear-management`。

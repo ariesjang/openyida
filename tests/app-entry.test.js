@@ -51,6 +51,39 @@ test('help does not require authentication', async () => {
   await run(['--help']);
   expect(createAuthRef).not.toHaveBeenCalled();
 });
+test.each([
+  ['frontend', `${origin}/o/public-home`],
+  ['management', `${origin}/APP/workbench`],
+])('registers only %s for a new application without inventing the other entry', async (key, url) => {
+  const entries = { [key]: { url } };
+  client.get.mockResolvedValueOnce(response({})).mockResolvedValueOnce(response(entries, 'v2'));
+  await run(['set', 'APP', `--${key}`, url]);
+  expect(client.postForm).toHaveBeenCalledWith('/APP/query/app/saveAccessEntries.json', {
+    accessEntries: JSON.stringify(entries), revision: 'v1',
+  });
+  expect(JSON.parse(console.log.mock.calls[0][0]).urls).toEqual({ [key]: url });
+});
+test('registers both entries only when both are explicitly supplied', async () => {
+  const entries = {
+    frontend: { url: `${origin}/o/public-home` },
+    management: { url: `${origin}/APP/manage/FORM` },
+  };
+  client.get.mockResolvedValueOnce(response({})).mockResolvedValueOnce(response(entries, 'v2'));
+  await run(['set', 'APP', '--frontend', entries.frontend.url, '--management', entries.management.url]);
+  expect(JSON.parse(client.postForm.mock.calls[0][1].accessEntries)).toEqual(entries);
+});
+test('an application with no configured entries is returned without invented defaults', async () => {
+  client.get.mockResolvedValue(response({}));
+  await run(['get', 'APP']);
+  expect(client.postForm).not.toHaveBeenCalled();
+  expect(JSON.parse(console.log.mock.calls[0][0]).urls).toEqual({});
+});
+test('no entry arguments do not trigger authentication or network requests', async () => {
+  await expect(run(['set', 'APP'])).rejects.toThrow();
+  expect(createAuthRef).not.toHaveBeenCalled();
+  expect(client.get).not.toHaveBeenCalled();
+  expect(client.postForm).not.toHaveBeenCalled();
+});
 test('updates only the supplied entry and uses the read revision', async () => {
   const management = { url: `${origin}/APP/workbench` };
   client.get.mockResolvedValueOnce(response({ management })).mockResolvedValueOnce(response({
