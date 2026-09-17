@@ -2,7 +2,7 @@
 
 ## 输入与生成
 
-`design-plan init` 从已确认需求建立草稿、主题上下文和业务/视觉片段，返回必要任务与可选视觉精修。标准首版只编写业务事实，视觉片段复用已确认选择，由 CLI 补齐标准页面视觉；视觉选择不完整时返回补齐任务，有特殊视觉要求时执行可选精修。片段写入与合并见 [并行交接](../../../../yida-app/workflow/parallel-work.md#plan-的-cli-交接)。保留生成的项目目录名、页面 ID 与 sceneKey；业务名称使用 `meta.appName`。补齐业务与视觉片段后执行交接命令；标准首版使用 init 返回的 `materialize.command`：
+`design-plan init` 从已确认需求建立草稿、主题上下文和业务/视觉片段，返回必要任务与可选视觉精修。CLI 预填已确认的风格、主色和导航；模型补齐业务内容及每个自定义页的具体设计。未完成的片段由返回任务处理，主题提供公共规则，不代替逐页决定。片段写入与合并见 [并行交接](../../../../yida-app/workflow/parallel-work.md#plan-的-cli-交接)。保留生成的项目目录名、页面 ID 与 sceneKey；业务名称使用 `meta.appName`。补齐业务与视觉片段后执行交接命令；标准首版使用 init 返回的 `materialize.command`：
 
 init 已预填 `business.json` 结构，业务任务先读后写并保留 base。`authoring.pendingFields` 列出初始化时的待补文件、字段路径与说明；格式示例位于返回的 `context` 文件。示例用于说明类型，实际值按当前业务填写。复核内容后将片段设为 `ready=true`，最终生成继续执行完整校验。业务 facts 仅允许 overview、dataModels、businessFlows、pages、execution；visualStyle 只属于 `visual.json`。首次合并前一次补齐每个普通表单的 sampleDataPlan（跳过则写 skipReason）和每个自定义页面的 permissionSummary，避免用多轮 materialize 探测必填字段。
 
@@ -79,7 +79,7 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 - `entryMode`：`platform-shell/standalone`；应用级 custom 及独立前台使用 standalone，后台平台页面使用 platform-shell。
 - `navigation`：可选的当前入口菜单 `{type:"custom",variant:"top",reason:"员工只办理自己的事项"}`，variant 为 top/side/mixed/dock；无菜单用 `{type:"none",reason:"单步办理"}`。只能用于 standalone，不接受应用设置字段。省略则沿用既有入口规则；CLI 不据此修改应用 navigationType。
 - `contentBlocks/dataSources/dataBinding/emptyReason/primaryAction/themeSummary`：本页交接差异。
-- `designFile/designRefs`：默认由 CLI 生成 `prd/<projectName>/design.md` 和 `themeProfile`、`sceneRecipes.<sceneKey>`。额外引用须存在于最终设计文档的 components、states 或 sceneRecipes 中。
+- `designFile/designRefs`：源计划默认引用 `prd/<projectName>/design.md`；生成时 designFile 指向实际输出文件，designRefs 包含 `themeProfile`、`sceneRecipes.<sceneKey>`。额外引用须存在于最终设计文档的 components、states 或 sceneRecipes 中。
 
 ## 视觉事实
 
@@ -91,11 +91,11 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 {
   "forUser": {
     "visualDirection": {"label":"清晰柔和","description":"突出待办与业务状态，浅色界面搭配暖棕色重点操作","source":"user_selected"},
-    "colorStrategy": {"primaryColor":"#6F4E37","primaryColorName":"暖棕色","source":"user_selected","surfaceTone":"brand-tinted","usage":"暖棕浅底、白色卡片与品牌焦点协调"},
+    "colorStrategy": {"primaryColor":"#6F4E37","primaryColorName":"暖棕色","source":"user_selected","usage":"暖棕浅底、白色卡片与品牌焦点协调"},
     "navigationStyle": {"structure":"side","tone":"light","source":"user_selected","selectionReason":"沿用已选的左侧导航"},
     "iconSystem": {"library":"lucide-react","mappings":{"新建采购":"Plus"}},
     "pageApplications": [
-      {"pageId":"page-1","firstScreenFocus":"先看到待处理采购数量与最紧急记录，主操作紧邻列表标题","layout":"顶部单行筛选与主操作，下方连续采购列表；必要提示放列表右侧窄栏，列表随记录自然增长","responsive":"窄屏筛选换行，提示移到列表下方，表格保留关键列并允许横向滚动","acceptanceChecks":["首屏可找到待处理记录与新建采购操作","窄屏主操作和错误恢复入口可用"],"visualMemoryApplications":[{"name":"摘要拼接组","renderPolicy":"prd_match_only","target":"采购待办摘要","reason":"页面已有并列的待办状态"}]}
+      {"pageId":"page-1","primaryAction":"列表标题右侧的新建采购按钮打开原生采购表单，成功后刷新列表","firstScreenFocus":"先看到待处理采购数量与最紧急记录，主操作紧邻列表标题","layout":"顶部单行筛选与主操作，下方连续采购列表；必要提示放列表右侧窄栏，列表随记录自然增长","responsive":"窄屏筛选换行，提示移到列表下方，表格保留关键列并允许横向滚动","acceptanceChecks":["首屏可找到待处理记录与新建采购操作","窄屏主操作和错误恢复入口可用"],"visualMemoryApplications":[{"name":"摘要拼接组","renderPolicy":"prd_match_only","target":"采购待办摘要","reason":"页面已有并列的待办状态"}]}
     ],
     "assetStrategy": {"materialStatus":"none","pages":[{"pageId":"page-1","imageNeed":"none","reason":"纯数据操作页","slots":[]}],"missingAssets":[],"notes":"无图片需求"}
   },
@@ -105,7 +105,7 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 ```
 
 - 已选主题取当前上下文；主色为 6 位 HEX。导航 structure 为 top/side，tone 为 light/dark；它与整页暗色风格分开记录。
-- 每个实际自定义页使用相同 pageId，最终物化前必须填写 firstScreenFocus、layout、responsive 三项非空说明和 acceptanceChecks 非空字符串数组；内容须具体到当前页，不能只写继承主题。纯原生页无需增加记录。
+- 每个实际自定义页使用相同 pageId，最终物化前必须填写 firstScreenFocus、layout、primaryAction、responsive 四项具体说明和 acceptanceChecks 非空字符串数组；内容须具体到当前页，不能只写继承主题。纯原生页无需增加记录。
 - 视觉记忆点按适用条件绑定真实区块，无匹配时保留空数组。草稿缺逐页决定可预览，最终产物拒绝缺项；旧计划沿用同一规则，补齐后再物化。
 - `visualStyle.evidence/constraints` 保留实际视觉依据和约束。
 - `forUser.iconSystem` 可选，格式为 `{library: "lucide-react" | "@ant-design/icons", mappings: {业务语义: 具体组件名}}`。初始化保留 brief 的已选图标映射；仅未配置时默认 lucide-react 与空映射。

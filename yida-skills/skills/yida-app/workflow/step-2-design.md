@@ -26,7 +26,9 @@ Fast / Plan 的主题与配色统一按[设计方向比较](../../yida-design/re
 
 执行规划前读取 `constraints.prohibitedActions`。PRD 与 design 必须把禁止项写成实现门禁：`theme-file` 禁止时沿用现有平台主题且不安排主题文件任务；`page-source` 禁止时只允许只读核查与非源码配置；`publish` 禁止时把发布明确标记为跳过。不得为了满足默认九步流程静默删除这些约束。
 
-按 [访问态入口契约](../references/entry-navigation.md) 为每个入口补齐角色、默认任务、菜单、资源/视图/操作权限。Fast PRD 与 Plan execution.entryRecommendation 共用契约；管理端无概览需求时不创建首页。
+按 [访问态入口契约](../references/entry-navigation.md) 为每个入口补齐角色、默认任务、菜单、资源/视图/操作权限。Fast PRD 与 Plan execution.entryRecommendation 共用契约；管理端按 [首页按任务选择](../../yida-requirement-analysis/references/experience-groups.md#首页按任务选择) 确定默认任务；需要汇集办事入口时设计业务工作台，无汇总价值时直接进入业务页。
+
+前台和后台都按 [首页与菜单顺序](../references/entry-navigation.md#每个入口都确定首页与菜单顺序) 确定默认页面、菜单及分组顺序、打开后的首屏任务。顺序写入各入口 `menu`，默认页写入 `defaultMenuKey`；不沿用资源创建顺序，不把前台首页自动放进后台，也不将自定义导航视为无需排序。
 
 ## 2.1 按已确认方式推进
 
@@ -46,7 +48,7 @@ Plan 分支从已加载 `yida-app` 的 Available Files 读取精确路径 `workf
 | 内容 | 负责技能 | 输出 | 完成条件 |
 | --- | --- | --- | --- |
 | Product PRD | `yida-prd` | `prd/<项目名>/prd.md` | 资源蓝图、资源创建顺序、页面实现交付顺序、导航顺序、页面 handoff 和验收标准完整 |
-| Visual Design | `yida-design` | `prd/<项目名>/design.md` | 主题 token、视觉 DNA、布局、材质、圆角、密度、组件、状态、响应式和页面场景引用完整 |
+| Visual Design | `yida-design` | `prd/<项目名>/design.md` | 主题 token、视觉特征、布局、材质、圆角、密度、组件、状态、响应式和页面场景引用完整 |
 
 两个技能读取同一份已确认需求，业务规划与基础视觉同时准备；页面任务、区块和 sceneKey 确定后补齐逐页视觉绑定。各自维护职责内的文件。某一份生成失败时只重跑对应技能，不覆盖已经完成的另一份。
 

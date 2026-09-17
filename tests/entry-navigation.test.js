@@ -87,6 +87,25 @@ describe('entry planning and platform navigation', () => {
       expect(handoff(plan).navigationOrder).toEqual([]);
     }
   });
+  test.each(['frontend-only', 'custom'])('%s preserves ordered menu groups and default tasks when platform sorting is skipped', mode => {
+    const plan = planFixture();
+    const entry = plan.execution.entryRecommendation.entries[0];
+    const [mine, submit] = entry.menu;
+    entry.menu = [{ key: 'service-tasks', label: '办理与查询', children: [submit, mine] }];
+    // A default task can differ from the first item when the business order is explicit.
+    entry.defaultMenuKey = 'mine';
+    if (mode === 'frontend-only') {
+      plan.execution.entryRecommendation.mode = mode;
+      plan.execution.entryRecommendation.entries = [entry];
+    } else {
+      plan.execution.appConfig.navigationType = 'custom';
+    }
+    const result = handoff(plan);
+    expect(result.navigationOrder).toEqual([]);
+    expect(result.entryRecommendation.entries).toEqual(plan.execution.entryRecommendation.entries);
+    expect(result.entryRecommendation.entries[0].menu[0].children.map(item => item.key)).toEqual(['submit', 'mine']);
+    expect(result.entryRecommendation.entries[0].defaultMenuKey).toBe('mine');
+  });
   test.each([
     ['conflicting platform order', plan => { plan.execution.navigationOrder = ['采购工作台']; }, /navigationOrder/],
     ['unavailable default', plan => { plan.execution.entryRecommendation.entries[1].defaultMenuKey = 'missing'; }, /默认菜单/],

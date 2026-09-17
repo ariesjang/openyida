@@ -72,7 +72,8 @@ test.each([
   ['unquoted spacing', source => source.replace('"--s-5": 20px', '"--s-5": 22px'), '--s-5 应使用固定值'],
   ['numeric font weight', source => source.replace('"--font-weight-subhead": 500', '"--font-weight-subhead": 600'), '--font-weight-subhead 应使用固定值'],
   ['missing appearance token', source => source.replace(/^.*"--pod-nav-item-text-color":.*\n/m, ''), '全局变量集合'],
-  ['global dependency on custom token', source => source.replace('"--pod-page-bg-color": "#000000"', '"--pod-page-bg-color": "var(--oyd-inset-surface)"'), '不得依赖页面变量'],
+  ['cross-group cycle', source => source.replace('"--pod-page-bg-color": "#000000"', '"--pod-page-bg-color": "var(--oyd-inset-surface)"').replace('"--oyd-inset-surface": "#000000"', '"--oyd-inset-surface": "var(--pod-page-bg-color)"'), '变量循环引用'],
+  ['unsupported brand slot', source => source.replace('  custom-page:\n', '  custom-page:\n    "--color-brand1-4": "#FFFFFF"\n'), '不支持的品牌色阶'],
   ['duplicate variable across scopes', source => source.replace('  custom-page:\n', '  custom-page:\n    "--color-white": "#FFFFFF"\n'), '页面层重复定义全局变量'],
   ['duplicate YAML property', source => source.replace('    shadow:\n', '    shadow:\n      "--shadow-1": "none"\n'), '重复定义 --shadow-1'],
   ['malformed token value', source => source.replace('"--s-5": 20px', '"--s-5": [20px, 22px]'), '仅支持映射和非空 CSS 标量'],
@@ -94,6 +95,18 @@ test.each([
     const result = validate(skill, 'cp1252');
     expect(result.status).toBe(1);
     expect(result.stdout).toContain(expected);
+  });
+});
+
+test('templates accept extra global and project variables with shared references', () => {
+  withFixture(({ skill, template, original }) => {
+    const changed = original
+      .replace('    shadow:\n', '    shadow:\n      "--project-floating-shadow": "0 6px 24px rgb(0 0 0 / 8%)"\n')
+      .replace('  custom-page:\n', '  custom-page:\n    "--project-cover": "linear-gradient(135deg, #FFFFFF, #EFE7DA)"\n    "--project-motion": "180ms"\n')
+      .replace('"--pod-page-bg-color": "#000000"', '"--pod-page-bg-color": "var(--oyd-inset-surface)"');
+    fs.writeFileSync(template, changed);
+    const result = validate(skill);
+    expect({ status: result.status, errors: result.stderr, output: result.stdout }).toMatchObject({ status: 0, errors: '' });
   });
 });
 

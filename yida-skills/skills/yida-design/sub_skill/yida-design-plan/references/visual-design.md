@@ -39,7 +39,11 @@ PRD 决定页面任务、操作和内容优先级；主题决定这些内容如�
 
 ## 配色与导航
 
-项目主色写 `forUser.colorStrategy.primaryColor`，使用 6 位 HEX；显式 CSS 差异写 `visualStyle.tokens`。`themeProfile` 是输出摘要，不以修改摘要代替 token。原生页与自定义页共用 application-global，页面独立语义变量保留在 custom-page，全局不反向依赖局部。
+项目主色写 `forUser.colorStrategy.primaryColor`，使用 6 位 HEX；平台变量覆盖与项目扩展变量都写入 `visualStyle.tokens`，不受模板现有变量数量或 `--oyd-*` 前缀限制。`themeProfile` 是输出摘要，不以修改摘要代替 token。CLI 组织 application-global 与 custom-page 分组，两组都会写入主题 CSS 的 `:root`；可引用已声明的共享变量，不能循环引用或依赖只在某个页面内定义的变量。
+
+逐项核对已选方向承诺的画布、面板、文字、字体和特色强调是否有对应变量；差异由设计者补齐，不能只写在 description/usage 中。物化后按 [共用主题规则](../../../references/application-theme-consistency.md) 对照生成的 CSS，再交给页面作者。
+
+颜色推导与 Fast 相同，直接使用所选主题的公式和项目 token，不增加 Plan 专用染色规则。应用根渐变写 `--pod-app-root-bg-image`；单页渐变与装饰在页面设计中说明作用区域，按 [背景规则](../../../workflow/output-design.md#背景颜色渐变与图片) 实现。
 
 整体配色与主题的冲突按公共输出契约处理。导航明暗独立于内容画布，既定入口范围保持不变；前台与后台可改变表达强度，但共享基础变量、字体、状态和组件语言。无法保留已选主题核心特征时回到主题选择，不在页面阶段另建主题。
 

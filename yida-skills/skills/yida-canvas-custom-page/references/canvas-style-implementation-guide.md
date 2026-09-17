@@ -2,7 +2,9 @@
 
 按本指南把 `design.md` 的布局、材质、密度、图表和控件样式写入 Canvas 页面。业务事实来自 `yida-prd` 输出的 `prd.md`，视觉事实来自 `yida-design` 输出的 `design.md`。
 
-应用主题通过 app-theme.css 配置，页面样式限定在 `YidaComp` 内，使用 `--pod-page-*`、`--pod-card-*`、`--color-brand1-*` 和 `--color-group`。平台负责应用壳、原生表单和详情页的主题。
+应用主题通过 app-theme.css 配置，页面样式限定在 `YidaComp` 内。`--pod-page-*`、`--pod-card-*`、`--color-brand1-*` 和 `--color-group` 等是平台基础角色；页面还可消费项目定义的材质、布局、字体、动效和组件状态变量。平台负责应用壳、原生表单和详情页的主题，新变量需要显式消费或映射后才会影响这些组件。
+
+开发前按 [应用与自定义页面共用主题](../../yida-design/references/application-theme-consistency.md) 核对风格与变量。纯 DOM 页面也必须引用应用主题；省略 antd Provider 不等于可以另写固定色盘。已确认风格缺少变量时先补设计源并重新生成主题，不在每页用 `--canvas: #…`、`--ink: #…` 复制一套基础配色。
 
 CLI 将 Canvas 宿主的 `contentBgColor`、`pageStyle.backgroundColor`、`contentBgColorMobile` 设为 `var(--pod-page-bg-color, var(--color-white, #fff))`。自绘导航页的内部画布按下方规则设置局部背景。
 
@@ -82,6 +84,8 @@ body.pod-premium.page-type-workbench .vc-page-yida-pure-container:has(> .vc-root
 ## 背景与导航的关联
 
 背景职责统一：Shell 的 `--pod-shell-bg-color-light/white/gray/dark` 承载外层氛围；原生页面与自定义页面的基础底色统一消费 `--pod-page-bg-color`；卡片、表格外壳和面板消费 `--pod-card-bg-color`，回退 `--color-white`。渐变、纹理和图片作为页面局部装饰层叠加，不另设应用基础背景变量。
+
+应用根背景已提供 `--pod-app-root-bg-color` 和 `--pod-app-root-bg-image`，后者可表达图片或 CSS 渐变。它们只影响实际消费这些变量的根容器；不透明页面和卡片仍显示各自底色。全应用背景由主题 CSS 配置，单页渐变在本页根容器用 `background-image` 实现；颜色变量不放渐变，页面代码不向父页面 body 注入样式。Fast 与 Plan 共用这套规则，详见 [背景作用范围](../../yida-design/workflow/output-design.md#背景颜色渐变与图片)。
 抽屉整体背景默认使用 `--pod-shell-theme-bg-color`，回退 `--color-white`；标题栏、正文容器透明承接外壳，不铺 `--pod-card-bg-color`。抽屉内独立业务卡片才使用卡片 token。
 
 导航布局和页面底色分别配置。隐藏应用导航不自动把 Canvas 改为透明；深色或明确的应用底色在 `design.md` 的平台 token 中定义，生成 `app-theme.css` 后统一生效。页面局部视觉不能通过修改应用 token 影响其他页面。

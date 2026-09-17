@@ -114,10 +114,9 @@ def validate_tokens(frontmatter: dict, text: str, label: str, contract: dict, er
         return
     global_tokens = collect_tokens(tokens["application-global"], f"{label} application-global", errors)
     custom_tokens = collect_tokens(tokens["custom-page"], f"{label} custom-page", errors)
-    if set(global_tokens) != basic_tokens:
-        missing = sorted(basic_tokens - set(global_tokens))
-        extra = sorted(set(global_tokens) - basic_tokens)
-        errors.append(f"{label} 全局变量集合应与 basic-tokens.json 一致；缺少 {missing}，额外 {extra}")
+    missing = sorted(basic_tokens - set(global_tokens))
+    if missing:
+        errors.append(f"{label} 全局变量集合缺少基础变量：{missing}")
     overlap = set(global_tokens) & set(custom_tokens)
     if overlap:
         errors.append(f"{label} 页面层重复定义全局变量：{', '.join(sorted(overlap))}")
@@ -130,13 +129,13 @@ def validate_tokens(frontmatter: dict, text: str, label: str, contract: dict, er
         errors.append(f"{label} --oyd-page-bg 必须单向继承 --pod-page-bg-color")
 
     declared = {**global_tokens, **custom_tokens}
+    unsupported = set(declared) & {"--color-brand1-4", "--color-brand1-7", "--color-brand1-8"}
+    if unsupported:
+        errors.append(f"{label} 不支持的品牌色阶：{', '.join(sorted(unsupported))}")
     unknown = set(TOKEN_REFERENCE.findall(text)) - set(declared)
     if unknown:
         errors.append(f"{label} 引用了未声明变量：{', '.join(sorted(unknown))}")
     dependencies = {name: set(TOKEN_REFERENCE.findall(value)) for name, value in declared.items()}
-    for name in global_tokens:
-        if dependencies[name] & set(custom_tokens):
-            errors.append(f"{label} 全局变量 {name} 不得依赖页面变量")
     visited: set[str] = set()
     active: set[str] = set()
 

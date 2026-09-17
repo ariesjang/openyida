@@ -127,7 +127,6 @@ describe('OpenYida skill contracts', () => {
     expect(compactSchema).toContain('按优先顺序填写 `{name,purpose}`');
     expect(compactSchema).toContain('与按资源生成的通用检查合并并去重');
     expect(planBusiness).toContain('功能范围、数据与规则、页面组织、关键交互、业务验收');
-    expect(planWorkflow).toContain('绝不写 `visualStyle`');
     expect(planWorkflow).toContain('只物化一次');
     expect(parallel).toContain('业务任务必须先读后写');
     expect(planBusiness).toContain('普通表单的 sampleDataPlan 用 skipReason');
@@ -610,7 +609,7 @@ describe('OpenYida skill contracts', () => {
     expect(step8).toContain('不得以历史版本、编译成功或现有 URL 冒充本轮发布');
   });
 
-  test('unified full app build consumes PRD navigation order and falls back to auto order', () => {
+  test('full app build documents platform sorting commands separately from custom entry navigation', () => {
     const root = readSkill('yida-skills/SKILL.md');
     const app = readSkill('yida-skills/skills/yida-app/SKILL.md');
     const step4 = readSkill('yida-skills/skills/yida-app/workflow/step-4-forms-processes.md');
@@ -627,19 +626,12 @@ describe('OpenYida skill contracts', () => {
     expect(step8).toContain('PRD 写明页面/表单清单顺序：');
     expect(step8).toContain('导航排序必须等待本轮全部页面开发、发布和相关资源创建完成');
     expect(step8).toContain('openyida nav-group order <appType> <页面/表单...>');
-    expect(step8).toContain('PRD 缺少明确页面清单：');
+    expect(step8).toContain('entry-navigation.md#每个入口都确定首页与菜单顺序');
     expect(step8).toContain('openyida nav-group auto-order <appType>');
     expect(step8).toContain('同一搭建 Run 不得同时执行显式排序与自动排序');
-    const explicitNavBranch = step8.slice(
-      step8.indexOf('PRD 写明页面/表单清单顺序：'),
-      step8.indexOf('PRD 缺少明确页面清单：')
-    );
-    const fallbackNavBranch = step8.slice(
-      step8.indexOf('PRD 缺少明确页面清单：'),
-      step8.indexOf('4. 同一搭建 Run')
-    );
-    const explicitNavCommands = explicitNavBranch.match(/```text\n([\s\S]*?)\n```/)[1];
-    const fallbackNavCommands = fallbackNavBranch.match(/```text\n([\s\S]*?)\n```/)[1];
+    const commandBlocks = [...step8.matchAll(/```text\n([\s\S]*?)\n```/g)].map(match => match[1]);
+    const explicitNavCommands = commandBlocks.find(block => block.includes('nav-group order'));
+    const fallbackNavCommands = commandBlocks.find(block => block.includes('nav-group auto-order'));
     expect(explicitNavCommands).not.toContain('--auto-nav-order');
     expect(fallbackNavCommands).not.toContain('nav-group order');
     expect(fallbackNavCommands).toContain('nav-group auto-order');
@@ -1411,13 +1403,11 @@ describe('OpenYida skill contracts', () => {
     expect(theme).toContain('严禁页面代码修改或向上层注入主题变量');
     expect(theme).toContain('workflow/output-design.md#cli-token-契约fast--plan-共用');
     expect(theme).toContain('outputs.theme');
-    expect(theme).toContain('不得用 Python、Node、Shell 或 `run_workspace_script` 脚本');
-    expect(theme).toContain('校验脚本只能读取并报告问题，不能改写主题文件');
+    expect(theme).toContain('references/application-theme-consistency.md');
     expect(theme).not.toContain('文件复制能力');
     expect(step2).toContain('output-design.md#cli-token-契约fast--plan-共用');
     expect(step2).toContain('Plan 复用已生成的主题 CSS');
-    expect(step2).toContain('不得用 Python、Node、Shell 或 `run_workspace_script` 脚本');
-    expect(step2).toContain('校验脚本只能读取并报告问题，不能改写主题文件');
+    expect(step2).toContain('../references/application-theme-consistency.md');
     expect(step2).not.toContain('文件复制能力');
     expect(outputDesign).toContain('只能由上述 OpenYida CLI 契约生成或更新');
     expect(outputDesign).toContain('不得另写 Python、Node、Shell 或 `run_workspace_script` 临时脚本');

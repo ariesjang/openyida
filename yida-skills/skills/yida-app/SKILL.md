@@ -1,6 +1,6 @@
 ---
 name: yida-app
-description: 创建完整宜搭应用，或补齐已有应用时使用。先确认核心功能和实际用法；Fast 直接搭建，Plan 先确认方案。由 yida-prd 和 yida-design 同时准备业务与基础视觉，校验后创建或复用资源；表单/流程先于自定义页面。页面 UI 按已确认设计实现，代码示例按需参考；发布后优先按 PRD 导航顺序排序，检查后交付入口。
+description: 创建完整宜搭应用，或补齐已有应用时使用。先确认核心功能和实际用法；Fast 直接搭建，Plan 先确认方案。由 yida-prd 和 yida-design 同时准备业务与基础视觉，校验后创建或复用资源；表单/流程先于自定义页面。页面 UI 按已确认设计实现，代码示例按需参考；前后台都规划菜单顺序与默认页面，发布后分别验收实际入口。
 ---
 
 # yida-app
@@ -89,7 +89,7 @@ Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-de
 3. **产品与视觉分工**：`yida-requirement-analysis` 先统一整理用户需求；业务目标、资源蓝图、页面结构、导航顺序和验收标准由 `yida-prd` 写入 `prd.md`；主题 token、布局、材质、圆角、密度、组件和状态规则由 `yida-design` 写入 `design.md`。两份文件校验通过前不得创建资源。
 4. **阶段技能按需加载**：进入应用壳、表单、流程、页面、发布、数据写入等阶段时，才执行对应 `use_skill(...)`。
 5. **真实 ID 和真实数据**：不编造 `appType`、`formUuid`、`fieldId`、`processCode`、`reportId`。无显式窄范围的完整应用默认给核心普通表单写入 1-3 条业务化 seed records 并 query 抽查；`explicitScope.allowInferredResources=false` 时不得增加未点名的 seed records 或页面。
-6. **自定义页面开发技能固定**：完整应用页面源码按 Step 7 执行；管理端仅需原生视图时不创建 display 首页。前后台按 [访问态入口契约](references/entry-navigation.md) 分别规划菜单、默认落点和权限。
+6. **自定义页面开发技能固定**：完整应用页面源码按 Step 7 执行；管理端仅需原生视图时不创建 display 首页。前后台按 [访问态入口契约](references/entry-navigation.md) 分别规划菜单及分组顺序、默认页面、首屏任务和权限；平台导航与自定义导航都要落实排序并验收。
 7. **删除必须确认**：用户要求删除应用时，先展示应用名称、应用 ID 和影响范围，等待明确“确认删除”后才能执行。
 8. **页面实现选择**：前台默认一个 coding 页承载已选任务的多个视图；后台按操作效率选择原生或 coding。平台数据管理满足任务时可复用，需要不同交互时由 AI 为已选功能规划自定义视图。
 9. **交付物收口**：Step 2 的三个文件和 Step 9 的 build manifest 都是内部文件，不是用户交付物。表单、流程、报表和页面只在业务总结中概述，不逐项生成用户可见附件；宿主支持交付工具时，final 只交付一次“应用访问入口”组。
@@ -100,7 +100,7 @@ Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-de
 - 需要收集或存储数据：先创建或复用核心普通表单，再生成页面；纯展示或静态内容可跳过表单创建。
 - 需要审批、申请、审核、工单流转：先创建或复用流程表单，再生成页面。
 - 需要标准统计：优先创建原生报表；明确高级图表或大屏时，再选择 `yida-rechart` / `yida-chart`。
-- 主页面语义为看板、工作台、驾驶舱或 Dashboard：必须加载 `yida-dashboard`；页面读取任何表单业务数据时必须继续加载 `yida-canvas-data-binding`，不能只加载 `yida-canvas-custom-page`。
+- 按页面主任务选技能：经营分析、指标判断或投屏监控页面加载 `yida-dashboard`；待办、操作队列、业务列表和门户式工作台由 `yida-canvas-custom-page` 实现，不能仅凭“工作台”或“看板”名称加载经营看板技能。页面读取任何表单业务数据时继续加载 `yida-canvas-data-binding`。
 - PRD 明确包含报表或集成自动化时，它们属于 Step 4 主流程资源，不得推迟到 final 后置建议；自动化动作必须按通知、数据新增/更新、审批完成、定时或手动触发分别建模，不得统一退化成新增通知。
 
 ## 页面数据契约

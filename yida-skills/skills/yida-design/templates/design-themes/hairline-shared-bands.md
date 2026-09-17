@@ -7,7 +7,7 @@ tokens:
     appearance: # 应用外观：应用背景、内容表面与导航配色，共 11 个变量
       surfaces: # 应用背景与内容表面
         "--pod-app-root-bg-color": "#070707" # neutral-gray；应用根背景及加载兜底
-        "--pod-app-root-bg-image": "none" # 应用根背景图；仅允许完整 url("...") 或 none，只作用于根节点
+        "--pod-app-root-bg-image": "none" # 应用根背景图；支持 none、完整 url("...") 或 CSS 渐变，只作用于根节点
         "--pod-page-bg-color": "#070707" # neutral-gray；近黑页面画布
         "--pod-card-bg-color": "#111111" # neutral-gray；平整卡片、表单与详情主面
         "--pod-table-cell-color": "var(--pod-card-bg-color)" # 表格正文单元格背景；跟随卡片背景
@@ -138,13 +138,13 @@ YAML 是变量值事实源，正文规定消费关系。局部线宽和未展示
 
 ### 2.2 应用导航
 
-导航采用独立中性暗色：`--pod-shell-theme-bg-color` 为底色，普通文字和图标用 `--pod-nav-item-text-color`；悬停用 `--pod-nav-item-text-hover-color` 与 `--pod-nav-menu-bg-hover-color`，选中用 `--pod-nav-item-text-selected-color` 与 `--pod-nav-menu-bg-selected-color`。默认选中是略亮灰面和明亮文字，不整块铺品牌色。
+导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
 原生导航仅配置上述六项颜色，布局、尺寸、菜单结构和折叠由平台处理。导航明暗与内容明暗独立；中性壳层使用无色相灰，需要主题色的角色引用对应品牌派生档。
 
 自绘导航已被项目确定时，菜单项使用 `--corner-2`，图标与文本间隔 `--s-2`，水平留白 `--s-3`、上下 `--s-2`。分组标题使用 caption 与正常导航文字色，组间留 `--s-6`；必要选中轮廓使用弱细线。搜索、账户信息和分组入口只在实际功能存在时出现，不照搬示例菜单。
 
-导航弹出菜单使用 `--color-fill1-5` 与既定内容前景；导航保留暗底灰浅字和选中灰底亮字配对，换主色不切换导航明暗或改写内容区 Text、Fill、pop-up。
+导航弹出菜单使用 `--color-fill1-5` 与既定内容前景；导航前景和背景按项目明暗成组配对，换主色不切换导航明暗或改写内容区 Text、Fill、pop-up。
 
 ### 2.3 页面标题与操作
 
@@ -271,7 +271,7 @@ YAML 是变量值事实源，正文规定消费关系。局部线宽和未展示
 
 ### 变量与项目换色
 
-YAML 是已声明变量的唯一事实源。全局变量供原生及自定义页消费，页面层仅补填充式筛选触发器、操作前景、数据色与重点数值规格。递归提取以 `--` 开头的标量叶子，分组名不拼入变量名；不重复定义，全局不依赖页面层。
+YAML 是已声明变量的唯一事实源。全局变量供原生及自定义页消费，本模板的扩展包含填充式筛选触发器、操作前景、数据色与重点数值规格。递归提取以 `--` 开头的标量叶子，分组名不拼入变量名；不重复定义，平台基础与项目扩展均在主题中声明，可无环引用，并按实际设计补充变量。
 
 需求决定内容与操作，平台约束决定可用能力，主题规定视觉机制。原生导航仅配置开放六色，自绘导航沿用项目已选结构；配方不覆盖数据含义、自然内容增长或平台限制。
 

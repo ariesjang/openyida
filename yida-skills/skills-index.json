@@ -300,6 +300,9 @@
         "window.__OPENYIDA_UTILS__",
         "官网首页",
         "工作台",
+        "办事门户",
+        "操作队列",
+        "任务看板",
         "看板页面",
         ".canvas.jsx"
       ],
@@ -660,7 +663,7 @@
       "name": "yida-dashboard",
       "path": "skills/yida-dashboard/SKILL.md",
       "display_name": "经营看板产品化交付",
-      "description": "经营看板、驾驶舱和数据大屏产品化交付，覆盖真实数据接入、筛选交互、截图、短链和钉钉待办闭环。",
+      "description": "经营分析看板、驾驶舱和数据大屏交付，用于指标判断、趋势分析和投屏监控；普通待办工作台、操作队列和办事门户使用自定义页面技能。",
       "category": "yida-skills/analytics",
       "tags": [
         "看板",
@@ -675,14 +678,18 @@
       "positive_signals": [
         "经营看板",
         "管理驾驶舱",
-        "产品化工作台",
+        "经营指标分析",
         "指标闭环",
-        "行动看板"
+        "分析结果派单"
       ],
       "negative_signals": [
         "单个 ECharts 图",
         "原生报表",
-        "只做页面视觉美化"
+        "只做页面视觉美化",
+        "待办工作台",
+        "操作队列",
+        "办事门户",
+        "任务看板"
       ],
       "command_ids": [
         "create-page",
@@ -1358,6 +1365,10 @@
       "display_name": "自定义页面",
       "description": "自定义展示页创建、自定义页面开发、Canvas 运行桥、平台 JSX 组件页面维护、真实数据绑定、YidaCodeCanvas 迁移、页面发布、防覆盖、页面内导航壳和 PPT 页面。",
       "signals": [
+        "工作台",
+        "办事门户",
+        "操作队列",
+        "任务看板",
         "自定义页面",
         "YidaCodeCanvas",
         "Canvas 运行桥",
@@ -1382,7 +1393,7 @@
         "图表",
         "Recharts",
         "ECharts",
-        "看板",
+        "经营分析看板",
         "驾驶舱",
         "数据大屏"
       ]

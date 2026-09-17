@@ -7,7 +7,7 @@ tokens:
     appearance: # 应用外观：应用背景、内容表面与导航配色，共 11 个变量
       surfaces: # 应用背景与内容表面
         "--pod-app-root-bg-color": "#141414" # neutral-gray；应用根背景及加载兜底
-        "--pod-app-root-bg-image": "none" # 应用根背景图；仅允许完整 url("...") 或 none，只作用于根节点
+        "--pod-app-root-bg-image": "none" # 应用根背景图；支持 none、完整 url("...") 或 CSS 渐变，只作用于根节点
         "--pod-page-bg-color": "#141414" # neutral-gray；页面画布
         "--pod-card-bg-color": "#141414" # neutral-gray；卡片、表单与详情主面
         "--pod-table-cell-color": "var(--pod-card-bg-color)" # 表格正文单元格背景；跟随卡片背景
@@ -149,7 +149,7 @@ YAML 是数值事实源，正文定义消费关系。未能直接确定的尺寸
 
 ### 2.2 应用导航
 
-导航默认深炭色，六项颜色独立维护：壳层使用 `--pod-shell-theme-bg-color`，普通文字及图标使用 `--pod-nav-item-text-color`，悬停使用 `--pod-nav-item-text-hover-color` 与 `--pod-nav-menu-bg-hover-color`，选中使用 `--pod-nav-item-text-selected-color` 与 `--pod-nav-menu-bg-selected-color`。选中底面与壳层保持同明度，依靠较亮文字和双层轮廓识别，不抬亮成灰色实底块，也不铺满品牌色或操作色。
+导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
 原生导航只配置上述六项，尺寸、结构、折叠和排序由平台决定。导航与内容明暗分别确定；壳层当前使用中性灰，需要主题色时引用相应品牌浅深变体，保留导航专用角色。页头的标题、检索和全局动作不构成新增导航。
 
@@ -298,7 +298,7 @@ YAML 是数值事实源，正文定义消费关系。未能直接确定的尺寸
 
 ### 变量与项目换色
 
-YAML 为所有已声明变量的唯一数值来源；全局变量面向原生及自定义页，页面层只补充通栏底带、双层轮廓、品牌关联任务操作角色、数据纹理及重点数值规格。递归提取以 `--` 开头的标量叶子，分组名不拼入变量名；不重复定义已有变量，全局不得依赖页面层。
+YAML 为所有已声明变量的唯一数值来源；全局变量面向原生及自定义页，本模板的扩展包含通栏底带、双层轮廓、品牌关联任务操作角色、数据纹理及重点数值规格。递归提取以 `--` 开头的标量叶子，分组名不拼入变量名；不重复定义已有变量，平台基础与项目扩展均在主题中声明，可无环引用，并按实际设计补充变量。
 
 需求决定内容与操作，平台约束决定可用能力，主题决定视觉机制。原生导航只消费开放六色，项目已确定自绘时才应用补充尺寸。条件配方不覆盖实际数据、内容增长或平台限制。
 

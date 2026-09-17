@@ -39,6 +39,47 @@ beforeEach(() => {
 });
 afterEach(() => fs.rmSync(dir, { recursive: true, force: true }));
 
+test.each([
+  ['workbench', '采购工作台', '处理待确认订单与待收货队列', 'workbench'],
+  ['dashboard', '采购成本分析', '比较已确认的采购成本趋势与交付率', 'dashboard-overview'],
+])('preserves the planned %s task through initialization and materialization', (scene, name, primaryTask, pageStructure) => {
+  const source = fixture();
+  const page = source.pages.customPageDetails[0];
+  Object.assign(page, { name, primaryTask, scene, sceneKey: 'procurement-entry' });
+  brief.appName = '暗黑供应链管理系统';
+  brief.pageScenes = [{ ...page, key: page.sceneKey, kind: 'custom-page' }];
+  brief.visualSelection.pageApplications[0].pageId = page.pageId;
+  save();
+  const result = init();
+  const business = JSON.parse(fs.readFileSync(result.preparedInputs.business, 'utf8'));
+  const initializedPages = business.facts.pages.customPageDetails;
+  expect(initializedPages).toHaveLength(1);
+  expect(initializedPages[0]).toMatchObject({ name, primaryTask, scene, sceneKey: page.sceneKey });
+  business.ready = true;
+  business.facts = { ...business.facts, overview: source.overview, dataModels: source.dataModels, businessFlows: source.businessFlows };
+  fs.writeFileSync(result.preparedInputs.business, JSON.stringify(business));
+  const built = materialize(result.output, { businessFile: result.preparedInputs.business, visualFile: result.preparedInputs.visual });
+  const prd = fs.readFileSync(built.outputs.prd, 'utf8');
+  const execution = JSON.parse(prd.match(/```json\n([\s\S]*?)\n```/)[1]);
+  expect(execution.pages).toHaveLength(1);
+  expect(execution.pages[0]).toMatchObject({ name, pageSpecHandoff: { scene, pageStructure, primaryAction: primaryTask } });
+  expect(JSON.parse(fs.readFileSync(result.output, 'utf8')).pages.customPageDetails[0].blocks).toEqual(page.blocks);
+});
+
+test('does not add a custom homepage for an entry that uses only native business resources', () => {
+  brief.navigation = { type: 'platform-side', source: 'ai_default', reason: '维护订单使用平台管理列表' };
+  brief.pageScenes = [{ key: 'orders', name: '订单', kind: 'form', purpose: '查询维护订单' }];
+  brief.entryRecommendation = { mode: 'unified', source: 'ai_inferred', reason: '主要任务为维护订单',
+    entries: [{ key: 'operations', role: 'workspace', name: '订单管理', taskRefs: ['manage-orders'], defaultMenuKey: 'orders',
+      menu: [{ key: 'orders', label: '订单管理', resource: '采购订单', targetType: 'page',
+        access: [{ resource: '采购订单', operation: 'OPERATE_VIEW', dataScope: '已授权管理范围' }] }] }] };
+  save();
+  const result = init();
+  const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+  expect(plan.pages.customPageDetails).toEqual([]);
+  expect(plan.execution.entryRecommendation).toEqual(brief.entryRecommendation);
+});
+
 test.each(['visualDirection', 'navigationStyle'])('rejects string %s before creating draft files', field => {
   brief.visualSelection[field] = '顶部导航';
   save();
@@ -59,7 +100,7 @@ test.each(['#6F4E37', '#1677FF'])('color examples preserve the project choice %s
   expect(plan.visualStyle.forUser.colorStrategy.primaryColor).toBe(primaryColor);
 });
 
-test('missing color uses the existing visual-selection task and leaves the example unfilled', () => {
+test('missing color uses the existing visual-design task and leaves the example unfilled', () => {
   delete brief.visualSelection.colorStrategy;
   save();
   const result = init();
@@ -67,7 +108,7 @@ test('missing color uses the existing visual-selection task and leaves the examp
   expect(result.authoring.pendingFields).toEqual(expect.arrayContaining([
     expect.objectContaining({ path: 'facts.visualStyle.forUser.colorStrategy.primaryColor' }),
   ]));
-  expect(result.parallelTasks.map(task => task.id)).toEqual(['business', 'visual-selection']);
+  expect(result.parallelTasks.map(task => task.id)).toEqual(['business', 'visual-design']);
   expect(result.authoring.visualDecision.comparison).toMatchObject({ baseline: 'first_instinct', alternatives: 2, distinctDimensions: 2 });
 });
 
@@ -106,7 +147,7 @@ test('initializes stable references, preserves explicit facts and returns a boun
   expect(visualPart.ready).toBe(true);
   expect(visualPart.facts.visualStyle).toEqual(plan.visualStyle);
   expect(visualPart.facts.visualStyle.tokens).toEqual(brief.visualSelection.tokens);
-  expect(visualPart.facts.visualStyle.forUser.colorStrategy.surfaceTone).toBe('brand-tinted');
+  expect(visualPart.facts.visualStyle.forUser.colorStrategy).toEqual({ source: '', usage: '', ...brief.visualSelection.colorStrategy });
   const context = fs.readFileSync(result.context, 'utf8');
   expect(context).toContain('## 1. 风格摘要');
   expect(context).toContain('compact-workbench');
@@ -132,9 +173,10 @@ test('keeps page-specific design decisions pending while preserving selected the
   const visual = JSON.parse(fs.readFileSync(result.preparedInputs.visual, 'utf8'));
   expect(result.preparedInputs.visualReady).toBe(false);
   expect(visual.ready).toBe(false);
+  expect(result.parallelTasks.find(task => task.id === 'visual-design').dependsOn).toEqual(['business']);
   expect(visual.facts.visualStyle.forUser.iconSystem).toEqual(brief.visualSelection.iconSystem);
   expect(visual.facts.visualStyle.forUser.pageApplications[0]).toMatchObject({ firstScreenFocus: '', layout: '', responsive: '', acceptanceChecks: [] });
-  for (const key of ['firstScreenFocus', 'layout', 'responsive', 'acceptanceChecks']) {
+  for (const key of ['firstScreenFocus', 'layout', 'primaryAction', 'responsive', 'acceptanceChecks']) {
     expect(result.authoring.pendingFields.some(item => item.path.endsWith(`.${key}`))).toBe(true);
   }
   expect(fs.readFileSync(result.context, 'utf8')).toContain('不能仅写继承主题');
@@ -148,6 +190,19 @@ test('rejects a generic inherit-theme answer for a page design decision', () => 
   expect(result.authoring.pendingFields).toEqual(expect.arrayContaining([
     expect.objectContaining({ path: 'facts.visualStyle.forUser.pageApplications[0].layout' }),
   ]));
+});
+
+test('the compact skill example supplies all required page design fields for materialization', () => {
+  const contract = fs.readFileSync(path.resolve(__dirname,
+    '../yida-skills/skills/yida-design/sub_skill/yida-design-plan/references/build-plan-compact-schema.md'), 'utf8');
+  const examples = [...contract.matchAll(/```json\n([\s\S]*?)\n```/g)].map(match => JSON.parse(match[1]));
+  const example = examples.find(value => value.forUser?.pageApplications);
+  const plan = fixture();
+  plan.schemaVersion = '2.0';
+  plan.visualStyle.forUser.pageApplications = [{ ...example.forUser.pageApplications[0], pageId: plan.pages.customPageDetails[0].pageId }];
+  const input = path.join(dir, 'documented-plan.json');
+  fs.writeFileSync(input, JSON.stringify(plan));
+  expect(materialize(input, { outputDir: path.join(dir, 'documented-output') }).success).toBe(true);
 });
 
 test('prefills resource-only execution with deterministic sample-data skips and root resource context', () => {
@@ -292,7 +347,7 @@ test.each(['海洋蓝，搭配沙滩暖色', '海洋🌊风格', ''])('keeps a c
   const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
   const visual = JSON.parse(fs.readFileSync(result.preparedInputs.visual, 'utf8'));
   const strategy = visual.facts.visualStyle.forUser.colorStrategy;
-  expect(strategy).toEqual({ primaryColor: '', primaryColorName: '', source: '', usage: description, surfaceTone: 'brand-tinted' });
+  expect(strategy).toEqual({ primaryColor: '', primaryColorName: '', source: '', usage: description });
   expect(plan.visualStyle.forUser.colorStrategy).toEqual(strategy);
   expect(visual.ready).toBe(false);
   expect(result.authoring.pendingFields).toContainEqual(expect.objectContaining({ path: 'facts.visualStyle.forUser.colorStrategy.primaryColor' }));
@@ -316,11 +371,11 @@ test.each([[], ['海洋蓝'], 123, true])('rejects invalid color strategy types 
 });
 
 test('preserves an explicit neutral reference palette at intake', () => {
-  brief.visualSelection.colorStrategy.surfaceTone = 'theme';
+  brief.visualSelection.tokens = { '--pod-page-bg-color': '#F7F7F7', '--pod-card-bg-color': '#FFFFFF' };
   save();
   const result = init();
   const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
-  expect(plan.visualStyle.forUser.colorStrategy.surfaceTone).toBe('theme');
+  expect(plan.visualStyle.tokens).toEqual(brief.visualSelection.tokens);
 });
 
 test('keeps incomplete visual choices unready and schedules only the missing selection work', () => {
@@ -328,7 +383,7 @@ test('keeps incomplete visual choices unready and schedules only the missing sel
   save();
   const result = init();
   expect(result.preparedInputs.visualReady).toBe(false);
-  expect(result.parallelTasks.map(task => [task.id, task.dependsOn])).toEqual([['business', []], ['visual-selection', []]]);
+  expect(result.parallelTasks.map(task => [task.id, task.dependsOn])).toEqual([['business', []], ['visual-design', ['business']]]);
   const visual = JSON.parse(fs.readFileSync(result.preparedInputs.visual, 'utf8'));
   expect(visual.ready).toBe(false);
   expect(result.authoring.pendingFields).toEqual(expect.arrayContaining([

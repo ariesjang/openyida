@@ -60,6 +60,44 @@ function expectIssue(action, issue) {
   try {action(); throw new Error('Expected validation error');} catch (error) {expect(error.details?.issue).toBe(issue);}
 }
 
+test('platform basics are a minimum set and can consume declared project extensions', () => {
+  const value = fixture();
+  const global = value.metadata.tokens['application-global'];
+  global.spacing['--project-reading-width'] = 'min(100%, 72rem)';
+  value.metadata.tokens['custom-page'].project = {
+    '--project-paper': '#F6F1E8',
+    '--project-surface': 'var(--project-paper)',
+    '--project-cover': 'linear-gradient(135deg, var(--project-paper), #FFFFFF)',
+    '--project-motion': '180ms',
+  };
+  global.appearance.surfaces['--pod-page-bg-color'] = 'var(--project-surface)';
+  expect(() => check(value)).not.toThrow();
+  expect(extractDesignTokens(value.metadata, { strict: true })).toMatchObject({
+    '--pod-page-bg-color': 'var(--project-surface)',
+    '--project-reading-width': 'min(100%, 72rem)',
+    '--project-cover': 'linear-gradient(135deg, var(--project-paper), #FFFFFF)',
+    '--project-motion': '180ms',
+  });
+});
+
+test.each(['页面任务', '首屏焦点', '布局', '表面与组件', '主操作', '状态', '响应式', '验收'])(
+  'final documents reject generic text for %s just as Plan inputs do', label => {
+    for (const placeholder of ['按主题执行', '继承主题。', 'TODO']) {
+      const value = fixture();
+      value.body = value.body.replace(new RegExp(`^- \\*\\*${label}：\\*\\* .*`, 'm'), `- **${label}：** ${placeholder}`);
+      expectIssue(() => check(value), 'PAGE_LABEL_REQUIRED');
+    }
+  }
+);
+
+test.each(['--pod-app-root-bg-color', '--pod-page-bg-color', '--pod-card-bg-color'])(
+  'background colors reject image values in %s', token => {
+    const value = fixture();
+    value.metadata.tokens['application-global'].appearance[token] = 'linear-gradient(135deg, #F4F8F5, #E8F0EC)';
+    expectIssue(() => check(value), 'COLOR_CANNOT_BE_IMAGE');
+  }
+);
+
 test('serialization safely round-trips metadata, grouped tokens and single-line asset JSON', () => {
   const value = fixture();
   value.metadata.description = '引号 "、换行\n、反斜杠\\都保留';
@@ -120,8 +158,12 @@ test.each([
   ['missing standard variable', v => { delete v.metadata.tokens['application-global'].spacing['--s-5']; }, 'GLOBAL_TOKEN_SET_MISMATCH'],
   ['wrong token group', v => { v.metadata.tokens['application-global'].colors['--s-5'] = '20px'; }, 'GLOBAL_TOKEN_SET_MISMATCH'],
   ['undefined reference', v => { v.metadata.tokens['custom-page']['--a'] = 'var(--missing)'; }, 'UNDECLARED_TOKEN_REFERENCE'],
+  ['platform references missing extension', v => { v.metadata.tokens['application-global'].appearance.surfaces['--pod-page-bg-color'] = 'var(--page-only-paper)'; }, 'UNDECLARED_TOKEN_REFERENCE'],
   ['cycle', v => { Object.assign(v.metadata.tokens['custom-page'], { '--a': 'var(--b)', '--b': 'var(--a)' }); }, 'TOKEN_REFERENCE_CYCLE'],
-  ['reverse dependency', v => { v.metadata.tokens['application-global'].appearance.surfaces['--pod-page-bg-color'] = 'var(--oyd-inset-surface)'; }, 'GLOBAL_DEPENDS_ON_CUSTOM_TOKEN'],
+  ['cross-group cycle', v => {
+    v.metadata.tokens['application-global'].appearance.surfaces['--pod-page-bg-color'] = 'var(--project-paper)';
+    v.metadata.tokens['custom-page']['--project-paper'] = 'var(--pod-page-bg-color)';
+  }, 'TOKEN_REFERENCE_CYCLE'],
   ['fixed bridge', v => { v.metadata.tokens['application-global'].colors['--color-white'] = '#FFFFFF'; }, 'FIXED_PLATFORM_VALUE'],
   ['primary mismatch', v => { v.metadata.themeProfile.themeColor = '#FF0000'; }, 'PRIMARY_COLOR_MISMATCH'],
   ['missing CSS path', v => { delete v.metadata.themeProfile.themeFile; }, 'STRING_REQUIRED'],

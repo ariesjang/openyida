@@ -46,7 +46,14 @@ test('joins independent results, invalidates old confirmation, and writes one ma
   const expectedDir = path.join(dir, 'expected');
   const expected = materialize(input, { outputDir: expectedDir });
   for (const key of ['prd', 'html']) {
-    expect(fs.readFileSync(result.outputs[key]).equals(fs.readFileSync(expected.outputs[key]))).toBe(true);
+    const actual = fs.readFileSync(result.outputs[key], 'utf8');
+    const regenerated = fs.readFileSync(expected.outputs[key], 'utf8');
+    // Each output directory has its own design file; other content must match.
+    if (key === 'prd') {
+      expect(actual).toContain(result.outputs.design);
+      expect(regenerated).toContain(expected.outputs.design);
+    }
+    expect(regenerated.replaceAll(expected.outputs.design, result.outputs.design)).toBe(actual);
   }
   const { parseDesignDocument } = require('../lib/design/document');
   const actualDesign = parseDesignDocument(fs.readFileSync(result.outputs.design, 'utf8'));

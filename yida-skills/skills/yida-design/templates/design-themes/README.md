@@ -34,13 +34,13 @@ Frontmatter 包含 `name`、`description`、`themeId` 和 `tokens`。正文依�
 
 ## Token 契约
 
-`tokens.application-global` 按 `appearance`（含表面和导航）、`colors`、`typography`、`spacing`、`rounded`、`shadow` 分组，完整定义契约中的 69 个基础变量。`tokens.custom-page` 可为空，也可按颜色、字体等分组补充页面语义。递归读取以 `--` 开头的标量叶子，分组名不拼入 CSS 变量名。
+`tokens.application-global` 按 `appearance`（含表面和导航）、`colors`、`typography`、`spacing`、`rounded`、`shadow` 分组，完整定义契约中的 69 个基础变量；这是最小集合，允许按角色补充变量。`tokens.custom-page` 可为空，也可组织跨页面与组件复用的项目扩展变量，包括材质、布局、字体、动效等。两组均写入主题 CSS 的 `:root`，分组不是运行时隔离作用域，变量前缀不限定为 `--oyd-*`。递归读取以 `--` 开头的标量叶子，分组名不拼入 CSS 变量名。
 
 - 字体与间距使用契约固定值；页面标题使用 subhead，表格正文使用 table。
 - 颜色与圆角保留主题差异。Tooltip 固定使用 `#262626` 与 `#FFFFFF`。
 - `--color-white` 和 `--pod-table-cell-color` 通过 `var(--pod-card-bg-color)` 继承内容表面；页面桥接 `--oyd-page-bg` 若存在，使用 `var(--pod-page-bg-color)`。
 - `--color-brand1-6` 使用项目主色占位符，其他品牌档位明确引用这个主色种子推导。`<生成实际色值：…>` 属于推导指令，项目化时替换为实际 CSS 值。
-- 变量名在两层及各分组中均唯一；全局变量不得依赖页面变量。声明与正文中的引用必须存在，不得循环引用，不使用后缀缩写或 `*` 通配写法。
+- 变量名在两层及各分组中均唯一；平台基础与项目扩展均在主题中声明，可无环引用，并按实际设计补充变量。声明与正文中的引用必须存在，不得循环引用，不使用后缀缩写或 `*` 通配写法。
 - 标量可用双引号、单引号或普通 CSS 文本；数字可以不加引号。不使用 YAML 数组、别名、标签或多行标量。
 
 ## 项目化占位符

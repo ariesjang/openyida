@@ -144,14 +144,7 @@ tokens:
 
 ### 2.2 应用导航
 
-默认导航为主题色浅灰，内容画布为白色，两者的配色独立维护。六个导航变量独立维护，需要主题色的角色引用品牌浅深变体，中性角色保持无色相灰；不引用内容区的 Text 或 Fill。图标随当前菜单文字颜色变化。
-
-| 导航角色 | 使用变量 | 视觉结果 |
-| --- | --- | --- |
-| 导航框架 | `--pod-shell-theme-bg-color` | 微染灰背景，与白色内容形成轻分区 |
-| 普通菜单 | `--pod-nav-item-text-color` | 中灰文字和线性图标 |
-| 悬停文字、背景 | `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color` | 文字变深，底面出现轻微主题灰色差 |
-| 当前项文字、背景 | `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color` | 白色菜单面承载深色图文，无品牌色竖条 |
+导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
 原生导航仅配置这六项配色。导航位置、尺寸、分组、排列与收纳由项目已有结构和平台处理，不因本主题额外建立侧栏或顶部导航。
 
@@ -315,7 +308,7 @@ tokens:
 
 ### 变量与平台边界
 
-YAML 是变量值的唯一事实源；正文只说明角色和消费关系。全局变量供应用与页面使用，`custom-page` 仅补足外框表面、图形序列、数据字体和局部轮廓等独立语义。递归读取两类作用域中以双连字符开头的标量叶子，分组名不拼入变量名；全局不反向依赖页面变量。
+YAML 是变量值的唯一事实源；正文只说明角色和消费关系。全局变量供应用与页面使用，`custom-page` 在本模板中包含外框表面、图形序列、数据字体和局部轮廓等独立语义。递归读取两类分组中以双连字符开头的标量叶子，分组名不拼入变量名；平台基础与项目扩展均在主题中声明，可无环引用，并按实际设计补充变量。
 
 `--pod-table-cell-color` 单向引用 `--pod-card-bg-color`，`--oyd-page-bg` 单向引用 `--pod-page-bg-color`。页面层的微染灰底框与全局微染灰输入当前具有相近外观，但用途独立：改变输入不会自动改变面板结构。
 
