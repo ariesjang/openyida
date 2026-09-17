@@ -10,11 +10,13 @@ description: >
 
 宜搭应用和页面视觉设计技能，输出 `design.md`。
 
-确定风格前，按[设计方向比较](references/style-design-selection.md#设计方向比较)以第一直觉为参照，发展两个更有表现力的方向，在当前规划轮次内选定。已有明确视觉要求时，在其范围内完善设计。
+确定风格前，按[设计方向比较](references/theme-selection.md#设计方向比较)以第一直觉为参照，发展两个更有表现力的方向，在当前规划轮次内选定。已有明确视觉要求时，在其范围内完善设计。
 
 向用户说明设计时，写风格和适用场景：“设计主题风格为轻盈媒体栅格，适合产品展示型品牌官网。”风格名称与场景按当前项目填写；建议阶段使用“建议采用……风格”。
 
 需要业务规划时调用 `use_skill("yida-prd")`。已有 `prd.md` 时直接读取其中的页面任务、区块和业务规则，再做视觉设计；查询业务字段或格式时，按需读取 `yida-prd` 的参考文件。
+
+Fast、Plan 和单页设计共用 [主题索引](templates/design-themes/index.json)，按 [共享主题选择规则](references/theme-selection.md) 先读摘要、选中后读一份完整主题。
 
 完整应用沿用需求分析阶段确认的模式与风格，按 [设计模式路由](references/design-mode.md) 推进。Fast 使用下方视觉流程；Plan 使用 [视觉分支](sub_skill/yida-design-plan/SKILL.md) 维护视觉事实，由 `yida-app` 生成方案并请用户确认；业务规划始终归 `yida-prd`。单页设计和主题调整直接继续。
 
@@ -47,7 +49,7 @@ description: >
 | 4 | [UI 视觉和状态设计](workflow/step-5-visual-states.md) | 从业务任务、信息拓扑和视觉 DNA 选择设计风格 | `design.md` 内容草稿 |
 | 5 | [写入 design.md](workflow/step-6-handoff.md) | 写入唯一视觉事实源和稳定 `designRefs` | `prd/<项目名>/design.md` |
 
-完整应用输出一份应用级 `design.md`，包含主题、布局、组件、状态和响应式规则，Fast 手写格式见 [视觉输出契约](workflow/output-design.md)；Plan 使用紧凑契约，由 CLI 生成完整文档。页面实现同时读取业务 PRD 和视觉契约。
+完整应用输出一份应用级 `design.md`，包含主题、布局、组件、状态和响应式规则，三种流程共用 [唯一输出契约](workflow/output-design.md)：frontmatter 保存机器数据与 anchor 索引，完整规则只写在五章正文。Fast 手写并执行 `check-design`，Plan 使用紧凑契约由 CLI 生成并执行同一校验。页面实现同时读取业务 PRD 和视觉契约。
 
 ---
 
@@ -63,8 +65,8 @@ description: >
 8. **页面布局要到可实现粒度**：每个页面至少写清顶部/左侧/主体/右侧/底部区域、核心组件、信息密度、主操作位置、PC/移动端差异和空/载/错态。
 9. **页面丰富度建议**：工作台、首页、门户、看板、展示页和业务入口页推荐规划 8-10 个有业务目的的区块以上，例如上下文标题、状态摘要、主操作、筛选、任务列表、最近记录、动态流、洞察、提醒、空态行动、右侧上下文和底部辅助信息。区块数量不是硬门槛，窄场景、单任务页面或用户明确要求精简时可以更少，但要写清每个区块的业务目的和取舍原因。计数按“区块组”算，不按子项算：`KPI 卡片: 学生总数, 课程总数, 出勤率, 平均分` 只能算 1 个状态摘要区块，`快捷入口: 录入学生/登记成绩/记录考勤/管理课程` 只能算 1 个动作区块；不能用重复 KPI 卡、重复快捷入口或大空白卡凑数量。
 10. **工作台禁低密大卡片套路**：工作台 / 业务首页不能用“标题 + 4 个等宽大 KPI 白卡 + 图标快捷卡 + 大空态白卡”撑首屏。默认改成紧凑状态摘要条、任务/动态列表、最近记录、右侧上下文面板和高频动作；没有真实数据时也展示薄空态行 + 登记入口，不铺大块空白卡片。
-11. **默认圆润高密且有呼吸感**：业务工具页默认使用圆润形状、紧凑信息密度和清晰呼吸节奏。`design.md` 必须写清 `roundedRule`、`densityRule` 和 `breathingRule`：卡片 padding 必须大于 20px（默认 22-28px），卡片与卡片的 gap 必须小于 20px（默认 12-18px），卡片圆角范围 0-32px（业务卡片默认 20-24px），控件 10-14px，状态摘要 64-88px，动作条 40-56px，列表行 44-56px，空态 88-120px 内；页面边距、卡片 gap 和卡片 padding 要形成可扫读的分组节奏。呼吸感来自对齐、分组、层级和节奏，不来自额外 margin、超宽空 KPI 框或空白卡撑页面。
-12. **背景与卡片必须有层次对比**：默认业务页背景保持浅色调、清爽但不能与卡片相近或相同。`design.md` 必须写清 `surfaceContrast`：白色/浅色背景配有边框卡片；浅灰背景（如 `#F3F4F6`）配白色无边框卡片；浅彩色背景（如浅蓝、浅暖灰）配白色无边框卡片；渐变背景配玻璃感卡片。禁止浅底白卡无边框、同色背景同色卡片或只有阴影没有色差/边框的层次。
+11. **按主题保持形状、密度与呼吸感**：`design.md` 正文写清圆角、密度与呼吸节奏的具体消费方式和必要数值，优先采用选中主题的容器/控件形状与内距、组间距、列表行高。通用业务页参考值只补主题未定义项，不能用固定大圆角、padding 或 gap 覆盖主题。呼吸感来自对齐、分组、层级和节奏，不来自超宽空 KPI 框或空白卡。
+12. **背景与内容层次清晰**：正文说明主题如何用色差、细边界、共容器、留白或材质区分内容。同色画布与面板可通过明确边界和分组成立；渐变、玻璃、阴影按主题规则启用，不强制添加。
 13. **设计风格先选后定制**：先按业务任务、信息拓扑选择风格，再按用户确认的色彩氛围协调页面、卡片、导航、填充、边界和交互。布局、圆角与材质可保留，模板固定灰阶和品牌色面积限制不能覆盖用户要求。“自然绿意”等整体风格不能缩减成只有按钮和 logo 变绿；明确只改强调色或忠实中性参考时才保持原画布。文字保留可读的中性层级，状态保留独立语义。
 14. **应用主题统一**：`app-theme.css` 只在应用级配置，由平台统一作用于应用壳、原生表单、详情页和自定义页面外层。`YidaCodeCanvas` 页面只在 `YidaComp` 内消费 `--color-brand1-*`、`--color-group` 和 `--pod-*`；严禁页面代码修改或向上层注入主题变量。
 15. **参考转成可执行选择**：参考 Dribbble / 优秀案例时，落到主色、背景素材、首屏构图、信息密度、动线、区块数量和反默认点。
@@ -85,10 +87,11 @@ description: >
 | [写入 design.md](workflow/step-6-handoff.md) | `design.md` 必填内容、稳定引用和完成条件 | 输出前 |
 | [page-design 单页设计](sub_skill/page-design/SKILL.md) | 单页主题证据、页面级设计流程、输出补充字段 | 单个自定义页设计 |
 | [design.md 输出格式](workflow/output-design.md) | `design.md` 字段示例 | Fast 写入前；Plan 定制时按需 |
-| [design.md 生成规则](references/style-design-selection.md) | 从业务推演视觉 DNA，选择设计风格并按主题色换肤，生成应用级 `design.md` | UI 视觉设计 |
-| [视觉结构配方库](references/visual-scaffold-recipes.md) | 将高质量页面结构转成 `visualScaffold` 槽位，约束页面实现落地 | UI 视觉设计 |
+| [共享主题选择规则](references/theme-selection.md) | Fast、Plan、单页共用的摘要选型、项目化和读取边界 | 主题选择与生成 |
+| [视觉结构配方库](references/visual-scaffold-recipes.md) | 把真实内容组织为可实现的布局、表面与响应式安排 | UI 视觉设计 |
 | [页面质量门禁](references/page-quality-gates.md) | 区块数量、源码槽位、低密大卡片、主题一致性和 `pageSpecHandoff` 检查 | 页面结构、视觉与交接阶段 |
-| [style-design 风格注册表](references/style-designs/registry.md) | 内置视觉 DNA 风格、选择评分、风险扣分、风格消费规则 | UI 视觉设计 |
+| [共享主题索引](templates/design-themes/index.json) | 唯一主题 ID、路径与精简风格摘要 | 选前只读摘要；选后只读对应完整主题 |
+| [基础变量契约](templates/design-themes/basic-tokens.json) | 全局基础变量与固定值 | 主题项目化和 token 校验 |
 | [应用结构参考](../yida-prd/references/app/blueprint.md) | 应用角色、导航、页面清单、页面/表单/流程资源蓝图 | 完整应用或主页面 |
 | [应用主题与 token 参考](references/theme/theme-token-presets.md) | 平台主题 key、候选主题、token profile | 需要主题 key 或 token |
 | [应用主题 CSS 模板](references/theme/app-custom-theme-template.css) | AI 可复制修改的品牌、Shell、页面、表格和导航 token | 生成自定义应用主题文件时必读 |

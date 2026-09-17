@@ -5,12 +5,24 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  design_document: {
+    invalid: 'Échec de la validation du design : {0} ({1})',
+    yaml: 'Le frontmatter du document de design n’est pas un YAML valide',
+    token_value: 'Le jeton {0} doit être une valeur CSS résolue sur une seule ligne',
+    token_conflict: 'Le jeton {0} contient des valeurs dupliquées ou contradictoires',
+    tokens_required: 'design.md doit contenir un frontmatter avec des jetons',
+    brand_required: 'Jetons de marque manquants dans design.md : {0}',
+    usage: 'Utilisation: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    read_error: 'Impossible de lire le fichier de validation du design : {0}',
+    checked: 'Validation du design réussie : {0} ; {1} pages, {2} jetons',
+  },
   asset: {
     executionReview: 'Vérifiez les preuves d’exécution des ressources : {0}. Contrôlez les retours des tâches en arrière-plan, les durées métier et les raisons du repli synchrone.',
     localFileUnavailable: "Image introuvable : {0}. Vérifiez le répertoire de travail de la commande ou utilisez un chemin absolu.",
     invalidStrategy: "Les besoins en images doivent être un objet indiquant les emplacements par page.",
   },
   help: {
+    cmd_check_design: 'Valider les documents de design, les variables du thème et la transmission du PRD',
     subtitle: 'Outil de développement IA low-code pour Yida',
     usage: 'Utilisation :',
     alias: 'Alias :',

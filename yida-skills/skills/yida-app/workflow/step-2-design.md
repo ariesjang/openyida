@@ -20,7 +20,7 @@
 2. 按 [模式路由](../../yida-design/references/design-mode.md) 确定执行方式，沿用用户最后一次明确选择。
 3. AI 根据有效功能、`userTasks` 与 `entryRecommendation`，按 [导航决策](../../yida-design/references/navigation-decision.md) 规划各入口的页面和菜单，补齐稳定 `pageScenes` 与主题映射。新增建议标记来源，范围遵守 explicitScope。
 
-Fast / Plan 的主题与配色统一按[设计方向比较](../../yida-design/references/style-design-selection.md#设计方向比较)在本轮规划中选定，结果写回 brief，后续直接复用。
+Fast / Plan 的主题与配色统一按[设计方向比较](../../yida-design/references/theme-selection.md#设计方向比较)在本轮规划中选定，结果写回 brief，后续直接复用。
 
 进入 2.1 前校验规划字段完整性和 `intake.designMode`。页面、导航、主题等建议随整体搭建方案展示。
 
@@ -52,7 +52,7 @@ Plan 分支从已加载 `yida-app` 的 Available Files 读取精确路径 `workf
 
 ## 2.3 校验两份结果
 
-`yida-app` 必须等待两个文件都生成完成，再执行一致性校验：
+`yida-app` 必须等待两个文件都生成完成，再执行 `openyida check-design prd/<项目名>/design.md --prd prd/<项目名>/prd.md --json`。Fast 的设计步骤先完成单文件检查，合并时补上述关联检查；Plan 物化内部调用同一校验。检查：
 
 - 两个文件路径存在且非空；
 - PRD 每个 display 页面的 `designFile` 指向当前 `design.md`；

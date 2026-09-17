@@ -798,6 +798,12 @@ async function main() {
       break;
     }
 
+    case 'check-design': {
+      const { run } = require('../lib/design/check-design');
+      await run(args);
+      break;
+    }
+
     case 'er': {
       const { run } = require('../lib/app/er');
       await run(args);

@@ -45,9 +45,16 @@ test('joins independent results, invalidates old confirmation, and writes one ma
   expect(merged.meta).toMatchObject({ status: 'awaiting_confirmation', planState: { planConfirmed: false, confirmedRevision: null, presentedRevision: null } });
   const expectedDir = path.join(dir, 'expected');
   const expected = materialize(input, { outputDir: expectedDir });
-  for (const key of ['prd', 'design', 'html']) {
+  for (const key of ['prd', 'html']) {
     expect(fs.readFileSync(result.outputs[key]).equals(fs.readFileSync(expected.outputs[key]))).toBe(true);
   }
+  const { parseDesignDocument } = require('../lib/design/document');
+  const actualDesign = parseDesignDocument(fs.readFileSync(result.outputs.design, 'utf8'));
+  const expectedDesign = parseDesignDocument(fs.readFileSync(expected.outputs.design, 'utf8'));
+  expect(actualDesign.metadata.themeProfile.themeFile).toBe(result.outputs.theme);
+  expect(expectedDesign.metadata.themeProfile.themeFile).toBe(expected.outputs.theme);
+  expectedDesign.metadata.themeProfile.themeFile = actualDesign.metadata.themeProfile.themeFile;
+  expect(actualDesign).toEqual(expectedDesign);
   expect([businessFile, visualFile].map(file => fs.readFileSync(file, 'utf8'))).toEqual(beforeParts);
   expect(() => merge()).toThrow('旧版本');
 });

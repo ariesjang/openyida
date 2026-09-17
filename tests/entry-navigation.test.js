@@ -257,7 +257,7 @@ describe('entry contract survives authoring and rendering', () => {
       navigation: { type: 'platform-side', source: 'user_selected' }, businessGoals: ['办理业务'],
       pageScenes: [{ key: 'service', name: '业务服务', kind: 'custom-page' }], entryRecommendation: recommendation };
     const file = path.join(dir, 'brief.json'); fs.writeFileSync(file, JSON.stringify(brief));
-    const result = initialize(file, { themeId: 'airy-modular-clarity', outputDir: path.join(dir, 'plan') });
+    const result = initialize(file, { themeId: 'soft-inset-surfaces', outputDir: path.join(dir, 'plan') });
     const initialized = JSON.parse(fs.readFileSync(result.output));
     expect(initialized.execution.entryRecommendation).toEqual(recommendation);
     expect(JSON.stringify(result)).toContain('execution.entryRecommendation.entries[0].menu');

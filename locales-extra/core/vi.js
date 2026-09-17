@@ -5,12 +5,24 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  design_document: {
+    invalid: 'Xác thực thiết kế thất bại: {0} ({1})',
+    yaml: 'Frontmatter của tài liệu thiết kế không phải YAML hợp lệ',
+    token_value: 'Token {0} phải là giá trị CSS đã xác định trên một dòng',
+    token_conflict: 'Token {0} có giá trị trùng lặp hoặc xung đột',
+    tokens_required: 'design.md cần có frontmatter chứa token',
+    brand_required: 'design.md thiếu token thương hiệu: {0}',
+    usage: 'Cách dùng: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    read_error: 'Không thể đọc tệp xác thực thiết kế: {0}',
+    checked: 'Xác thực thiết kế thành công: {0}; {1} trang, {2} token',
+  },
   asset: {
     executionReview: 'Cần kiểm tra bằng chứng thực thi tư liệu: {0}. Kiểm tra xác nhận tác vụ nền, thời gian công việc và lý do chuyển sang đồng bộ.',
     localFileUnavailable: "Không tìm thấy tệp ảnh: {0}. Kiểm tra thư mục làm việc của lệnh hoặc dùng đường dẫn tuyệt đối.",
     invalidStrategy: "Yêu cầu về ảnh phải là một đối tượng liệt kê vị trí ảnh theo từng trang.",
   },
   help: {
+    cmd_check_design: 'Xác thực tài liệu thiết kế, biến giao diện và bàn giao PRD',
     subtitle: 'Công cụ phát triển AI low-code cho Yida',
     usage: 'Cách dùng:',
     alias: 'Bí danh:',

@@ -5,12 +5,24 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  design_document: {
+    invalid: 'فشل التحقق من التصميم: {0} ({1})',
+    yaml: 'بيانات frontmatter في مستند التصميم ليست YAML صالحًا',
+    token_value: 'يجب أن يكون الرمز {0} قيمة CSS محددة في سطر واحد',
+    token_conflict: 'يحتوي الرمز {0} على قيم مكررة أو متعارضة',
+    tokens_required: 'يتطلب design.md بيانات frontmatter تحتوي على الرموز',
+    brand_required: 'يفتقد design.md رموز العلامة التجارية: {0}',
+    usage: 'الاستخدام: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    read_error: 'تعذرت قراءة ملف التحقق من التصميم: {0}',
+    checked: 'نجح التحقق من التصميم: {0}؛ {1} صفحات، {2} رموز',
+  },
   asset: {
     executionReview: 'تحتاج سجلات تنفيذ المواد إلى مراجعة: {0}. تحقق من إيصالات المهام الخلفية وفترات العمل وأسباب التنفيذ المتزامن.',
     localFileUnavailable: "ملف الصورة غير موجود: {0}. تحقق من مجلد عمل الأمر أو استخدم مسارًا مطلقًا.",
     invalidStrategy: "يجب أن تكون متطلبات الصور كائنًا يحدد مواضع الصور حسب الصفحة.",
   },
   help: {
+    cmd_check_design: 'التحقق من مستندات التصميم ومتغيرات السمة وتسليم PRD',
     subtitle: 'أداة تطوير الذكاء الاصطناعي منخفضة الكود لـ Yida',
     usage: 'الاستخدام:',
     alias: 'الاسم المستعار:',

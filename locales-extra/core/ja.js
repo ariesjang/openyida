@@ -5,12 +5,24 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  design_document: {
+    invalid: 'デザイン検証に失敗しました：{0}（{1}）',
+    yaml: 'デザイン文書の frontmatter は有効な YAML ではありません',
+    token_value: 'トークン {0} には確定した1行の CSS 値が必要です',
+    token_conflict: 'トークン {0} に重複または競合する値があります',
+    tokens_required: 'design.md にトークンを含む frontmatter がありません',
+    brand_required: 'design.md にブランドトークンがありません：{0}',
+    usage: '使用方法: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    read_error: 'デザイン検証ファイルを読み取れません：{0}',
+    checked: 'デザイン検証に成功しました：{0}、{1} ページ、{2} トークン',
+  },
   asset: {
     executionReview: '素材の実行記録を確認してください：{0}。バックグラウンド実行の応答、業務の実行時間、同期処理への切り替え理由を確認してください。',
     localFileUnavailable: "画像ファイルが見つかりません：{0}。コマンドの作業ディレクトリを確認するか、絶対パスを指定してください。",
     invalidStrategy: "画像の要件は、ページごとの画像の配置を記述したオブジェクトで指定してください。",
   },
   help: {
+    cmd_check_design: 'デザイン文書、テーマ変数、PRD の引き継ぎを検証',
     subtitle: '宜搭ローコード AI 開発ツール',
     usage: '使用方法:',
     alias: 'エイリアス:',

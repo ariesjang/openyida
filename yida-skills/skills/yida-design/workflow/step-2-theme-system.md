@@ -6,7 +6,7 @@
 
 已有应用里的单页重构/美化读取并沿用当前应用主题。用户要求更换主色时，更新应用级主题文件，不在页面代码中创建或向上层写入另一套主题。
 
-先按[设计方向比较](../references/style-design-selection.md#设计方向比较)确定本项目的构图、层级、材质和色彩关系，复用已经完成的选择。
+先按[设计方向比较](../references/theme-selection.md#设计方向比较)确定本项目的构图、层级、材质和色彩关系，复用已经完成的选择。
 
 ## 选择主题色
 
@@ -17,6 +17,7 @@
 | 1 | `user-specified` | 用户明确给出色值、品牌色、主题 key 或换肤要求 | 原样记录用户意图；命中平台 key 才允许传 `--theme`，任意色值写 token |
 | 2 | `application-theme` | 已有应用或工作区中能读到当前 `theme`、`colour`、`themeColor` 或 `navTheme` | 单页美化和已有应用改造默认跟随；页面主按钮、链接、选中态和图表主序列跟随应用主题 |
 | 3 | `business-inferred` | 无明确主题证据，需要根据行业、品牌气质、业务情绪和视觉目标推导 | 设计任意合法的自定义品牌色盘，写应用主题 token 和文件交付方案 |
+
 
 1. 先判断业务气质：行业、目标用户、品牌关键词、业务情绪、视觉目标，以及是否需要亲和/专业/活力/稳重/科技/自然感。
 2. 在 `design.md` 中记录主题色、`navTheme`、`logoSource` 和 `layoutDirection`。
@@ -32,13 +33,13 @@
 
 | token | 语义 | 典型用途 |
 | --- | --- | --- |
-| `--color-brand1-1` | 明亮品牌浅色或浅 hover 色 | 列表 hover、菜单 hover、轻量背景，不直接当深色文字 |
+| `--color-brand1-1` | 品牌交互悬停色 | 按主题定义用于交互 hover，不直接充当持续数据色 |
 | `--color-brand1-2` | 品牌浅底 | 标签浅底、提示块、选中底、弱强调背景 |
-| `--color-brand1-3` | 品牌透明/浅边界 | 选中边框、禁用/弱化品牌态、浅描边 |
-| `--color-brand1-5` | 主色 hover 档 | 主按钮 hover、链接 hover、可点击强调 hover |
+| `--color-brand1-3` | 品牌派生浅色 | 按主题和平台的既有消费关系使用 |
+| `--color-brand1-5` | 品牌派生深色 | 深色导航或强调表面等主题指定角色 |
 | `--color-brand1-6` | 主品牌色 | 主按钮、链接、选中态、重点标签、图表主序列 |
-| `--color-brand1-9` | 深主色 | 深色强调、深底按钮、强调标题、深色场景锚点 |
-| `--color-brand1-10` | 深色或透明强调档 | 深色 hover、强强调背景、深色主题补充 |
+| `--color-brand1-9` | 品牌交互激活色 | active / 按下状态，持续数据焦点另用主题数据变量 |
+| `--color-brand1-10` | 品牌交互禁用色 | 品牌控件 disabled 状态 |
 | `--color-brand-1` | 移动端品牌浅/透明档 1 | 移动端壳层、移动端表单、移动组件浅品牌态 |
 | `--color-brand-2` | 移动端品牌浅/中档 2 | 移动端 hover、轻量强调、移动端组件浅色面 |
 | `--color-brand-3` | 移动端主品牌档 3 | 移动端主操作、选中态、原生表单移动主色 |
@@ -47,7 +48,7 @@
 
 自定义色盘生成时，先确定 `--color-brand1-6` 主色，再推导平台实际消费的浅底、hover、深色和移动端桥接色阶。移动端 `--color-brand-1` ~ `--color-brand-4` 必须保留，不能只输出 `--color-brand1-*`。
 
-AI 默认直接使用模板内 coffee 咖啡色色阶和大圆角层级。若 `design.md` 选择其他主色，必须成套替换品牌色阶、基础品牌色阶、`--color-group`，以及按钮、表单、选中态、导航和日期组件中的品牌相关直接色值；成功、警告、错误、通知等语义色保持独立。除非 `roundedRule` 明确改变，不得拆散模板的页面/卡片/抽屉 20px、组件 8-12px、按钮胶囊形圆角层级。
+共享主题使用项目 `PRIMARY_COLOR` 作为主色输入，不默认采用 CSS 示例中的咖啡色。按选中主题推导品牌色阶和真实用到的图表色，保留成功、警告、错误、通知等独立语义。圆角与组件形状采用主题的用途映射，不统一改成大圆角或胶囊。
 
 ## 处理应用主题和页面风格
 
@@ -96,18 +97,10 @@ AI 默认直接使用模板内 coffee 咖啡色色阶和大圆角层级。若 `d
 - 风格摘要：<2-3 个业务风格关键词>
 - 主题交付摘要：<平台预置 / 应用自定义主题文件 / 继承当前应用>
 
-design.md Theme Profile：
-- themeProfile.name：<平台预置 key 或自定义色盘名称>
-- themeColorSource：<user-specified / application-theme / business-inferred>
-- themeColorToken：<CSS 中 --color-brand1-6 的字面量值>
-- themeDelivery：<app-custom-theme-file / current-app-theme>
-- customThemeTemplate：yida-design/references/theme/app-custom-theme-template.css
-- customThemeFile：<复制模板并修改 token 后的 .css 路径；平台预置时留空>
-- themeColor：<#RRGGBB>
-- navTheme：<light / dark / white / gray>
-- colorMode：<宜搭配色模式，如 gradient；不表示暗黑>
-- typography：<标题/正文/数字层级>
-- componentTone：<按钮/卡片/表格/标签/抽屉风格>
+design.md 的机器字段与正文分工按 output-design.md：
+- themeProfile：项目方向名称、真实主色及来源、navTheme、themeDelivery、themeFile 与既有导航配置。
+- tokens：选中主题的全局和局部变量，以及明确的项目差异。
+- 正文：色彩角色、字体层级和组件规则；不再复制一组 customThemeTemplate/customThemeFile/themeColorToken 交接字段。
 ```
 
 ## 下一步

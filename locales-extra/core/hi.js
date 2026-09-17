@@ -5,12 +5,24 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  design_document: {
+    invalid: 'डिज़ाइन सत्यापन विफल: {0} ({1})',
+    yaml: 'डिज़ाइन दस्तावेज़ का frontmatter मान्य YAML नहीं है',
+    token_value: 'टोकन {0} का मान निर्धारित एकल-पंक्ति CSS मान होना चाहिए',
+    token_conflict: 'टोकन {0} में दोहराए गए या विरोधी मान हैं',
+    tokens_required: 'design.md में टोकन वाला frontmatter आवश्यक है',
+    brand_required: 'design.md में ब्रांड टोकन मौजूद नहीं हैं: {0}',
+    usage: 'उपयोग: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    read_error: 'डिज़ाइन सत्यापन फ़ाइल नहीं पढ़ी जा सकती: {0}',
+    checked: 'डिज़ाइन सत्यापन सफल: {0}; {1} पृष्ठ, {2} टोकन',
+  },
   asset: {
     executionReview: 'सामग्री निष्पादन के प्रमाण की समीक्षा करें: {0}। पृष्ठभूमि कार्य की पुष्टि, व्यावसायिक कार्य अवधि और समकालिक विकल्प के कारण जाँचें।',
     localFileUnavailable: "चित्र फ़ाइल नहीं मिली: {0}। कमांड की कार्य निर्देशिका जाँचें या पूर्ण पथ दें।",
     invalidStrategy: "चित्र आवश्यकताएँ एक ऑब्जेक्ट में दें, जिसमें हर पृष्ठ के चित्र स्थान हों।",
   },
   help: {
+    cmd_check_design: 'डिज़ाइन दस्तावेज़, थीम चर और PRD हस्तांतरण सत्यापित करें',
     subtitle: 'Yida के लिए AI-संचालित लो-कोड विकास उपकरण',
     usage: 'उपयोग:',
     alias: 'उपनाम:',

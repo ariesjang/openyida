@@ -2470,7 +2470,8 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
     expect(route.design_mode_policy).not.toContain('Confirm unresolved navigation');
     expect(route.product_design_policy).toBe(workflow.product_design_policy);
-    expect(route.product_design_policy).toContain('Theme templates use only basic-tokens.json variables');
+    expect(route.product_design_policy).toContain('Fast, Plan and single-page design share yida-design/templates/design-themes');
+    expect(route.product_design_policy).toContain('plus scoped custom-page variables');
   }
   expect(workflow.default_nav_order_policy).toContain('preserves platform navigation for the management workspace');
   expect(workflow.entry_navigation_contract).toMatchObject({
@@ -2576,6 +2577,13 @@ test('Plan CLI preserves workspace navigation while materializing and patching a
       entryMode: 'standalone', navigation: { type: 'custom', variant: 'top', reason: '员工办理个人事项' },
     };
     plan.pages.customPageDetails.push(frontend);
+    plan.visualStyle.forUser.pageApplications.push({
+      ...plan.visualStyle.forUser.pageApplications[0], pageId: frontend.pageId, pageName: frontend.name,
+      firstScreenFocus: '员工自己的待办入口位于顶部，待处理状态紧邻入口名称。',
+      layout: '顶部为单层办理入口，下方个人记录占满内容宽度；各区按内容自然增高。',
+      responsive: '720px以下入口单列排列，个人记录保持在入口下方，表格允许横向滚动。',
+      acceptanceChecks: ['平台导航保持可见，独立入口仅隐藏本页导航；个人待办与记录范围保持一致。'],
+    });
     fs.writeFileSync(input, JSON.stringify(plan));
     runOk(['design-plan', 'materialize', input, '--json']);
     const handoff = () => JSON.parse(fs.readFileSync(path.join(dir, 'prd.md'), 'utf8').match(/```json\n([\s\S]*?)\n```/)[1]);
@@ -2599,9 +2607,11 @@ test('Plan CLI and design-file sample work locally without a login', () => {
     expect(fs.existsSync(path.join(dir, 'design.md'))).toBe(false);
     runOk(['design-plan', 'materialize', input, '--json']);
     const { readDesignTokens } = require('../lib/app/theme-from-design');
-    const contract = require('../yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/design-themes/basic-tokens.json');
+    const contract = require('../yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json');
     const tokens = readDesignTokens(fs.readFileSync(path.join(dir, 'design.md'), 'utf8'));
-    expect(Object.keys(tokens).sort()).toEqual(Object.values(contract.groups).flat().sort());
+    expect(Object.keys(tokens)).toEqual(expect.arrayContaining(Object.values(contract.groups).flat()));
+    expect(Object.keys(tokens).filter(name => !Object.values(contract.groups).flat().includes(name))
+      .every(name => name.startsWith('--oyd-'))).toBe(true);
     for (const [name, value] of Object.entries(contract.fixedValues)) {
       expect(tokens[name]).toBe(value);
     }
@@ -2611,7 +2621,7 @@ test('Plan CLI and design-file sample work locally without a login', () => {
     runOk(['sample', 'yida-design', 'app-theme', '--design-file', path.join(dir, 'design.md'), '--output', cssPath]);
     const css = fs.readFileSync(cssPath, 'utf8');
     expect(css).toContain('--pod-card-border-radius: 16px');
-    for (const [tone, background] of Object.entries({ light: 'var(--color-brand1-3)', dark: 'var(--color-brand1-5)', white: '#fff', gray: '#f0f2f5' })) {
+    for (const [tone, background] of Object.entries({ dark: tokens['--pod-shell-theme-bg-color'], white: '#fff', gray: '#f0f2f5' })) {
       const block = css.match(new RegExp(`\\.pod-premium\\.nav-${tone}\\s*\\{([^}]+)\\}`))[1];
       expect(block).toContain(`--pod-shell-theme-bg-color: ${background};`);
     }

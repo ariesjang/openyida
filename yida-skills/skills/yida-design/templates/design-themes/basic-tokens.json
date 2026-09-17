@@ -1,12 +1,20 @@
 {
   "groups": {
-    "colors": [
+    "appearance": [
       "--pod-app-root-bg-color",
       "--pod-app-root-bg-image",
-      "--pod-shell-theme-bg-color",
       "--pod-page-bg-color",
-      "--color-white",
       "--pod-card-bg-color",
+      "--pod-table-cell-color",
+      "--pod-shell-theme-bg-color",
+      "--pod-nav-item-text-color",
+      "--pod-nav-item-text-hover-color",
+      "--pod-nav-item-text-selected-color",
+      "--pod-nav-menu-bg-hover-color",
+      "--pod-nav-menu-bg-selected-color"
+    ],
+    "colors": [
+      "--color-white",
       "--color-brand1-1",
       "--color-brand1-2",
       "--color-brand1-3",
@@ -19,6 +27,7 @@
       "--color-fill1-1",
       "--color-fill1-2",
       "--color-fill1-3",
+      "--color-fill1-5",
       "--color-fill1-10",
       "--color-text1-5",
       "--color-text1-4",
@@ -66,6 +75,11 @@
       "--corner-5",
       "--corner-circle",
       "--corner-semicircle"
+    ],
+    "shadow": [
+      "--shadow-1",
+      "--shadow-2",
+      "--shadow-3"
     ]
   },
   "fixedValues": {
@@ -95,7 +109,9 @@
     "--s-8": "32px",
     "--s-9": "36px",
     "--s-10": "40px",
-    "--color-fill1-10": "#2E3033",
-    "--color-text1-5": "#FFFFFF"
+    "--color-fill1-10": "#262626",
+    "--color-text1-5": "#FFFFFF",
+    "--pod-table-cell-color": "var(--pod-card-bg-color)",
+    "--color-white": "var(--pod-card-bg-color)"
   }
 }

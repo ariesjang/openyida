@@ -60,6 +60,7 @@
 
 ### <页面名>
 
+- pageId：<display-page必填，复用共享需求/设计中的稳定页面ID；原生页面不补造>
 - 页面类型：<display-page / form-page / process-form / report / detail-entry>
 - 页面定位：<主入口页面 / 核心业务页 / 详情页 / 报表页 / 配置页；说明为什么需要这个页面>
 - 入口模式：<`platform-shell` / `standalone`；信息不足时必须写 `platform-shell`>

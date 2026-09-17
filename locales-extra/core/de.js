@@ -5,12 +5,24 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  design_document: {
+    invalid: 'Designprüfung fehlgeschlagen: {0} ({1})',
+    yaml: 'Das Frontmatter des Designdokuments ist kein gültiges YAML',
+    token_value: 'Token {0} muss ein aufgelöster einzeiliger CSS-Wert sein',
+    token_conflict: 'Token {0} enthält doppelte oder widersprüchliche Werte',
+    tokens_required: 'design.md benötigt ein Frontmatter mit Tokens',
+    brand_required: 'In design.md fehlen Marken-Tokens: {0}',
+    usage: 'Verwendung: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    read_error: 'Datei zur Designprüfung kann nicht gelesen werden: {0}',
+    checked: 'Designprüfung erfolgreich: {0}; {1} Seiten, {2} Tokens',
+  },
   asset: {
     executionReview: 'Ausführungsnachweise der Medien prüfen: {0}. Prüfen Sie Hintergrundaufträge, Geschäftsintervalle und Gründe für synchrone Ausführung.',
     localFileUnavailable: "Bilddatei nicht gefunden: {0}. Prüfen Sie das Arbeitsverzeichnis des Befehls oder verwenden Sie einen absoluten Pfad.",
     invalidStrategy: "Die Bildanforderungen müssen ein Objekt mit Bildpositionen pro Seite sein.",
   },
   help: {
+    cmd_check_design: 'Designdokumente, Theme-Variablen und PRD-Übergabe prüfen',
     subtitle: 'KI-gestütztes Low-Code-Entwicklungstool für Yida',
     usage: 'Verwendung:',
     alias: 'Alias:',

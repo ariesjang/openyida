@@ -5,12 +5,24 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  design_document: {
+    invalid: '設計文件驗證失敗：{0}（{1}）',
+    yaml: '設計文件 frontmatter 不是有效的 YAML',
+    token_value: 'token {0} 必須是已確定的單行 CSS 值',
+    token_conflict: 'token {0} 存在重複或衝突值',
+    tokens_required: 'design.md 缺少包含 token 的 frontmatter',
+    brand_required: 'design.md 缺少品牌 token：{0}',
+    usage: '用法: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    read_error: '無法讀取設計檢查文件：{0}',
+    checked: '設計文件驗證通過：{0}；{1} 個頁面，{2} 個 token',
+  },
   asset: {
     executionReview: '素材執行記錄需覆核：{0}。請檢查背景派發回執、業務執行時間及同步退化原因。',
     localFileUnavailable: "找不到圖片檔案：{0}。請檢查指令工作目錄，或使用絕對路徑。",
     invalidStrategy: "圖片要求應填寫為物件，按頁面列出圖片位置。",
   },
   help: {
+    cmd_check_design: '檢查設計文件、主題變數與 PRD 交接',
     subtitle: '宜搭低程式碼 AI 開發工具',
     usage: '用法:',
     alias: '別名:',

@@ -5,12 +5,24 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  design_document: {
+    invalid: '디자인 검증 실패: {0} ({1})',
+    yaml: '디자인 문서의 frontmatter가 올바른 YAML이 아닙니다',
+    token_value: '토큰 {0}에는 확정된 한 줄 CSS 값이 필요합니다',
+    token_conflict: '토큰 {0}에 중복되거나 충돌하는 값이 있습니다',
+    tokens_required: 'design.md에 토큰을 포함한 frontmatter가 없습니다',
+    brand_required: 'design.md에 브랜드 토큰이 없습니다: {0}',
+    usage: '사용법: openyida check-design <design.md> [--prd <prd.md>] [--json]',
+    read_error: '디자인 검증 파일을 읽을 수 없습니다: {0}',
+    checked: '디자인 검증 통과: {0}, 페이지 {1}개, 토큰 {2}개',
+  },
   asset: {
     executionReview: '소재 실행 기록 검토 필요: {0}. 백그라운드 실행 응답, 업무 실행 시간 및 동기 처리 전환 이유를 확인하세요.',
     localFileUnavailable: "이미지 파일을 찾을 수 없습니다: {0}. 명령의 작업 디렉터리를 확인하거나 절대 경로를 사용하세요.",
     invalidStrategy: "이미지 요구사항은 페이지별 이미지 위치를 나열한 객체로 입력하세요.",
   },
   help: {
+    cmd_check_design: '디자인 문서, 테마 변수 및 PRD 인계 검증',
     subtitle: 'Yida 로우코드 AI 개발 도구',
     usage: '사용법:',
     alias: '별칭:',

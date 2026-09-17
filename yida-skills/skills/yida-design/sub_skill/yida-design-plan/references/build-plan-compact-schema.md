@@ -93,21 +93,24 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
     "visualDirection": {"label":"清晰柔和","description":"突出待办与业务状态，浅色界面搭配暖棕色重点操作","source":"user_selected"},
     "colorStrategy": {"primaryColor":"#6F4E37","primaryColorName":"暖棕色","source":"user_selected","surfaceTone":"brand-tinted","usage":"暖棕浅底、白色卡片与品牌焦点协调"},
     "navigationStyle": {"structure":"side","tone":"light","source":"user_selected","selectionReason":"沿用已选的左侧导航"},
+    "iconSystem": {"library":"lucide-react","mappings":{"新建采购":"Plus"}},
     "pageApplications": [
-      {"pageId":"page-1","visualMemoryApplications":[{"name":"摘要拼接组","renderPolicy":"prd_match_only","target":"采购待办摘要","reason":"页面已有并列的待办状态"}]}
+      {"pageId":"page-1","firstScreenFocus":"先看到待处理采购数量与最紧急记录，主操作紧邻列表标题","layout":"顶部单行筛选与主操作，下方连续采购列表；必要提示放列表右侧窄栏，列表随记录自然增长","responsive":"窄屏筛选换行，提示移到列表下方，表格保留关键列并允许横向滚动","acceptanceChecks":["首屏可找到待处理记录与新建采购操作","窄屏主操作和错误恢复入口可用"],"visualMemoryApplications":[{"name":"摘要拼接组","renderPolicy":"prd_match_only","target":"采购待办摘要","reason":"页面已有并列的待办状态"}]}
     ],
     "assetStrategy": {"materialStatus":"none","pages":[{"pageId":"page-1","imageNeed":"none","reason":"纯数据操作页","slots":[]}],"missingAssets":[],"notes":"无图片需求"}
   },
-  "internal": {"selectedTheme":{"themeId":"airy-modular-clarity","source":"user_selected"}},
+  "internal": {"selectedTheme":{"themeId":"soft-outline-rhythm","source":"user_selected"}},
   "forDesignMd": {"productTopologyApplication":"工作台与表单共享主题，视觉重点绑定已有采购任务"}
 }
 ```
 
 - 已选主题取当前上下文；主色为 6 位 HEX。导航 structure 为 top/side，tone 为 light/dark；它与整页暗色风格分开记录。
-- 页面视觉绑定使用相同 pageId，按上下文中的视觉记忆点及适用条件匹配真实区块；没有匹配内容时保留空数组，并在项目应用中说明。
+- 每个实际自定义页使用相同 pageId，最终物化前必须填写 firstScreenFocus、layout、responsive 三项非空说明和 acceptanceChecks 非空字符串数组；内容须具体到当前页，不能只写继承主题。纯原生页无需增加记录。
+- 视觉记忆点按适用条件绑定真实区块，无匹配时保留空数组。草稿缺逐页决定可预览，最终产物拒绝缺项；旧计划沿用同一规则，补齐后再物化。
 - `visualStyle.evidence/constraints` 保留实际视觉依据和约束。
+- `forUser.iconSystem` 可选，格式为 `{library: "lucide-react" | "@ant-design/icons", mappings: {业务语义: 具体组件名}}`。初始化保留 brief 的已选图标映射；仅未配置时默认 lucide-react 与空映射。
 - `visualStyle.tokens` 可写具体单行 CSS token 差异，如 `{"--pod-card-border-radius":"16px"}`。品牌色阶由主色派生；themeProfile 为只读摘要。
-- 完整主题的 token、组件、状态、响应式和自检规则由 CLI 注入 design.md。项目独有组件调整时再读模板对应章节；整体暗色主题按需读取暗色浮层规则。
+- 最终 design.md 按 [公共输出契约](../../../workflow/output-design.md) 生成并校验：机器数据和 anchor 索引留在 frontmatter，完整规则只写在五章正文一次。主题的 token、组件、状态与公共响应式由 CLI 注入，页面具体布局和响应式来自上述输入。项目独有组件调整时再读模板对应章节；整体暗色主题按需读取暗色浮层规则。
 
 ## 执行交接
 
@@ -138,7 +141,7 @@ PRD 实施交接中的 `pages[].navigationPolicy` 与 `pageSpecHandoff` 同级�
 
 `duplicatePlatformMenu` 始终为 false；显式 none 优先于应用级 custom。策略描述实现约束，不代表线上导航已配置或已通过视觉验收。实际菜单过滤的 `mode=platform` 仅指自绘菜单的数据来源，不表示平台工作区应再渲染菜单。
 
-源 JSON 保留项目事实；派生后的 PRD 包含完整 11 章业务与实施交接，HTML 展示同一套业务内容。
+源 JSON 保留完整项目事实，派生后的 PRD 包含完整 11 章业务与实施交接；HTML 仅按 [展示规范](../assets/README.md#需求确认内容范围) 呈现需求确认内容，不减少 PRD 或设计文档的交接要求。
 
 ## 调整与确认
 

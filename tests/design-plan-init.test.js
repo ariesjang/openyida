@@ -12,7 +12,7 @@ let dir;
 let briefPath;
 let brief;
 const save = () => fs.writeFileSync(briefPath, JSON.stringify(brief));
-const init = () => initialize(briefPath, { themeId: 'airy-modular-clarity', outputDir: path.join(dir, 'prd') });
+const init = () => initialize(briefPath, { themeId: 'soft-inset-surfaces', outputDir: path.join(dir, 'prd') });
 const colorExample = result => JSON.parse(fs.readFileSync(result.context, 'utf8')
   .split('## 输入格式示例')[1].match(/```json\n([\s\S]*?)\n```/)[1]).colorStrategy;
 
@@ -28,6 +28,7 @@ beforeEach(() => {
       colorStrategy: { primaryColor: '#6F4E37', primaryColorName: '暖棕色' },
       navigationStyle: { structure: 'top', tone: 'light' },
       tokens: { '--pod-card-border-radius': '16px' },
+      pageApplications: [{ ...fixture().visualStyle.forUser.pageApplications[0], pageId: 'dashboard' }],
     },
     resourceContext: { app: { appType: 'APP_EXISTING' } },
     businessObjects: [{ name: '采购订单', fields: [{ name: '订单号', type: '文本', required: true }] }],
@@ -107,7 +108,7 @@ test('initializes stable references, preserves explicit facts and returns a boun
   expect(visualPart.facts.visualStyle.tokens).toEqual(brief.visualSelection.tokens);
   expect(visualPart.facts.visualStyle.forUser.colorStrategy.surfaceTone).toBe('brand-tinted');
   const context = fs.readFileSync(result.context, 'utf8');
-  expect(context).toContain('视觉记忆点应用策略');
+  expect(context).toContain('## 1. 风格摘要');
   expect(context).toContain('compact-workbench');
   expect(context).not.toContain('"--color-brand1-1"');
   expect(fs.readFileSync(briefPath, 'utf8')).toBe(original);
@@ -121,6 +122,32 @@ test('normalizes a single business goal string without crashing', () => {
   const result = init();
   const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
   expect(plan.overview.summary).toBe('只完成回访记录表单');
+});
+
+test('keeps page-specific design decisions pending while preserving selected theme and icon facts', () => {
+  delete brief.visualSelection.pageApplications;
+  brief.visualSelection.iconSystem = { library: '@ant-design/icons', mappings: { approve: 'CheckOutlined' } };
+  save();
+  const result = init();
+  const visual = JSON.parse(fs.readFileSync(result.preparedInputs.visual, 'utf8'));
+  expect(result.preparedInputs.visualReady).toBe(false);
+  expect(visual.ready).toBe(false);
+  expect(visual.facts.visualStyle.forUser.iconSystem).toEqual(brief.visualSelection.iconSystem);
+  expect(visual.facts.visualStyle.forUser.pageApplications[0]).toMatchObject({ firstScreenFocus: '', layout: '', responsive: '', acceptanceChecks: [] });
+  for (const key of ['firstScreenFocus', 'layout', 'responsive', 'acceptanceChecks']) {
+    expect(result.authoring.pendingFields.some(item => item.path.endsWith(`.${key}`))).toBe(true);
+  }
+  expect(fs.readFileSync(result.context, 'utf8')).toContain('不能仅写继承主题');
+});
+
+test('rejects a generic inherit-theme answer for a page design decision', () => {
+  brief.visualSelection.pageApplications[0].layout = '继承主题';
+  save();
+  const result = init();
+  expect(result.preparedInputs.visualReady).toBe(false);
+  expect(result.authoring.pendingFields).toEqual(expect.arrayContaining([
+    expect.objectContaining({ path: 'facts.visualStyle.forUser.pageApplications[0].layout' }),
+  ]));
 });
 
 test('prefills resource-only execution with deterministic sample-data skips and root resource context', () => {
@@ -341,7 +368,7 @@ test('catalog is read-only and its theme IDs initialize through the public CLI w
   const before = fs.readdirSync(dir);
   const result = JSON.parse(execFileSync(process.execPath, [bin, 'design-plan', 'catalog', '--json'], options));
   expect(fs.readdirSync(dir)).toEqual(before);
-  const themeIndex = require('../yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/design-themes/index.json');
+  const themeIndex = require('../yida-skills/skills/yida-design/templates/design-themes/index.json');
   const patterns = require('../yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/page-patterns/index.json');
   expect(result.themes.map(theme => theme.themeId)).toEqual(themeIndex.themes.map(theme => theme.themeId));
   expect(result.pagePatterns).toEqual(patterns.patterns.map(({ id, label, mustKeep }) => ({ id, label, mustKeep })));
@@ -370,7 +397,7 @@ test('collects interaction state format errors alongside other missing facts', (
 
 test('returned materialize command handles spaces, quotes and shell expressions in paths', () => {
   const { spawnSync } = require('child_process');
-  const result = initialize(briefPath, { themeId: 'airy-modular-clarity', outputDir: path.join(dir, "plan ' $(touch unwanted)") });
+  const result = initialize(briefPath, { themeId: 'soft-inset-surfaces', outputDir: path.join(dir, "plan ' $(touch unwanted)") });
   const source = fixture();
   source.pages.customPageDetails[0].pageId = 'dashboard';
   source.pages.customPageDetails[0].sceneKey = 'dashboard';
@@ -398,25 +425,34 @@ test('returned materialize command handles spaces, quotes and shell expressions 
   expect(fs.existsSync(path.join(dir, 'unwanted'))).toBe(false);
 });
 
-test('materializes a complete standard Plan from business facts and the prepared visual input without another visual task', () => {
-  const result = init();
-  const source = fixture();
-  source.pages.customPageDetails[0].pageId = 'dashboard';
-  source.pages.customPageDetails[0].sceneKey = 'dashboard';
-  delete source.pages.customPageDetails[0].pageSpecHandoff;
-  const businessFile = result.parallelTasks[0].output;
-  const business = JSON.parse(fs.readFileSync(businessFile, 'utf8'));
-  business.ready = true;
-  business.facts = { overview: source.overview, dataModels: source.dataModels, businessFlows: source.businessFlows, pages: source.pages };
-  fs.writeFileSync(businessFile, JSON.stringify(business));
-  const output = materialize(result.output, { businessFile, visualFile: result.preparedInputs.visual });
-  expect(output.success).toBe(true);
-  expect(output).toMatchObject({ previousRevision: '1', revision: '1' });
-  const design = fs.readFileSync(output.outputs.design, 'utf8');
-  expect(design).toContain('dashboard');
-  expect(design).toContain('#6F4E37');
-  expect(fs.readFileSync(output.outputs.prd, 'utf8')).toContain('采购');
-});
+test.each(require('../yida-skills/skills/yida-design/templates/design-themes/index.json').themes)(
+  'initializes and materializes shared theme $themeId with its current summary and token contract', theme => {
+    delete brief.visualSelection.visualDirection;
+    save();
+    const result = initialize(briefPath, { themeId: theme.themeId, outputDir: path.join(dir, 'prd') });
+    const initialized = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+    expect(initialized.visualStyle.forUser.visualDirection.description).toBe(theme.styleSummary);
+    expect(result.preparedInputs.visualReady).toBe(true);
+    expect(fs.readFileSync(result.context, 'utf8')).toContain('## 1. 风格摘要');
+    const source = fixture();
+    source.pages.customPageDetails[0].pageId = 'dashboard';
+    source.pages.customPageDetails[0].sceneKey = 'dashboard';
+    delete source.pages.customPageDetails[0].pageSpecHandoff;
+    const businessFile = result.parallelTasks[0].output;
+    const business = JSON.parse(fs.readFileSync(businessFile, 'utf8'));
+    business.ready = true;
+    business.facts = { overview: source.overview, dataModels: source.dataModels, businessFlows: source.businessFlows, pages: source.pages };
+    fs.writeFileSync(businessFile, JSON.stringify(business));
+    const output = materialize(result.output, { businessFile, visualFile: result.preparedInputs.visual });
+    expect(output.success).toBe(true);
+    expect(output).toMatchObject({ previousRevision: '1', revision: '1' });
+    const design = fs.readFileSync(output.outputs.design, 'utf8');
+    expect(design).toContain('dashboard');
+    expect(design).toContain('#6F4E37');
+    expect(design).not.toMatch(/<生成实际色值|\{\{[A-Z_]+\}\}/);
+    expect(require('../lib/app/theme-from-design').readDesignTokens(design)['--color-brand1-6']).toBe('#6F4E37');
+    expect(fs.readFileSync(output.outputs.prd, 'utf8')).toContain('采购');
+  });
 
 test.each([
   b => {b.intake.confirmed = false;},
@@ -504,7 +540,7 @@ test('CLI init is permitted locally, documents every argument and runs through t
   expect(command.args.map(arg => arg.builder_options[0])).toEqual(['--requirement-brief', '--theme-id', '--output-dir', '--json']);
   const { execFileSync } = require('child_process');
   const result = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, '../bin/yida.js'), 'design-plan', 'init', briefPath,
-    '--theme-id', 'airy-modular-clarity', '--output-dir', path.join(dir, 'cli-prd'), '--json'], {
+    '--theme-id', 'soft-inset-surfaces', '--output-dir', path.join(dir, 'cli-prd'), '--json'], {
     cwd: dir, encoding: 'utf8', env: { ...process.env, OPENYIDA_SKIP_UPDATE_CHECK: '1' },
   }));
   expect(result.success).toBe(true);

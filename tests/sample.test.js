@@ -624,7 +624,7 @@ describe('application theme from design.md', () => {
   const { renderDesign } = require('../lib/design-plan/materialize');
   const template = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
   const fixture = require('./fixtures/design-plan.json');
-  const themeIndex = require('../yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/design-themes/index.json');
+  const themeIndex = require('../yida-skills/skills/yida-design/templates/design-themes/index.json');
   const tokens = {
     '--color-brand1-1': '#7197EE', '--color-brand1-2': '#EFF3FE', '--color-brand1-3': '#DAE3FD',
     '--color-brand1-5': '#2245AA', '--color-brand1-6': '#315BCC', '--color-brand1-9': '#1F3D99',
@@ -652,13 +652,18 @@ describe('application theme from design.md', () => {
     expect(readDesignTokens(design)['--pod-card-border-radius']).toBe('16px');
     expect(css).toContain('--pod-card-border-radius: 16px;');
     expect(css).toContain('--color-brand1-6: #6F4E37;');
-    // Ignore added custom-page tokens when comparing the template's selectors and scope.
+    // Ignore new theme declarations while preserving all existing selectors and scope.
     const rootPattern = /^:root\s*\{([\s\S]*?)^\}/m;
     const originalRoot = template.match(rootPattern)[1];
     const originalNames = new Set([...originalRoot.matchAll(/(--[\w-]+)\s*:/g)].map(m => m[1]));
-    const withoutExtra = css.replace(rootPattern, root => root.replace(
+    let withoutExtra = css.replace(rootPattern, root => root.replace(
       /^[ \t]*(--[\w-]+)\s*:[^;]+;\n/gm, (line, name) => originalNames.has(name) ? line : ''
     ));
+    const lightMode = /(\.pod-premium\.is-light\s*\{)([^}]*)(\})/;
+    const originalLightNames = new Set([...template.match(lightMode)[2].matchAll(/(--[\w-]+)\s*:/g)].map(m => m[1]));
+    withoutExtra = withoutExtra.replace(lightMode, (block, start, body, end) => start + body.replace(
+      /^[ \t]*(--[\w-]+)\s*:[^;]+;\n/gm, (line, name) => originalLightNames.has(name) ? line : ''
+    ) + end);
     expect(structure(withoutExtra)).toBe(structure(template));
   });
 
@@ -743,7 +748,8 @@ describe('application theme from design.md', () => {
       await expect(run(['yida-design', 'app-theme', '--design-file', designPath, '--output', cssPath])).rejects.toThrow(/单行 CSS/);
       expect(fs.readFileSync(cssPath, 'utf8')).toBe(before);
       await expect(run(['yida-design', 'app-theme', '--design-file', designPath, '--output', designPath])).rejects.toThrow(/不能覆盖/);
-      expect(() => readDesignTokens(fastDesign.replace('---\n', '---\ntokensOther:\n  --color-brand1-6: #000000\n'))).toThrow(/冲突/);
+      // Values outside tokens are metadata, never CSS declarations.
+      expect(readDesignTokens(fastDesign.replace('---\n', '---\ntokensOther:\n  --color-brand1-6: #000000\n'))['--color-brand1-6']).toBe('#315BCC');
     } finally {
       log.mockRestore(); err.mockRestore();
       fs.rmSync(dir, { recursive: true, force: true });
