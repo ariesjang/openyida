@@ -10,18 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 海外版宜搭暂不适用当前 OAuth token 登录与创建应用链路；如需在海外版宜搭创建应用，请使用 `2026.7.14-2` 以前的版本，例如 `npm install -g openyida@2026.7.13`。
 
-## [2026.9.18] - 2026-09-18
-
-### 问题修复
-
-- **流程配置失败后明确保留原表**：`create-process` 在表单已存在但后续配置失败时，返回结构化 `recovery` 和 `noWriteRetry`，保留 `appType/formUuid`，引导检查原表而非重复创建；新建与复用模式均适用。
-- **修复恢复命令的路径与引用**：返回的 `retryCommand` 保留流程定义文件的完整原路径，正确引用 POSIX Shell 和 Windows PowerShell 中含空格、引号及特殊字符的参数；仅在原请求已有 `--replace` 时保留该选项。
-
-### 恢复与安全说明
-
-- 先按 `stage`、`nextStep`、`recovery` 核实原表状态与权限，修正明确原因后才使用返回的完整命令复用原 `formUuid`。`noWriteRetry:true`、`NON_IDEMPOTENT_RESULT_UNKNOWN` 或 `PUBLISHED_UNVERIFIED` 时只读核实，不写重试、不新建替代资源，也不自动添加 `--replace` 绕过保护；无法安全恢复时保留原表并报告原表链接、失败阶段和待处理问题。
-
-## [2026.9.17] - 2026-09-17
+## [2026.9.18-1] - 2026-09-18
 
 ### 设计与搭建
 
@@ -44,15 +33,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **修复刷新时的表格黑边**：共享 Canvas Provider 将加载遮罩边框固定为零，只保留透明度过渡，避免延迟加载基础样式时产生黑边动画；CLI 示例和主题装配脚本自动带上修复。
 - **导航颜色与入口诊断更准确**：分别处理浅色、深色导航，统一选中项图标和文字颜色；缺少 `entry.sceneKey` 时不再同时误报已正确填写的 `menu.resource`。
 - **流程输出与参数更明确**：`create-process` 增加 `formMode=create|reuse`，复用模式中未查询的 `formTitle`、`fieldCount` 返回 `null`；缺参、重复参数或未知选项在读取文件和登录前报错。补齐命令帮助，并在数据帮助与技能中明确日期字段使用毫秒时间戳、日期区间使用时间戳数组。
-- **连接器测试可忽略已保存默认值**：`connector test` 新增 `--ignore-defaults`，从空的 Path、Query、Header、Body 参数集开始，仅使用本次显式参数，避免动作定义中的历史默认值或脱敏占位值影响测试；不修改已保存的动作配置。
-- **保留鉴权保护**：忽略默认值时，已保存的非空 `systemToken` 默认值会触发警告；声明该参数的动作仍须使用 `--system-token-app` 由 CLI 安全解析，继续验证可信目标并拒绝显式传入 `systemToken`。需要鉴权的连接器仍须选择属于该连接器的 `--account-id`。
-- **修复连接器测试请求体序列化**：非 GET/DELETE 动作在提交测试请求时预先将请求体序列化为 JSON，保留嵌套对象和数组；已序列化的字符串不重复转换，空请求体使用 `{}`，GET/DELETE 仍不发送 Body 字段。
 
 ### 升级说明
 
 - 旧主题计划需切换到当前主题并补齐逐页设计；背景和渐变通过主题变量或页面样式设置，不再使用 `surfaceTone`。
 - 读取流程创建结果的脚本需适配复用模式的 `null` 值；页面已创建但隐藏导航未确认时，修复原页面配置，不要重复创建页面。
 - 已发布应用不会自动更新：配色调整需更新应用主题，抽屉与加载遮罩修复需更新页面源码后重新发布。静态检查不能替代真实页面的首屏、配色和交互验收。
+
+## [2026.9.18] - 2026-09-18
+
+### 问题修复
+
+- **流程配置失败后明确保留原表**：`create-process` 在表单已存在但后续配置失败时，返回结构化 `recovery` 和 `noWriteRetry`，保留 `appType/formUuid`，引导检查原表而非重复创建；新建与复用模式均适用。
+- **修复恢复命令的路径与引用**：返回的 `retryCommand` 保留流程定义文件的完整原路径，正确引用 POSIX Shell 和 Windows PowerShell 中含空格、引号及特殊字符的参数；仅在原请求已有 `--replace` 时保留该选项。
+
+### 恢复与安全说明
+
+- 先按 `stage`、`nextStep`、`recovery` 核实原表状态与权限，修正明确原因后才使用返回的完整命令复用原 `formUuid`。`noWriteRetry:true`、`NON_IDEMPOTENT_RESULT_UNKNOWN` 或 `PUBLISHED_UNVERIFIED` 时只读核实，不写重试、不新建替代资源，也不自动添加 `--replace` 绕过保护；无法安全恢复时保留原表并报告原表链接、失败阶段和待处理问题。
+
+## [2026.9.17] - 2026-09-17
+
+### 体验优化
+
+- **连接器测试可忽略已保存默认值**：`connector test` 新增 `--ignore-defaults`，从空的 Path、Query、Header、Body 参数集开始，仅使用本次显式参数，避免动作定义中的历史默认值或脱敏占位值影响测试；不修改已保存的动作配置。
+- **保留鉴权保护**：忽略默认值时，已保存的非空 `systemToken` 默认值会触发警告；声明该参数的动作仍须使用 `--system-token-app` 由 CLI 安全解析，继续验证可信目标并拒绝显式传入 `systemToken`。需要鉴权的连接器仍须选择属于该连接器的 `--account-id`。
+
+### 问题修复
+
+- **修复连接器测试请求体序列化**：非 GET/DELETE 动作在提交测试请求时预先将请求体序列化为 JSON，保留嵌套对象和数组；已序列化的字符串不重复转换，空请求体使用 `{}`，GET/DELETE 仍不发送 Body 字段。
 
 ## [2026.9.16-2] - 2026-09-16
 
