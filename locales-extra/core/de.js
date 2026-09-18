@@ -19,6 +19,7 @@ module.exports = {
     checked: 'Designprüfung erfolgreich: {0}; {1} Seiten, {2} Tokens',
   },
   asset: {
+    sourceRecords: 'In assets[] über --input assetId, creator, sourcePage, license, licenseUrl, licenseCheckedAt (YYYY-MM-DD) und authorizationEvidence (Array von Beleg-URLs oder Dateipfaden) eintragen. Das Manifest bewahrt diese Angaben; fehlende Werte bleiben leer. Dies bestätigt keine kommerzielle Nutzungserlaubnis.',
     executionReview: 'Ausführungsnachweise der Medien prüfen: {0}. Prüfen Sie Hintergrundaufträge, Geschäftsintervalle und Gründe für synchrone Ausführung.',
     localFileUnavailable: "Bilddatei nicht gefunden: {0}. Prüfen Sie das Arbeitsverzeichnis des Befehls oder verwenden Sie einen absoluten Pfad.",
     invalidStrategy: "Die Bildanforderungen müssen ein Objekt mit Bildpositionen pro Seite sein.",

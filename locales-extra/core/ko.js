@@ -19,6 +19,7 @@ module.exports = {
     checked: '디자인 검증 통과: {0}, 페이지 {1}개, 토큰 {2}개',
   },
   asset: {
+    sourceRecords: '--input의 assets[]에 assetId, creator, sourcePage, license, licenseUrl, licenseCheckedAt(YYYY-MM-DD), authorizationEvidence(증빙 URL 또는 파일 경로 배열)를 기록하세요. 목록에 기록이 보존되며 미입력 값은 비워 둡니다. 상업적 이용 허가를 자동으로 인정하지 않습니다.',
     executionReview: '소재 실행 기록 검토 필요: {0}. 백그라운드 실행 응답, 업무 실행 시간 및 동기 처리 전환 이유를 확인하세요.',
     localFileUnavailable: "이미지 파일을 찾을 수 없습니다: {0}. 명령의 작업 디렉터리를 확인하거나 절대 경로를 사용하세요.",
     invalidStrategy: "이미지 요구사항은 페이지별 이미지 위치를 나열한 객체로 입력하세요.",

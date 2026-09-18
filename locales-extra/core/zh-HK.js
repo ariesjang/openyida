@@ -19,6 +19,7 @@ module.exports = {
     checked: '設計文件驗證通過：{0}；{1} 個頁面，{2} 個 token',
   },
   asset: {
+    sourceRecords: '在 --input 的 assets[] 中填寫 assetId、creator、sourcePage、license、licenseUrl、licenseCheckedAt（YYYY-MM-DD）和 authorizationEvidence（憑證連結或檔案路徑陣列）。清單保留這些記錄；未提供的留空，不自動認定已獲商用授權。',
     executionReview: '素材執行記錄需覆核：{0}。請檢查背景派發回執、業務執行時間及同步退化原因。',
     localFileUnavailable: "找不到圖片檔案：{0}。請檢查指令工作目錄，或使用絕對路徑。",
     invalidStrategy: "圖片要求應填寫為物件，按頁面列出圖片位置。",

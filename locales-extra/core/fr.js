@@ -19,6 +19,7 @@ module.exports = {
     checked: 'Validation du design réussie : {0} ; {1} pages, {2} jetons',
   },
   asset: {
+    sourceRecords: 'Dans assets[] via --input, renseignez assetId, creator, sourcePage, license, licenseUrl, licenseCheckedAt (YYYY-MM-DD) et authorizationEvidence (tableau de liens ou chemins de justificatifs). Le manifeste conserve ces données ; les valeurs absentes restent vides. Cela ne certifie pas une autorisation commerciale.',
     executionReview: 'Vérifiez les preuves d’exécution des ressources : {0}. Contrôlez les retours des tâches en arrière-plan, les durées métier et les raisons du repli synchrone.',
     localFileUnavailable: "Image introuvable : {0}. Vérifiez le répertoire de travail de la commande ou utilisez un chemin absolu.",
     invalidStrategy: "Les besoins en images doivent être un objet indiquant les emplacements par page.",

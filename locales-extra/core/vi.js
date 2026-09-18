@@ -19,6 +19,7 @@ module.exports = {
     checked: 'Xác thực thiết kế thành công: {0}; {1} trang, {2} token',
   },
   asset: {
+    sourceRecords: 'Trong assets[] qua --input, ghi assetId, creator, sourcePage, license, licenseUrl, licenseCheckedAt (YYYY-MM-DD) và authorizationEvidence (mảng URL hoặc đường dẫn tệp chứng từ). Danh sách giữ lại các bản ghi; giá trị thiếu để trống, không tự xác nhận quyền sử dụng thương mại.',
     executionReview: 'Cần kiểm tra bằng chứng thực thi tư liệu: {0}. Kiểm tra xác nhận tác vụ nền, thời gian công việc và lý do chuyển sang đồng bộ.',
     localFileUnavailable: "Không tìm thấy tệp ảnh: {0}. Kiểm tra thư mục làm việc của lệnh hoặc dùng đường dẫn tuyệt đối.",
     invalidStrategy: "Yêu cầu về ảnh phải là một đối tượng liệt kê vị trí ảnh theo từng trang.",

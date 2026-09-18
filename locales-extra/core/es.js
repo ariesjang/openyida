@@ -19,6 +19,7 @@ module.exports = {
     checked: 'Validación del diseño correcta: {0}; {1} páginas, {2} tokens',
   },
   asset: {
+    sourceRecords: 'En assets[] mediante --input, registre assetId, creator, sourcePage, license, licenseUrl, licenseCheckedAt (YYYY-MM-DD) y authorizationEvidence (arreglo de URL o rutas de justificantes). El manifiesto conserva los datos; los valores ausentes quedan vacíos. Esto no certifica una autorización comercial.',
     executionReview: 'Revise las pruebas de ejecución de recursos: {0}. Compruebe las respuestas de tareas en segundo plano, los intervalos de trabajo y los motivos del modo síncrono.',
     localFileUnavailable: "No se encontró la imagen: {0}. Comprueba el directorio de trabajo del comando o usa una ruta absoluta.",
     invalidStrategy: "Los requisitos de imágenes deben ser un objeto con las posiciones de imágenes por página.",

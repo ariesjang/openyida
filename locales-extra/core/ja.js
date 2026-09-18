@@ -19,6 +19,7 @@ module.exports = {
     checked: 'デザイン検証に成功しました：{0}、{1} ページ、{2} トークン',
   },
   asset: {
+    sourceRecords: '--input の assets[] に assetId、creator、sourcePage、license、licenseUrl、licenseCheckedAt（YYYY-MM-DD）、authorizationEvidence（証拠の URL またはファイルパスの配列）を記録します。マニフェストは記録を保持し、未入力の値は空欄のままです。商用許諾を自動判定しません。',
     executionReview: '素材の実行記録を確認してください：{0}。バックグラウンド実行の応答、業務の実行時間、同期処理への切り替え理由を確認してください。',
     localFileUnavailable: "画像ファイルが見つかりません：{0}。コマンドの作業ディレクトリを確認するか、絶対パスを指定してください。",
     invalidStrategy: "画像の要件は、ページごとの画像の配置を記述したオブジェクトで指定してください。",
