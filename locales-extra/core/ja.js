@@ -6,6 +6,7 @@
  */
 module.exports = {
   design_document: {
+    update_conflict: "{0}（{1}）を更新できません。現在の内容が前回の生成結果と競合しています。該当箇所のローカル変更と計画データを合わせてから再試行してください。ファイルは保存されていません。",
     theme_css_invalid: 'テーマ CSS の {0} 行付近に、閉じられていないか対応しない括弧、文字列、コメントがあります。修正して再試行してください。',
     invalid: 'デザイン検証に失敗しました：{0}（{1}）',
     yaml: 'デザイン文書の frontmatter は有効な YAML ではありません',
@@ -42,8 +43,8 @@ module.exports = {
     design_plan_preview_invalid: '草稿の更新に失敗しました。詳細を確認してください',
     cmd_design_plan_catalog: '計画に利用できるテーマとページパターンを一覧表示',
     cmd_design_plan_init: '確認済みの要件から計画の下書きを作成',
-    cmd_design_plan_materialize: 'build-plan.json から設計計画成果物を生成・検証',
-    cmd_design_plan_patch: 'フィールドパスで計画を更新し以前の確認を無効化',
+    cmd_design_plan_materialize: "計画文書とテーマを生成・更新し、整合性を検証",
+    cmd_design_plan_patch: "計画のフィールドを変更し、必要に応じて文書とテーマを同期",
     cmd_update_app: 'アプリ情報を更新',
     cmd_app_online: 'Yida アプリを有効化',
     cmd_app_offline: 'Yida アプリを無効化',

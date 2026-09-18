@@ -6,6 +6,7 @@
  */
 module.exports = {
   design_document: {
+    update_conflict: "Não foi possível atualizar {0} ({1}): o conteúdo está em conflito com a última versão gerada. Concilie a alteração local desta seção com os dados do plano e tente novamente. Nenhum arquivo foi salvo.",
     theme_css_invalid: 'O CSS do tema contém um delimitador, uma string ou um comentário não fechado ou incompatível perto da linha {0}. Corrija e tente novamente.',
     invalid: 'Falha na validação do design: {0} ({1})',
     yaml: 'O frontmatter do documento de design não é YAML válido',
@@ -42,8 +43,8 @@ module.exports = {
     design_plan_preview_invalid: 'Falha ao atualizar o rascunho; verifique os detalhes',
     cmd_design_plan_catalog: 'Listar temas e padrões de página disponíveis para planejamento',
     cmd_design_plan_init: 'Criar um rascunho do plano com requisitos confirmados',
-    cmd_design_plan_materialize: 'Gerar e validar artefatos a partir de build-plan.json',
-    cmd_design_plan_patch: 'Alterar o plano por caminho e invalidar a confirmação anterior',
+    cmd_design_plan_materialize: "Gerar ou atualizar documentos e tema do plano e verificar a consistência",
+    cmd_design_plan_patch: "Alterar campos do plano e sincronizar documentos e tema quando solicitado",
     cmd_update_app: 'Atualizar informações do aplicativo',
     cmd_app_online: 'Ativar um aplicativo Yida',
     cmd_app_offline: 'Desativar um aplicativo Yida',

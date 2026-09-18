@@ -48,9 +48,13 @@ HTML 使用预置模板，保留需求总览、数据模型、业务流程、页
 
 ## 4. 处理调整
 
-`continue_editing` 把工作流从 `awaiting_confirmation` 转为 `editing`。下一次交互收集变更内容；收到变更后更新当前计划源，物化新 revision，并重新进入最终确认。
+修改已有方案时，从当前 `build-plan.json` 继续，只读本次涉及的字段和相关章节。已有具体修改要求就直接处理；只有用户选择 `continue_editing` 却没有说明改什么时，才在下一次交互收集修改内容。
 
-按字段更新源事实并重新生成，例如同时调整品牌色和圆角：
+1. 找到要改的源字段。业务内容由 `yida-prd` 维护，视觉内容由 `yida-design` 维护；只补读相关规则，不重走需求分析、主题选择或初始化。
+2. 将本轮变更合在一次 `patch --materialize` 中。只提交变化的字段；页面任务改变时，同步该页的视觉说明和必要引用。
+3. CLI 校验后更新 PRD、design、Plan HTML 和主题 CSS 的变化部分，保留其他内容；`updated` 返回实际改动的文件。成功后直接用 `outputs.html` 展示修改摘要和当前方案，不再全文读取、重复生成或预检。
+
+例如，同时调整品牌色和圆角：
 
 ```bash
 openyida design-plan patch prd/<项目名>/build-plan.json \
@@ -61,6 +65,8 @@ openyida design-plan patch prd/<项目名>/build-plan.json \
 ```
 
 首版从 1 开始，内部补全保持当前版；已展示方案实质变更升一版并清空确认，相同内容及素材进度不升版。可选字段与旧计划兼容规则见 [紧凑计划契约](../../../yida-design/sub_skill/yida-design-plan/references/build-plan-compact-schema.md#可选字段-patch-与完成校验)。
+
+`build-plan.json` 是 Plan 的修改入口。固定标题和排版交给 CLI，不重写整份 `business.json`、`visual.json`、HTML 或 MD。主题文件使用 `outputs.theme` 的实际路径；已有 CSS 中的自定义样式会保留。CLI 自动维护同目录的 `.build-plan-artifacts.json` 作为上次生成记录，不手动修改它。若返回内容冲突，只读取报错文件的对应部分，将本地修改与源事实对齐后重试，不能删除记录或覆盖整份文件绕过冲突。
 
 | 调整内容 | 负责技能与传播范围 |
 | --- | --- |

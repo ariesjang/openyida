@@ -6,6 +6,7 @@
  */
 module.exports = {
   design_document: {
+    update_conflict: "無法更新 {0}（{1}）：現有內容與上次生成結果衝突。請讀取這部分，將本地修改與計劃來源對齊後重試；本次未儲存任何檔案。",
     theme_css_invalid: '主題 CSS 第 {0} 行附近存在未閉合或不匹配的括號、字串或註解，請修正後重試。',
     invalid: '設計文件驗證失敗：{0}（{1}）',
     yaml: '設計文件 frontmatter 不是有效的 YAML',
@@ -42,8 +43,8 @@ module.exports = {
     design_plan_preview_invalid: '方案草稿更新失敗，請檢查錯誤詳情',
     cmd_design_plan_catalog: '查詢規劃可用的主題與頁面模式',
     cmd_design_plan_init: '從已確認需求初始化計劃草稿',
-    cmd_design_plan_materialize: '從 build-plan.json 產生並校驗搭建計畫產物',
-    cmd_design_plan_patch: '按欄位路徑調整搭建計畫並使舊確認失效',
+    cmd_design_plan_materialize: "生成或更新方案文件與主題，並校驗一致性",
+    cmd_design_plan_patch: "按欄位修改方案，按需同步文件與主題",
     cmd_update_app: '更新應用程式資料',
     cmd_app_online: '啟用宜搭應用程式',
     cmd_app_offline: '停用宜搭應用程式',

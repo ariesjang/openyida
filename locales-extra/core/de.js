@@ -6,6 +6,7 @@
  */
 module.exports = {
   design_document: {
+    update_conflict: "{0} ({1}) kann nicht aktualisiert werden: Der Inhalt weicht von der letzten generierten Version ab. Gleichen Sie die lokale Änderung in diesem Abschnitt mit den Plandaten ab und versuchen Sie es erneut. Es wurden keine Dateien gespeichert.",
     theme_css_invalid: 'Das Theme-CSS enthält nahe Zeile {0} eine nicht geschlossene oder falsch gepaarte Klammer, Zeichenfolge oder einen Kommentar. Bitte korrigieren und erneut versuchen.',
     invalid: 'Designprüfung fehlgeschlagen: {0} ({1})',
     yaml: 'Das Frontmatter des Designdokuments ist kein gültiges YAML',
@@ -42,8 +43,8 @@ module.exports = {
     design_plan_preview_invalid: 'Entwurfsaktualisierung fehlgeschlagen; Details prüfen',
     cmd_design_plan_catalog: 'Verfügbare Planungsthemen und Seitenmuster auflisten',
     cmd_design_plan_init: 'Planentwurf aus bestätigten Anforderungen erstellen',
-    cmd_design_plan_materialize: 'Planartefakte aus build-plan.json erzeugen und validieren',
-    cmd_design_plan_patch: 'Plan per Feldpfad ändern und frühere Bestätigung verwerfen',
+    cmd_design_plan_materialize: "Plandokumente und Theme erzeugen oder aktualisieren und prüfen",
+    cmd_design_plan_patch: "Planfelder ändern und optional Dokumente und Theme synchronisieren",
     cmd_update_app: 'App-Informationen aktualisieren',
     cmd_app_online: 'Yida-App aktivieren',
     cmd_app_offline: 'Yida-App deaktivieren',

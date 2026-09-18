@@ -131,6 +131,8 @@ test('check-only does not publish the merged source or artifacts', () => {
 
 test('rolls source and artifacts back together if an artifact write fails', () => {
   materialize(input);
+  visual.facts.visualStyle.forUser.colorStrategy.primaryColor = '#8B5E3C';
+  save();
   const files = [input, path.join(dir, 'prd.md'), path.join(dir, 'design.md'), path.join(dir, 'build-plan.html')];
   const before = files.map(file => fs.readFileSync(file, 'utf8'));
   const rename = fs.renameSync;

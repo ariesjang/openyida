@@ -100,6 +100,10 @@ Fast 保留 PRD 的 Markdown 逐页块与 `pageSpecHandoff` 格式，display-pag
 
 `iconSystem.mappings` 只登记实际业务动作、状态、导航和空态使用的具体组件名称。图标尺寸、描边和容器规则放在正文；Canvas 按选中库 import，旧平台 JSX 则按已验证的运行时加载方式使用。不能用 emoji、CSS 图形、字母占位、Unicode、临时 SVG 或 iconfont 绕过图标规范；无法稳定加载时去掉非必要图标或使用已验证资源。
 
+图标配色按 [主题一致性门禁](../references/page-quality-gates.md#4-主题一致性门禁) 检查。有底盒、按钮背景或选中底色时，在 `iconSystem.colorPairs` 登记配色，例如 `{"name":"统计图标·默认","foreground":"var(--oyd-stat-icon-fg)","background":"var(--oyd-stat-icon-bg)"}`。优先引用已有变量，需要新角色时再加入 `tokens`；共享配色只记录一次，颜色不同的状态分别记录。
+
+Fast 写入 `design.md`；Plan 写入 `visualStyle.forUser.iconSystem.colorPairs`，变量写入 `visualStyle.tokens`。CLI 支持 HEX、rgb/rgba、black/white/transparent 及这些颜色的变量引用；半透明底色需补充实际不透明的 `surface`。低于 3:1、颜色无法解析或缺少底色信息时校验失败。
+
 ## 用户配色与模板的优先级
 
 用户确认的整体氛围高于模板默认灰阶。根据品牌和已确认方向协调页面、卡片、导航、填充、边界和交互，同时保留文字可读性和独立状态语义；不能只改按钮，也不能统一抹掉主题原有层次与材质。
@@ -145,7 +149,7 @@ Fast 或单独更新主题时，执行 `openyida sample yida-design app-theme --
 
 主题文件只能由上述 OpenYida CLI 契约生成或更新。不得另写 Python、Node、Shell 或 `run_workspace_script` 临时脚本来生成、复制、整文件重写、正则替换或 retheme 主题 CSS；校验脚本只能读取并报告问题，不能改写主题文件。需要调整 CLI 未覆盖的精确 classname 覆盖时，只允许在现有文件末尾做小范围编辑，并重新通过 `update-app --theme-file` 上传完整文件。
 
-Plan 修改 `visualStyle.tokens` 并按模块更新草稿，最终由 `materialize` 同时生成设计文档和主题 CSS，使用返回的 `outputs.theme`。Fast 由 `yida-design` 直接维护 `design.md`。应用阶段由 `yida-app` 使用 `--theme-file` 应用同一份产物。
+Plan 修改现有方案按 [局部调整](../../yida-app/workflow/plan/step-4-deliver.md#4-处理调整) 更新视觉字段与配色，使用返回的 `outputs.theme`。Fast 由 `yida-design` 直接维护 `design.md`。应用阶段由 `yida-app` 使用 `--theme-file` 应用同一份产物。
 
 整体暗色方案按 [浮层适配](../references/theme/theme-token-presets.md#暗色主题浮层适配) 补齐组件 token。实现阶段可在生成的应用主题 CSS 末尾追加精确 classname 覆盖，再上传完整主题文件。
 

@@ -6,6 +6,7 @@
  */
 module.exports = {
   design_document: {
+    update_conflict: "{0}({1})을 업데이트할 수 없습니다. 현재 내용이 이전 생성 결과와 충돌합니다. 해당 부분의 로컬 변경 사항과 계획 데이터를 일치시킨 후 다시 시도하세요. 파일은 저장되지 않았습니다.",
     theme_css_invalid: '테마 CSS의 {0}행 근처에 닫히지 않았거나 짝이 맞지 않는 괄호, 문자열 또는 주석이 있습니다. 수정 후 다시 시도하세요.',
     invalid: '디자인 검증 실패: {0} ({1})',
     yaml: '디자인 문서의 frontmatter가 올바른 YAML이 아닙니다',
@@ -42,8 +43,8 @@ module.exports = {
     design_plan_preview_invalid: '초안 업데이트 실패. 오류 세부 정보를 확인하세요',
     cmd_design_plan_catalog: '계획에 사용할 수 있는 테마와 페이지 패턴 조회',
     cmd_design_plan_init: '확인된 요구 사항으로 계획 초안 만들기',
-    cmd_design_plan_materialize: 'build-plan.json에서 설계 계획 산출물 생성 및 검증',
-    cmd_design_plan_patch: '필드 경로로 계획을 수정하고 이전 확인 무효화',
+    cmd_design_plan_materialize: "계획 문서와 테마를 생성하거나 업데이트하고 일관성 검증",
+    cmd_design_plan_patch: "계획 필드를 수정하고 필요에 따라 문서와 테마 동기화",
     cmd_update_app: '앱 정보 업데이트',
     cmd_app_online: 'Yida 앱 활성화',
     cmd_app_offline: 'Yida 앱 비활성화',

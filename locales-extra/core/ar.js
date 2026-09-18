@@ -6,6 +6,7 @@
  */
 module.exports = {
   design_document: {
+    update_conflict: "تعذر تحديث {0} ({1}): يتعارض المحتوى الحالي مع آخر نسخة مولدة. راجع هذا القسم ووفق التعديل المحلي مع بيانات الخطة ثم أعد المحاولة. لم يتم حفظ أي ملفات.",
     theme_css_invalid: 'يحتوي CSS للسمة قرب السطر {0} على قوس أو سلسلة نصية أو تعليق غير مغلق أو غير متطابق. أصلحه ثم أعد المحاولة.',
     invalid: 'فشل التحقق من التصميم: {0} ({1})',
     yaml: 'بيانات frontmatter في مستند التصميم ليست YAML صالحًا',
@@ -42,8 +43,8 @@ module.exports = {
     design_plan_preview_invalid: 'فشل تحديث المسودة؛ تحقق من تفاصيل الخطأ',
     cmd_design_plan_catalog: 'عرض السمات وأنماط الصفحات المتاحة للتخطيط',
     cmd_design_plan_init: 'تهيئة مسودة خطة من المتطلبات المؤكدة',
-    cmd_design_plan_materialize: 'إنشاء مخرجات الخطة والتحقق منها من build-plan.json',
-    cmd_design_plan_patch: 'تعديل الخطة حسب مسار الحقل وإبطال التأكيد السابق',
+    cmd_design_plan_materialize: "إنشاء أو تحديث مستندات الخطة والقالب والتحقق من الاتساق",
+    cmd_design_plan_patch: "تعديل حقول الخطة ومزامنة المستندات والقالب عند الحاجة",
     cmd_update_app: 'تحديث معلومات التطبيق',
     cmd_app_online: 'تفعيل تطبيق Yida',
     cmd_app_offline: 'تعطيل تطبيق Yida',

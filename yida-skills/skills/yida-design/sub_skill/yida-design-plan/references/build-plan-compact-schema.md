@@ -108,7 +108,7 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 - 每个实际自定义页使用相同 pageId，最终物化前必须填写 firstScreenFocus、layout、primaryAction、responsive 四项具体说明和 acceptanceChecks 非空字符串数组；内容须具体到当前页，不能只写继承主题。纯原生页无需增加记录。
 - 视觉记忆点按适用条件绑定真实区块，无匹配时保留空数组。草稿缺逐页决定可预览，最终产物拒绝缺项；旧计划沿用同一规则，补齐后再物化。
 - `visualStyle.evidence/constraints` 保留实际视觉依据和约束。
-- `forUser.iconSystem` 可选，格式为 `{library: "lucide-react" | "@ant-design/icons", mappings: {业务语义: 具体组件名}}`。初始化保留 brief 的已选图标映射；仅未配置时默认 lucide-react 与空映射。
+- `forUser.iconSystem` 可选，包含 `library: "lucide-react" | "@ant-design/icons"` 与 `mappings: {业务语义: 具体组件名}`。有底盒或状态背景时，按 [图标输出契约](../../../workflow/output-design.md#图片素材与图标) 补充 `colorPairs`。初始化保留 brief 的已选图标映射；仅未配置时默认 lucide-react 与空映射。
 - `visualStyle.tokens` 可写具体单行 CSS token 差异，如 `{"--pod-card-border-radius":"16px"}`。品牌色阶由主色派生；themeProfile 为只读摘要。
 - 最终 design.md 按 [公共输出契约](../../../workflow/output-design.md) 生成并校验：机器数据和 anchor 索引留在 frontmatter，完整规则只写在五章正文一次。主题的 token、组件、状态与公共响应式由 CLI 注入，页面具体布局和响应式来自上述输入。项目独有组件调整时再读模板对应章节；整体暗色主题按需读取暗色浮层规则。
 
@@ -145,15 +145,11 @@ PRD 实施交接中的 `pages[].navigationPolicy` 与 `pageSpecHandoff` 同级�
 
 ## 调整与确认
 
-调整现有事实使用字段级修改：
-
-```bash
-openyida design-plan patch prd/<项目名>/build-plan.json --set 'visualStyle.forUser.colorStrategy.primaryColor=#8B5E3C' --materialize --json
-```
+调整现有方案按 [局部调整](../../../../yida-app/workflow/plan/step-4-deliver.md#4-处理调整) 执行；本节只说明版本和校验规则。
 
 初始化 revision=1；未展示的首次合并、preview 汇总和内部 patch 保持当前版。已展示或已确认的当前版发生实质修改才升版并清空确认；相同内容不升版。旧文件缺少 planState 时保守升版。片段仍以 base.digest 校验来源，版本相同也不能复用过期片段。仅更新素材 materialStatus/missingAssets 保留版本与确认。
 
-展示成功后必须将 `meta.planState.presentedRevision=meta.revision` 写回源 JSON，仅更新展示事实，不再物化。awaiting_confirmation 仅表示准备确认，不证明已展示；收到明确确认后绑定 confirmedRevision、planConfirmed 与同版产物，按应用流程交接。内部补全不得伪造展示或确认记录。`--materialize` 同步文档和主题；可选字段范围见下节。
+展示成功后必须将 `meta.planState.presentedRevision=meta.revision` 写回源 JSON，仅更新展示事实，不再物化。awaiting_confirmation 仅表示准备确认，不证明已展示；收到明确确认后绑定 confirmedRevision、planConfirmed 与同版产物，按应用流程交接。内部补全不得伪造展示或确认记录。`--materialize` 同步变化的文档内容和主题变量，`updated` 列出实际写入的产物；不带此参数只校验并保存源事实，不渲染 HTML，也不更新文档。可选字段范围见下节。
 
 旧版无 schemaVersion 或 1.x 文件继续使用原结构；维护旧计划时按需查阅旧版结构说明。
 

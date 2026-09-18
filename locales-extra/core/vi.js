@@ -6,6 +6,7 @@
  */
 module.exports = {
   design_document: {
+    update_conflict: "Không thể cập nhật {0} ({1}): nội dung hiện tại xung đột với phiên bản được tạo trước đó. Hãy đối chiếu thay đổi cục bộ trong phần này với dữ liệu kế hoạch rồi thử lại. Chưa lưu tệp nào.",
     theme_css_invalid: 'CSS giao diện gần dòng {0} có dấu ngoặc, chuỗi hoặc chú thích chưa đóng hoặc không khớp. Hãy sửa rồi thử lại.',
     invalid: 'Xác thực thiết kế thất bại: {0} ({1})',
     yaml: 'Frontmatter của tài liệu thiết kế không phải YAML hợp lệ',
@@ -42,8 +43,8 @@ module.exports = {
     design_plan_preview_invalid: 'Cập nhật bản nháp thất bại; kiểm tra chi tiết lỗi',
     cmd_design_plan_catalog: 'Liệt kê chủ đề và mẫu trang có sẵn để lập kế hoạch',
     cmd_design_plan_init: 'Khởi tạo bản nháp kế hoạch từ yêu cầu đã xác nhận',
-    cmd_design_plan_materialize: 'Tạo và xác thực sản phẩm từ build-plan.json',
-    cmd_design_plan_patch: 'Sửa kế hoạch theo đường dẫn và vô hiệu xác nhận trước',
+    cmd_design_plan_materialize: "Tạo hoặc cập nhật tài liệu và giao diện kế hoạch, kiểm tra tính nhất quán",
+    cmd_design_plan_patch: "Sửa các trường kế hoạch và đồng bộ tài liệu, giao diện khi cần",
     cmd_update_app: 'Cập nhật thông tin ứng dụng',
     cmd_app_online: 'Bật ứng dụng Yida',
     cmd_app_offline: 'Tắt ứng dụng Yida',

@@ -7,6 +7,8 @@ description: Plan 模式的视觉设计分支。基于需求选择视觉方向�
 
 负责 Plan 的视觉候选与页面视觉应用。选型遵守 [共享主题规则](../../references/theme-selection.md)，与 Fast 和单页共用上层主题库。首轮仅保留整体风格或可调整建议，主题映射在规划准备补齐；需求确认后由 [Plan 流程](../../../yida-app/workflow/plan/workflow.md) 启动页面视觉设计。
 
+已有方案的配色、布局或页面设计调整，直接按 [局部调整](../../../yida-app/workflow/plan/step-4-deliver.md#4-处理调整) 修改相关视觉字段，跳过下面的首版流程。
+
 ## 阶段一：提供视觉候选
 
 输入为共享的 `.cache/openyida/<项目名>/requirement-brief.json`。
@@ -25,4 +27,4 @@ description: Plan 模式的视觉设计分支。基于需求选择视觉方向�
 
 用户选择整体暗色或黑色主题时，按 [暗色主题浮层适配](../../references/theme/theme-token-presets.md#暗色主题浮层适配) 补齐 `visualStyle.tokens`；导航明暗保持独立。
 
-需要精修时一次更新完整 `visual.json`，避免先提交基础视觉、再提交 `pageApplications` 形成两段等待。仅超大需求需要中间展示时才按 [按模块更新方案](../../../yida-app/workflow/incremental-preview.md) 提交。主流程负责生成完整方案、展示和确认，主题 CSS 使用 CLI 返回的 `outputs.theme`。
+首版提交前，将基础视觉与 `pageApplications` 一次补齐到已有 `visual.json`。仅超大需求需要中间展示时才按 [按模块更新方案](../../../yida-app/workflow/incremental-preview.md) 提交。主流程负责生成方案、展示和确认，主题 CSS 使用 CLI 返回的 `outputs.theme`。

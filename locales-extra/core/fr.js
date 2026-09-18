@@ -6,6 +6,7 @@
  */
 module.exports = {
   design_document: {
+    update_conflict: "Impossible de mettre à jour {0} ({1}) : le contenu est en conflit avec la dernière version générée. Alignez les modifications locales de cette section avec les données du plan, puis réessayez. Aucun fichier enregistré.",
     theme_css_invalid: 'Le CSS du thème contient un délimiteur, une chaîne ou un commentaire non fermé ou mal apparié près de la ligne {0}. Corrigez puis réessayez.',
     invalid: 'Échec de la validation du design : {0} ({1})',
     yaml: 'Le frontmatter du document de design n’est pas un YAML valide',
@@ -42,8 +43,8 @@ module.exports = {
     design_plan_preview_invalid: 'Échec de mise à jour du brouillon ; consultez les détails',
     cmd_design_plan_catalog: 'Lister les thèmes et modèles de page disponibles pour la planification',
     cmd_design_plan_init: 'Créer un brouillon de plan à partir des besoins confirmés',
-    cmd_design_plan_materialize: 'Générer et valider les livrables depuis build-plan.json',
-    cmd_design_plan_patch: 'Modifier le plan par chemin et invalider la confirmation précédente',
+    cmd_design_plan_materialize: "Générer ou mettre à jour les documents et le thème du plan et vérifier leur cohérence",
+    cmd_design_plan_patch: "Modifier les champs du plan et synchroniser les documents et le thème si nécessaire",
     cmd_update_app: "Mettre à jour les infos de l'application",
     cmd_app_online: "Activer une application Yida",
     cmd_app_offline: "Désactiver une application Yida",
