@@ -622,6 +622,9 @@ describe('design-plan materialize', () => {
     const shared = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/application-theme-consistency.md'), 'utf8');
     const pairing = shared.split('## 指标卡与按钮配色\n')[1].split('\n## ')[0].trim();
     expect(design).toContain(`### 指标卡与按钮配色\n\n${pairing}`);
+    const dividers = shared.split('## 分组标题与分割线\n')[1].split('\n## ')[0].trim();
+    expect(design).toContain(`### 分组标题与分割线\n\n${dividers}`);
+    expect(design.match(/### 分组标题与分割线/g)).toHaveLength(1);
     expect(design.match(/### 指标卡与按钮配色/g)).toHaveLength(1);
     expect(design).not.toContain('## 页面只引用设计值');
     expect(readDesignTokens(design)).toMatchObject(plan.visualStyle.tokens);
