@@ -54,7 +54,7 @@
 { "type": "Divider", "title": "基本信息", "dividerType": "left-dot-title" }
 ```
 
-按当前页面的业务、密度和主题选择 `dividerType`，同页同层级尽量一致，不同业务页面优先选用不同且合适的样式；无法判断时按页面随机轮换，选定后显式填写，同页复用。完整外观和场景见 [Divider 选型表](form-field-properties.md#divider)。未填写仅以 `solid` 兜底，不代表推荐所有页面使用实线。
+按当前页面的业务、密度和主题选择 `dividerType`，同页同层级尽量一致，不同业务页面优先选用不同且合适的样式；无法判断时按页面随机轮换，选定后显式填写，同页复用。完整外观和场景见 [Divider 选型表](form-field-properties.md#divider)。未填写时 CLI 以 `bold-with-thin` 兜底，不替代按场景选型。
 
 ### ColumnContainer
 

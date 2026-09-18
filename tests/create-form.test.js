@@ -1488,7 +1488,7 @@ describe('form presentation components', () => {
     }));
   });
 
-  test('Divider omissions use the platform solid fallback without imposing a decorative style', () => {
+  test('Divider omissions use bold-with-thin as the CLI fallback', () => {
     const schema = createForm._private.buildFormSchema(
       '分割线测试',
       [{ type: 'Divider', title: '默认分割线' }],
@@ -1503,7 +1503,7 @@ describe('form presentation components', () => {
     const divider = findDirectChildByComponentName(formContainer, 'Divider');
 
     expect(divider.componentName).toBe('Divider');
-    expect(divider.props.type).toBe('solid');
+    expect(divider.props.type).toBe('bold-with-thin');
     expect(divider.props.title.zh_CN).toBe('默认分割线');
   });
 

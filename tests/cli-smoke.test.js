@@ -2528,7 +2528,7 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.divider_style_contract.supported_types).toEqual(require('../lib/app/form-field-validator').DIVIDER_TYPES);
     expect(route.divider_style_contract.supported_types).toHaveLength(23);
     expect(route.divider_style_contract.supported_types).not.toContain('none');
-    expect(route.divider_style_contract.fallback).toBe('solid');
+    expect(route.divider_style_contract.fallback).toBe('bold-with-thin');
     expect(route.form_entry_policy.sample_command).toBe('openyida sample openyida-page-template form-open-container --output .cache/samples/form-open-container.jsx');
     expect(route.navigation_policy).toBe(workflow.navigation_policy);
     expect(route.entry_navigation_contract).toEqual(workflow.entry_navigation_contract);

@@ -107,14 +107,14 @@ OpenYida 支持以下 **23 个可见样式**，不接受 `none`（无分割线�
 
 把“页面 → 样式 → 选择理由”写在现有 `design.md` 对应页面说明里，Fast 与 Plan 使用同一规则。原生表单通过字段 JSON 配置，Canvas 分组标题参考相同外观原则手写，不向原生表单注入 CSS。
 
-未提供样式时 CLI 仅以平台基础 `solid` 兜底，不替 AI 决定业务风格。显式的不支持值会报错，不静默替换。`dividerType` 写入 `props.type`；也接受历史别名 `dividerStyle`、`styleType`、`typeStyle` 和 `props.type`，按此前顺序取值，新生成统一用 `dividerType`。
+未提供样式时 CLI 以 `bold-with-thin` 兜底，不替 AI 决定业务风格。显式的不支持值会报错，不静默替换。`dividerType` 写入 `props.type`；也接受历史别名 `dividerStyle`、`styleType`、`typeStyle` 和 `props.type`，按此前顺序取值，新生成统一用 `dividerType`。
 
 `none` 不参与推荐、轮换或字段生成；确实不需要分隔的内容区直接省略 Divider 组件。复杂装饰主要用于短标题；长标题和窄屏优先选简单线型、圆点或浅底，发布后检查换行与截断。
 
 | 属性 | 默认值 | 说明 |
 | --- | --- | --- |
 | `behavior` | `"NORMAL"` | 默认状态，支持 `"NORMAL"` / `"HIDDEN"` |
-| `dividerType` | `"solid"`（遗漏时兜底） | 从上表按页面选型，写入 Schema 的 `props.type`，不是 CLI 参数 |
+| `dividerType` | `"bold-with-thin"`（遗漏时兜底） | 从上表按页面选型，写入 Schema 的 `props.type`，不是 CLI 参数 |
 | `showTitle` | `true` | 是否显示标题 |
 | `title` | `"标题"` | 分割线标题，写入 `props.title` |
 | `description` | `""` | 标题描述，写入 `props.description` |
