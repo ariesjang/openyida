@@ -85,6 +85,9 @@ describe('small process commands', () => {
       success: true,
       appType: 'APP_XXX',
       formUuid: 'FORM_1',
+      formMode: 'reuse',
+      formTitle: null,
+      fieldCount: null,
       processCode: 'TPROC_1',
     });
     expect(utils.httpPost).not.toHaveBeenCalled();
@@ -201,6 +204,7 @@ describe('small process commands', () => {
     expect(result).toEqual({
       success: true,
       formUuid: 'FORM_CREATED',
+      formMode: 'create',
       formTitle: '流程表单',
       appType: 'APP_XXX',
       fieldCount: 1,
@@ -282,6 +286,9 @@ describe('small process commands', () => {
       success: false,
       errorCode: 'CONFIGURE_PROCESS_SAVE_FAILED',
       formUuid: 'FORM_1',
+      formMode: 'reuse',
+      formTitle: null,
+      fieldCount: null,
       appType: 'APP_XXX',
       error: expect.stringContaining('save denied'),
       stage: 'save_definition',

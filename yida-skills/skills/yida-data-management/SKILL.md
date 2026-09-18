@@ -127,6 +127,8 @@ description: 宜搭数据管理。表单实例/子表/流程实例/任务中心�
 
 ## 命令
 
+`data create/update` 的 `--data-json` 和 `--data-file` 中，`DateField` 传毫秒时间戳数字，`CascadeDateField` 传毫秒时间戳数组；不要传日期字符串或秒级时间戳。按业务时区转换，示例见 [日期字段格式](references/data-format-guide.md#日期字段datefield--cascadedatefield)。`--resolve-aliases` 只转换字段名，不转换日期值。
+
 ### 表单实例
 
 ```bash

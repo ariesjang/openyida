@@ -79,8 +79,10 @@ openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> 
 ## 输出
 
 ```json
-{"success":true,"formUuid":"FORM-YYY","formTitle":"订单处理表","appType":"APP_XXX","fieldCount":6,"processCode":"TPROC--XXX","processId":"83145794990","processVersion":2,"verificationLevel":"PLATFORM_VIEW_VERIFIED","platformViewVerified":true,"url":"{base_url}/APP_XXX/workbench/FORM-YYY"}
+{"success":true,"formUuid":"FORM-YYY","formMode":"create","formTitle":"订单处理表","appType":"APP_XXX","fieldCount":6,"processCode":"TPROC--XXX","processId":"83145794990","processVersion":2,"verificationLevel":"PLATFORM_VIEW_VERIFIED","platformViewVerified":true,"url":"{base_url}/APP_XXX/workbench/FORM-YYY"}
 ```
+
+`formMode` 区分新建（`create`）和复用（`reuse`）。复用模式不读取表单名称和字段数，`formTitle`、`fieldCount` 返回 `null`，表示未查询，不代表字段为空或转换失败；新建模式返回传入名称和创建结果中的字段数。配置失败时返回的表单信息也遵循此约定。流程是否成功以 `success` 和 `verificationLevel` 为准，不能根据字段数判断。
 
 ## 流程定义最小 DSL 合约
 

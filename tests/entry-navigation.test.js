@@ -67,10 +67,28 @@ describe('entry planning and platform navigation', () => {
       if (field === 'resource') { owner[field] = '采购订单'; } else { delete owner[field]; }
       expect(() => handoff(plan)).toThrow(expect.objectContaining({
         code: 'DESIGN_PLAN_INVALID_ENTRY_NAVIGATION',
-        details: expect.objectContaining({ entryKey: entry.key, menuKey: 'mine', missingFields: expect.arrayContaining([field === 'sceneKey' ? 'entry.sceneKey' : `menu.${field}`]) }),
+        details: expect.objectContaining({ entryKey: entry.key, menuKey: 'mine', missingFields: [field === 'sceneKey' ? 'entry.sceneKey' : `menu.${field}`] }),
       }));
       owner[field] = old;
     }
+  });
+  test('missing scene and view report only those fields, then accept the unchanged resource', () => {
+    const plan = planFixture();
+    const entry = plan.execution.entryRecommendation.entries[0];
+    entry.role = 'workspace';
+    entry.menu = [entry.menu[0]];
+    plan.execution.entryRecommendation = { mode: 'unified', entries: [entry] };
+    plan.pages.customPageDetails[0].pageSpecHandoff = { entryMode: 'platform-shell' };
+    const resource = entry.menu[0].resource;
+    delete entry.sceneKey;
+    delete entry.menu[0].viewKey;
+    expect(() => handoff(plan)).toThrow(expect.objectContaining({
+      code: 'DESIGN_PLAN_INVALID_ENTRY_NAVIGATION',
+      details: expect.objectContaining({ resource, missingFields: ['entry.sceneKey', 'menu.viewKey'] }),
+    }));
+    entry.sceneKey = 'service';
+    entry.menu[0].viewKey = 'mine';
+    expect(handoff(plan).entryRecommendation.entries[0].menu[0].resource).toBe(resource);
   });
   test.each([0, 1])('requires access for frontend and management leaf menus (%i)', index => {
     const plan = planFixture();
