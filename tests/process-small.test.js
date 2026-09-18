@@ -76,6 +76,35 @@ describe('small process commands', () => {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 
+  test.each([
+    [[], 'appType', 'missing_value'],
+    [['APP', '--formUuid'], '--formUuid', 'missing_value'],
+    [['APP', '--formUuid', '  ', 'process.json'], '--formUuid', 'missing_value'],
+    [['APP', '--formUuid', '--replace'], '--formUuid', 'missing_value'],
+    [['APP', '--formUuid', 'FORM'], 'processDefinitionFile', 'missing_value'],
+    [['APP', '--form-uuid', 'FORM', 'process.json'], '--form-uuid', 'unknown_option'],
+    [['APP', '--formUuid', 'FORM', 'process.json', '--unknown'], '--unknown', 'unknown_option'],
+    [['APP', '--formUuid', 'FORM', '--formUuid', 'FORM2', 'process.json'], '--formUuid', 'duplicate_option'],
+    [['APP', '表单', 'fields.json', 'process.json', '--replace', '--replace'], '--replace', 'duplicate_option'],
+    [['APP', '表单', 'fields.json', 'process.json', 'extra'], 'extra', 'unexpected_argument'],
+  ])('create-process rejects invalid arguments before file access or authentication: %j', async (args, argument, reason) => {
+    await expect(createProcess.run(args)).rejects.toMatchObject({
+      code: 'CREATE_PROCESS_INVALID_ARGUMENTS', details: { argument, reason },
+    });
+    expect(utils.loadAuthData).not.toHaveBeenCalled();
+    expect(createForm.createFormForLegacyProcess).not.toHaveBeenCalled();
+    expect(configureProcess.run).not.toHaveBeenCalled();
+  });
+
+  test('create-process accepts flags before or after positional arguments', () => {
+    expect(createProcess.parseArgs(['--replace', 'APP', '表单', 'fields.json', 'process.json']))
+      .toMatchObject({ appType: 'APP', formTitle: '表单', replace: true });
+    expect(createProcess.parseArgs(['--formUuid', 'FORM', '--replace', 'APP', 'process.json']))
+      .toMatchObject({ appType: 'APP', existingFormUuid: 'FORM', processDefinitionFile: 'process.json', replace: true });
+    expect(createProcess.parseArgs(['APP', 'process.json', '--formUuid', 'FORM']))
+      .toMatchObject({ appType: 'APP', existingFormUuid: 'FORM', processDefinitionFile: 'process.json', replace: false });
+  });
+
   test('create-process reuses a form and delegates conversion and publishing to configure-process', async () => {
     const processDefPath = path.join(tmpDir, 'process.json');
     fs.writeFileSync(processDefPath, JSON.stringify({ nodes: [] }), 'utf8');

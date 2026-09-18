@@ -74,6 +74,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: 'Données & Permissions',
     cmd_data: 'Gestion unifiée des données (formulaire/processus/tâche/sous-formulaire)',
+    data_notes: "DateField attend un horodatage Unix numérique en millisecondes ; CascadeDateField attend un tableau de ces valeurs. Convertissez selon le fuseau métier ; les dates textuelles et les secondes sont refusées. --resolve-aliases résout uniquement les noms de champs.",
     cmd_task_center: 'Centre de tâches global (à faire/traité/CC etc.)',
     cmd_basic_info: "Consulter les infos d'organisation, capacités, quotas et domaine",
     cmd_read_dingtalk_doc: "Récupérer le contenu Markdown d'un document DingTalk",
@@ -85,6 +86,7 @@ module.exports = {
     group_process: 'Processus',
     cmd_configure_process: 'Configurer et publier les règles de processus; Ajout d’approbateur et transfert via JSON nodes[].actions.normalActions/appendActions',
     cmd_create_process: 'Créer un formulaire de processus (tout-en-un); Ajout d’approbateur et transfert via JSON nodes[].actions.normalActions/appendActions',
+    create_process_notes: "formMode=create|reuse distingue création et réutilisation. En réutilisation, formTitle et fieldCount valent null (non consultés) ; la création renvoie le nom et le nombre de champs. Cela vaut aussi en cas de configuration échouée. Vérifiez success et verificationLevel. --replace exige une autorisation explicite de remplacer tout le processus existant, brouillon ou publié.",
     cmd_ai_form_setting: 'Manage process form AI approval prompts',
     cmd_process_preview: "Aperçu de l'instance de processus (organigramme)",
     group_share: 'Configuration & Partage de page',
@@ -214,7 +216,7 @@ module.exports = {
       '  get-permission <appType> <formUuid>                          Query form permission config\n' +
       '  save-permission <appType> <formUuid> [--data-permission <json>] [--action-permission <json>]  Save form permission config\n' +
       '  configure-process <appType> <formUuid> <processDefinitionFile> [processCode] [--replace]  Configure and publish process\n' +
-      '  create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>  Create process form (all-in-one)\n' +
+      '  create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]  Create process form (all-in-one)\n' +
       '  create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]         Reuse existing form for process\n' +
       '  connector list [options]                                     List HTTP connectors\n' +
       '  connector create "<name>" "<domain>" --operations <file> [options]  Create connector\n' +
@@ -338,7 +340,7 @@ module.exports = {
     import_example2: '        openyida import ./yida-export.json "Quality System (Production)"',
     configure_process_usage: 'Usage: openyida configure-process <appType> <formUuid> <processDefinitionFile> [processCode] [--replace]',
     configure_process_example: 'Example: openyida configure-process "APP_XXX" "FORM-YYY" .cache/openyida/process/process-definition.json',
-    create_process_usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>\n' +
+    create_process_usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]\n' +
       '        openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]',
     create_process_example: 'Example: openyida create-process "APP_XXX" "Order Form" .cache/openyida/process/fields.json .cache/openyida/process/process-definition.json',
     process_usage: 'Usage: openyida process <subcommand>\n' +
@@ -1077,6 +1079,7 @@ module.exports = {
     offline_success: 'Application désactivée',
   },
   create_process: {
+    invalid_argument: "Argument {0} manquant ou invalide. Corrigez-le selon la syntaxe ci-dessous.",
     title: 'Yida Process Form Creation',
     app_id: 'App ID',
     mode: 'Mode',
@@ -1110,7 +1113,7 @@ module.exports = {
     process_def_not_found: 'Process definition file not found',
     done: 'Process form creation completed',
     url: 'URL',
-    usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>',
+    usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]',
     usage2: '       openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]',
     example: 'Example: openyida create-process "APP_XXX" "Order Form" .cache/openyida/process/fields.json .cache/openyida/process/process-definition.json',
     example2: '         openyida create-process "APP_XXX" --formUuid FORM-YYY .cache/openyida/process/process-definition.json'

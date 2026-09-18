@@ -140,3 +140,41 @@ test('CLI accepts one batch and reports the actual updated artifact paths', asyn
     '--set', 'visualStyle.forUser.colorStrategy.primaryColor=#8B5E3C', '--materialize', '--json']);
   expect(JSON.parse(output.mock.calls[0][0])).toMatchObject({ changed: false, updated: [] });
 });
+
+test('materialize reuses validation and theme output for identical inputs', () => {
+  jest.isolateModules(() => {
+    const document = require('../lib/design/document');
+    const theme = require('../lib/app/theme-from-design');
+    const validate = jest.spyOn(document, 'validateDesignDocument');
+    const apply = jest.spyOn(theme, 'applyDesignTokens');
+    const { materialize: generate } = require('../lib/design-plan/materialize');
+    const { patchPlan: patch } = require('../lib/design-plan/patch');
+    generate(input);
+    expect(validate).toHaveBeenCalledTimes(1);
+    expect(apply).toHaveBeenCalledTimes(1);
+    validate.mockClear(); apply.mockClear();
+    patch(input, ['overview.summary=复用相同输入的计算结果'], { materialize: true });
+    expect(validate).toHaveBeenCalledTimes(1);
+    expect(apply).toHaveBeenCalledTimes(2);
+  });
+});
+
+test('invalid local design metadata is still validated before saving a business edit', () => {
+  materialize(input);
+  const original = read('design.md');
+  const edited = original.replace(/("themeDelivery":\s*)"app-custom-theme-file"/, '$1"invalid"');
+  expect(edited).not.toBe(original);
+  fs.writeFileSync(file('design.md'), edited);
+  const before = snapshot();
+  expect(() => patchPlan(input, ['overview.summary=业务更新不得掩盖无效设计'], { materialize: true }))
+    .toThrow(expect.objectContaining({ code: 'DESIGN_DOCUMENT_INVALID', details: { field: 'themeProfile.themeDelivery', issue: 'INVALID_THEME_DELIVERY' } }));
+  expect(snapshot()).toEqual(before);
+});
+
+test('empty existing theme is rejected instead of reusing the generated base theme', () => {
+  materialize(input);
+  fs.writeFileSync(file('app-theme.css'), '');
+  const before = snapshot();
+  expect(() => patchPlan(input, ['overview.summary=不得覆盖损坏主题'], { materialize: true })).toThrow();
+  expect(snapshot()).toEqual(before);
+});

@@ -74,6 +74,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: '데이터 & 권한',
     cmd_data: '통합 데이터 관리 (양식/프로세스/작업/하위양식)',
+    data_notes: "DateField는 밀리초 숫자 타임스탬프, CascadeDateField는 해당 타임스탬프 배열을 사용합니다. 업무 시간대로 변환하세요. 날짜 문자열과 초 단위 값은 사용할 수 없습니다. --resolve-aliases는 필드 이름만 변환합니다.",
     cmd_task_center: '글로벌 작업 센터 (할일/처리됨/참조 등)',
     cmd_basic_info: '조직 기본 정보, 용량, 할당량 및 도메인 설정 조회',
     cmd_read_dingtalk_doc: 'DingTalk 문서의 Markdown 내용 가져오기',
@@ -85,6 +86,7 @@ module.exports = {
     group_process: '프로세스',
     cmd_configure_process: '프로세스 규칙 설정 및 게시; JSON nodes[].actions.normalActions/appendActions로 승인자 추가 및 전달 설정',
     cmd_create_process: '프로세스 양식 생성 (통합형); JSON nodes[].actions.normalActions/appendActions로 승인자 추가 및 전달 설정',
+    create_process_notes: "formMode=create|reuse는 신규 생성과 재사용을 구분합니다. 재사용 시 formTitle과 fieldCount는 null(조회 안 함)이며 신규 생성 시 이름과 필드 수를 반환합니다. 구성 실패 출력도 동일합니다. success와 verificationLevel로 결과를 확인하세요. --replace는 명시적으로 승인된 기존 초안 또는 게시된 흐름 전체 교체에만 사용합니다.",
     cmd_ai_form_setting: 'Manage process form AI approval prompts',
     cmd_process_preview: '프로세스 인스턴스 미리보기 (플로차트)',
     group_share: '페이지 설정 & 공유',
@@ -214,7 +216,7 @@ module.exports = {
       '  get-permission <appType> <formUuid>                          Query form permission config\n' +
       '  save-permission <appType> <formUuid> [--data-permission <json>] [--action-permission <json>]  Save form permission config\n' +
       '  configure-process <appType> <formUuid> <processDefinitionFile> [processCode] [--replace]  Configure and publish process\n' +
-      '  create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>  Create process form (all-in-one)\n' +
+      '  create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]  Create process form (all-in-one)\n' +
       '  create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]         Reuse existing form for process\n' +
       '  connector list [options]                                     List HTTP connectors\n' +
       '  connector create "<name>" "<domain>" --operations <file> [options]  Create connector\n' +
@@ -338,7 +340,7 @@ module.exports = {
     import_example2: '        openyida import ./yida-export.json "Quality System (Production)"',
     configure_process_usage: 'Usage: openyida configure-process <appType> <formUuid> <processDefinitionFile> [processCode] [--replace]',
     configure_process_example: 'Example: openyida configure-process "APP_XXX" "FORM-YYY" .cache/openyida/process/process-definition.json',
-    create_process_usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>\n' +
+    create_process_usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]\n' +
       '        openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]',
     create_process_example: 'Example: openyida create-process "APP_XXX" "Order Form" .cache/openyida/process/fields.json .cache/openyida/process/process-definition.json',
     process_usage: 'Usage: openyida process <subcommand>\n' +
@@ -1076,6 +1078,7 @@ module.exports = {
     offline_success: '앱이 비활성화되었습니다',
   },
   create_process: {
+    invalid_argument: "인수 {0}이 누락되었거나 잘못되었습니다. 아래 구문에 맞게 수정하세요.",
     title: 'Yida Process Form Creation',
     app_id: 'App ID',
     mode: 'Mode',
@@ -1109,7 +1112,7 @@ module.exports = {
     process_def_not_found: 'Process definition file not found',
     done: 'Process form creation completed',
     url: 'URL',
-    usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>',
+    usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]',
     usage2: '       openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]',
     example: 'Example: openyida create-process "APP_XXX" "Order Form" .cache/openyida/process/fields.json .cache/openyida/process/process-definition.json',
     example2: '         openyida create-process "APP_XXX" --formUuid FORM-YYY .cache/openyida/process/process-definition.json'

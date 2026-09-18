@@ -526,6 +526,7 @@ function printManifestCommandHelp(commandName) {
   printCommandUsage(...entries.flatMap((entry) => [
     entry.usage,
     entry.description,
+    ...(entry.notes || []),
     ...(entry.examples || []),
   ]));
   return true;
@@ -1015,9 +1016,6 @@ async function main() {
     }
 
     case 'create-process': {
-      if (args.length < 2) {
-        throwCliUsage(t('cli.create_process_usage'), t('cli.create_process_example'));
-      }
       const { run: runCreateProcess } = require('../lib/process/create-process');
       await runCreateProcess(args);
       break;

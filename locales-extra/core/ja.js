@@ -74,6 +74,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: 'データ & 権限',
     cmd_data: '統合データ管理（フォーム/プロセス/タスク/サブフォーム）',
+    data_notes: "DateField はミリ秒単位の数値タイムスタンプ、CascadeDateField はその配列を指定します。業務のタイムゾーンで変換してください。日付文字列と秒単位の値は使えません。--resolve-aliases はフィールド名のみ変換します。",
     cmd_task_center: 'グローバルタスクセンター（未処理/処理済/CC等）',
     cmd_basic_info: '組織の基本情報、容量、クォータ、ドメイン設定を照会',
     cmd_read_dingtalk_doc: 'DingTalk ドキュメントの Markdown 内容を取得',
@@ -85,6 +86,7 @@ module.exports = {
     group_process: 'プロセス',
     cmd_configure_process: 'プロセスルールを設定＆公開; 承認者の追加・転送は JSON nodes[].actions.normalActions/appendActions で設定',
     cmd_create_process: 'プロセスフォームを作成（一体型）; 承認者の追加・転送は JSON nodes[].actions.normalActions/appendActions で設定',
+    create_process_notes: "formMode=create|reuse は新規作成と再利用を区別します。再利用時の formTitle と fieldCount は null（未照会）で、新規作成時は名前と件数を返します。設定失敗時も同じです。結果は success と verificationLevel で確認します。--replace は明示的に許可された既存の下書き・公開済みフロー全体の置換にのみ使います。",
     cmd_ai_form_setting: 'Manage process form AI approval prompts',
     cmd_process_preview: 'プロセスインスタンスをプレビュー（フローチャート）',
     group_share: 'ページ設定 & 共有',
@@ -212,7 +214,7 @@ module.exports = {
       '  get-permission <appType> <formUuid>                          フォーム権限設定を照会\n' +
       '  save-permission <appType> <formUuid> [--data-permission <json>] [--action-permission <json>]  フォーム権限設定を保存\n' +
       '  configure-process <appType> <formUuid> <processDefinitionFile> [processCode] [--replace]  プロセスを設定して公開\n' +
-      '  create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>  プロセスフォームを作成（一体化）\n' +
+      '  create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]  プロセスフォームを作成（一体化）\n' +
       '  create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]         既存フォームでプロセス作成\n' +
       '  connector list [オプション]                                  HTTP コネクター一覧\n' +
       '  connector create "名前" "ドメイン" --operations <file> [オプション]  コネクター作成\n' +
@@ -324,7 +326,7 @@ module.exports = {
     import_example2: '    openyida import ./yida-export.json "品質追跡システム（本番環境）"',
     configure_process_usage: 'Usage: openyida configure-process <appType> <formUuid> <processDefinitionFile> [processCode] [--replace]',
     configure_process_example: 'Example: openyida configure-process "APP_XXX" "FORM-YYY" .cache/openyida/process/process-definition.json',
-    create_process_usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>\n' +
+    create_process_usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]\n' +
       '        openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]',
     create_process_example: 'Example: openyida create-process "APP_XXX" "Order Form" .cache/openyida/process/fields.json .cache/openyida/process/process-definition.json',
     process_usage: 'Usage: openyida process <subcommand>\n' +
@@ -1029,6 +1031,7 @@ module.exports = {
     offline_success: 'アプリを無効化しました',
   },
   create_process: {
+    invalid_argument: "引数 {0} が不足しているか無効です。以下の構文で修正してください。",
     title: 'Yida Process Form Creation',
     app_id: 'App ID',
     mode: 'Mode',
@@ -1062,7 +1065,7 @@ module.exports = {
     process_def_not_found: 'Process definition file not found',
     done: 'Process form creation completed',
     url: 'URL',
-    usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>',
+    usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]',
     usage2: '       openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]',
     example: 'Example: openyida create-process "APP_XXX" "Order Form" .cache/openyida/process/fields.json .cache/openyida/process/process-definition.json',
     example2: '         openyida create-process "APP_XXX" --formUuid FORM-YYY .cache/openyida/process/process-definition.json'

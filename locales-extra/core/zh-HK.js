@@ -74,6 +74,7 @@ module.exports = {
     cmd_get_form_config: '查询表单配置',
     group_data: '資料 & 權限',
     cmd_data: '統一資料管理（表單/流程/任務/子表單）',
+    data_notes: "DateField 傳毫秒時間戳數字；CascadeDateField 傳毫秒時間戳陣列。先按業務時區轉換，不接受日期字串或秒級時間戳。--resolve-aliases 只轉換欄位名稱。",
     cmd_task_center: '全域任務中心（待辦/已處理/抄送等）',
     cmd_basic_info: '查詢組織基本資訊、容量、額度和域名設定',
     cmd_read_dingtalk_doc: '取得釘釘文件的 Markdown 內容',
@@ -85,6 +86,7 @@ module.exports = {
     group_process: '流程',
     cmd_configure_process: '設定並發布流程規則; 支援加簽/轉交，設定位於 JSON nodes[].actions.normalActions/appendActions',
     cmd_create_process: '建立流程表單（一體化）; 支援加簽/轉交，設定位於 JSON nodes[].actions.normalActions/appendActions',
+    create_process_notes: "formMode=create|reuse 區分新建與重用。重用時 formTitle、fieldCount 為 null，表示未查詢；新建時返回名稱和欄位數。成功和配置失敗輸出均遵守此約定，結果看 success 與 verificationLevel。--replace 僅用於已獲明確授權的現有草稿或已發佈流程整圖替換。",
     cmd_ai_form_setting: '管理流程表單 AI 審批提示',
     cmd_process_preview: '預覽流程實例（視覺化流程圖）',
     group_share: '頁面設定 & 分享',
@@ -213,7 +215,7 @@ module.exports = {
       '  get-permission <appType> <formUuid>                          查詢表單權限設定\n' +
       '  save-permission <appType> <formUuid> [--data-permission <json>] [--action-permission <json>]  儲存表單權限設定\n' +
       '  configure-process <appType> <formUuid> <processDefinitionFile> [processCode] [--replace]  設定並發布流程\n' +
-      '  create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>  建立流程表單（一體化）\n' +
+      '  create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]  建立流程表單（一體化）\n' +
       '  create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]         複用已有表單建立流程\n' +
       '  connector list [選項]                                        列出 HTTP 連接器\n' +
       '  connector create "名稱" "網域" --operations <file> [選項]    建立連接器\n' +
@@ -324,7 +326,7 @@ module.exports = {
     import_example2: '      openyida import ./yida-export.json "品質追溯系統（正式環境）"',
     configure_process_usage: '用法：openyida configure-process <appType> <formUuid> <processDefinitionFile> [processCode] [--replace]',
     configure_process_example: '範例：openyida configure-process "APP_XXX" "FORM-YYY" .cache/openyida/process/process-definition.json',
-    create_process_usage: '用法：openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>\n' +
+    create_process_usage: '用法：openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]\n' +
       '      openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]',
     create_process_example: '範例：openyida create-process "APP_XXX" "訂單處理表" .cache/openyida/process/fields.json .cache/openyida/process/process-definition.json',
     process_usage: '用法：openyida process <子指令>\n\n子指令：\n  preview <appType> <processInstanceId> [--output <path>]  預覽流程實例（產生視覺化流程圖）',
@@ -1020,6 +1022,7 @@ module.exports = {
     offline_success: '應用已停用',
   },
   create_process: {
+    invalid_argument: "參數 {0} 缺失或無效，請按以下用法修正。",
     title: '宜搭流程表单一体化创建',
     app_id: '应用 ID',
     mode: '模式',
@@ -1053,7 +1056,7 @@ module.exports = {
     process_def_not_found: '流程定义文件不存在',
     done: '流程表单创建完成',
     url: '访问地址',
-    usage: '用法: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>',
+    usage: '用法: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]',
     usage2: '      openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]',
     example: '示例: openyida create-process "APP_XXX" "订单处理表" .cache/openyida/process/fields.json .cache/openyida/process/process-definition.json',
     example2: '      openyida create-process "APP_XXX" --formUuid FORM-YYY .cache/openyida/process/process-definition.json'

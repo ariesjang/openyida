@@ -76,6 +76,8 @@ openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> 
 | `processDefinitionFile` | 是 | 流程定义文件（格式同 `yida-process-rule`） |
 | `--replace` | 条件必填 | 仅当目标已存在 PUBLISHED 流程或 SAVED 草稿，并已获得用户对整图替换的明确确认时传入 |
 
+参数不确定时先看 `openyida create-process --help`。缺参、重复参数或未知选项会在读文件和登录前返回 `CREATE_PROCESS_INVALID_ARGUMENTS`；按 `details.argument` 定位参数、`details.reason` 判断原因，修正后重试。复用参数写作 `--formUuid`。
+
 ## 输出
 
 ```json

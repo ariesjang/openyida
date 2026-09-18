@@ -301,11 +301,16 @@ describe('CLI offline smoke', () => {
     expect(process.output).toBe('json');
     expect(data.output).toBe('json');
     expect(process.notes.join(' ')).toContain('formMode=create|reuse');
-    expect(process.notes.join(' ')).toContain('formTitle and fieldCount are null');
-    expect(data.notes.join(' ')).toContain('CascadeDateField uses an array');
+    expect(process.notes.join(' ')).toContain('formTitle、fieldCount 为 null');
+    expect(data.notes.join(' ')).toContain('CascadeDateField 传毫秒时间戳数组');
     const help = runOk(['create-process', '--help']);
     expect(help).toContain('<formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]');
     expect(help).toContain('--formUuid <formUuid> <processDefinitionFile> [--replace]');
+    expect(help).toContain(process.notes[0]);
+    expect(runOk(['data', 'create', '--help'])).toContain(data.notes[0]);
+    const englishHelp = runOkWithEnv(['create-process', '--help'], { OPENYIDA_LANG: 'en' });
+    expect(englishHelp).toContain('formTitle and fieldCount are null');
+    expect(runOkWithEnv(['data', '--help'], { OPENYIDA_LANG: 'en' })).toContain('CascadeDateField uses an array');
     const { parseArgs } = require('../lib/process/create-process');
     expect(parseArgs(['APP', '审批表', 'fields.json', 'process.json', '--replace'])).toMatchObject({
       appType: 'APP', formTitle: '审批表', fieldsJsonFile: 'fields.json', processDefinitionFile: 'process.json', existingFormUuid: null, replace: true,
@@ -313,6 +318,13 @@ describe('CLI offline smoke', () => {
     expect(parseArgs(['APP', '--formUuid', 'FORM', 'process.json', '--replace'])).toMatchObject({
       appType: 'APP', formTitle: null, fieldsJsonFile: null, processDefinitionFile: 'process.json', existingFormUuid: 'FORM', replace: true,
     });
+  });
+
+  test('process CLI identifies incorrect arguments before login in JSON output', () => {
+    const result = runAnyWithEnv(['create-process', 'APP', '--formUuid', '--replace', '--json'], {});
+    expect(result.status).not.toBe(0);
+    const output = JSON.parse(result.stderr);
+    expect(output).toMatchObject({ success: false, errorCode: 'CREATE_PROCESS_INVALID_ARGUMENTS', details: { argument: '--formUuid', reason: 'missing_value' } });
   });
 
   test('CRM Pro command help probes exit successfully without requiring login', () => {
