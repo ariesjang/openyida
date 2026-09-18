@@ -139,7 +139,7 @@ function setNavigationTitle(title) {
 
 纯 DOM 页面直接消费平台 CSS 变量，不必引入 antd 或 Provider。按 [共用主题规则](../yida-design/references/application-theme-consistency.md) 引用画布、卡片、文字与特色角色；风格缺项回写设计源，不在页面根复制固定色盘。
 
-antd 页面使用 CanvasThemeProvider，图表通过 useCanvasThemeContext 取色。`sample` 输出的表单抽屉、批量表格和趋势图页面已接好主题；其他页面按 [主题接入步骤](references/canvas-theme-provider.md) 操作。
+antd 页面使用 CanvasThemeProvider，图表通过 useCanvasThemeContext 取色。`sample` 输出的表单抽屉、批量表格和趋势图页面已包含主题与加载遮罩防闪边样式，合并代码时保留 Provider 内的 style；其他页面及旧页面升级按 [主题接入步骤](references/canvas-theme-provider.md) 操作。
 
 页面入口按 `YidaComp → CanvasThemeProvider → PageContent` 组织，主题 hook 放在 PageContent 或其子组件内。编译通过后，打开实际页面检查首屏、主题和交互。
 

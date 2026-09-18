@@ -213,4 +213,6 @@ antd 页面按 [CanvasThemeProvider 指南](canvas-theme-provider.md) 统一接�
 4. 按主操作、状态与响应式说明实现动作、反馈、恢复入口及窄屏重排。
 5. 将实际页面八项验收逐条对应源码和截图；实现偏差局部修正，设计事实变化先更新源事实。
 
-控件默认保留组件库样式，仅在实际受到宿主样式干扰时修正：需要局部浮层样式时，通过 `CanvasThemeProvider.getPopupContainer` 选择不会裁剪弹层的容器，`OPENYIDA_CANVAS_CONTROL_CSS` 统一输入框、下拉、日期、运行态字段组件的 hover / focus / dropdown 样式。出现黑色粗边、浏览器原生 outline、下拉浮层脱离页面风格时，先检查主题与挂载位置，再按样式指南增加局部 reset。
+整页刷新时，表格加载遮罩可能因 `transition: all` 遇到延迟加载的基础样式而闪出黑边。标准 Provider 已将遮罩边框固定为零，只保留透明度过渡；保留内置 style，旧页面按 [主题接入步骤](canvas-theme-provider.md) 更新 Provider 并重新发布，不通过修改主题色或全局清除边框处理。
+
+其他控件默认保留组件库样式，仅在实际受到宿主样式干扰时修正：需要局部浮层样式时，通过 `CanvasThemeProvider.getPopupContainer` 选择不会裁剪弹层的容器，`OPENYIDA_CANVAS_CONTROL_CSS` 统一输入框、下拉、日期、运行态字段组件的 hover / focus / dropdown 样式。控件焦点边框或下拉浮层不符合设计时，先检查主题与挂载位置，再按样式指南局部调整，保留可见的键盘焦点。
