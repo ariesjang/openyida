@@ -309,7 +309,7 @@ module.exports = {
     integration_enable_example: 'Ejemplo: openyida integration enable APP_XXX FORM-XXX LPROC-XXX',
     integration_disable_usage: 'Uso: openyida integration disable <appType> <formUuid> <processCode>',
     integration_disable_example: 'Ejemplo: openyida integration disable APP_XXX FORM-XXX LPROC-XXX',
-    compile_usage: 'Uso: openyida compile <sourceFile>',
+    compile_usage: 'Uso: openyida compile <sourceFile> [--canvas] [--compat] [--skip-lint] [--json]',
     compile_example: 'Ejemplo: openyida compile pages/src/home.oyd.jsx',
     check_page_usage: 'Usage: openyida check-page <sourceFile> [--compat] [--json]',
     check_page_example: 'Example: openyida check-page pages/src/home.oyd.jsx --json',
@@ -317,7 +317,7 @@ module.exports = {
     generate_page_example: 'Example: openyida generate-page product-homepage --brand-name OpenKuma --brand-initials OK --theme-scope page --output pages/src/home.canvas.jsx --compile',
     build_page_usage: 'Usage: openyida build-page <sourceFile> [--output pages/build/page.yida.jsx|--write] [--json]',
     build_page_example: 'Example: openyida build-page pages/src/dashboard.oyd.jsx --output pages/build/dashboard.yida.jsx',
-    publish_usage: 'Usage: openyida publish <sourceFile> <appType> <formUuid> [--health-check] [--canvas] [--auto-nav-order]',
+    publish_usage: 'Usage: openyida publish <sourceFile> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]',
     publish_example: 'Example: openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
@@ -709,7 +709,7 @@ module.exports = {
   },
   create_page: {
     title: '  create-page - Herramienta de creación de páginas personalizadas Yida',
-    usage: 'Uso: openyida create-page <appType> <nombre de página> [--mode dashboard] [--hide-nav]',
+    usage: 'Uso: openyida create-page <appType> <nombre de página> [--mode dashboard] [--hide-nav] [--locale zh_CN|en_US|ja_JP] [--open|--no-open]',
     example: 'Ejemplo: openyida create-page APP_XXX "Dashboard" --mode dashboard',
     app_id: '\n  ID de la app:    {0}',
     page_name: '  Nombre de página: {0}',
@@ -719,6 +719,7 @@ module.exports = {
     step_dashboard_config: '\n🖥️  Step 3: Configure hidden navigation',
     dashboard_config_ok: '  ✅ Navigation hidden by explicit request, chromeless custom URL enabled',
     dashboard_config_failed: '  ⚠️  Hidden navigation config failed: {0}',
+    navigation_unverified: 'La página se creó, pero la lectura posterior no confirmó que la navegación esté oculta. Corrija y verifique la pageId devuelta; no cree otra página.',
     err_mode_invalid: 'Unsupported page mode: {0}',
     mode_hint: 'Available modes: default, dashboard. Navigation is visible by default; pass --hide-nav or --render-nav false to hide it.',
     page_id_label: '  pageId: {0}',
@@ -1402,7 +1403,7 @@ module.exports = {
     error: '\n❌ Publish error: {0}',
     source_not_found: '❌ Archivo fuente no encontrado: {0}',
     source_path_hint: '💡 Prueba esta ruta de archivo fuente: {0}',
-    usage: 'Uso: openyida publish <archivoFuente> <appType> <formUuid> [--health-check] [--canvas] [--auto-nav-order]',
+    usage: 'Uso: openyida publish <archivoFuente> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]',
     example: 'Ejemplo: openyida publish pages/src/xxx.js APP_XXX FORM-XXX --health-check --auto-nav-order'
   },
   qr_login: {
@@ -1988,7 +1989,7 @@ Object.assign(module.exports.save_share_config || (module.exports.save_share_con
 
 Object.assign(module.exports.publish || (module.exports.publish = {}), {
   lint_jsx_text_identifier: 'La copia JSX no se puede escribir como {{0}}; se trata como variable y causa {0} is not defined. Use plain text {0} o una cadena con comillas {\'{0}\'} en su lugar.',
-  lint_form_open_container: 'Abrir páginas de envío/detalles del formulario Yida desde una página personalizada debe usar FormOpenContainer: un iframe drawer de 50vw para escritorio, y solo nueva/página completa para móvil. Los manejadores de botón deben llamar openForm({ type: "submission" | "detail", ... }).',
+  lint_form_open_container: 'Los formularios y detalles requieren la plantilla completa: openyida sample openyida-page-template form-open-container. Integre CanvasDrawer, FormOpenContainer y useYidaFormOpen, llame a openForm y renderice formOpenContainer. Use el panel iframe en escritorio y la lógica de la plantilla en móvil; no los sustituya por enlaces o diálogos propios.',
   lint_form_detail_link: 'Las páginas de detalle del formulario Yida deben usar una formInstId real: lea row.formInstId primero, y deshabilite o advierta cuando el id de instancia esté ausente en lugar de abrir un enlace formDetail con un formInstId vacío.',
   lint_searchformdata_http_path: 'Una llamada directa a searchFormDatas.json debe usar /dingtalk/web/<appType>/v1/form/searchFormDatas.json; /query/form/searchFormDatas.json no es un endpoint válido de datos del formulario',
   lint_searchformdata_http_query_params: 'La consulta URL directa de searchFormDatas.json falta los parámetros requeridos: {0}. Use URLSearchParams con appType, formUuid, currentPage, pageSize y searchFieldJson',

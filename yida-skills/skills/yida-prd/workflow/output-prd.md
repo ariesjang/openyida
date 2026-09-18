@@ -220,4 +220,4 @@
 | corpId | <目标组织 corpId；未知时写“待登录态确认”> |
 | baseUrl | <平台地址，如 https://www.aliwork.com 或私有化域名> |
 
-自定义导航逐页设置 isRenderNav=false 并回读；业务说明写平台导航的显示方式及页面切换行为。
+自定义导航逐页设置 isRenderNav=false 并回读 renderNav=false，字段兼容规则见导航壳技能；业务说明写平台导航的显示方式及页面切换行为。

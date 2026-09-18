@@ -472,6 +472,27 @@ describe('CLI offline smoke', () => {
     expect(entries['create-form.batch'].args.find(arg => arg.name === 'concurrency')).toMatchObject({ type: 'integer', default: 3 });
   });
 
+  test('page commands expose navigation recovery and form drawer validation contracts', () => {
+    const { commands } = JSON.parse(runOk(['commands', '--json']));
+    const page = commands.find(item => item.id === 'create-page');
+    const check = commands.find(item => item.id === 'check-page');
+    const help = runAny(['create-page', '--help']).output;
+    for (const flag of page.usage.match(/--[a-z][a-z-]*/g)) {
+      expect(help).toContain(flag);
+    }
+    expect(page.notes.join(' ')).toContain('CREATE_PAGE_NAVIGATION_NOT_VERIFIED');
+    expect(page.notes.join(' ')).toContain('pageCreated=true');
+    expect(page.notes.join(' ')).toContain('Never repeat create-page');
+    expect(check.requires_login).toBe(false);
+    const { parseArgs } = require('../lib/app/check-page');
+    for (const option of check.args.find(arg => arg.name === 'compat').builder_options) {
+      expect(parseArgs(['example.canvas.jsx', option, '--json'])).toEqual({ sourceFile: 'example.canvas.jsx', compat: true, json: true });
+    }
+    for (const id of ['sample', 'check-page', 'compile', 'publish']) {
+      expect(commands.find(item => item.id === id).notes.join(' ')).toContain('form-open-container');
+    }
+  });
+
   test('commands --json renders machine-readable command manifest', () => {
     const output = runOk(['commands', '--json']);
     const parsed = JSON.parse(output);
@@ -2362,6 +2383,34 @@ describe('CLI offline smoke', () => {
     }
   });
 
+  test('Canvas compile and publish enforce form drawers even with skip-lint and force', () => {
+    const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-form-drawer-contract-'));
+    try {
+      const source = 'workbench.canvas.jsx';
+      fs.writeFileSync(path.join(workspace, source), `
+        import React from 'react';
+        export default function Page() {
+          return <button onClick={() => window.open('/APP_TEST/submission/FORM_TEST', '_blank')}>新增</button>;
+        }
+      `);
+      for (const args of [
+        ['compile', source, '--skip-lint', '--json'],
+        ['publish', source, 'APP_TEST', 'FORM_TEST', '--skip-lint', '--force', '--no-open', '--json'],
+      ]) {
+        const result = runAnyWithEnv(args, {}, workspace);
+        expect(result.status).toBe(1);
+        expect(JSON.parse(result.jsonOutput)).toMatchObject({
+          success: false,
+          errorCode: 'OPENYIDA_CANVAS_FORM_OPEN_CONTAINER_REQUIRED',
+        });
+        expect(result.output).toContain('form-open-container');
+        expect(result.output).not.toContain('读取登录态');
+      }
+    } finally {
+      fs.rmSync(workspace, { recursive: true, force: true });
+    }
+  });
+
   test('Canvas publish --json preserves emoji source error code and details before login', () => {
     const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-publish-canvas-'));
     try {
@@ -2474,6 +2523,8 @@ test('command and agent navigation policies align with AI intake decisions', () 
 
   const workflow = manifest.summary.core_workflows.full_app_build;
   for (const route of [workflow, summary.full_app_artifact_route, capabilities.commands.core_workflows.full_app_build]) {
+    expect(route.form_entry_policy).toEqual(workflow.form_entry_policy);
+    expect(route.form_entry_policy.sample_command).toBe('openyida sample openyida-page-template form-open-container --output .cache/samples/form-open-container.jsx');
     expect(route.navigation_policy).toBe(workflow.navigation_policy);
     expect(route.entry_navigation_contract).toEqual(workflow.entry_navigation_contract);
     expect(route.application_entry_policy).toEqual(workflow.application_entry_policy);

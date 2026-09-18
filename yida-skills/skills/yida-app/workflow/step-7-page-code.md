@@ -6,7 +6,7 @@
 
 无直接依赖的页面按 [页面并行规则](parallel-work.md#页面按实际依赖并行) 同时开发，每页只等待自身需要的资源，不按导航顺序串行。共享主题或同一已就绪表单不构成页面间依赖；当前页就绪即可进入发布步骤，导航排序等待全部页面完成。
 
-独立前台只实现本入口的菜单与任务，多视图共用同一页面时按状态或 hash 切换。全码填写直接连接真实表单/流程 API，校验、提交状态、错误处理、权限与结果刷新均要实现；第 9 条容器规则只用于明确复用原生表单的入口，不能静默替换计划中的全码交互。需要平台原生能力才能完成时，在计划说明替代方式。后台按自己的任务和导航实现，不被前台菜单影响。平台导航下的自定义后台默认只写业务内容，不渲染整份管理菜单；跨模块用平台菜单，同任务分类才用页内 Tab。派发任务时传递该页 `navigationPolicy` 与 `pageSpecHandoff`，Fast 也明确同样边界，详见[管理页面边界](../../yida-canvas-custom-page/references/navigation-and-entry-guide.md#平台导航下的管理页面)。
+独立前台只实现本入口的菜单与任务，多视图共用同一页面时按状态或 hash 切换。普通表单新增、填写提交和详情按第 9 条接入提供的 iframe 抽屉模板；全码前台也不另写一套填写与提交 API 逻辑。已有计划若写成自绘普通提交表单，先局部对齐交互描述，保留业务字段、权限与结果刷新。后台按自己的任务和导航实现，不被前台菜单影响。平台导航下的自定义后台默认只写业务内容，不渲染整份管理菜单；跨模块用平台菜单，同任务分类才用页内 Tab。派发任务时传递该页 `navigationPolicy` 与 `pageSpecHandoff`，Fast 也明确同样边界，详见[管理页面边界](../../yida-canvas-custom-page/references/navigation-and-entry-guide.md#平台导航下的管理页面)。
 
 ## 输入
 
@@ -35,7 +35,7 @@
 6. 列表、看板、详情页读取真实表单数据时，写 `dataBinding.mode=form`、真实 `appType/formUuid/fieldId` 和字段映射；禁止静态 0 或 mock 数据作为交付值。
 7. 页面代码默认消费发布层自动注入的 `window.__OPENYIDA_YIDA_API__` 和 `window.__OPENYIDA_UTILS__`：表单/流程/表单设计 API 走 yida API 桥，`toast/dialog/openPage/router.push/isMobile` 走 utils 桥；`YidaComp` 内不得直接调用 `this.utils.yida.*` 或 `this.utils.*`。
 8. 表单、流程、任务、成员等分页查询一般显式写 `pageSize: 50` 或 `pageSize: '50'`，除非用户明确要求其他页大小。
-9. **MUST**：计划选择打开原生表单新建/提交/详情的 Canvas 页面，必须先执行 `openyida sample openyida-page-template form-open-container --output .cache/samples/form-open-container.jsx` 拉取当前模板，整体合并 `CanvasDrawer` / `FormOpenContainer` / `useYidaFormOpen` 及依赖的 import、辅助函数。禁止自绘 fixed 遮罩 + iframe 抽屉壳；以源码及打开后的 DOM 存在 `.openyida-form-drawer` 为必要检查项，不能只加类名。入口统一使用 `FormOpenContainer`，PC 端右侧抽屉 iframe，移动端整页或新页打开；详情必须从真实行解析 `formInstId`，缺失时禁用入口或提示。应用级办理导航在主内容区嵌入提交页的场景仍按导航规范处理，不强制改成抽屉。
+9. **MUST**：含普通表单新增/提交/详情入口的 Canvas 页面，先执行 `openyida sample openyida-page-template form-open-container --output .cache/samples/form-open-container.jsx`，整体合并 `CanvasDrawer` / `FormOpenContainer` / `useYidaFormOpen` 及其 import、辅助函数。必须调用 `openForm` 并渲染 `formOpenContainer`，不能只复制定义或类名；PC 端使用提供的 iframe 抽屉，移动端由模板处理。禁止自绘 fixed 遮罩、替代弹窗或普通链接；详情从真实行解析 `formInstId`，缺失时禁用或提示。应用级办理导航已明确在主内容区嵌入原生页时仍按导航规范处理；搜索筛选和专用表格批量录入不套普通表单提交规则。
 10. 页面源码默认不自绘应用级侧边导航、顶部应用导航或同级模块菜单；PRD 的导航顺序交给 Step 8 的平台导航排序处理。PRD 导航类型为自定义导航，或用户显式要求在自定义页面内实现自己的应用级导航、隐藏应用导航或独立全屏应用壳时，执行 `use_skill("yida-nav-shell")`。
 11. 没有真实数据时，页面展示空态、表单入口、刷新或登记按钮。
 12. 页面源码用 `.canvas.jsx` / `.canvas.tsx`、`YidaComp`、页面生成器或本地快检。

@@ -111,7 +111,7 @@
 - 业务总结中的资源数量、seed records 数量和完成状态与逐资源真实返回值/readback 一一对应；证据不完整的资源标记为未核验。
 - 新增、修改或发布单个具体页面时，交付当前页面并保持单页范围。
 - 完整应用的入口组按有效范围交付：统一工作区或前后台双入口包含经验证的“业务管理入口”：根 `{base_url}/{appType}/workbench` 或上述指定任务/视图链接；明确仅前台时不追加业务后台，但仍提供开发者管理后台。
-- 前台页面在 PRD 中为 `entryMode=standalone`，且 Step 8 回读确认 `isRenderNav=false` 时，入口组包含“前台” `{base_url}/{appType}/custom/{formUuid}`；否则不得输出。
+- 前台页面在 PRD 中为 `entryMode=standalone`，且 Step 8 回读确认 `renderNav=false` 时，入口组包含“前台” `{base_url}/{appType}/custom/{formUuid}`；否则不得输出。
 - 完整应用默认交付“开发者管理后台” `{base_url}/{appType}/admin`，使用 `create-app` 或 `app-list` 成功结果中的 `adminUrl`。`application_entry_policy.entries.admin=include` 不受云端/本地宿主或登录态注入方式影响；不要沿用旧版本云端省略 admin 的规则。地址生成不代表已验证收件人的管理权限，实际访问仍由平台鉴权。
 - 完整应用一般为 2–3 个地址：有前后台时为“前台、业务后台、开发者管理后台”；仅前台时为“前台、开发者管理后台”；统一工作区时为“应用工作台、开发者管理后台”。同一业务入口不重复凑数，不为补链接创建额外业务后台。用户明确排除开发者入口时遵从；单页任务保持单页交付范围。
 - 若历史创建结果缺少 `adminUrl`，分页查询 `app-list` 并匹配真实 `appType`（名称仅辅助识别），保留其 `adminUrl`；不要自行猜租户域名或资源 ID。无法取得时明确标记开发者入口待补齐，不得静默省略或声明交付完成。
@@ -141,7 +141,7 @@
 | 应用首页 | `{base_url}/{appType}/workbench` |
 | 表单提交页（默认隐藏导航） | `{base_url}/{appType}/submission/{formUuid}?isRenderNav=false` |
 | 自定义页面 | `{base_url}/{appType}/custom/{formUuid}` |
-| 独立自定义页面 | `{base_url}/{appType}/custom/{formUuid}`；页面 `isRenderNav=false` 回读通过，混合前后台应用保留 `hideAppNav=n` |
+| 独立自定义页面 | `{base_url}/{appType}/custom/{formUuid}`；页面 `renderNav=false` 回读通过，混合前后台应用保留 `hideAppNav=n` |
 | 原生报表（仅单独交付该报表时） | 使用 CLI 返回的 `{base_url}/{appType}/workbench/{reportId}`；禁止拼接 `/{appType}/report/{reportId}` |
 | 表单详情页（抽屉/隐藏导航） | `{base_url}/{appType}/formDetail/{formUuid}?formInstId={formInstId}&navConfig.layout=1180&isRenderNav=false` |
 | 表单详情页（编辑模式） | `{base_url}/{appType}/formDetail/{formUuid}?formInstId={formInstId}&mode=edit&navConfig.layout=1180&isRenderNav=false` |

@@ -713,7 +713,7 @@ describe('OpenYida skill contracts', () => {
     expect(blueprint).toContain('`entryMode` 只允许 `platform-shell` 或 `standalone`');
     expect(step8).toContain('openyida update-form-config <appType> <displayPageFormUuid> false');
     expect(step8).toContain('openyida get-form-config <appType> <displayPageFormUuid> --json');
-    expect(step8).toContain('只有回读明确为 `isRenderNav=false`');
+    expect(step8).toContain('只有回读明确为 `renderNav=false`');
     expect(pageConfig).toContain('PRD 已把主页面明确标记为 `entryMode=standalone`');
     expect(feature).toContain('| 仅前台 | 已验证的独立业务入口 |');
     expect(feature).toContain('| 前后台双入口 | 独立业务入口和业务管理入口 |');
@@ -1412,14 +1412,14 @@ describe('OpenYida skill contracts', () => {
     expect(outputDesign).toContain('只能由上述 OpenYida CLI 契约生成或更新');
     expect(outputDesign).toContain('不得另写 Python、Node、Shell 或 `run_workspace_script` 临时脚本');
     expect(outputDesign).toContain('校验脚本只能读取并报告问题，不能改写主题文件');
-    expect(step2).toContain('若截图或预览中出现左侧导航选中态与页面主操作颜色不一致');
+    expect(step2).toContain('导航选中态与按钮不同色不直接判为冲突');
     expect(styleSelection).toContain('沿用已确认主题，只补当前页面');
     expect(canvasStyleGuide).toContain('按本指南把 `design.md` 的布局、材质、密度、图表和控件样式写入 Canvas 页面');
     expect(canvasStyleGuide).toContain('业务事实来自 `yida-prd` 输出的 `prd.md`，视觉事实来自 `yida-design` 输出的 `design.md`');
     expect(canvasStyleGuide).toContain('## 应用主题与页面风格冲突处理');
-    expect(canvasStyleGuide).toContain('页面跟随已确认应用主题，生成的辅助色不自动成为另一套主色');
+    expect(canvasStyleGuide).toContain('品牌、操作和信息强调可以用不同颜色，但必须属于同一份项目设计');
     expect(canvasStyleGuide).toContain('openyida sample openyida-page-template canvas-theme');
-    expect(canvasStyleGuide).toContain('当前脚本不自动映射尺寸、圆角、字体、图表色组或完整 CSS 选择器');
+    expect(canvasStyleGuide).toContain('当前脚本也不自动映射尺寸、圆角、字体、图表色组或完整 CSS 选择器');
     expect(canvasStyleGuide).toContain('antd 页面统一使用');
     expect(step2).toContain('`--color-brand1-*` 是页面和 PC 端主要消费的品牌色阶');
     expect(step2).toContain('是平台主题契约要求的品牌色阶，由应用自定义主题文件统一提供');
@@ -1700,7 +1700,8 @@ describe('OpenYida skill contracts', () => {
     expect(pageUiux).toContain('抽屉默认半屏 `50vw`');
     expect(pageUiux).toContain('新增/提交页 URL 默认使用页面级隐藏导航的 `submission/{formUuid}?isRenderNav=false`');
     expect(pageUiux).toContain('formDetail/{formUuid}?formInstId={formInstId}&navConfig.layout=1180&isRenderNav=false');
-    expect(canvas).toContain('表单打开入口统一容器');
+    expect(canvas).toContain('表单提交必须接入提供的抽屉模板');
+    expect(canvas).not.toContain('全码前台直接实现填写与结果并连接真实 API');
     expect(canvas).toContain('FormOpenContainer');
     expect(canvas).toContain('openyida sample openyida-page-template form-open-container');
     expect(canvas).toContain('references/navigation-and-entry-guide.md#接入示例');
@@ -1723,7 +1724,8 @@ describe('OpenYida skill contracts', () => {
     expect(navGuide).toContain('有实例 ID 时启用详情按钮；缺少时禁用按钮，并提示“未找到数据实例”');
     expect(navGuide).toContain('&isRenderNav=false');
     expect(navGuide).toContain('FormOpenContainer');
-    expect(navGuide).toContain('按钮事件只调用 `openForm(request)`');
+    expect(navGuide).toContain('按钮事件调用 `openForm(request)`');
+    expect(navGuide).toContain('只有定义没有挂载，不算接入');
     expect(navGuide).not.toContain('runtime.openDrawer');
     expect(pageGeneration).toContain('| 表单新建/提交 | `targetType: "submission"` + `openMode: "responsive-drawer"` | PC 用 `FormOpenContainer` 右侧抽屉 iframe，URL 带 `isRenderNav=false` |');
     expect(pageGeneration).toContain('| 表单查看详情 | `targetType: "detail"` + 目标 `formUuid` + 真实 `formInstId` 来源 | PC 用同一套抽屉宽度，详情 URL 带 `navConfig.layout=1180&isRenderNav=false` |');

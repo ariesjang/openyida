@@ -295,7 +295,7 @@ module.exports = {
     integration_enable_example: '範例：openyida integration enable APP_XXX FORM-XXX LPROC-XXX',
     integration_disable_usage: '用法：openyida integration disable <appType> <formUuid> <processCode>',
     integration_disable_example: '範例：openyida integration disable APP_XXX FORM-XXX LPROC-XXX',
-    compile_usage: '用法：openyida compile <原始檔路徑>',
+    compile_usage: '用法：openyida compile <原始檔路徑> [--canvas] [--compat] [--skip-lint] [--json]',
     compile_example: '範例：openyida compile pages/src/home.oyd.jsx',
     check_page_usage: '用法：openyida check-page <原始檔路徑> [--compat] [--json]',
     check_page_example: '範例：openyida check-page pages/src/home.oyd.jsx --json',
@@ -303,7 +303,7 @@ module.exports = {
     generate_page_example: '範例：openyida generate-page product-homepage --brand-name OpenKuma --brand-initials OK --theme-scope page --output pages/src/home.canvas.jsx --compile',
     build_page_usage: '用法: openyida build-page <源文件路径> [--output pages/build/page.yida.jsx|--write] [--json]',
     build_page_example: '示例: openyida build-page pages/src/dashboard.oyd.jsx --output pages/build/dashboard.yida.jsx',
-    publish_usage: '用法：openyida publish <原始檔路徑> <appType> <formUuid> [--health-check] [--canvas] [--auto-nav-order]',
+    publish_usage: '用法：openyida publish <原始檔路徑> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]',
     publish_example: '範例：openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
@@ -671,7 +671,7 @@ module.exports = {
   },
   create_page: {
     title: '  openyida create-page - 宜搭自訂頁面建立工具',
-    usage: '用法：openyida create-page <appType> "<pageName>" [--mode dashboard] [--hide-nav]',
+    usage: '用法：openyida create-page <appType> "<pageName>" [--mode dashboard] [--hide-nav] [--locale zh_CN|en_US|ja_JP] [--open|--no-open]',
     example: '範例：openyida create-page "APP_XXX" "駕駛艙" --mode dashboard',
     app_id: '  應用程式 ID：  {0}',
     page_name: '  頁面名稱：{0}',
@@ -681,6 +681,7 @@ module.exports = {
     step_dashboard_config: '\n🖥️  Step 3：設定看板全螢幕模式',
     dashboard_config_ok: '  ✅ 已設定看板模式：隱藏頂部導航，並輸出無左側欄的 custom URL',
     dashboard_config_failed: '  ⚠️  看板模式設定失敗：{0}',
+    navigation_unverified: '頁面已建立，但未能回讀確認導覽已隱藏。請使用傳回的 pageId 修復設定並回讀，不要重複建立頁面。',
     err_mode_invalid: '不支援的頁面模式：{0}',
     mode_hint: '可用模式：default, dashboard',
     page_id_label: '  pageId：   {0}',
@@ -1339,7 +1340,7 @@ module.exports = {
     error: '\n❌ 發布異常：{0}',
     source_not_found: '❌ 原始檔案不存在：{0}',
     source_path_hint: '💡 可嘗試使用原始檔路徑：{0}',
-    usage: '用法：openyida publish <原始檔路徑> <appType> <formUuid> [--health-check] [--canvas] [--auto-nav-order]',
+    usage: '用法：openyida publish <原始檔路徑> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]',
     example: '範例：openyida publish pages/src/xxx.js APP_XXX FORM-XXX --health-check --auto-nav-order'
   },
   qr_login: {
@@ -1862,7 +1863,7 @@ Object.assign(module.exports.save_share_config || (module.exports.save_share_con
 
 Object.assign(module.exports.publish || (module.exports.publish = {}), {
   lint_jsx_text_identifier: 'JSX 中文文案不能寫成 {{0}}，這會被當作變量並導致 {0} is not defined；請改成純文本 {0} 或字符串 {\'{0}\'}。',
-  lint_form_open_container: '自定義頁內打開表單提交/詳情只能使用 FormOpenContainer：PC 端用 50vw 抽屜 iframe，移動端才整頁或新頁打開。按鈕事件請調用 openForm({ type: "submission" | "detail", ... })。',
+  lint_form_open_container: '一般表單提交/詳情必須使用完整抽屜模板。執行 openyida sample openyida-page-template form-open-container，合併 CanvasDrawer、FormOpenContainer、useYidaFormOpen，呼叫 openForm 並渲染 formOpenContainer。PC 使用 iframe 抽屜，流動端由模板處理；不能以普通連結或自製彈層代替。',
   lint_form_detail_link: '表單詳情頁必須使用真實 formInstId：優先讀取 row.formInstId，缺少實例 ID 時禁用詳情入口或提示，不能打開空 formInstId 的 formDetail 鏈接。',
   lint_searchformdata_http_path: '直連 searchFormDatas.json 必須使用 /dingtalk/web/<appType>/v1/form/searchFormDatas.json；/query/form/searchFormDatas.json 不是有效表單數據端點',
   lint_searchformdata_http_query_params: '直連 searchFormDatas.json 的 URL query 缺少必要參數：{0}；請用 URLSearchParams 寫入 appType、formUuid、currentPage、pageSize 和 searchFieldJson',

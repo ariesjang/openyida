@@ -42,12 +42,12 @@ body.pod-premium.page-type-workbench .vc-page-yida-pure-container:has(> .vc-root
 
 | 冲突现象 | 处理方式 |
 | --- | --- |
-| 左侧平台导航选中态是应用主题色，页面主按钮 / 标题强调 / 卡片选中态用了另一套主色 | 页面主操作、链接、选中态、重点标签和图表主序列改回应用主题 `--color-brand1-*` |
-| design.md 生成了青绿、紫色、蓝色等辅助色，但当前应用主题是橙色或其他色 | 保留 `design.md` 的布局、卡片、密度、图表语言，把生成色彩降为辅助色、浅底背景、分组色或第二图表序列 |
+| 导航选中态与页面按钮、指标颜色不同 | 对照 `design.md` 的颜色角色；已设计的协调配色可以保留，临时硬编码或误用变量才需要修正，不以同色为验收标准 |
+| design.md 的操作色或指标色与品牌色不同 | 按已定义的用途和表面使用项目变量，同时检查与画布、图片及状态色的关系；未说明搭配时先补设计，不自动降为装饰或改回品牌色 |
 | 用户要求导航和内容一起换色 | 交给 `yida-design` 更新应用主题设计 |
 | 页面是沉浸页、自绘壳、独立官网、活动页或公开落地页 | 仍消费应用主题变量；页面差异通过布局、材质、素材、构图和辅助色表达，不覆盖品牌 token |
 
-实现时读取 `themeProfile` 的主色与交付方式，以及正文中的主题关系。页面跟随已确认应用主题，生成的辅助色不自动成为另一套主色。
+实现时读取 `themeProfile` 的主色与交付方式，以及正文中的颜色角色。品牌、操作和信息强调可以用不同颜色，但必须属于同一份项目设计，不能在页面中另配一套色盘。
 
 ## 工作台卡片密度红线
 
@@ -98,7 +98,7 @@ body.pod-premium.page-type-workbench .vc-page-yida-pure-container:has(> .vc-root
 
 **MUST** 区分平台宿主与自绘应用画布：宿主继续使用平台背景 token；内部导航壳可按 `design.md` 使用浅灰、浅彩、低饱和渐变或局部纹理，不强制使用 `--pod-page-bg-color` 作为唯一可见底色。`design.md` 明确 `canvasBackground`、`navigationSurface` 和 `cardSurface`，仅在当前页面根选择器实现，不修改 body、父页面或全局变量。
 
-导航底色按首屏、滚动和展开状态设计，不因浅色画布强制白色浮导。浅彩画布上的白卡可无框，白画布上的白卡用细边框或投影；品牌色用于 Logo、选中态和主操作。渐变低饱和、集中于局部；深色画布独立设计对比。
+导航底色按首屏、滚动和展开状态设计，不因浅色画布强制白色浮导。浅彩画布上的白卡可无框，白画布上的白卡用细边框或投影；Logo、选中态和主操作按项目颜色角色搭配，不要求同色。渐变低饱和、集中于局部；深色画布独立设计对比。
 
 ```css
 /* 明确选择浮导时的局部示例，色值由 design.md 确认。 */
@@ -247,9 +247,10 @@ body.pod-premium.page-type-workbench .vc-page-yida-pure-container:has(> .vc-root
 | token | design.md 语义 | YidaCodeCanvas 使用方式 |
 | --- | --- | --- |
 | `--color-brand1-6` | 主色 | 主按钮、链接、选中态、信息强调、图表主序列 |
-| `--color-brand1-1` / `--color-brand1-2` / `--color-brand1-3` | 浅底色阶 | 标签浅底、提示块、筛选选中底、弱强调背景 |
-| `--color-brand1-5` / `--color-brand1-9` | 交互色阶 | hover / active / pressed 状态 |
-| `--color-brand1-9` / `--color-brand1-10` | 深色阶 | 深色标题、深底按钮、深色主题强调 |
+| `--color-brand1-1` | 品牌交互悬停色 | 品牌控件 hover，不用作常驻指标背景 |
+| `--color-brand1-2` / `--color-brand1-3` | 品牌派生浅色 | 按主题定义用于选中底、提示块和弱强调背景 |
+| `--color-brand1-5` | 品牌派生深色 | 按主题定义用于深色导航或强调表面 |
+| `--color-brand1-9` / `--color-brand1-10` | 激活 / 禁用色 | 分别用于 pressed / disabled，不用作普通标题、指标或默认按钮背景 |
 | `--color-brand-1` ~ `--color-brand-4` | 移动端品牌色阶 | 当前自定义页面的移动端布局和品牌状态 |
 | `--color-group` | 平台图表色组 | 多系列折线、柱状、排名、环形图配色 |
 | `--oyd-control-selected-bg` | 页面级选中浅底 | 下拉选中项、Tabs 选中底、轻量筛选块 |
@@ -296,11 +297,12 @@ antd 页面统一使用 [CanvasThemeProvider](canvas-theme-provider.md) 读取�
 
 ### 按钮语义与优先级
 
+- 按 `design.md` 的[指标卡与按钮配色](../../yida-design/references/application-theme-consistency.md#指标卡与按钮配色)实现背景、文字、图标和状态。指标区检查外层容器的背景，按钮检查内部图标的 `currentColor`、描边和透明度；换背景时一起调整前景。跨应用复用页面后，删除旧主题变量和深色兜底，使用当前设计声明的颜色角色；不能只换品牌色值。
 - 内容面板切换用 Tabs，类别单选用 Segmented/Radio.Group，主动作才用实心 Button。按 [默认控件状态](canvas-theme-provider.md#默认控件状态) 接入 Provider：中性普通项、轻底选中项、清晰文字与独立禁用态；不把分类筛选做成一排主操作，不以主色文字叠加同色实心底。
-- 主按钮、链接、选中态跟随应用品牌 token；普通按钮使用中性表面、文字和边框。
+- 主按钮、链接、选中态消费项目为相应角色定义的 token，可与品牌色不同；同类操作跨页面保持一致，普通按钮保持次要层级。
 - 删除、失败、成功、警告保留语义色，不能把所有按钮和提示都染成品牌色。
 - 原生 DOM 按钮直接消费 CSS 变量；antd 控件使用 `ConfigProvider` 的解析值，保留库的 disabled/loading/focus 行为。
-- 应用 token 优先于 design.md 兜底。内层 `ConfigProvider` 或按钮行内 `background/color` 会覆盖外层主题；仅在明确的业务语义或用户要求下覆盖，不能复制固定蓝色主按钮。
+- 应用 token 优先于 design.md 兜底。内层 `ConfigProvider` 或按钮行内 `background/color` 会覆盖外层主题；按已设计的组件配色局部适配，引用项目变量并覆盖完整交互状态，不能复制固定蓝色或黑色按钮。
 - 浮层保持 React provider 上下文；CSS 变量还取决于实际挂载 DOM。优先使用声明式 Modal/Drawer 和上下文内的消息 API，避免静态调用绕过主题；根据滚动和裁剪情况选择弹层容器并验收。
 - 页面差异通过布局、密度、圆角、材质和素材实现，默认不创建另一套页面品牌色。
 
@@ -323,13 +325,13 @@ antd 页面统一使用 [CanvasThemeProvider](canvas-theme-provider.md) 读取�
 
 这些映射不改变业务数据和操作。表格表头、卡片外壳、自绘文字等 CSS 同步消费对应 token；外壳卡片使用 `background: var(--pod-card-bg-color, var(--color-white, #fff))` 与主题卡片边框；卡片边界按上文背景搭配选择细边框、投影或无框，不能只映射 antd 而遗漏自绘表面。
 
-颜色解析和刷新由 Provider 处理。当前脚本不自动映射尺寸、圆角、字体、图表色组或完整 CSS 选择器，也不会把平台所有组件样式转换成 antd 样式。布局与圆角仍按 design.md 实现；需要 antd 局部配置时仅覆盖所需的尺寸、圆角等属性，保留外层颜色主题。
+颜色解析和刷新由 Provider 处理。上表是默认映射，不是配色限制；项目明确采用独立操作色时，读取对应项目变量，在 Button 等目标组件范围配置背景、前景和交互状态，不修改全局品牌色或无关组件。扩展变量不会自动被 Provider 消费，必须显式适配。当前脚本也不自动映射尺寸、圆角、字体、图表色组或完整 CSS 选择器，布局与圆角仍按 design.md 实现。
 
 应用主题模式主色缺失时为 missing、解析抛异常时为 error；其他缺失颜色保留 antd 默认值；这不代表主题验收通过。本地快照只在显式 preview 模式下使用。
 
 ## 默认 light 模式避免灰黑主题
 
-业务列表、协同表、数据管理页、工作台和门户默认都是 light 模式。正文使用深色保证可读性；主操作、选中态、筛选焦点、批量操作和信息标签使用平台品牌色或当前页面确认的品牌色；卡片边框、表格分割线和下拉浮层边框使用浅色品牌混合，例如 `#DCE6F2`、`color-mix(in srgb, var(--oy-brand) 16%, #DDE8F4)`。用户明确要求暗色大屏、夜间模式或高对比风格时使用深色主视觉。
+业务列表、协同表、数据管理页、工作台和门户默认都是 light 模式。正文使用深色保证可读性；主操作、选中态、筛选焦点、批量操作和信息标签按项目颜色角色表达主次，卡片与浮层边界按所在表面选择中性或协调的浅彩色，不强制使用品牌混色。用户明确要求暗色大屏、夜间模式或高对比风格时使用深色主视觉。
 
 ## 控件焦点态与下拉浮层 reset
 
@@ -379,12 +381,12 @@ Canvas 节点在页面 DOM 树内，Tailwind 运行时对普通元素直接用 a
 ```jsx
 // 主色文字 / 背景 / 边框，直接引平台变量，跟随 App 主题
 <div className="text-[var(--color-brand1-6)] border border-[var(--color-brand1-3)]">…</div>
-<button className="bg-[var(--color-brand1-6)] hover:bg-[var(--color-brand1-5)] text-white rounded-lg px-4 py-2">
+<button className="bg-[var(--color-brand1-6)] hover:bg-[var(--color-brand1-1)] text-[var(--oyd-on-action-color)] rounded-lg px-4 py-2">
   主操作
 </button>
 ```
 
-色阶对应以 `design.md` 和 yida-design 主题 token 语义为准：主色 `brand1-6`、填充按钮 hover 使用 `brand1-5`、按下使用深色档 `brand1-9`、通用浅色 hover 底使用 `brand1-1`、选中/标签浅底使用 `brand1-2`。
+本例要求当前设计已声明并核对 `--oyd-on-action-color`，项目已有同义前景变量时直接复用。色阶以 `design.md` 为准：主色 `brand1-6`、品牌 hover 使用 `brand1-1`、按下使用 `brand1-9`、禁用使用 `brand1-10`、选中/标签浅底使用 `brand1-2`；默认与悬停背景都要能读清文字。
 
 ## 图表 / recharts：用解析后的品牌色组
 

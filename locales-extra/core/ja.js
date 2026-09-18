@@ -295,7 +295,7 @@ module.exports = {
     integration_enable_example: '例: openyida integration enable APP_XXX FORM-XXX LPROC-XXX',
     integration_disable_usage: '使用方法: openyida integration disable <appType> <formUuid> <processCode>',
     integration_disable_example: '例: openyida integration disable APP_XXX FORM-XXX LPROC-XXX',
-    compile_usage: '使用方法: openyida compile <ソースファイル>',
+    compile_usage: '使用方法: openyida compile <ソースファイル> [--canvas] [--compat] [--skip-lint] [--json]',
     compile_example: '例: openyida compile pages/src/home.oyd.jsx',
     check_page_usage: 'Usage: openyida check-page <sourceFile> [--compat] [--json]',
     check_page_example: 'Example: openyida check-page pages/src/home.oyd.jsx --json',
@@ -303,7 +303,7 @@ module.exports = {
     generate_page_example: 'Example: openyida generate-page product-homepage --brand-name OpenKuma --brand-initials OK --theme-scope page --output pages/src/home.canvas.jsx --compile',
     build_page_usage: 'Usage: openyida build-page <sourceFile> [--output pages/build/page.yida.jsx|--write] [--json]',
     build_page_example: 'Example: openyida build-page pages/src/dashboard.oyd.jsx --output pages/build/dashboard.yida.jsx',
-    publish_usage: '使用方法: openyida publish <ソースファイル> <appType> <formUuid> [--health-check] [--canvas] [--auto-nav-order]',
+    publish_usage: '使用方法: openyida publish <ソースファイル> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]',
     publish_example: '例: openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
@@ -678,7 +678,7 @@ module.exports = {
   },
   create_page: {
     title: '  openyida create-page - Yida カスタムページ作成ツール',
-    usage: 'Usage: openyida create-page <appType> "<pageName>" [--mode dashboard] [--hide-nav]',
+    usage: 'Usage: openyida create-page <appType> "<pageName>" [--mode dashboard] [--hide-nav] [--locale zh_CN|en_US|ja_JP] [--open|--no-open]',
     example: '例: openyida create-page "APP_XXX" "Dashboard" --mode dashboard',
     app_id: '  アプリ ID:   {0}',
     page_name: '  ページ名:   {0}',
@@ -688,6 +688,7 @@ module.exports = {
     step_dashboard_config: '\n🖥️  Step 3: ダッシュボード全画面モードを設定',
     dashboard_config_ok: '  ✅ ダッシュボードモードを設定しました: 上部ナビを非表示にし、chromeless custom URL を出力します',
     dashboard_config_failed: '  ⚠️  ダッシュボードモード設定に失敗しました: {0}',
+    navigation_unverified: 'ページは作成されましたが、再取得した設定でナビゲーションの非表示を確認できませんでした。返された pageId の設定を修正して再確認してください。ページを再作成しないでください。',
     err_mode_invalid: 'Unsupported page mode: {0}',
     mode_hint: 'Available modes: default, dashboard. Navigation is visible by default; pass --hide-nav or --render-nav false to hide it.',
     page_id_label: '  pageId: {0}',
@@ -1351,7 +1352,7 @@ module.exports = {
     error: '\n❌ 公開エラー: {0}',
     source_not_found: '❌ ソースファイルが見つかりません：{0}',
     source_path_hint: '💡 次のソースファイルパスを試してください：{0}',
-    usage: '使用方法: openyida publish <ソースファイル> <appType> <formUuid> [--health-check] [--canvas] [--auto-nav-order]',
+    usage: '使用方法: openyida publish <ソースファイル> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]',
     example: '例: openyida publish pages/src/xxx.js APP_XXX FORM-XXX --health-check --auto-nav-order'
   },
   qr_login: {
@@ -1913,7 +1914,7 @@ Object.assign(module.exports.save_share_config || (module.exports.save_share_con
 
 Object.assign(module.exports.publish || (module.exports.publish = {}), {
   lint_jsx_text_identifier: 'JSX コピーは {{0}} として書けません。変数とみなされ {0} is not defined が発生します。代わりに平文 {0} またはクォートされた文字列 {\'{0}\'} を使用してください。',
-  lint_form_open_container: 'カスタムページから Yida フォーム送信/詳細ページを開く場合、FormOpenContainer（デスクトップでは 50vw ドローア iframe、モバイルではフル画面/新規ページのみ）を使用する必要があります。ボタンハンドラーは openForm({ type: "submission" | "detail", ... }) を呼び出すべきです。',
+  lint_form_open_container: 'フォーム送信・詳細には完全なドロワーテンプレートが必要です。openyida sample openyida-page-template form-open-container を実行し、CanvasDrawer / FormOpenContainer / useYidaFormOpen を統合してください。openForm を呼び、formOpenContainer を描画します。PC は iframe ドロワー、モバイルはテンプレートで処理し、通常のリンクや独自ダイアログで置き換えないでください。',
   lint_form_detail_link: 'Yida フォーム詳細ページには実際の formInstId を使用する必要があります：row.formInstId を読み取り、formInstId が欠落している場合はフォーム詳細リンクで空の formInstId を開く代わりに無効化または警告を表示してください。',
   lint_searchformdata_http_path: '直接 searchFormDatas.json の呼び出しは /dingtalk/web/<appType>/v1/form/searchFormDatas.json を使用する必要があります。/query/form/searchFormDatas.json は有効なフォームデータエンドポイントではありません',
   lint_searchformdata_http_query_params: '直接的な searchFormDatas.json URL クエリには必須パラメータ {0} が不足しています。URLSearchParams で appType, formUuid, currentPage, pageSize, searchFieldJson を使用してください',

@@ -309,7 +309,7 @@ module.exports = {
     integration_enable_example: '예시: openyida integration enable APP_XXX FORM-XXX LPROC-XXX',
     integration_disable_usage: '사용법: openyida integration disable <appType> <formUuid> <processCode>',
     integration_disable_example: '예시: openyida integration disable APP_XXX FORM-XXX LPROC-XXX',
-    compile_usage: '사용법: openyida compile <sourceFile>',
+    compile_usage: '사용법: openyida compile <sourceFile> [--canvas] [--compat] [--skip-lint] [--json]',
     compile_example: '예: openyida compile pages/src/home.oyd.jsx',
     check_page_usage: 'Usage: openyida check-page <sourceFile> [--compat] [--json]',
     check_page_example: 'Example: openyida check-page pages/src/home.oyd.jsx --json',
@@ -317,7 +317,7 @@ module.exports = {
     generate_page_example: 'Example: openyida generate-page product-homepage --brand-name OpenKuma --brand-initials OK --theme-scope page --output pages/src/home.canvas.jsx --compile',
     build_page_usage: 'Usage: openyida build-page <sourceFile> [--output pages/build/page.yida.jsx|--write] [--json]',
     build_page_example: 'Example: openyida build-page pages/src/dashboard.oyd.jsx --output pages/build/dashboard.yida.jsx',
-    publish_usage: 'Usage: openyida publish <sourceFile> <appType> <formUuid> [--health-check] [--canvas] [--auto-nav-order]',
+    publish_usage: 'Usage: openyida publish <sourceFile> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]',
     publish_example: 'Example: openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
@@ -709,7 +709,7 @@ module.exports = {
   },
   create_page: {
     title: '  create-page - Yida 커스텀 페이지 생성 도구',
-    usage: '사용법: openyida create-page <appType> <페이지 이름> [--mode dashboard] [--hide-nav]',
+    usage: '사용법: openyida create-page <appType> <페이지 이름> [--mode dashboard] [--hide-nav] [--locale zh_CN|en_US|ja_JP] [--open|--no-open]',
     example: '예: openyida create-page APP_XXX "Dashboard" --mode dashboard',
     app_id: '\n  앱 ID:    {0}',
     page_name: '  페이지 이름: {0}',
@@ -719,6 +719,7 @@ module.exports = {
     step_dashboard_config: '\n🖥️  Step 3: Configure hidden navigation',
     dashboard_config_ok: '  ✅ Navigation hidden by explicit request, chromeless custom URL enabled',
     dashboard_config_failed: '  ⚠️  Hidden navigation config failed: {0}',
+    navigation_unverified: '페이지가 생성되었지만 설정을 다시 읽어도 탐색 숨김이 확인되지 않았습니다. 반환된 pageId의 설정을 수정하고 확인하세요. 페이지를 다시 만들지 마세요.',
     err_mode_invalid: 'Unsupported page mode: {0}',
     mode_hint: 'Available modes: default, dashboard. Navigation is visible by default; pass --hide-nav or --render-nav false to hide it.',
     page_id_label: '  pageId: {0}',
@@ -1401,7 +1402,7 @@ module.exports = {
     error: '\n❌ Publish error: {0}',
     source_not_found: '❌ 소스 파일을 찾을 수 없습니다: {0}',
     source_path_hint: '💡 이 소스 파일 경로를 시도해 보세요: {0}',
-    usage: '사용법: openyida publish <소스 파일> <appType> <formUuid> [--health-check] [--canvas] [--auto-nav-order]',
+    usage: '사용법: openyida publish <소스 파일> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]',
     example: '예시: openyida publish pages/src/xxx.js APP_XXX FORM-XXX --health-check --auto-nav-order'
   },
   qr_login: {
@@ -1987,7 +1988,7 @@ Object.assign(module.exports.save_share_config || (module.exports.save_share_con
 
 Object.assign(module.exports.publish || (module.exports.publish = {}), {
   lint_jsx_text_identifier: 'JSX 복사 {{0}} 로 작성될 수 없으며, 변수로 간주되어 {0} is not defined 오류를 유발합니다. 평문 텍스트 {0} 또는 인용된 문자열 {\'{0}\'} 대신 사용하세요.',
-  lint_form_open_container: '커스텀 페이지에서 Yida 폼 제출/상세 페이지를 열려면 FormOpenContainer 를 사용해야 합니다: 데스크톱에서는 50vw 드래워 iframe, 모바일에서는 전체/새 페이지만 사용합니다. 버튼 핸들러는 openForm({ type: "submission" | "detail", ... }) 을 호출해야 합니다.',
+  lint_form_open_container: '폼 제출/상세에는 전체 드로어 템플릿이 필요합니다. openyida sample openyida-page-template form-open-container 를 실행하고 CanvasDrawer / FormOpenContainer / useYidaFormOpen 을 통합하세요. openForm 을 호출하고 formOpenContainer 를 렌더링하세요. PC는 iframe 드로어, 모바일은 템플릿 처리를 사용하며 일반 링크나 자체 팝업으로 대체하지 마세요.',
   lint_form_detail_link: 'Yida 폼 상세 페이지에는 실제 formInstId 를 사용해야 합니다: row.formInstId 를 먼저 읽으시고, 빈 formInstId 로 폼Detail 링크를 열지 않고 대신 비활성화 또는 경고하세요.',
   lint_searchformdata_http_path: '직접적인 searchFormDatas.json 호출은 /dingtalk/web/<appType>/v1/form/searchFormDatas.json 을 사용해야 합니다; /query/form/searchFormDatas.json 은 유효하지 않은 폼 데이터 엔드포인트입니다.',
   lint_searchformdata_http_query_params: '직접적인 searchFormDatas.json URL 쿼리는 필수 파라미터 {0} 를 누락했습니다. appType, formUuid, currentPage, pageSize, searchFieldJson 을 사용하여 URLSearchParams 로 사용하세요.',

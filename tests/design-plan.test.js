@@ -613,6 +613,21 @@ describe('design-plan materialize', () => {
     }
   });
 
+  test.each(['warm-canvas-contrast-panels', 'graphite-bevel-grid'])('carries shared color pairing guidance into %s without overriding project colors', themeId => {
+    const { readDesignTokens } = require('../lib/app/theme-from-design');
+    const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
+    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
+    plan.visualStyle.tokens = { '--oyd-on-action-color': '#241B18', '--pod-card-bg-color': '#FFF7F2' };
+    const design = renderDesign(plan);
+    const shared = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/application-theme-consistency.md'), 'utf8');
+    const pairing = shared.split('## 指标卡与按钮配色\n')[1].split('\n## ')[0].trim();
+    expect(design).toContain(`### 指标卡与按钮配色\n\n${pairing}`);
+    expect(design.match(/### 指标卡与按钮配色/g)).toHaveLength(1);
+    expect(design).not.toContain('## 页面只引用设计值');
+    expect(readDesignTokens(design)).toMatchObject(plan.visualStyle.tokens);
+    expect(validateDesignDocument(design).success).toBe(true);
+  });
+
   test.each(['light', 'dark'])('generated %s navigation has one final palette in its own section', tone => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.visualStyle.forUser.selectedTheme = { themeId: 'soft-outline-rhythm', templatePath: 'templates/design-themes/soft-outline-rhythm.md' };

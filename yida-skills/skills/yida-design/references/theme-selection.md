@@ -56,6 +56,7 @@ Fast、Plan 和单页设计共用 [主题索引](../templates/design-themes/inde
 - 字号、字重、行高与间距的默认值及 Tooltip 等基础契约按 [基础变量契约](../templates/design-themes/basic-tokens.json) 执行；组件选择哪些变量、圆角档位、表面和留白节奏由选中主题决定。
 - 品牌色与整体氛围按 [主题与 token](../workflow/step-2-theme-system.md) 和 [用户配色优先级](../workflow/output-design.md#用户配色与模板的优先级) 处理。保留主题中可复用的层次、形状与组件机制，不能以固定灰阶覆盖用户整体配色。
 - 页面任务和布局来自当前业务事实，主题负责呈现。没有真实内容支撑的图形、指标、侧栏或特色配方不启用；同一应用通过页面局部变体保持统一基础语言。
+- 按[指标卡与按钮配色](application-theme-consistency.md#指标卡与按钮配色)决定信息和操作的主次，将搭配写入项目组件规则。按钮和指标可用与品牌不同但协调的颜色；主题里的深色面板、近黑按钮都是可选表达，不能覆盖项目配色决定。
 - 按 [视觉结构配方](visual-scaffold-recipes.md) 把真实区块映射为页面布局与八项设计要点，按 [页面质量门禁](page-quality-gates.md) 写验收条件。配方是交接辅助，不能覆盖主题节奏或生成新的业务模块。
 
 ## 交接
