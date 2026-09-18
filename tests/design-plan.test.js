@@ -699,7 +699,7 @@ describe('design-plan materialize', () => {
     const read = fs.readFileSync;
     const spy = jest.spyOn(fs, 'readFileSync').mockImplementation((file, ...args) => {
       const value = read(file, ...args);
-      return String(file).endsWith('/soft-inset-surfaces.md')
+      return path.basename(String(file)) === 'soft-inset-surfaces.md'
         ? value.replace(/## 3\. 基础组件表达[\s\S]*?(?=## 4\.)/, '## 3. 基础组件表达\n\n### 文字层次\n\n正文保持清晰。\n\n') : value;
     });
     try {

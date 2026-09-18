@@ -6,6 +6,19 @@ const path = require('path');
 const { materialize } = require('../lib/design-plan/materialize');
 const { planBase } = require('../lib/design-plan/parallel');
 
+function normalizeDesignPath(content, from, to) {
+  return content.replaceAll(JSON.stringify(from), () => JSON.stringify(to))
+    .replaceAll(from, () => to);
+}
+
+test.each([path.posix, path.win32])('normalizes plain and JSON design paths with separator $sep', paths => {
+  const root = paths.resolve('project');
+  const from = paths.join(root, 'expected', 'design.md');
+  const to = paths.join(root, 'design.md');
+  const artifact = file => `Design: ${file}\n${JSON.stringify({ designFile: file, title: '采购工作台' })}`;
+  expect(normalizeDesignPath(artifact(from), from, to)).toBe(artifact(to));
+});
+
 let dir, input, source, businessFile, visualFile, business, visual;
 const save = () => {
   fs.writeFileSync(input, JSON.stringify(source));
@@ -53,7 +66,7 @@ test('joins independent results, invalidates old confirmation, and writes one ma
       expect(actual).toContain(result.outputs.design);
       expect(regenerated).toContain(expected.outputs.design);
     }
-    expect(regenerated.replaceAll(expected.outputs.design, result.outputs.design)).toBe(actual);
+    expect(normalizeDesignPath(regenerated, expected.outputs.design, result.outputs.design)).toBe(actual);
   }
   const { parseDesignDocument } = require('../lib/design/document');
   const actualDesign = parseDesignDocument(fs.readFileSync(result.outputs.design, 'utf8'));

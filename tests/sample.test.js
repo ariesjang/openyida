@@ -798,9 +798,11 @@ describe('application theme from design.md', () => {
       expect(before).toContain('.custom-popup { padding: 23px; }');
       expect(before).toContain('--color-brand1-6: #315BCC;');
       fs.writeFileSync(designPath, fastDesign.replace('#315BCC', '<待生成>'));
-      await expect(run(['yida-design', 'app-theme', '--design-file', designPath, '--output', cssPath])).rejects.toThrow(/单行 CSS/);
+      await expect(run(['yida-design', 'app-theme', '--design-file', designPath, '--output', cssPath])).rejects.toMatchObject({
+        code: 'DESIGN_THEME_TOKEN_INVALID', details: { token: '--color-brand1-6' },
+      });
       expect(fs.readFileSync(cssPath, 'utf8')).toBe(before);
-      await expect(run(['yida-design', 'app-theme', '--design-file', designPath, '--output', designPath])).rejects.toThrow(/不能覆盖/);
+      await expect(run(['yida-design', 'app-theme', '--design-file', designPath, '--output', designPath])).rejects.toMatchObject({ code: 'SAMPLE_OUTPUT_CONFLICT' });
       // Values outside tokens are metadata, never CSS declarations.
       expect(readDesignTokens(fastDesign.replace('---\n', '---\ntokensOther:\n  --color-brand1-6: #000000\n'))['--color-brand1-6']).toBe('#315BCC');
     } finally {
