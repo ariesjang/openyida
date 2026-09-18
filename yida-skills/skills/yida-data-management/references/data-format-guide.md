@@ -6,7 +6,7 @@
 - `formDataJson` 传字符串，不直接传对象
 - `updateFormDataJson` 传字符串，不直接传对象
 - `dynamicOrder` 传字符串，不直接传对象
-- `DateField` / `CascadeDateField` 的保存、更新和测试数据值必须使用**13 位毫秒时间戳**，不要传日期字符串
+- 保存、更新和测试数据中，`DateField` 传毫秒时间戳数字，`CascadeDateField` 传毫秒时间戳数组；不要传日期字符串
 
 ## 查询条件格式
 

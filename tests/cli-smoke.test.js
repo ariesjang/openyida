@@ -294,6 +294,27 @@ describe('CLI offline smoke', () => {
     });
   });
 
+  test('process and data command metadata matches output and documented input modes', () => {
+    const { commands } = JSON.parse(runOk(['commands', '--json']));
+    const process = commands.find(item => item.id === 'create-process');
+    const data = commands.find(item => item.id === 'data');
+    expect(process.output).toBe('json');
+    expect(data.output).toBe('json');
+    expect(process.notes.join(' ')).toContain('formMode=create|reuse');
+    expect(process.notes.join(' ')).toContain('formTitle and fieldCount are null');
+    expect(data.notes.join(' ')).toContain('CascadeDateField uses an array');
+    const help = runOk(['create-process', '--help']);
+    expect(help).toContain('<formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]');
+    expect(help).toContain('--formUuid <formUuid> <processDefinitionFile> [--replace]');
+    const { parseArgs } = require('../lib/process/create-process');
+    expect(parseArgs(['APP', '审批表', 'fields.json', 'process.json', '--replace'])).toMatchObject({
+      appType: 'APP', formTitle: '审批表', fieldsJsonFile: 'fields.json', processDefinitionFile: 'process.json', existingFormUuid: null, replace: true,
+    });
+    expect(parseArgs(['APP', '--formUuid', 'FORM', 'process.json', '--replace'])).toMatchObject({
+      appType: 'APP', formTitle: null, fieldsJsonFile: null, processDefinitionFile: 'process.json', existingFormUuid: 'FORM', replace: true,
+    });
+  });
+
   test('CRM Pro command help probes exit successfully without requiring login', () => {
     const probes = [
       { args: ['get-schema', '--help'], text: 'openyida get-schema' },

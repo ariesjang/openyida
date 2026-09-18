@@ -56,7 +56,7 @@ description: 流程表单一体化创建（创建表单 → 转流程 → 配置
 ## 用法 1：全新创建
 
 ```bash
-openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>
+openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]
 ```
 
 ## 用法 2：复用已有表单（推荐）
