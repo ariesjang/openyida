@@ -1109,6 +1109,7 @@ module.exports = {
     manual_hint: 'Please configure the process manually in Yida admin. Form UUID: {0}',
     configuring_process: 'Configuring and publishing process',
     configure_failed: 'Failed to configure process',
+    preserve_existing_form: "Das ursprüngliche Formular existiert. Prüfen Sie seinen Status und die Fehlerursache anhand der formUuid nur lesend und behalten Sie es bei. Entfernen Sie nicht --formUuid und erstellen Sie weder das Formular erneut noch einen gleichnamigen Ersatz. Bei noWriteRetry=true sind Schreibwiederholungen verboten.",
     retry_hint: 'Process configuration failed, but the form was created. Fix the process definition and retry with this command:',
     fields_not_found: 'Fields definition file not found',
     process_def_not_found: 'Process definition file not found',
@@ -2053,7 +2054,8 @@ Object.assign(module.exports.create_process || (module.exports.create_process = 
   login_required: 'Keine gültige Yida-Anmeldung gefunden. Führen Sie zuerst openyida login aus.',
 });
 module.exports.connector_test = {
-  usage: 'Usage: openyida connector test --connector-id <id> --action <actionId> [structured JSON options] [--account-id <id>] [--json]',
+  usage: 'Usage: openyida connector test --connector-id <id> --action <actionId> [structured JSON options] [--account-id <id>] [--ignore-defaults] [--json]',
+  ignore_defaults_system_token_warning: 'Gespeicherte Standardparameterwerte werden durch --ignore-defaults ignoriert (sie enthalten einen nicht leeren systemToken und werden in diesem Lauf nicht verwendet); bereinigen Sie die Aktions-Defaults vor dem Produktionseinsatz im Designer.',
   invalid_json: '{0} is not valid JSON: {1}', json_object_required: '{0} must be a JSON object',
   unknown_flat_param: 'Parameter {0} is not in the action schema; use structured JSON options', ambiguous_flat_param: 'Parameter {0} belongs to multiple locations; use structured JSON options',
   auth_account_required: 'This connector requires an owned auth account passed with --account-id', auth_account_not_owned: 'Account {0} does not belong to this connector',

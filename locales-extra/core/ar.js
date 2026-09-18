@@ -1109,6 +1109,7 @@ module.exports = {
     manual_hint: 'Please configure the process manually in Yida admin. Form UUID: {0}',
     configuring_process: 'Configuring and publishing process',
     configure_failed: 'Failed to configure process',
+    preserve_existing_form: "النموذج الأصلي موجود. افحص حالته وسبب الفشل للقراءة فقط باستخدام formUuid وأبقِ عليه. لا تحذف --formUuid ولا تعِد إنشاء النموذج ولا تنشئ بديلاً بالاسم نفسه للاسترداد. لا تعِد محاولة الكتابة عندما noWriteRetry=true.",
     retry_hint: 'Process configuration failed, but the form was created. Fix the process definition and retry with this command:',
     fields_not_found: 'Fields definition file not found',
     process_def_not_found: 'Process definition file not found',
@@ -2053,7 +2054,8 @@ Object.assign(module.exports.create_process || (module.exports.create_process = 
   login_required: 'لم يتم العثور على جلسة Yida صالحة. شغّل openyida login أولاً.',
 });
 module.exports.connector_test = {
-  usage: 'Usage: openyida connector test --connector-id <id> --action <actionId> [structured JSON options] [--account-id <id>] [--json]',
+  usage: 'Usage: openyida connector test --connector-id <id> --action <actionId> [structured JSON options] [--account-id <id>] [--ignore-defaults] [--json]',
+  ignore_defaults_system_token_warning: 'يتم تجاهل قيم المعلمات الافتراضية المحفوظة عبر --ignore-defaults (تحتوي على systemToken غير فارغ ولا تُستخدم في هذه العملية)؛ نظّف القيم الافتراضية للإجراء في المصمم قبل الاستخدام في الإنتاج.',
   invalid_json: '{0} is not valid JSON: {1}', json_object_required: '{0} must be a JSON object',
   unknown_flat_param: 'Parameter {0} is not in the action schema; use structured JSON options',
   ambiguous_flat_param: 'Parameter {0} belongs to multiple locations; use structured JSON options',
