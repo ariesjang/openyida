@@ -63,7 +63,7 @@ description: 流程表单一体化创建（创建表单 → 转流程 → 配置
 ## 用法 1：全新创建
 
 ```bash
-openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>
+openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]
 ```
 
 ## 用法 2：复用已有表单（推荐）
@@ -83,11 +83,15 @@ openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> 
 | `processDefinitionFile` | 是 | 流程定义文件（格式同 `yida-process-rule`） |
 | `--replace` | 条件必填 | 仅当目标已存在 PUBLISHED 流程或 SAVED 草稿，并已获得用户对整图替换的明确确认时传入 |
 
+参数不确定时先看 `openyida create-process --help`。缺参、重复参数或未知选项会在读文件和登录前返回 `CREATE_PROCESS_INVALID_ARGUMENTS`；按 `details.argument` 定位参数、`details.reason` 判断原因，修正后重试。复用参数写作 `--formUuid`。
+
 ## 输出
 
 ```json
-{"success":true,"formUuid":"FORM-YYY","formTitle":"订单处理表","appType":"APP_XXX","fieldCount":6,"processCode":"TPROC--XXX","processId":"83145794990","processVersion":2,"verificationLevel":"PLATFORM_VIEW_VERIFIED","platformViewVerified":true,"url":"{base_url}/APP_XXX/workbench/FORM-YYY"}
+{"success":true,"formUuid":"FORM-YYY","formMode":"create","formTitle":"订单处理表","appType":"APP_XXX","fieldCount":6,"processCode":"TPROC--XXX","processId":"83145794990","processVersion":2,"verificationLevel":"PLATFORM_VIEW_VERIFIED","platformViewVerified":true,"url":"{base_url}/APP_XXX/workbench/FORM-YYY"}
 ```
+
+`formMode` 区分新建（`create`）和复用（`reuse`）。复用模式不读取表单名称和字段数，`formTitle`、`fieldCount` 返回 `null`，表示未查询，不代表字段为空或转换失败；新建模式返回传入名称和创建结果中的字段数。配置失败时返回的表单信息也遵循此约定。流程是否成功以 `success` 和 `verificationLevel` 为准，不能根据字段数判断。
 
 ## 流程定义最小 DSL 合约
 
