@@ -216,7 +216,17 @@
   --pod-formView-stickyFooter-height: 50px;
   --pod-formView-stickyFooter-bottom: var(--pod-page-auto-width-margin, 8px);
   --pod-page-header-bg-color: var(--color-white, #fff);
-  --pod-form-label-color: var(--color-text1-10, #606060);
+
+  /* 原生表单：按项目设计调整控件形状、密度和填充，不通过全局 input 选择器覆盖状态。 */
+  --form-element-medium-corner: var(--corner-2, 8px);
+  --form-element-medium-height: 32px;
+  --form-element-medium-font-size: 14px;
+  --input-bg-color: var(--pod-card-bg-color, #fff);
+  --input-border-width: 1px;
+  --input-border-color: var(--color-line1-2, rgba(24, 28, 31, .12));
+  --pod-form-label-color: var(--color-text1-10, rgba(24, 28, 31, .8));
+  --form-top-label-margin-b: 0px;
+
   --pod-data-manager-title-padding: 12px 8px 0;
   --pod-data-manager-container-padding: 16px 20px 20px;
   --pod-detail-container-padding: 8px;
@@ -345,6 +355,15 @@
   --page-bg: var(--pod-page-bg-color, #fff);
   --card-bg: var(--pod-card-bg-color, #fff);
   --popup-bg: var(--color-fill1-5, #fff);
+}
+
+/* 独立提交页（含抽屉 iframe）使用应用外衬；平台默认壳层取导航背景且不消费背景图。 */
+body.pod-premium.page-type-submit .vc-shell-without-nav.pod-premium {
+  background-color: var(--pod-app-root-bg-color, var(--pod-page-bg-color, #fff));
+  background-image: var(--pod-app-root-bg-image, none);
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /* 白色导航背景与白色卡片相邻时，用描边保留卡片层级。 */
