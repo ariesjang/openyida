@@ -112,3 +112,6 @@ design.md 的机器字段与正文分工按 output-design.md：
 ## 下一步
 
 → [页面结构和交互设计](step-4-wireframe-interaction.md)
+
+
+应用整体设计可使用[应用风格模板或自由创意](../references/application-style-library.md)。导航、自定义页面、表单与详情继承同一设计语言；自由创意从业务推演，不强制选模板。模板中的原生布局 JSON 只提供结构，须填入真实字段并核对间距和响应式，禁止加载代码注入样式。

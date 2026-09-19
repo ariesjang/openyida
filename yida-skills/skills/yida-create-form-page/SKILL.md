@@ -366,3 +366,6 @@ openyida create-form resume <appType> <formUuid> <fieldsJsonOrFile> --json
 | 字段类型不支持 | 检查字段类型是否在支持的 19 种业务字段或已验证展示布局组件列表中 |
 | 子表字段创建失败 | 确认 `children` 数组格式正确，子表字段不能嵌套子表 |
 | 返回 JSON 中无 formUuid | 不要猜测 formUuid，重新执行命令获取 |
+
+
+应用整体设计可使用[应用风格模板或自由创意](../yida-design/references/application-style-library.md)。导航、自定义页面、表单与详情继承同一设计语言；自由创意从业务推演，不强制选模板。模板中的原生布局 JSON 只提供结构，须填入真实字段并核对间距和响应式，禁止加载代码注入样式。
