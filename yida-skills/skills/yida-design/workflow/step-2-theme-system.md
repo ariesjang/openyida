@@ -93,6 +93,8 @@
 
 指标卡与按钮按[配色规则](../references/application-theme-consistency.md#指标卡与按钮配色)成组设计，明确普通信息、重点信息、主操作与次操作的颜色关系，不能仅写“深色强调”或“跟随主题”。
 
+表单主题同时显式确定 `--pod-page-footer-bg-color` 和 `--pod-sticky-footer-box-shadow`，写入设计源的 token 并生成到应用 CSS；背景及阴影随应用材质选择，不一律透明，也不漏配后沿用默认阴影。
+
 ## 产出
 
 ```markdown

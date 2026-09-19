@@ -91,7 +91,9 @@ describe('shared application theme', () => {
     for (const file of [result.outputs.theme, fastOutput]) {
       const css = fs.readFileSync(file, 'utf8');
       for (const [name, value] of Object.entries(formTokens)) {
-        expect(css).toContain(`${name}: ${value};`);
+        // Template declarations may put the value on the following line.
+        const declaration = css.match(new RegExp(`${name}:\\s*([^;]+);`));
+        expect(declaration?.[1].trim()).toBe(value);
         // A later duplicate declaration must not silently reset the form design.
         expect(css.split(`${name}:`)).toHaveLength(2);
       }
