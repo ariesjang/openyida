@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 海外版宜搭暂不适用当前 OAuth token 登录与创建应用链路；如需在海外版宜搭创建应用，请使用 `2026.7.14-2` 以前的版本，例如 `npm install -g openyida@2026.7.13`。
 
+## [2026.9.19] - 2026-09-19
+
+### 方案与设计校验
+
+- **方案恢复指引更清晰**：`design-plan` 的编写指引改用 `businessFragment` 事实结构组织业务图谱、业务流程、页面数据绑定与执行计划，并新增 `referenceRules` 说明引用值必须填写数据模型中的完整名称、关系描述放入 `description`，无对应业务时使用空数组，减少方案恢复与物化时的引用歧义。
+- **视觉字段校验一次性汇总**：`design-plan` 归一化不再遇到首个非法字段就中断，而是收集全部 `visualDirection`、`navigationStyle` 等对象字段的类型问题后一并报错，返回完整 `issues` 列表，便于一次性修复。
+
+### 自定义页面数据读取
+
+- **表单数据响应守卫**：新增 `form-data-response-guard`，在发布前检查自定义页面消费 `window.__OPENYIDA_YIDA_API__` 桥接的 `searchFormDatas` 结果。行数据位于 `payload.data`、总数位于 `payload.totalCount`；仅读取 `payload.data.data` 且未做数组归一化时报错并提示分页使用 `currentPage`，参考 `yida-canvas-data-binding`。守卫仅识别未被遮蔽的官方桥接结果，避免误伤同名方法或其他 HTTP 客户端。
+
 ## [2026.9.18-1] - 2026-09-18
 
 ### 设计与搭建
