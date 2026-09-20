@@ -39,6 +39,7 @@
   "themeId": "<有效索引记录，仅内部>",
   "primaryColor": "#6F4E37",
   "primaryColorName": "暖咖啡棕",
+  "contentTone": "light",
   "navigationStructure": "side",
   "navigationTone": "dark",
   "recommendationReason": "适合需要持续查看关系历史和推进状态的日常工作。"
@@ -50,8 +51,8 @@
 1. 第一项为推荐项。
 2. `directionLabel`、`description` 和 `recommendationReason` 由 AI 根据项目的用户、任务和界面效果编写。
 3. 具体模板方向使用目录记录；自由创意使用 catalog.creativeOption，并填写独立设计决策和 Token，不绑定命名模板。
-4. 候选保持已确认的导航类型；通过主题基底、主题色、导航明暗形成差异，优先至少两项不同。用户约束固定的部分保持不变。
-5. 配色和菜单明暗应依据品牌素材、用户偏好和实际使用场景选择，并写清理由。
+4. 候选保持已确认的导航类型；通过内容界面明暗、主题基底、主题色和导航明暗形成差异，优先至少两项不同。用户约束固定的部分保持不变。
+5. `contentTone` 与 `navigationTone` 按[主题明暗双轴](../../../references/application-style-library.md#主题明暗双轴)分别选择并写清理由；选中的 `navigationTone` 最终写入 `navTheme`。
 6. 用户明确品牌色时保留该颜色，通过主题基底、材质和组件表达形成差异。
 7. 项目色彩和已确定导航可覆盖模板默认变量；核心特征冲突时可换基底，也可进入自由创意。
 8. 没有匹配模板时走自由创意，不把原创方向改造成模板。

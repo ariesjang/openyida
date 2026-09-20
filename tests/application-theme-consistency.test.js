@@ -15,6 +15,13 @@ const editorialTokens = JSON.parse(guidance.match(/```json\n([\s\S]*?)\n```/)[1]
 const formGuidance = fs.readFileSync(path.join(ROOT,
   'yida-skills/skills/yida-design/references/native-form-styles.md'), 'utf8');
 const formTokens = JSON.parse(formGuidance.match(/```json\n([\s\S]*?)\n```/)[1]);
+const DETAIL_FIELD_PREVIEW_TOKENS = [
+  '--pod-field-preview-bg-color', '--pod-field-preview-border-radius',
+  '--pod-field-preview-indicator-color', '--pod-field-preview-shadow',
+  '--pod-field-preview-text-color', '--form-element-medium-font-size',
+  '--pod-field-preview-gap', '--pod-field-preview-line-height',
+  '--pod-field-preview-min-height', '--pod-field-preview-padding',
+];
 
 describe('shared application theme', () => {
   let directory;
@@ -79,6 +86,14 @@ describe('shared application theme', () => {
     expect(css).toContain('--oyd-editorial-accent: #A63820;');
     expect(css).not.toContain('--oyd-editorial-accent: #C1451D;');
     expect(tokens['--color-brand1-6']).toBe('#1B1B1B');
+  });
+
+  test('detail read-only field guidance covers every consumed style token', () => {
+    expect(formGuidance).toContain('## 详情页只读字段数据框');
+    DETAIL_FIELD_PREVIEW_TOKENS.forEach(token => {
+      expect(formGuidance).toContain(`\`${token}\``);
+      expect(formTokens[token]).toBeDefined();
+    });
   });
 
   test('native form controls and submission backgrounds survive Plan and Fast generation', async () => {

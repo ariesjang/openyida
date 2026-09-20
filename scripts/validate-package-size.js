@@ -11,11 +11,12 @@ const path = require('path');
 // samples, skills). Raise them intentionally when new content is justified; the
 // per-file cap stays fixed to catch accidental large-blob embeds.
 // Application styles add 18 paired presets plus the independent creative scaffold
-// (57 design/CSS/layout assets), their catalog, recipe and runtime consumer.
-// Node 26/npm 11 measures about 1,901 KB packed / 7,149 KB unpacked in 568 files.
+// (57 design/CSS/layout assets), their catalog, recipe and runtime consumer. Complete
+// content/navigation tone and detail-field tokens are retained in every standalone preset.
+// Node 26/npm 11 measures about 1,867 KiB packed / 7,038 KiB unpacked in 568 files.
 // Retain ~21 KiB npm 10 compression overhead; round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 1920 * 1024;
-const MAX_UNPACKED_BYTES = 7008 * 1024;
+const MAX_UNPACKED_BYTES = 7056 * 1024;
 const MAX_ENTRY_COUNT = 568;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 

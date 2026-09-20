@@ -112,6 +112,8 @@ test('templates accept extra global and project variables with shared references
 
 test.each([
   ['missing summary', index => { delete index.themes[0].styleSummary; }, 'styleSummary'],
+  ['missing content tone', index => { delete index.themes[0].contentTone; }, 'contentTone'],
+  ['invalid navigation tone', index => { index.themes[0].navTheme = 'auto'; }, 'navTheme'],
   ['duplicate IDs', index => { index.themes.push({ ...index.themes[0] }); }, '重复 themeId'],
   ['unsafe theme ID', index => { index.themes[0].themeId = '../outside'; }, 'themeId 格式非法'],
   ['path traversal', index => { index.themes[0].templatePath = '../outside.md'; }, 'templatePath 必须指向公共主题目录'],

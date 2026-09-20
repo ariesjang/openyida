@@ -12,12 +12,12 @@ tokens:
         "--pod-card-bg-color": "#ffffff"
         "--pod-table-cell-color": "var(--pod-card-bg-color)"
       navigation:
-        "--pod-shell-theme-bg-color": "#ffffff"
-        "--pod-nav-item-text-color": "#24665f"
-        "--pod-nav-item-text-hover-color": "#24665f"
-        "--pod-nav-item-text-selected-color": "#24665f"
-        "--pod-nav-menu-bg-hover-color": "#edf4f2"
-        "--pod-nav-menu-bg-selected-color": "#edf4f2"
+        "--pod-shell-theme-bg-color": "#FFFFFF"
+        "--pod-nav-item-text-color": "#595959"
+        "--pod-nav-item-text-hover-color": "#262626"
+        "--pod-nav-item-text-selected-color": "var(--color-brand1-6)"
+        "--pod-nav-menu-bg-hover-color": "#F5F5F5"
+        "--pod-nav-menu-bg-selected-color": "#F0F0F0"
       native-form:
         "--form-element-medium-corner": "8px"
         "--form-element-medium-height": "40px"
@@ -43,11 +43,15 @@ tokens:
         "--pod-formView-stickyFooter-border-top": "1px solid #bfd6d0"
         "--pod-formView-stickyFooter-height": "56px"
         "--pod-formView-stickyFooter-bottom": "8px"
-        "--pod-field-preview-text-color": "#24665f"
+        "--pod-field-preview-min-height": "32px"
+        "--pod-field-preview-padding": "8px 12px"
+        "--pod-field-preview-gap": "4px"
         "--pod-field-preview-bg-color": "#ffffff"
         "--pod-field-preview-border-radius": "8px"
-        "--pod-field-preview-padding": "8px 12px"
+        "--pod-field-preview-indicator-color": "var(--color-fill1-3)"
         "--pod-field-preview-shadow": "none"
+        "--pod-field-preview-text-color": "#24665f"
+        "--pod-field-preview-line-height": "20px"
     colors:
       "--color-white": "var(--pod-card-bg-color)"
       "--color-brand1-1": "<生成实际色值：--color-brand1-6 88% + #FFFFFF 12%，sRGB 逐通道混合>"
@@ -131,6 +135,9 @@ tokens:
 applicationStyle:
   recipe: "application-style-v1"
   mode: "template"
+themeProfile:
+  contentTone: "light"
+  navTheme: "light"
 ---
 # {{PROJECT_NAME}} design.md
 
@@ -140,7 +147,7 @@ applicationStyle:
 
 二比一主次区、任务流与状态摘要条；青绿弱填充、清晰分组、适度圆角。适合运营排班、供应与项目协同。
 
-应用、自定义页面、原生表单、编辑与详情共用这一套视觉语言。业务内容来自 PRD，不复制示例行业、编号、标题或数据。色彩来源：{{COLOR_SOURCE}}；主色由 {{PRIMARY_COLOR}} 实例化，示范配色只是参考。
+应用、自定义页面、表单、编辑与详情共用这一套视觉语言。业务内容来自 PRD，不复制示例行业、编号、标题或数据。色彩来源：{{COLOR_SOURCE}}；主色由 {{PRIMARY_COLOR}} 实例化，示范配色只是参考。
 
 ## 2. 页面视觉系统
 
@@ -150,7 +157,7 @@ applicationStyle:
 
 ### 2.2 应用导航
 
-平台侧导航与内容表面保持连续；选中项用品牌色和明确文字，不靠图标猜测。 默认保留平台导航，菜单来自真实业务范围。只有需求确定自绘导航时才在 Canvas 实现结构。导航深浅与正文深浅分别决定。
+平台侧导航与内容区域使用同一设计语言；选中项用品牌色和明确文字，不靠图标猜测。 默认保留平台导航，菜单来自真实业务范围。只有需求确定自绘导航时才在 Canvas 实现结构。当前模板使用 contentTone: light、navTheme: light。
 
 ### 2.3 页面标题与操作
 
@@ -158,21 +165,33 @@ applicationStyle:
 
 ### 2.4 布局和移动端
 
-桌面业务工作区：二比一主次区、任务流与状态摘要条。短字段建议 8:4，字段间距 24px、章节间距 48px、内容内距 32px；这些是项目起点，必须在每张表单设计中按字段长度确定。窄屏与半屏抽屉优先单列，介绍区在字段前面；长文本、附件和子表占整行。不把屏幕断点当 iframe 宽度，不用 fixed 卡片截断自然内容。
+桌面业务工作区：二比一主次区、任务流与状态摘要条。短字段建议 8:4，字段间距 24px、章节间距 48px、内容内距 32px；这些是项目起点，必须在每张表单设计中按组件树和字段长度确定。窄屏与半屏抽屉按实际可用宽度重排顶部、左侧、主体、右侧及字段间区域，侧栏组件可移到主体前后或折叠为合适的窄屏结构；长文本、附件和子表通常占整行。不把屏幕断点当 iframe 宽度，不用 fixed 卡片截断自然内容。
+
+### 2.5 自定义页面设计
+
+自定义页面以 二比一主次区、任务流与状态摘要条 组织真实业务内容，以 窄色带章节与任务说明 建立标题与首屏焦点，并用 青绿弱填充、清晰分组、适度圆角 统一页面表面。页面根据 PRD 安排标题与操作区、状态摘要、筛选、主要内容、上下文信息和反馈区；列表、表格、图表、详情抽屉和表单入口只在业务需要时出现。宽度、列数、高度和滚动方式按内容增长确定，移动端按阅读与操作顺序重排。
+
+每个自定义页面逐页写清页面任务、首屏焦点、布局、表面与组件、主操作、状态、响应式和验收。状态覆盖加载、空、错误和无权限反馈及恢复动作；页面使用全局主题 token 落实当前风格，并为键盘焦点、纯图标按钮、非颜色状态表达和 reduced motion 提供可执行规则。
 
 ## 3. 基础组件表达
 
+### 自定义页面组件与交互
+
+页面标题、筛选、主操作、状态摘要、列表、表格、图表、详情抽屉和表单入口按真实任务组合。标题与操作保持清楚的主次和对齐；列表、表格与图表使用稳定容器高度或自然增长规则；详情抽屉保留上下文并提供明确返回路径。默认、hover、active、focus、loading、empty、error、disabled 和 selected 状态使用同一套表面、边界、文字与状态语义。
+
+`YidaCodeCanvas` 页面在 `YidaComp` 内消费 --oyd-page-bg、--oyd-surface、--oyd-ink、--oyd-border、--oyd-accent、--oyd-radius、--oyd-content-width、--oyd-content-padding、--oyd-section-gap 和其他已声明 token。页面局部 CSS 只负责当前组件的布局和特色表达；应用全局样式统一作用于应用框架、表单、详情页和自定义页面等。
+
 ### 表单、表格与记录集合
 
-单行控件 40px、圆角 8px，边框 1px；字段 labelAlign=top（标签在字段上方）。多行文本、附件、日期范围、子表按自身布局。详情使用相同章节顺序与表面，保留只读语义。表格为有真实数据的紧凑记录集合，不能给每个单元格加独立大卡。按钮、输入、浮层和导航消费同源色彩与形状。
+单行控件 40px、圆角 8px，边框 1px；字段 labelAlign=top（标签在字段上方）。多行文本、附件、日期范围、子表按自身布局。详情页沿用相同章节顺序与表面；只读字段的数据框使用 --pod-field-preview-bg-color、--pod-field-preview-border-radius、--pod-field-preview-shadow、--pod-field-preview-indicator-color、--pod-field-preview-text-color、--form-element-medium-font-size、--pod-field-preview-gap、--pod-field-preview-line-height、--pod-field-preview-min-height 和 --pod-field-preview-padding，延续应用的色彩、形状、字体与密度。表格保持紧凑，按钮、输入、浮层和导航消费同源色彩与形状。
 
-### 原生结构与介绍区
+### 表单组件与版式结构
 
-原生表单先按填写任务决定是否需要介绍，不直接复制应用首页的构图。form-layout.json 只提供 8:4 字段分栏，不预置介绍栏或占位标题；columnGap=24px、rowGap=24px、display=VERTICAL。简单新增/编辑可直接从字段开始；一句必要提示放顶部或字段旁；多步骤任务可用步骤提示；只有独立且需持续参考的材料清单、规则或上下文，加上足够的容器宽度，才考虑侧栏。不能因主题名称自动套 3:9，不能让介绍重复弹窗标题或首组标题。介绍与章节可用 Divider.title/description，业务文案不放 CSS content；无需说明时直接省略，不注入 HTML/JS。
+表单支持在顶部、左侧、主体、右侧和字段之间放置分栏、Divider、图片/图形、Tab/切换、按钮组/操作入口、状态区和字段。各组件分别承担导航、操作、视觉焦点、反馈、层级、节奏、装饰或采集作用。普通业务分组和章节分隔使用 Divider，横向字段组合使用 ColumnContainer。form-layout.json 提供 8:4 空字段列，columnGap=24px、rowGap=24px、display=VERTICAL；按任务与容器宽度补充组件并调整布局。不因主题名称自动套 3:9，不重复已有标题，不用空泛文案凑版式。
 
 ### 组件状态
 
-默认/hover/focus 同时配置边界和表面；键盘焦点保持可见。错误、警告、禁用沿用平台独立语义，不能被通用强调色覆盖；不得以全局 input 或 .next-* 强制改所有控件。表单样式由应用 CSS 发布，原生布局由 Schema 发布，禁止 didMount、style 标签或 iframe 跨文档注入。
+默认/hover/focus 同时配置边界和表面；键盘焦点保持可见。错误、警告、禁用沿用平台独立语义，不能被通用强调色覆盖；不得以全局 input 或 .next-* 强制改所有控件。应用 CSS 配置表单、编辑和详情的视觉样式。
 
 ### 底栏与对齐
 
@@ -180,25 +199,21 @@ applicationStyle:
 
 ## 4. 特色表达配方
 
-### R1 介绍与正文的关系
-
-窄色带章节与任务说明是有相应内容时的可选构图，不是每张表单的固定结构。应用首页、详情与表单继承字体、材质和标题语法，不要求同一版式。先判断无介绍、顶部短说明、分组内提示、步骤提示或侧栏哪一种能帮助当前任务；不得为多样性随机轮换。原生 form-layout.json 仅含字段分栏；自定义页面可用 .oyd-style-intro 与 .oyd-style-section，在 .oyd-style-workspace 内按任务组织 .oyd-style-layout。侧栏需在 design.md 写清独立内容、持续参考价值和容器宽度依据；抽屉空间不足时移到顶部或省略，不压缩字段。伪元素只画装饰，不承载文案。
-
-### R2 材质与信息密度
+### 材质与信息密度
 
 青绿弱填充、清晰分组、适度圆角。二比一主次区、任务流与状态摘要条。图表、图片、时间线只为真实内容出现；没有媒体时以排版与章节构图成立，不为“丰富”捏造指标或入口。
 
 ## 5. 项目应用与调整规则
 
-YAML Token 是唯一数值源。保留构图与材质语言，按业务调整主色、字段分组及信息密度；模板不是行业限制。
+YAML Token 是唯一数值源。沿用当前主题的构图与材质语言，按业务调整主色、字段分组及信息密度。
 
-按每页写清页面任务、首屏焦点、布局、表面与组件、主操作、空/载/错态、响应式与验收。表单额外写列比例、标签位置、内距、字段与章节间距、介绍区位置和详情延续方式。原生 Schema 不会由 design.md 自动生成：实施时消费附带布局起点并填入真实字段；设计验收须比较 Schema 与设计。
+逐页记录页面任务、首屏焦点、布局、组件、主操作、状态、响应式与验收。表单按第 3 节补充组件作用、列比例、标签、间距、窄屏重排和详情延续方式；在 form-layout.json 中填入真实字段与所需组件，并对照 design.md 验收。
 
 {{PAGE_APPLICATIONS}}
 
 ### 验收
 
-- [ ] 应用壳、Canvas、原生表单与详情的字体、线条、材质和状态一致。
+- [ ] 应用壳、Canvas、表单与详情的字体、线条、材质和状态一致。
 - [ ] 正文与底栏对齐；四类容器与移动端无横向溢出。
 - [ ] 文字/焦点/禁用/错误在实际背景上可辨，长说明与表格未裁切。
-- [ ] 原生布局与逐页设计一致；没有加载代码、伪元素文案或 iframe 注入。
+- [ ] 表单布局与逐页设计一致；组件、字段、主题和响应式规则均已核对。

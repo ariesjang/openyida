@@ -16,7 +16,7 @@ function fixture() {
     metadata: {
       schemaVersion: '1.0', name: '研发 "A" 系统', description: '页面设计',
       tokens: JSON.parse(JSON.stringify(tokenFixture)),
-      themeProfile: { name: '业务风格', themeColor: '#1677FF', themeColorSource: 'user-specified', navTheme: 'dark', themeDelivery: 'app-custom-theme-file', themeFile: 'app-theme.css' },
+      themeProfile: { name: '业务风格', themeColor: '#1677FF', themeColorSource: 'user-specified', contentTone: 'dark', navTheme: 'dark', themeDelivery: 'app-custom-theme-file', themeFile: 'app-theme.css' },
       sceneRecipes: { workbench: { pages: [{ pageId: 'workbench', anchor: '#page-workbench' }] } },
       components: { button: { anchor: '#component-button' } }, states: { empty: { anchor: '#state-empty' } },
       assetStrategy: { pages: [{ pageId: 'workbench', imageNeed: 'none', slots: [] }] },
@@ -166,6 +166,9 @@ test.each([
   }, 'TOKEN_REFERENCE_CYCLE'],
   ['fixed bridge', v => { v.metadata.tokens['application-global'].colors['--color-white'] = '#FFFFFF'; }, 'FIXED_PLATFORM_VALUE'],
   ['primary mismatch', v => { v.metadata.themeProfile.themeColor = '#FF0000'; }, 'PRIMARY_COLOR_MISMATCH'],
+  ['missing content tone', v => { delete v.metadata.themeProfile.contentTone; }, 'LIGHT_OR_DARK_REQUIRED'],
+  ['invalid content tone', v => { v.metadata.themeProfile.contentTone = 'auto'; }, 'LIGHT_OR_DARK_REQUIRED'],
+  ['invalid navigation theme', v => { v.metadata.themeProfile.navTheme = 'auto'; }, 'LIGHT_OR_DARK_REQUIRED'],
   ['missing CSS path', v => { delete v.metadata.themeProfile.themeFile; }, 'STRING_REQUIRED'],
   ['empty custom CSS path', v => { v.metadata.themeProfile.themeFile = ''; }, 'THEME_FILE_REQUIRED'],
   ['invalid optional plan revision', v => { v.metadata.buildPlanRevision = 42; }, 'NONEMPTY_STRING_REQUIRED'],

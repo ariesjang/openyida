@@ -193,6 +193,15 @@ def validate(skill_root: Path) -> list[str]:
                 seen[field].add(value)
         theme_id = theme.get("themeId")
         template_path = theme.get("templatePath")
+        mode = theme.get("mode")
+        if mode == "creative":
+            if "contentTone" in theme or "navTheme" in theme:
+                errors.append(f"{label} 自由创意不能预设 contentTone 或 navTheme")
+        else:
+            if theme.get("contentTone") not in {"light", "dark"}:
+                errors.append(f"{label} contentTone 必须是 light 或 dark")
+            if theme.get("navTheme") not in {"light", "dark"}:
+                errors.append(f"{label} navTheme 必须是 light 或 dark")
         if not isinstance(theme_id, str) or not re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*", theme_id):
             errors.append(f"{label} themeId 格式非法")
             continue

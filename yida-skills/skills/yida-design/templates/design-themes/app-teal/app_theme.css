@@ -239,7 +239,7 @@
   --pod-field-preview-gap: 4px;
   --pod-field-preview-bg-color: #ffffff;
   --pod-field-preview-border-radius: 8px;
-  --pod-field-preview-indicator-color: var(--color-fill1-3, #eaeaea);
+  --pod-field-preview-indicator-color: var(--color-fill1-3);
   --pod-field-preview-shadow: none;
   --pod-field-preview-text-color: #24665f;
   --pod-field-preview-line-height: 20px;
@@ -355,12 +355,12 @@
   --page-bg: var(--pod-page-bg-color, #fff);
   --card-bg: var(--pod-card-bg-color, #fff);
   --popup-bg: var(--color-fill1-5, #fff);
-  --pod-shell-theme-bg-color: #ffffff;
-  --pod-nav-item-text-color: #24665f;
-  --pod-nav-item-text-hover-color: #24665f;
-  --pod-nav-item-text-selected-color: #24665f;
-  --pod-nav-menu-bg-hover-color: #edf4f2;
-  --pod-nav-menu-bg-selected-color: #edf4f2;
+  --pod-shell-theme-bg-color: #FFFFFF;
+  --pod-nav-item-text-color: #595959;
+  --pod-nav-item-text-hover-color: #262626;
+  --pod-nav-item-text-selected-color: var(--color-brand1-6);
+  --pod-nav-menu-bg-hover-color: #F5F5F5;
+  --pod-nav-menu-bg-selected-color: #F0F0F0;
   --input-hover-bg-color: #ffffff;
   --oyd-page-bg: var(--pod-page-bg-color);
   --oyd-surface: var(--pod-card-bg-color);
@@ -450,12 +450,12 @@ body.pod-premium.page-type-submit
   /* Light theme defaults. */
   --pod-nav-logo-text: var(--color-text1-4, #202020);
   --pod-nav-sub-divider-color: var(--color-line1-1, #efefef);
-  --pod-nav-item-text-color: #24665f;
-  --pod-nav-item-text-hover-color: #24665f;
+  --pod-nav-item-text-color: #595959;
+  --pod-nav-item-text-hover-color: #262626;
   --pod-nav-item-text-disabled-color: rgba(24, 28, 31, 0.24);
-  --pod-nav-item-text-selected-color: #24665f;
-  --pod-nav-menu-bg-hover-color: #edf4f2;
-  --pod-nav-menu-bg-selected-color: #edf4f2;
+  --pod-nav-item-text-selected-color: var(--color-brand1-6);
+  --pod-nav-menu-bg-hover-color: #F5F5F5;
+  --pod-nav-menu-bg-selected-color: #F0F0F0;
   --pod-nav-l-container-bg: rgba(255, 255, 255, 0.4);
   --pod-nav-l-group-label-color: rgba(24, 28, 31, 0.4);
   --pod-nav-l-search-border-color: rgba(0, 0, 0, 0);
@@ -479,8 +479,8 @@ body.pod-premium.page-type-submit
 }
 
 .pod-premium.nav-light {
-  --pod-shell-theme-bg-color: #ffffff;
-  --pod-page-header-bg-color: #ffffff;
+  --pod-shell-theme-bg-color: #FFFFFF;
+  --pod-page-header-bg-color: #FFFFFF;
 }
 
 .pod-premium.nav-dark {
@@ -503,13 +503,13 @@ body.pod-premium.page-type-submit
   --pod-page-header-text-color: var(--pod-theme-text-color, var(--color-text1-4, #202020));
   --pod-nav-logo-bg: var(--color-brand1-6, #24665f);
   --pod-nav-logo-border: none;
-  --pod-nav-item-text-selected-color: #24665f;
-  --pod-nav-menu-bg-selected-color: #edf4f2;
+  --pod-nav-item-text-selected-color: var(--color-brand1-6);
+  --pod-nav-menu-bg-selected-color: #F0F0F0;
   --pod-nav-popup-bg-color: var(--color-white, #fff);
   --pod-nav-action-icon-color: var(--color-text1-2, #adadad);
-  --pod-nav-item-text-color: #24665f;
-  --pod-nav-item-text-hover-color: #24665f;
-  --pod-nav-menu-bg-hover-color: #edf4f2;
+  --pod-nav-item-text-color: #595959;
+  --pod-nav-item-text-hover-color: #262626;
+  --pod-nav-menu-bg-hover-color: #F5F5F5;
 }
 
 .pod-premium.is-dark {

@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-design');
+const { parseDesignDocument } = require('../lib/design/document');
 const { renderDesign } = require('../lib/design-plan/materialize');
 const { validateThemeCssContent } = require('../lib/app/custom-theme');
 const fixture = require('./fixtures/design-plan.json');
@@ -58,6 +59,24 @@ test.each([
   }
   expect(applyDesignTokens(css, markdown)).toBe(css);
   expect(applyDesignTokens(css, markdown, markdown)).toBe(css);
+});
+
+test.each(['soft-inset-surfaces', 'dark-inset-hairline'])('%s keeps content theme unchanged when navTheme changes', themeId => {
+  const lightNavigation = design(themeId, 'light');
+  const darkNavigation = design(themeId, 'dark');
+  const lightMetadata = parseDesignDocument(lightNavigation).metadata;
+  const darkMetadata = parseDesignDocument(darkNavigation).metadata;
+  const contentNames = [
+    '--pod-app-root-bg-color', '--pod-page-bg-color', '--pod-card-bg-color',
+    '--color-text1-4', '--color-fill1-1', '--color-fill1-5',
+  ];
+  expect(lightMetadata.themeProfile.contentTone).toBe(darkMetadata.themeProfile.contentTone);
+  expect(lightMetadata.themeProfile.navTheme).toBe('light');
+  expect(darkMetadata.themeProfile.navTheme).toBe('dark');
+  const lightTokens = readDesignTokens(lightNavigation);
+  const darkTokens = readDesignTokens(darkNavigation);
+  for (const name of contentNames) {expect(lightTokens[name]).toBe(darkTokens[name]);}
+  expect(navigationNames.some(name => lightTokens[name] !== darkTokens[name])).toBe(true);
 });
 
 test.each(['light', 'dark'])('Fast documents infer %s navigation from their shell without Plan metadata', tone => {

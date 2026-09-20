@@ -103,7 +103,8 @@
     "material": "深海蓝层次、局部青色微光",
     "scenario": "适合明确要求暗色的技术值守。",
     "accent": "#b4f5f1",
-    "dark": true,
+    "contentTone": "dark",
+    "navTheme": "dark",
     "background": "radial-gradient(ellipse at 10% 0%, rgba(80,205,210,.14), transparent 55%), radial-gradient(ellipse at 90% 100%, rgba(139,93,228,.12), transparent 55%)"
   },
   {
@@ -206,7 +207,8 @@
     "material": "像素直角、点线边界、等宽排版",
     "scenario": "适合明确要求终端风格的技术工具。",
     "accent": "#9fe5ad",
-    "dark": true,
+    "contentTone": "dark",
+    "navTheme": "dark",
     "font": "'SFMono-Regular', Consolas, monospace",
     "rule": "dotted"
   },
@@ -247,7 +249,8 @@
     "material": "墨绿黑表面、金色细节与长横线",
     "scenario": "适合明确要求暗色的战略与高管事项。",
     "accent": "#d9c49a",
-    "dark": true,
+    "contentTone": "dark",
+    "navTheme": "dark",
     "rail": true,
     "headingFont": "Georgia, 'Songti SC', serif",
     "headingSize": 44,
@@ -347,7 +350,8 @@
     "material": "石墨层次、细行线、低圆角",
     "scenario": "适合明确要求暗色的数据运营。",
     "accent": "#c7d4dc",
-    "dark": true
+    "contentTone": "dark",
+    "navTheme": "dark"
   },
   {
     "id": "app-plum",

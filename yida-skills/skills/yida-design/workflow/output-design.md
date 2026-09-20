@@ -38,12 +38,15 @@
 
 ### themeProfile
 
+`contentTone` 与 `navTheme` 的语义和组合规则统一见[主题明暗双轴](../references/application-style-library.md#主题明暗双轴)。
+
 | 字段 | 规则 |
 | --- | --- |
 | `name` | 项目自己的视觉方向名称，不写主题模板名称 |
 | `themeColor` | 当前主色，使用 6 位 HEX，与 `--color-brand1-6` 的最终值一致 |
 | `themeColorSource` | 实际来源，如 `user-specified`、`application-theme` 或 `business-inferred`；不伪造模板默认品牌色 |
-| `navTheme` | 当前导航明暗 `light` 或 `dark`；与页面画布明暗分开 |
+| `contentTone` | `light` 或 `dark` |
+| `navTheme` | `light` 或 `dark` |
 | `themeDelivery` | `app-custom-theme-file` 或 `current-app-theme` |
 | `themeFile` | 当前主题 CSS 的实际交付路径；继承当前应用且没有本地主题文件时为空字符串 |
 | 既有导航配置 | 保留 navigationType、layoutDirection、hideAppNav、logoSource 等已确认配置，不重新推断入口范围 |
@@ -116,7 +119,7 @@ Fast 与 Plan 使用同一主题的颜色推导、组件规则和页面设计标
 
 按 [应用与自定义页面共用主题](../references/application-theme-consistency.md) 将风格承诺落实到变量，再交接页面开发。文字中的“暖色”“纸感”不是 CLI 的色值输入；模板之外的全局风格必须写入 token，不能只在自定义页实现。
 
-平台基础变量是最低契约，不是允许使用的全部变量。项目可按需扩展颜色、材质、布局、字体、动效和组件状态等语义，命名不限定为 `--oyd-*`。基础变量和扩展变量统一生成到主题 CSS；分组不决定运行时作用域，新增变量需有明确的使用组件、CSS 属性或平台映射，详见 [扩展规则](../references/application-theme-consistency.md#平台变量是基础项目主题按需扩展)。
+平台基础变量是最低契约，不是允许使用的全部变量。项目可按需扩展颜色、材质、布局、字体、动效和组件状态等语义，命名不限定为 `--oyd-*`。基础变量和扩展变量统一生成到主题 CSS；分组不决定运行时作用域，新增变量需有明确的使用组件、CSS 属性或平台映射，详见 [扩展规则](../references/application-theme-consistency.md#平台基础变量是应用主题基础框架)。
 
 `app-theme.css` 是当前应用的主题资源产物，承载品牌色阶、语义色、字体、间距、圆角、阴影，以及 Shell、导航、页面、表单、表格和浮层的主题 token 与必要样式覆盖。`app_theme.css` 等其他 `.css` 文件名同样可用；CLI 根据 `--theme-file` 路径读取内容，不靠固定文件名识别用途。Plan 使用 `outputs.theme`，其他流程使用已记录的产物路径，避免生成多份后上传错文件。
 

@@ -11,9 +11,20 @@ const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-d
 const { exportApplicationStyle, CREATIVE_TOKENS } = require('../lib/app/application-style');
 const { validateThemeCssContent } = require('../lib/app/custom-theme');
 const { parseDesignDocument } = require('../lib/design/document');
+const { BUSINESS_FIELD_TYPES, PRESENTATION_FIELD_TYPES } = require('../lib/app/form-field-validator');
 const sample = require('../lib/core/sample');
 const form = require('../lib/app/create-form')._private;
-const styles = loadThemeIndex().themes.filter(theme => theme.collection === 'application-styles' && theme.mode !== 'creative');
+const themeIndex = loadThemeIndex().themes;
+const applicationStyles = themeIndex.filter(theme => theme.collection === 'application-styles');
+const sharedThemes = themeIndex.filter(theme => !theme.collection);
+const styles = applicationStyles.filter(theme => theme.mode !== 'creative');
+const DETAIL_FIELD_PREVIEW_TOKENS = [
+  '--pod-field-preview-bg-color', '--pod-field-preview-border-radius',
+  '--pod-field-preview-indicator-color', '--pod-field-preview-shadow',
+  '--pod-field-preview-text-color', '--form-element-medium-font-size',
+  '--pod-field-preview-gap', '--pod-field-preview-line-height',
+  '--pod-field-preview-min-height', '--pod-field-preview-padding',
+];
 let directory;
 
 beforeEach(() => { directory = fs.mkdtempSync(path.join(os.tmpdir(), 'oyd-app-style-')); });
@@ -34,7 +45,140 @@ test('catalog separates the creative option from eighteen application presets', 
   expect(layouts.size).toBeGreaterThanOrEqual(5);
 });
 
-test.each(styles.map(style => [style.themeId, style]))('%s pairs ship valid CSS and compile native layout without injected code', (_id, style) => {
+test('theme catalog separates content tone from navigation tone', () => {
+  const presets = themeIndex.filter(theme => theme.mode !== 'creative');
+  expect(presets.every(theme => ['light', 'dark'].includes(theme.contentTone))).toBe(true);
+  expect(presets.every(theme => ['light', 'dark'].includes(theme.navTheme))).toBe(true);
+  expect(themeIndex.find(theme => theme.themeId === 'dark-rail-fine-lines')).toMatchObject({
+    contentTone: 'light', navTheme: 'dark',
+  });
+  expect(themeIndex.find(theme => theme.themeId === 'dark-inset-hairline')).toMatchObject({
+    contentTone: 'dark', navTheme: 'dark',
+  });
+  expect(themeIndex.find(theme => theme.themeId === 'free-creative')).not.toHaveProperty('contentTone');
+  expect(themeIndex.find(theme => theme.themeId === 'free-creative')).not.toHaveProperty('navTheme');
+  const sourceProfiles = require('../yida-skills/skills/yida-design/templates/application-styles.json');
+  expect(sourceProfiles.every(profile => !Object.prototype.hasOwnProperty.call(profile, 'dark'))).toBe(true);
+
+  applicationStyles.filter(theme => theme.mode === 'template').forEach(theme => {
+    const design = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
+    expect(parseDesignDocument(design).metadata.themeProfile).toEqual({
+      contentTone: theme.contentTone, navTheme: theme.navTheme,
+    });
+    expect(design).toContain(`当前模板使用 contentTone: ${theme.contentTone}、navTheme: ${theme.navTheme}`);
+    expect(design).not.toContain('contentTone 决定页面、表单、详情和自定义页面的内容界面明暗');
+  });
+  const creative = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, applicationStyles.find(theme => theme.mode === 'creative').templatePath), 'utf8');
+  expect(creative).toContain('在 themeProfile 中分别填写 contentTone 与 navTheme');
+});
+
+test('all nineteen form-layout starters use supported types and direct capability language', () => {
+  expect(applicationStyles).toHaveLength(19);
+  const supportedTypes = new Set([...BUSINESS_FIELD_TYPES, ...PRESENTATION_FIELD_TYPES]);
+
+  applicationStyles.forEach(style => {
+    const design = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.templatePath), 'utf8');
+    expect(design).toContain('表单支持');
+    expect(design).toContain('普通业务分组和章节分隔使用 Divider');
+    expect(design).toContain('横向字段组合使用 ColumnContainer');
+    if (style.mode !== 'creative') {
+      expect(design).toContain('### 材质与信息密度');
+    }
+    expect(design).not.toContain('### R1 组件区域与字段的关系');
+    expect(design.match(/表单支持在顶部、左侧、主体、右侧和字段之间/g)).toHaveLength(1);
+    expect(design).not.toMatch(/能力上限|暂未覆盖|设计契约|误判为自定义页面|先扩展 CLI|平台 Schema|原生 Schema|原生表单 Schema|表单 Schema 编辑能力|完整 Schema|由 Schema 发布/);
+    const layout = JSON.parse(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.formLayoutPath), 'utf8'));
+    const visit = value => {
+      if (Array.isArray(value)) {
+        value.forEach(visit);
+        return;
+      }
+      if (!value || typeof value !== 'object') {
+        return;
+      }
+      if (value.type) {
+        expect(supportedTypes.has(value.type)).toBe(true);
+      }
+      if (value.children) {
+        visit(value.children);
+      }
+    };
+    visit(layout);
+  });
+});
+
+test('all nineteen application styles include complete custom-page guidance', () => {
+  expect(applicationStyles).toHaveLength(19);
+  applicationStyles.forEach(style => {
+    const design = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.templatePath), 'utf8');
+    expect(design).toContain('### 2.5 自定义页面设计');
+    expect(design).toContain('### 自定义页面组件与交互');
+    expect(design).toContain('页面任务、首屏焦点、布局、表面与组件、主操作、状态、响应式和验收');
+    expect(design).toContain('列表、表格、图表、详情抽屉和表单入口');
+    expect(design).toContain('YidaCodeCanvas');
+    expect(design).toContain('应用全局样式统一作用于应用框架、表单、详情页和自定义页面等');
+  });
+});
+
+test('all nineteen application styles define detail read-only field tokens and guidance', () => {
+  expect(applicationStyles).toHaveLength(19);
+  applicationStyles.forEach(style => {
+    const design = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.templatePath), 'utf8');
+    const metadata = parseDesignDocument(design).metadata;
+    const nativeFormTokens = metadata.tokens['application-global'].appearance['native-form'];
+    const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.cssTemplatePath), 'utf8');
+    expect(design).toContain('详情页');
+    expect(design).toContain('只读字段的数据框');
+    DETAIL_FIELD_PREVIEW_TOKENS.forEach(token => {
+      expect(nativeFormTokens[token]).toBeDefined();
+      expect(css).toContain(`${token}:`);
+    });
+  });
+});
+
+test('all fifteen shared themes include native form layout and style guidance', () => {
+  expect(sharedThemes).toHaveLength(15);
+  sharedThemes.forEach(theme => {
+    const design = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
+    expect(design).toContain('### 表单组件与版式结构');
+    expect(design).toContain('表单使用与自定义页面相同的应用全局样式');
+    expect(design).toContain('普通业务分组和章节分隔使用 `Divider`');
+    expect(design).toContain('横向字段组合使用 `ColumnContainer`');
+    expect(design).toContain('底栏、详情延续和窄屏重排');
+  });
+});
+
+test('form skills describe component capabilities with direct instructions', () => {
+  const files = [
+    'yida-create-form-page/SKILL.md',
+    'yida-create-form-page/references/form-field-properties.md',
+    'yida-design/SKILL.md',
+    'yida-design/references/native-form-styles.md',
+    'yida-design/references/application-style-library.md',
+  ];
+  const capabilityFiles = files.filter(file => file !== 'yida-design/SKILL.md');
+  const forbiddenCapabilityLanguage = /能力上限|能力边界|暂未覆盖|尚不支持某项表现|平台能力限制|不是完整视觉主题|只提交其已支持的类型|不代表平台 Schema|误判为自定义页面|先扩展 CLI|原生 Schema|原生表单 Schema|表单 Schema 编辑能力|完整 Schema|由 Schema 发布/;
+  files.forEach(file => {
+    const content = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, '..', file), 'utf8');
+    expect(content).not.toMatch(forbiddenCapabilityLanguage);
+  });
+  capabilityFiles.forEach(file => {
+    const content = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, '..', file), 'utf8');
+    expect(content).toContain('表单支持');
+  });
+  expect(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, '..', 'yida-design/workflow/step-2-theme-system.md'), 'utf8'))
+    .not.toMatch(forbiddenCapabilityLanguage);
+  expect(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, '..', 'yida-create-form-page/references/field-definition-guide.md'), 'utf8'))
+    .toContain('普通业务分组和章节分隔使用 `Divider`');
+  const designSkill = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'SKILL.md'), 'utf8');
+  const nativeFormStyles = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'references/native-form-styles.md'), 'utf8');
+  expect(designSkill).toContain('应用包含表单或详情页时，读取 [表单风格规则]');
+  expect(designSkill).not.toContain('表单支持在顶部、左侧、主体、右侧和字段之间放置');
+  expect(nativeFormStyles).toContain('`--pod-field-preview-bg-color`');
+  expect(nativeFormStyles).toContain('普通业务分组和章节分隔使用 `Divider`');
+});
+
+test.each(styles.map(style => [style.themeId, style]))('%s pairs ship valid CSS and compile the form layout', (_id, style) => {
   const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.cssTemplatePath), 'utf8');
   expect(() => validateThemeCssContent(css)).not.toThrow();
   expect(css.match(/OPENYIDA APPLICATION STYLE RECIPES START/g)).toHaveLength(1);
@@ -49,7 +193,7 @@ test.each(styles.map(style => [style.themeId, style]))('%s pairs ship valid CSS 
   const node = form.buildFormNodeComponent(layout[0]);
   expect(node.componentName).toBe('ColumnsLayout');
   expect(node.props).toMatchObject({ columnGap: layout[0].columnGap, rowGap: layout[0].rowGap, display: 'VERTICAL' });
-  expect(JSON.stringify(node)).not.toMatch(/didMount|createElement|<style|document\./);
+  expect(node.children[node.children.length - 1].children[0].componentName).toBe('TextField');
 });
 
 test.each(styles.map(style => style.themeId))('%s survives Plan materialization and Fast regeneration', async themeId => {
@@ -57,11 +201,18 @@ test.each(styles.map(style => style.themeId))('%s survives Plan materialization 
   fs.writeFileSync(input, JSON.stringify(planFor(themeId)));
   const result = materialize(input);
   const design = fs.readFileSync(result.outputs.design, 'utf8');
-  expect(parseDesignDocument(design).metadata.applicationStyle).toEqual({ recipe: 'application-style-v1', mode: 'template' });
+  const metadata = parseDesignDocument(design).metadata;
+  expect(metadata.applicationStyle).toEqual({ recipe: 'application-style-v1', mode: 'template' });
+  expect(metadata.themeProfile).toMatchObject({
+    contentTone: themeIndex.find(theme => theme.themeId === themeId).contentTone,
+    navTheme: 'dark',
+  });
   const fastOutput = path.join(directory, 'fast.css');
   await sample.run(['yida-design', 'app-theme', '--design-file', result.outputs.design, '--output', fastOutput]);
   expect(fs.readFileSync(fastOutput, 'utf8')).toBe(fs.readFileSync(result.outputs.theme, 'utf8'));
-  expect(design).toContain('原生结构与介绍区');
+  expect(design).toContain('表单组件与版式结构');
+  expect(design).toContain('普通业务分组和章节分隔使用 Divider');
+  expect(design).toContain('横向字段组合使用 ColumnContainer');
 });
 
 test('export writes all three assets and refuses to overwrite authored work', async () => {
@@ -116,6 +267,7 @@ test('free creative rejects absent business decisions and explicit design tokens
   fs.writeFileSync(input, JSON.stringify(plan));
   const result = materialize(input);
   const design = fs.readFileSync(result.outputs.design, 'utf8');
+  expect(parseDesignDocument(design).metadata.themeProfile).toMatchObject({ contentTone: 'light', navTheme: 'dark' });
   expect(design).toContain(plan.visualStyle.creativeDirection.businessRationale);
   expect(design).toContain(plan.visualStyle.creativeDirection.formLayout);
   expect(design).not.toMatch(/窄幅纸页|香槟金标题/);

@@ -239,7 +239,7 @@
   --pod-field-preview-gap: 4px;
   --pod-field-preview-bg-color: #242d35;
   --pod-field-preview-border-radius: 4px;
-  --pod-field-preview-indicator-color: var(--color-fill1-3, #eaeaea);
+  --pod-field-preview-indicator-color: var(--color-fill1-3);
   --pod-field-preview-shadow: none;
   --pod-field-preview-text-color: #c7d4dc;
   --pod-field-preview-line-height: 20px;
@@ -355,12 +355,12 @@
   --page-bg: var(--pod-page-bg-color, #fff);
   --card-bg: var(--pod-card-bg-color, #fff);
   --popup-bg: var(--color-fill1-5, #fff);
-  --pod-shell-theme-bg-color: #242d35;
-  --pod-nav-item-text-color: #c7d4dc;
-  --pod-nav-item-text-hover-color: #c7d4dc;
-  --pod-nav-item-text-selected-color: #c7d4dc;
-  --pod-nav-menu-bg-hover-color: #171d23;
-  --pod-nav-menu-bg-selected-color: #171d23;
+  --pod-shell-theme-bg-color: #171717;
+  --pod-nav-item-text-color: #A0A0A0;
+  --pod-nav-item-text-hover-color: #E7E7E7;
+  --pod-nav-item-text-selected-color: #FFFFFF;
+  --pod-nav-menu-bg-hover-color: #272727;
+  --pod-nav-menu-bg-selected-color: #323232;
   --input-hover-bg-color: #242d35;
   --oyd-page-bg: var(--pod-page-bg-color);
   --oyd-surface: var(--pod-card-bg-color);
@@ -450,12 +450,12 @@ body.pod-premium.page-type-submit
   /* Light theme defaults. */
   --pod-nav-logo-text: var(--color-text1-4, #202020);
   --pod-nav-sub-divider-color: var(--color-line1-1, #efefef);
-  --pod-nav-item-text-color: #c7d4dc;
-  --pod-nav-item-text-hover-color: #c7d4dc;
+  --pod-nav-item-text-color: #A0A0A0;
+  --pod-nav-item-text-hover-color: #E7E7E7;
   --pod-nav-item-text-disabled-color: rgba(24, 28, 31, 0.24);
-  --pod-nav-item-text-selected-color: #c7d4dc;
-  --pod-nav-menu-bg-hover-color: #171d23;
-  --pod-nav-menu-bg-selected-color: #171d23;
+  --pod-nav-item-text-selected-color: #FFFFFF;
+  --pod-nav-menu-bg-hover-color: #272727;
+  --pod-nav-menu-bg-selected-color: #323232;
   --pod-nav-l-container-bg: rgba(255, 255, 255, 0.4);
   --pod-nav-l-group-label-color: rgba(24, 28, 31, 0.4);
   --pod-nav-l-search-border-color: rgba(0, 0, 0, 0);
@@ -484,8 +484,8 @@ body.pod-premium.page-type-submit
 }
 
 .pod-premium.nav-dark {
-  --pod-shell-theme-bg-color: #242d35;
-  --pod-page-header-bg-color: #242d35;
+  --pod-shell-theme-bg-color: #171717;
+  --pod-page-header-bg-color: #171717;
 }
 
 .pod-premium.nav-white {
@@ -520,12 +520,12 @@ body.pod-premium.page-type-submit
   --pod-nav-logo-border: 1px solid rgba(255, 246, 246, 0.15);
   --pod-nav-logo-text: var(--color-text1-5, #fff);
   --pod-nav-sub-divider-color: rgba(255, 255, 255, 0.24);
-  --pod-nav-item-text-color: #c7d4dc;
-  --pod-nav-item-text-hover-color: #c7d4dc;
+  --pod-nav-item-text-color: #A0A0A0;
+  --pod-nav-item-text-hover-color: #E7E7E7;
   --pod-nav-item-text-disabled-color: rgba(255, 255, 255, 0.24);
-  --pod-nav-item-text-selected-color: #c7d4dc;
-  --pod-nav-menu-bg-hover-color: #171d23;
-  --pod-nav-menu-bg-selected-color: #171d23;
+  --pod-nav-item-text-selected-color: #FFFFFF;
+  --pod-nav-menu-bg-hover-color: #272727;
+  --pod-nav-menu-bg-selected-color: #323232;
   --pod-nav-l-container-bg: rgba(255, 255, 255, 0.08);
   --pod-nav-l-group-label-color: rgba(255, 255, 255, 0.4);
   --pod-nav-l-search-border-color: rgba(255, 255, 255, 0.05);

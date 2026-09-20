@@ -1,12 +1,12 @@
-# 原生表单样式与提交页背景
+# 表单样式与提交页背景
 
-原生表单通过平台已有变量表达不同风格。应用包含表单时，同时设计控件、标签、分组和背景；不能只换主色、Divider 或 Canvas 首页。先沿用选中主题，再按填写场景确定具体值，同类表单保持一致。
+表单通过平台已有变量表达不同风格。应用包含表单时，同时设计控件、标签、分组和背景；不能只换主色、Divider 或 Canvas 首页。先沿用选中主题，再按填写场景确定具体值，同类表单保持一致。
 
 ## 应用风格先于表单选型
 
-**统一风格不等于统一版式。** 不要将“左侧介绍栏＋右侧字段”当成表单默认结构，杂志风、行政风也不例外。先看填写任务：简单新增/编辑可直接进入字段；必要的一句话说明放顶部；规则只影响某一字段或分组时就近提示；分阶段任务才需要步骤提示。侧栏只用于独立且需持续参考的材料清单、业务规则或上下文，并在 `design.md` 写清内容价值与容器宽度依据。按抽屉/iframe 实际可用宽度判断，不看浏览器总宽度。空间不足时改顶部或省略，不挤占字段。
+**表单支持可组合组件布局，并沿用应用视觉风格。** 顶部、左侧、主体、右侧和字段之间都可放置组件。Tab/切换负责内容切换，按钮组提供操作入口，图片或图形建立视觉焦点，标题与 `Divider`、分栏和状态区组织层级与节奏，字段负责数据采集。每个组件都要有明确作用。普通业务分组和章节分隔使用 `Divider`，横向字段组合使用 `ColumnContainer`。
 
-介绍不能重复弹窗标题、表单标题或首组标题，也不要机械添加“登记基本信息，作为后续依据”这类没有新增信息的文案。不同业务可以采用不同布局，同类任务也可以复用；不设置侧栏出现比例，不为追求多样性随机轮换。模板只是结构起点，具体介绍区必须由业务与设计推演。
+左侧栏、顶部区、主次分栏和字段间组件都是可用版式。表单支持组合 Tab、按钮、图片、状态区、`Divider`、`ColumnContainer` 和业务字段。为每张表单在 `design.md` 写清组件、区域位置、业务或视觉作用、列宽与窄屏重排，并按抽屉或 iframe 的实际宽度调整。
 
 先读取当前 `design.md` 中已确认的应用风格、字体、表面、线条、圆角、密度与状态规则，再设计提交、编辑和详情页。表单是应用风格的延续，不单独抽取另一套配色或风格；多样性来自不同应用的设计方向，以及同一应用内不同业务任务的合理布局差异，不是让每张表单随机换肤。
 
@@ -21,14 +21,13 @@
 
 在现有 `design.md` 的组件规则及相关页面说明中写清：表单继承了哪些应用特征、主体宽度、列数/比例、标签位置、字段与组间距、分割线、背景层次、底部操作区和响应式，以及详情如何保持一致。无需新增文档或必填机器字段。
 
-## 实现职责与禁止注入
+## 实现职责与主题交付
 
-- **设计源**：风格与页面布局决策归 `design.md`；Fast 的 token 写入 `tokens.application-global`，Plan 通过 `visualStyle.tokens` 生成同一设计契约。
+- **设计文件**：风格与页面布局写入 `design.md`；Fast 将 token 写入 `tokens.application-global`，Plan 通过 `visualStyle.tokens` 生成同一份 `design.md`。
 - **应用样式**：颜色、字体、控件、状态、背景、详情表面与底栏样式统一进入当前应用的 `app_theme.css` / `app-theme.css`，以实际生成路径为准，通过应用主题设置加载。已有变量优先；需要边框形式、伪元素等额外表达时，仅在核实平台 DOM 后向同一应用 CSS 添加有限作用域规则，并在设计源记录用途。装饰不遮挡输入、不承载必要信息，不用全局 `.next-*` 覆盖所有组件。
-- **原生结构**：列数、字段排列和标签位置通过已支持的 Schema 属性及 `ColumnContainer`、`Divider` 实现；不同控件遵守自身能力。应用 CSS 不替代字段结构，也不重排 DOM、伪造字段或改变提交行为。
-- **禁止页面注入**：不得在表单或 `formDetail` 的 `didMount`、加载代码、动作模块中创建 style、写 CSS 变量、添加主题 class 或插入装饰 DOM；不得从 Canvas、iframe 父页面或跨框脚本修改表单样式。主题应由 iframe 自己加载的应用资源生效。
+- **表单结构**：列数、字段排列和标签位置使用表单属性、`ColumnContainer` 和 `Divider` 配置；不同控件遵守自身能力。应用 CSS 不替代字段结构，也不重排 DOM、伪造字段或改变提交行为。
 
-修改风格时更新设计源和同一份应用主题文件，不给每张表单复制主题代码。若目标平台尚不支持某项表现，保留原生能力并说明限制，不用页面注入绕过。已有实验注入仅在明确授权迁移后移除并验证，修改技能本身不代表已迁移线上应用。
+表单样式使用已验证的平台变量和组件。修改风格时更新设计源和同一份应用主题文件，所有表单复用该主题文件。
 
 ## 控件和标签
 
@@ -56,7 +55,26 @@
 
 多行文本、附件、成员选择和子表保留自身布局，不用全局 `input/textarea/.next-*` 规则强制同一高度。顶部标签间距不代表所有字段的行间距。
 
-默认、hover、focus 和只读详情应成套设计，不能只改默认边框后让聚焦跳回另一套风格。核实当前运行时对 `--input-hover-border-color`、`--input-focus-border-color`、`--input-hover-bg-color`、`--input-focus-bg-color` 等变量的消费与作用域后，写入应用主题；不能假定声明在根部就覆盖组件局部变量。焦点保持可辨，错误、警告、禁用保留独立语义。详情核对 `--pod-field-preview-text-color`、`--pod-field-preview-bg-color`、圆角、padding 与阴影等实际消费项，尤其避免深色底配旧版深色正文；未核实的变量不编造。
+默认、hover、focus 和只读详情应成套设计，不能只改默认边框后让聚焦跳回另一套风格。核实当前运行时对 `--input-hover-border-color`、`--input-focus-border-color`、`--input-hover-bg-color`、`--input-focus-bg-color` 等变量的消费与作用域后，写入应用主题；不能假定声明在根部就覆盖组件局部变量。焦点保持可辨，错误、警告、禁用保留独立语义。
+
+## 详情页只读字段数据框
+
+表单详情页使用只读字段数据框展示已提交的数据。修改详情页风格时，将以下 token 与表单控件、卡片和页面画布一起设计，并写入同一份应用主题。背景与卡片形成可辨层次，文字沿用正文色，圆角沿用控件或卡片的形状体系；字号、行高、最小高度、内距和字段间距共同决定信息密度。左侧指示线由指示色与内阴影共同表达，可按当前主题保留、弱化或关闭。
+
+| token | 控制的样式 | 推荐关系 |
+| --- | --- | --- |
+| `--pod-field-preview-bg-color` | 数据框 `background` | 从当前内容面或弱填充色推导，与 `--pod-card-bg-color` 保持层次 |
+| `--pod-field-preview-border-radius` | 数据框 `border-radius` | 与表单控件、卡片使用同一圆角体系 |
+| `--pod-field-preview-indicator-color` | 左侧指示线颜色 | 使用当前边界色或主题强调色 |
+| `--pod-field-preview-shadow` | 数据框 `box-shadow` 和左侧指示线 | 需要指示线时使用 `inset 2px 0 0 0 var(--pod-field-preview-indicator-color)`；平面风格可用 `none` |
+| `--pod-field-preview-text-color` | 数据值 `color` | 使用当前正文色并保证与数据框背景的对比度 |
+| `--form-element-medium-font-size` | 数据值 `font-size` | 与编辑态表单值保持同一字号层级 |
+| `--pod-field-preview-gap` | 数据框内部元素间距 | 按图标、文本、标签的组合密度确定 |
+| `--pod-field-preview-line-height` | 数据值 `line-height` | 与字号配套，保证单行和多行内容可读 |
+| `--pod-field-preview-min-height` | 数据框 `min-height` | 与编辑态单行控件高度协调 |
+| `--pod-field-preview-padding` | 数据框 `padding` | 与最小高度、行高共同形成垂直和水平留白 |
+
+独立详情页、数据管理详情、抽屉或 iframe 详情都使用这组应用主题 token。设计时在 `design.md` 记录最终值，通过主题生成命令写入 `app-theme.css`，再上传同一份主题文件；验收时分别检查普通文本、关联记录、日期、人员、长文本和空值，并核对 PC、窄屏和抽屉宽度下的计算样式。
 
 ## 底部操作区与宽度对齐
 
@@ -92,7 +110,7 @@
 
 `submission/{formUuid}?isRenderNav=false` 隐藏导航，不会取消应用主题，也不要求纯白背景。PC 抽屉里的 iframe 与独立提交页都需要检查；父页面的 CSS 变量不会自动继承进 iframe。
 
-| 层级 | 既有配置 | 使用边界 |
+| 层级 | 既有配置 | 作用范围 |
 | --- | --- | --- |
 | 应用外衬、无导航壳层 | `--pod-app-root-bg-color`、`--pod-app-root-bg-image` | 颜色与图片分开；图片值可为 `none`、渐变或真实 `url(...)` |
 | 页面画布、表单内容区 | `--pod-page-bg-color` | 只接受颜色；新版表单可通过 `--yida-form-content-bgcolor` 消费它 |
@@ -101,11 +119,11 @@
 
 模板通过 `body.pod-premium.page-type-submit .vc-shell-without-nav.pod-premium` 将外衬变量用于新版无导航提交页；平台默认壳层取导航背景，单独声明根背景图变量并不足以显示图片。该规则不修改有导航页面、旧主题或表单字段。渐变或背景图放在外层，内容表面保留可读底色。背景素材必须来自已确定的真实资源，不能让图像妨碍字段阅读；长表单、窄屏和滚动到底部时均应保持连续背景。默认居中靠上、cover、不重复，需要其他铺放方式时在已核实的作用范围调整。
 
-已有表单的 `Page.props.pageStyle`、`contentBgColor`、`contentBgColorMobile` 和页面 CSS 可能保留历史底色；不同运行版本的优先级也可能不同。先查看实际 body、壳层、`.vc-rootcontent` 和控件的计算样式，再决定调整应用主题还是目标页面配置。新表单的透明 `pageStyle` 只是一层默认值，不能迁移已有 Schema；不要批量清空页面样式，也不要在 Canvas 中向父页面注入主题。
+已有表单的 `Page.props.pageStyle`、`contentBgColor` 和 `contentBgColorMobile` 可能保留历史底色；不同运行版本的优先级也可能不同。先查看实际 body、壳层、`.vc-rootcontent` 和控件的计算样式，再通过应用主题或结构化页面属性调整。新表单的透明 `pageStyle` 只是一层默认值，不会自动改变已有表单；表单与详情页视觉统一由应用全局样式管理。
 
 模板显式将 `--yida-form-content-bgcolor` 接到 `--pod-page-bg-color`，避免 DeepContainer 的 inline 变量消费回退到白色。新版 AppThemePage 会过滤 `props.style` 中的自定义属性；因此不能把主题变量写进页面 style 代替应用主题。旧版 LegacyPage 则会在页面局部声明变量，根部设置不保证覆盖它。旧 `.vc-yida-shell-new` 还使用局部 `--vc-form-top-label-margin-b`，并非同名的 `--form-top-label-margin-b`；不要承诺一套 token 改遍所有历史布局。
 
-模板的 hover/focus 边框和 focus 底色已有源码消费者，但富文本编辑器仍有白色普通背景和固定蓝色焦点阴影。仅补变量不能修复这些硬编码；针对所用控件核实并做应用级局部适配，或明确列为平台能力限制，不宣称所有交互态已自动统一。
+模板的 hover/focus 边框和 focus 底色已有源码消费者。富文本编辑器使用白色普通背景和固定蓝色焦点阴影时，先核实实际控件，再添加作用域明确的应用级适配，并在验收清单中检查默认、hover 和 focus 状态。
 
 ## 写入现有主题源
 
@@ -121,6 +139,15 @@ Fast 将以下变量合并到 `design.md` 的 `tokens.application-global`；Plan
   "--input-border-color": "#D8CDBD",
   "--pod-form-label-color": "#554B40",
   "--form-top-label-margin-b": "6px",
+  "--pod-field-preview-bg-color": "#F7F1E7",
+  "--pod-field-preview-border-radius": "6px",
+  "--pod-field-preview-indicator-color": "#D8CDBD",
+  "--pod-field-preview-shadow": "inset 2px 0 0 0 var(--pod-field-preview-indicator-color)",
+  "--pod-field-preview-text-color": "#554B40",
+  "--pod-field-preview-gap": "4px",
+  "--pod-field-preview-line-height": "20px",
+  "--pod-field-preview-min-height": "32px",
+  "--pod-field-preview-padding": "0 8px",
   "--pod-app-root-bg-color": "#F3EBDD",
   "--pod-app-root-bg-image": "linear-gradient(135deg, #F3EBDD, #E8DDCB)",
   "--pod-page-bg-color": "#FFFCF6",
@@ -148,11 +175,12 @@ Fast 更新使用 `openyida sample yida-design app-theme --design-file <design.m
 
 以下按 `vc-deep-yida` 中的实际消费分组；已有模板变量优先配置，不重复添加同名声明，也不把旧分支或注释里的变量算作新主题能力。
 
-| 页面 / 区域 | 已确认消费的 token | 适配边界 |
+| 页面 / 区域 | 已确认消费的 token | 检查范围 |
 | --- | --- | --- |
 | 提交 / 编辑原生表单 | `--pod-form-label-color`、`--yida-form-content-bgcolor`、控件自身的 `--form-element-medium-*` / `--input-*` | 新版 AppThemePage 不接收页面 style 中的变量；控件逐项核对，不能沿用 LegacyPage 密度映射的假设 |
 | 管理页标题及内容 | `--pod-data-manager-title-padding`、`--pod-page-data-manage-top-padding`、`--pod-page-padding` | 消费在管理页容器，Shell 也有覆盖；不是单张表单字段间距 |
 | 管理页表单视图底栏 | `--pod-formView-stickyFooter-*` | 核对 DATA_MANAGE、抽屉提交标记，以及 fixed / sticky-v2 模式 |
+| 详情页只读字段数据框 | `--pod-field-preview-bg-color`、`--pod-field-preview-border-radius`、`--pod-field-preview-indicator-color`、`--pod-field-preview-shadow`、`--pod-field-preview-text-color`、`--form-element-medium-font-size`、`--pod-field-preview-gap`、`--pod-field-preview-line-height`、`--pod-field-preview-min-height`、`--pod-field-preview-padding` | 核对数据框与卡片、编辑态控件的色彩、形状、排版和密度关系，并检查长文本与空值 |
 | 详情卡片 / 自定义详情 | `--pod-card-bg-color`、`--pod-card-border`、`--pod-card-border-radius`、`--pod-page-inner-group-spacing`、`--pod-page-auto-width-margin` | PC 详情仍有固定最小宽度，不把提交页断点视为详情已支持移动布局 |
 | 详情记录历史 | `--pod-card-padding`、`--pod-card-bg-color`、`--pod-card-border`、`--pod-card-border-radius` | 历史面板仍有固定 max-width，源码中注释掉的内容宽度 token 不算有效消费 |
 | 门户 / 展示页卡片 | `--pod-card-*`、`--pod-page-inner-group-spacing` | 门户会在特定场景局部重新声明卡片边框，需检查实际作用域 |
