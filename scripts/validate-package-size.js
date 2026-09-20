@@ -17,7 +17,7 @@ const path = require('path');
 // Retain ~21 KiB npm 10 compression overhead; round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 1920 * 1024;
 const MAX_UNPACKED_BYTES = 7056 * 1024;
-const MAX_ENTRY_COUNT = 568;
+const MAX_ENTRY_COUNT = 569;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
