@@ -237,7 +237,8 @@ def validate(skill_root: Path) -> list[str]:
         if TOKEN_SUFFIX_SHORTHAND.search(text) or TOKEN_WILDCARD.search(text):
             errors.append(f"{template_path} 含未展开的 Token 后缀缩写或通配写法")
 
-    actual_files = {f"templates/design-themes/{p.relative_to(template_dir)}" for p in template_dir.rglob("*.md") if p.name != "README.md"}
+    # Catalog paths use forward slashes on every OS, including nested theme bundles.
+    actual_files = {f"templates/design-themes/{p.relative_to(template_dir).as_posix()}" for p in template_dir.rglob("*.md") if p.name != "README.md"}
     for name in sorted(actual_files - seen["templatePath"]):
         errors.append(f"主题模板未登记到索引：{name}")
     for name in sorted(seen["templatePath"] - actual_files):

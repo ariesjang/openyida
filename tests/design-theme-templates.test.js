@@ -24,11 +24,24 @@ test('shipped themes inherit project color instead of prescribing a hue when bra
   }
 });
 
-function validate(skill = SKILL, encoding = 'utf-8') {
+function validate(skill = SKILL, encoding = 'utf-8', windowsPaths = false) {
   if (!PYTHON) {
     throw new Error('Theme contract tests require Python 3.9+ (python3, python, or py -3).');
   }
-  return spawnSync(PYTHON[0], [...PYTHON[1], VALIDATOR, '--skill-root', skill], {
+  // Exercise Windows path serialization on every host while retaining real file reads.
+  const windowsRunner = `
+import runpy
+import sys
+from pathlib import Path, PureWindowsPath
+from unittest.mock import patch
+
+relative_to = Path.relative_to
+sys.argv = sys.argv[1:]
+with patch.object(Path, 'relative_to', lambda self, *args, **kwargs: PureWindowsPath(relative_to(self, *args, **kwargs))):
+    runpy.run_path(sys.argv[0], run_name='__main__')
+`;
+  const runner = windowsPaths ? ['-c', windowsRunner] : [];
+  return spawnSync(PYTHON[0], [...PYTHON[1], ...runner, VALIDATOR, '--skill-root', skill], {
     encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: encoding },
   });
 }
@@ -58,12 +71,14 @@ function withFixture(run) {
   }
 }
 
-test.each(['utf-8', 'cp1252'])('all shared themes pass the V2 contract with inherited %s encoding', encoding => {
-  const result = validate(SKILL, encoding);
-  expect({ status: result.status, error: result.stderr, failures: result.stdout.includes('校验失败') }).toEqual({
-    status: 0, error: '', failures: false,
+test.each([
+  ['native', 'utf-8'], ['native', 'cp1252'],
+  ['windows', 'utf-8'], ['windows', 'cp1252'],
+])('all shared themes pass the V2 contract with %s paths and inherited %s encoding', (paths, encoding) => {
+  const result = validate(SKILL, encoding, paths === 'windows');
+  expect({ status: result.status, error: result.stderr, output: result.stdout.trim() }).toEqual({
+    status: 0, error: '', output: '主题索引与完整 design.md 模板校验通过。',
   });
-  expect(result.stdout).toContain('主题索引与完整 design.md 模板校验通过。');
 });
 
 test.each([
