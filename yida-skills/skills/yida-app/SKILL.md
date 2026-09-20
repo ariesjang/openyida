@@ -133,4 +133,4 @@ Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-de
 | [常见问题解决思路](references/common-issues.md) | 资源冲突、字段 ID、seed records、页面数据、发布失败、输出口径等高频问题 | 遇到异常或执行结果不符合预期时 |
 
 
-应用整体设计可使用[应用风格模板或自由创意](../yida-design/references/application-style-library.md)。导航、自定义页面、表单与详情继承同一设计语言；自由创意从业务推演，不强制选模板。模板中的原生布局 JSON 只提供结构，须填入真实字段并核对间距和响应式，禁止加载代码注入样式。
+应用整体设计可使用[应用风格模板或自由创意](../yida-design/references/application-style-library.md)。导航、自定义页面、表单与详情继承同一设计语言；自由创意从业务推演，不强制选模板。模板中的表单布局 JSON 提供结构起点，使用时填入真实字段并核对间距和响应式。

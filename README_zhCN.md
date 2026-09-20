@@ -196,7 +196,7 @@ openyida sample openyida-page-template canvas-form-drawer --output project/pages
 openyida get-schema APP_XXX FORM_XXX
 ```
 
-表单字段定义支持 19 种业务字段，以及 `Divider`、`ColumnContainer` 等布局组件。普通分组优先使用 `Divider`，局部多列使用 `ColumnContainer`；`GroupContainer` / `PageSection` 只在确实需要容器语义时使用。
+表单采用组件树：业务字段负责数据采集，Tab 负责内容切换，操作按钮组执行业务动作，图片建立视觉焦点，状态区提供反馈，`Divider` 和 `ColumnContainer` 组织层级与分栏。`create-form` 字段定义可创建 19 种业务字段、`Divider` 和 `ColumnContainer`，更新表单时保留其他已有组件。
 
 ### 流程审批
 
@@ -294,7 +294,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | 命令 | 说明 |
 |------|------|
 | `openyida create-form batch <appType> <plan.json> [--concurrency 1..4] [--check] [--json]` | 按依赖并行创建表单 |
-| `openyida create-form create <appType> "<formTitle>" <fieldsJsonFile> [--icon auto\|<iconName>] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | 创建表单页面 |
+| `openyida create-form create <appType> "<formTitle>" <fieldsJsonFile> [--layout single\|double\|card\|section] [--theme default\|compact\|comfortable] [--label-align top\|left\|right] [--icon auto\|<iconName>] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | 创建表单页面 |
 | `openyida create-form icons [--json]` | 列出可用的表单导航图标 |
 | `openyida create-form validate-fields <fieldsJsonOrFile> [--json]` | 本地校验表单字段 JSON |
 | `openyida create-form update <appType> <formUuid> (<changesJsonOrFile> \| --data-file <changesJsonOrFile>) [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | 更新表单页面 |
