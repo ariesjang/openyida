@@ -1,6 +1,6 @@
 # 选择主题色和 token
 
-> 这一步选择应用主色、辅助色、字体层级、组件基调和宜搭 token 作用域。
+> 这一步同时设计导航、应用框架、表单、记录详情和自定义页面，确定配色、字体、形状、间距与状态，并写入应用 token。
 
 视觉方向要从“高级 / 简洁 / 商务”继续落细。PRD 只写应用主题色和风格摘要；`design.md` 写完整 `themeProfile`、主题 token、主色、辅助色、中性色、字体层级和组件基调。
 
@@ -20,7 +20,7 @@
 
 
 1. 先判断业务气质：行业、目标用户、品牌关键词、业务情绪、视觉目标，以及是否需要亲和/专业/活力/稳重/科技/自然感。
-2. 在 `design.md` 中记录主题色、从所选主题模板派生的 `navTheme`、`logoSource` 和 `layoutDirection`。
+2. 在 `design.md` 中记录主题色、`navTheme`、`logoSource` 和业务已确定的 `layoutDirection`。命名模板继承完整导航 token 和模板派生的 `navTheme`；自由创意明确设计两者。按 [导航与应用框架](../references/application-theme-consistency.md#导航与应用框架) 将导航外观与各类页面一起写入主题。
 3. 主题文件按 [生成与更新规则](output-design.md#cli-token-契约fast--plan-共用) 准备；Plan 复用已生成的主题 CSS。
 4. 主题 CSS 生成后读取并核对目标 token；需要修改变量时回到设计源文件，再通过 CLI 生成并重新上传。只有 CLI 未覆盖且已核实选择器的样式覆盖，才在现有 CSS 末尾小范围追加。按 [共用主题规则](../references/application-theme-consistency.md) 处理，不另写脚本生成或重写主题文件。
 5. 整体暗色时，按 [浮层适配](../references/theme/theme-token-presets.md#暗色主题浮层适配) 补齐组件 token 和必要的 classname 覆盖。

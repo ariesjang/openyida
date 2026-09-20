@@ -25,6 +25,10 @@ const DETAIL_FIELD_PREVIEW_TOKENS = [
   '--pod-field-preview-gap', '--pod-field-preview-line-height',
   '--pod-field-preview-min-height', '--pod-field-preview-padding',
 ];
+const NAVIGATION_COLOR_TOKENS = [
+  '--pod-shell-theme-bg-color', '--pod-nav-item-text-color', '--pod-nav-item-text-hover-color',
+  '--pod-nav-item-text-selected-color', '--pod-nav-menu-bg-hover-color', '--pod-nav-menu-bg-selected-color',
+];
 let directory;
 
 beforeEach(() => { directory = fs.mkdtempSync(path.join(os.tmpdir(), 'oyd-app-style-')); });
@@ -70,6 +74,58 @@ test('theme catalog separates content tone from navigation tone', () => {
   });
   const creative = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, applicationStyles.find(theme => theme.mode === 'creative').templatePath), 'utf8');
   expect(creative).toContain('在 themeProfile 中分别填写 contentTone 与 navTheme');
+});
+
+test('every named theme has its own complete platform navigation design and readable guidance', () => {
+  const platformCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'references/theme/app-custom-theme-template.css'), 'utf8');
+  const supported = new Set([...platformCss.matchAll(/(--[\w-]+)\s*:/g)].map(match => match[1]));
+  const palettes = new Set();
+  const radii = new Set();
+  const heights = new Set();
+  themeIndex.filter(theme => theme.mode !== 'creative').forEach(theme => {
+    const source = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
+    const navigation = parseDesignDocument(source).metadata.tokens['application-global'].appearance.navigation;
+    expect(theme.navigationSummary).toEqual(expect.any(String));
+    expect(source).toContain(theme.navigationSummary);
+    expect(source).toContain('导航与应用框架、表单、自定义页面和详情页共用设计语言');
+    expect(source).not.toContain('原生导航仅配置上述开放颜色');
+    Object.keys(navigation).forEach(token => expect(supported.has(token)).toBe(true));
+    expect(Object.keys(navigation).length).toBeGreaterThanOrEqual(40);
+    NAVIGATION_COLOR_TOKENS.forEach(token => expect(navigation[token]).toEqual(expect.any(String)));
+    palettes.add(NAVIGATION_COLOR_TOKENS.map(token => navigation[token]).join('|'));
+    radii.add(navigation['--pod-nav-menu-item-radius']);
+    heights.add(navigation['--pod-nav-menu-item-height']);
+    // Navigation overlays have their own surface, including dark-nav/light-content themes.
+    expect(navigation['--pod-nav-popup-bg-color']).toBe('var(--pod-shell-theme-bg-color)');
+    expect(navigation['--pod-nav-search-text-color']).toBe('var(--pod-nav-item-text-hover-color)');
+    expect(navigation['--pod-nav-logo-icon']).toBe('var(--pod-nav-item-text-selected-color)');
+  });
+  expect(palettes.size).toBe(33);
+  expect(radii.size).toBeGreaterThanOrEqual(8);
+  expect(heights.size).toBeGreaterThanOrEqual(6);
+});
+
+test('application preset navigation text is readable in ordinary, hover and selected states', () => {
+  const luminance = hex => {
+    const rgb = hex.slice(1).match(/../g).map(channel => parseInt(channel, 16) / 255)
+      .map(channel => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+    return rgb[0] * 0.2126 + rgb[1] * 0.7152 + rgb[2] * 0.0722;
+  };
+  const states = [
+    ['--pod-nav-item-text-color', '--pod-shell-theme-bg-color'],
+    ['--pod-nav-item-text-hover-color', '--pod-nav-menu-bg-hover-color'],
+    ['--pod-nav-item-text-selected-color', '--pod-nav-menu-bg-selected-color'],
+  ];
+  styles.forEach(theme => {
+    const navigation = parseDesignDocument(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8'))
+      .metadata.tokens['application-global'].appearance.navigation;
+    states.forEach(([foreground, background]) => {
+      const values = [navigation[foreground], navigation[background]];
+      values.forEach(value => expect(value).toMatch(/^#[\da-f]{6}$/i));
+      const [a, b] = values.map(luminance);
+      expect((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toBeGreaterThanOrEqual(4.5);
+    });
+  });
 });
 
 test('all nineteen form-layout starters use supported types and direct capability language', () => {
@@ -266,6 +322,11 @@ test('free creative rejects absent business decisions and explicit design tokens
   const starter = readDesignTokens(resolveThemeColors(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'templates/design-themes/free-creative/design.md'), 'utf8').replace(/\{\{PRIMARY_COLOR\}\}/g, '#685544')));
   plan.visualStyle.tokens = Object.fromEntries(CREATIVE_TOKENS.map(key => [key, starter[key]]));
   plan.visualStyle.tokens['--pod-page-bg-color'] = '#eee8df';
+  Object.assign(plan.visualStyle.tokens, {
+    '--pod-shell-theme-bg-color': '#302820', '--pod-nav-item-text-color': '#D5C9BA',
+    '--pod-nav-item-text-hover-color': '#FAF0E4', '--pod-nav-item-text-selected-color': '#302820',
+    '--pod-nav-menu-bg-hover-color': '#493C2F', '--pod-nav-menu-bg-selected-color': '#D5C9BA',
+  });
   fs.writeFileSync(input, JSON.stringify(plan));
   const result = materialize(input);
   const design = fs.readFileSync(result.outputs.design, 'utf8');

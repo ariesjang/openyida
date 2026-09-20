@@ -642,7 +642,47 @@ describe('design-plan materialize', () => {
     const section = design.split('### 2.2 应用导航')[1].split('### 2.3 ')[0];
     expect(section).toContain(`导航明暗：${tone === 'dark' ? '深色' : '浅色'}`);
     expect(section).not.toMatch(/模板默认|默认近白|生成项目时|项目生成时/);
-    expect(design.match(/本项目导航配色/g)).toHaveLength(1);
+    expect(design.match(/本项目导航与应用框架/g)).toHaveLength(1);
+    expect(section).toContain('| 选中项阴影 | --pod-nav-menu-item-selected-shadow | none |');
+    expect(validateDesignDocument(design).success).toBe(true);
+  });
+
+  test('project navigation values replace preset prose while preserving business layout reasons and shared guidance', () => {
+    const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
+    const { loadThemeIndex } = require('../lib/design-plan/themes');
+    const { readDesignTokens } = require('../lib/app/theme-from-design');
+    const theme = loadThemeIndex().themes.find(item => item.themeId === 'app-paper');
+    plan.visualStyle.forUser.selectedTheme = theme;
+    plan.visualStyle.forUser.navigationStyle = {
+      structure: 'side', tone: 'dark',
+      selectionReason: '高频流程处理需要稳定入口，深色导航加强模块边界。',
+    };
+    plan.visualStyle.tokens = {
+      '--pod-shell-theme-bg-color': '#EDF4FF', '--pod-nav-item-text-color': '#183A6B',
+      '--pod-nav-menu-bg-selected-color': '#BAD7FF',
+    };
+    const design = renderDesign(plan);
+    const section = design.split('### 2.2 应用导航')[1].split('### 2.3 ')[0];
+    expect(section).toContain('布局依据：高频流程处理需要稳定入口');
+    expect(section).toContain('明暗依据：沿用已选应用风格的导航明暗，当前为浅色');
+    expect(section).toContain('| 导航背景 | --pod-shell-theme-bg-color | #EDF4FF |');
+    expect(section).not.toContain(theme.navigationSummary);
+    expect(section).not.toContain('深色导航');
+    expect(section).not.toContain('当前模板使用');
+    expect(section).toContain('图标跟随对应文字状态');
+    expect(section).toContain('键盘焦点可见');
+    expect(readDesignTokens(design)).toMatchObject(plan.visualStyle.tokens);
+    expect(validateDesignDocument(design).success).toBe(true);
+  });
+
+  test('generated navigation design exposes the selected theme shadow value', () => {
+    const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
+    plan.visualStyle.forUser.selectedTheme = {
+      themeId: 'dark-rail-fine-lines',
+      templatePath: 'templates/design-themes/dark-rail-fine-lines.md',
+    };
+    const design = renderDesign(plan);
+    expect(design).toContain('| 选中项阴影 | --pod-nav-menu-item-selected-shadow | inset 3px 0 0 var(--color-brand1-6) |');
     expect(validateDesignDocument(design).success).toBe(true);
   });
 
@@ -869,7 +909,7 @@ describe('design-plan materialize', () => {
         : scope(template, mode).match(/--pod-shell-theme-bg-color:\s*([^;]+);/)[1];
       const scoped = scope(css, mode);
       expect(scoped).toContain(`--pod-shell-theme-bg-color: ${background};`);
-      const headerBackground = mode === tone ? background
+      const headerBackground = mode === tone ? (tokens['--pod-page-header-bg-color'] || background)
         : scope(template, mode).match(/--pod-page-header-bg-color:\s*([^;]+);/)[1];
       expect(scoped).toContain(`--pod-page-header-bg-color: ${headerBackground};`);
     }
@@ -880,7 +920,7 @@ describe('design-plan materialize', () => {
     expect(changed).toContain('--color-brand1-6: #1677FF;');
     expect(scope(changed, tone)).toContain(`--pod-shell-theme-bg-color: ${readDesignTokens(nextDesign)['--pod-shell-theme-bg-color']};`);
     for (const mode of ['light', 'dark', 'white', 'gray'].filter(mode => mode !== tone)) {
-      expect(scope(changed, mode)).toBe(scope(template, mode));
+      expect(scope(changed, mode)).toBe(scope(css, mode));
     }
     expect(changed).toContain('.local-detail { padding: 7px; }');
     expect(applyDesignTokens(changed, renderDesign(plan), renderDesign(plan))).toBe(changed);
@@ -1001,18 +1041,21 @@ describe('design-plan materialize', () => {
   });
 
   test.each([
-    ['soft-inset-surfaces', 'dark', 'light', '#767676', '#303030'],
-    ['dark-inset-hairline', 'light', 'dark', '#A8A8A8', '#ECECEC'],
-  ])('%s ignores stale %s input and keeps its derived %s navigation palette', (themeId, staleTone, tone, foreground, selectedForeground) => {
+    ['soft-inset-surfaces', 'dark', 'light'],
+    ['dark-inset-hairline', 'light', 'dark'],
+  ])('%s ignores stale %s input and keeps its derived %s navigation palette', (themeId, staleTone, tone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
     plan.visualStyle.forUser.navigationStyle.tone = staleTone;
     const { readDesignTokens } = require('../lib/app/theme-from-design');
+    const { resolveThemeColors } = require('../lib/design-plan/themes');
+    const source = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design', plan.visualStyle.forUser.selectedTheme.templatePath), 'utf8');
+    const sourceTokens = readDesignTokens(resolveThemeColors(source.replace(/\{\{PRIMARY_COLOR\}\}/g, plan.visualStyle.forUser.colorStrategy.primaryColor)));
     const design = renderDesign(plan);
     const tokens = readDesignTokens(design);
     expect(parseDesignDocument(design).metadata.themeProfile.navTheme).toBe(tone);
-    expect(tokens['--pod-nav-item-text-color']).toBe(foreground);
-    expect(tokens['--pod-nav-item-text-selected-color']).toBe(selectedForeground);
+    expect(tokens['--pod-nav-item-text-color']).toBe(sourceTokens['--pod-nav-item-text-color']);
+    expect(tokens['--pod-nav-item-text-selected-color']).toBe(sourceTokens['--pod-nav-item-text-selected-color']);
     expect(tokens['--pod-nav-menu-bg-hover-color']).not.toBe(tokens['--pod-shell-theme-bg-color']);
     expect(tokens['--pod-nav-menu-bg-selected-color']).not.toBe(tokens['--pod-nav-menu-bg-hover-color']);
     expect(tokens['--pod-page-bg-color']).toBe(themeId === 'soft-inset-surfaces' ? '#FAFAFA' : '#000000');

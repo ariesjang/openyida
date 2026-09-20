@@ -955,7 +955,7 @@ describe('OpenYida skill contracts', () => {
     expect(output).toContain('## 5. 应用主题与风格摘要');
     expect(output).toContain('| 设计文件 | `prd/<项目名>/design.md` |');
     expect(output).toContain('| 应用主题色 | <平台预置 key 或自定义色盘名称；必须与 design.md 的 Theme Profile 一致> |');
-    expect(output).toContain('| 风格摘要 | <2-3 个业务风格关键词，例如高效协同、稳重可信、经营洞察；完整 UI 设计见 design.md> |');
+    expect(output).toContain('| 风格摘要 | <概括导航、应用框架、表单、记录详情与自定义页面共同采用的视觉特点；完整规则见 design.md> |');
     expect(output).not.toContain('| 导航视觉 |');
     expect(output).toContain('### <页面名>');
     expect(output).toContain('- pageId：<display-page必填，复用共享需求/设计中的稳定页面ID；原生页面不补造>');
@@ -1335,6 +1335,7 @@ describe('OpenYida skill contracts', () => {
     const step2 = readSkill('yida-skills/skills/yida-design/workflow/step-2-theme-system.md');
     const outputDesign = readSkill('yida-skills/skills/yida-design/workflow/output-design.md');
     const styleSelection = readSkill('yida-skills/skills/yida-design/references/theme-selection.md');
+    const navShellPatterns = readSkill('yida-skills/skills/yida-nav-shell/references/nav-shell-patterns.md');
     const canvasStyleGuide = readSkill('yida-skills/skills/yida-canvas-custom-page/references/canvas-style-implementation-guide.md');
     const presets = readSkill('yida-skills/skills/yida-design/references/theme/theme-token-presets.md');
     const customThemeTemplate = readSkill('yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css');
@@ -1432,6 +1433,8 @@ describe('OpenYida skill contracts', () => {
     expect(outputDesign).toContain('只能由上述 OpenYida CLI 契约生成或更新');
     expect(outputDesign).toContain('不得另写 Python、Node、Shell 或 `run_workspace_script` 临时脚本');
     expect(outputDesign).toContain('校验脚本只能读取并报告问题，不能改写主题文件');
+    expect(outputDesign).toContain('`--pod-nav-menu-item-selected-shadow` 作为方向无关的基础外观 Token 独立透传');
+    expect(navShellPatterns).toContain('| 原生菜单选中标记 | `--pod-nav-menu-item-selected-shadow`');
     expect(step2).toContain('导航选中态与按钮不同色不直接判为冲突');
     expect(styleSelection).toContain('沿用已确认主题，只补当前页面');
     expect(canvasStyleGuide).toContain('按本指南把 `design.md` 的布局、材质、密度、图表和控件样式写入 Canvas 页面');

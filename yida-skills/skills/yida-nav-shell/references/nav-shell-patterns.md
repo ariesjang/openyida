@@ -265,6 +265,7 @@ hash 的 `view` 保存任务入口 key，刷新及前进后退恢复选中内容
 | 导航表面与标题 | `--pod-shell-theme-bg-color`、`--pod-nav-logo-text` |
 | 普通 / 悬停 / 选中 / 禁用文字 | `--pod-nav-item-text-*` |
 | 悬停 / 选中背景 | `--pod-nav-menu-bg-hover-color`、`--pod-nav-menu-bg-selected-color` |
+| 原生菜单选中标记 | `--pod-nav-menu-item-selected-shadow`；`none` 关闭，其他值使用完整 `box-shadow`，可表达左、右或底部内阴影 |
 | 分隔线、选中指示、焦点 | `--pod-nav-sub-divider-color`、`--pod-nav-tab-line-selected-color` |
 | 菜单高度、圆角、文字、间距 | `--pod-nav-menu-*`、`--pod-nav-top-tab-*` |
 | 悬浮阴影 | `--pod-nav-popup-shadow` |

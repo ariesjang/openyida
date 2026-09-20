@@ -13,12 +13,15 @@ const path = require('path');
 // Application styles add 18 paired presets plus the independent creative scaffold
 // (57 design/CSS/layout assets), their catalog, recipe and runtime consumer. Complete
 // content/navigation tone and detail-field tokens are retained in every standalone preset.
-// Merged theme-derived navigation and creative authoring contracts measure
-// 1,937,548 packed / 7,231,035 unpacked bytes in 569 files on Node 20/npm 10.
-// Retain ~21 KiB npm 10 compression overhead; round budgets to 16 KiB boundaries.
-const MAX_TARBALL_BYTES = 1920 * 1024;
-const MAX_UNPACKED_BYTES = 7072 * 1024;
-const MAX_ENTRY_COUNT = 569;
+// Complete navigation designs add 47 platform tokens to each template, paired
+// CSS mode overrides, one navigation-styles.json source, and matching guidance.
+// Paired CSS also retains scoped detail-canvas and toolbar contrast corrections.
+// Restored selected-item shadows include the common CSS rule and template guidance.
+// Measured on Node 20/npm 10: 1,967,920 packed / 7,480,355 unpacked bytes in 570 files.
+// Allow at least 21 KiB compression variation; round budgets to 16 KiB boundaries.
+const MAX_TARBALL_BYTES = 1952 * 1024;
+const MAX_UNPACKED_BYTES = 7312 * 1024;
+const MAX_ENTRY_COUNT = 570;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -55,6 +58,7 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-design/references/navigation-decision.md',
   'yida-skills/skills/yida-design/templates/design-themes/index.json',
   'yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json',
+  'yida-skills/skills/yida-design/templates/navigation-styles.json',
   'lib/app/application-style.js',
   'yida-skills/skills/yida-design/references/application-style-library.md',
   'yida-skills/skills/yida-design/references/theme/application-style-recipes.css',

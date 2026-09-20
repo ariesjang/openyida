@@ -15,12 +15,17 @@ const PYTHON = [['python3', []], ['python', []], ['py', ['-3']]].find(([command,
   return !result.error && result.status === 0 && match && Number(match[1]) === 3 && Number(match[2]) >= 9;
 });
 
-test('shipped themes inherit project color instead of prescribing a hue when branding is absent', () => {
+test('shipped themes inherit project color and declare the selected-item shadow contract', () => {
   const index = JSON.parse(fs.readFileSync(path.join(THEMES, 'index.json'), 'utf8'));
   for (const theme of index.themes) {
     const source = fs.readFileSync(path.join(SKILL, theme.templatePath), 'utf8');
     expect(source).not.toMatch(/(?:无品牌色|没有品牌色)[^。\n]*(?:默认[^。\n]*(?:蓝色|冷色|纯黑)|(?:蓝色|冷色|纯黑)[^。\n]*默认)/);
     expect(source).toContain('{{PRIMARY_COLOR}}');
+    const shadow = /"--pod-nav-menu-item-selected-shadow":\s*"([^"]+)"/.exec(source);
+    expect(shadow).not.toBeNull();
+    expect(shadow[1]).toBe(theme.themeId === 'dark-rail-fine-lines'
+      ? 'inset 3px 0 0 var(--color-brand1-6)'
+      : 'none');
   }
 });
 
@@ -129,6 +134,7 @@ test('templates accept extra global and project variables with shared references
 
 test.each([
   ['missing summary', index => { delete index.themes[0].styleSummary; }, 'styleSummary'],
+  ['missing navigation summary', index => { delete index.themes[0].navigationSummary; }, 'navigationSummary'],
   ['missing theme modes in summary', index => { index.themes[0].styleSummary = index.themes[0].styleSummary.replace(/^[^。]+。/, ''); }, 'styleSummary 必须用自然语言说明深色或浅色导航，以及深色或浅色内容界面'],
   ['mismatched nav theme in summary', index => { index.themes[0].styleSummary = index.themes[0].styleSummary.replace('深色导航', '浅色导航'); }, 'styleSummary 的导航明暗与主题模板 navTheme 不一致'],
   ['missing content tone', index => { delete index.themes[0].contentTone; }, 'contentTone'],

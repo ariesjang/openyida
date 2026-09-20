@@ -6,7 +6,7 @@
 
 - [index.json](index.json) 维护主题 ID、用户可读名称、模板路径和选型摘要，`schemaVersion` 为 `2.0`。
 - `<themeId>.md` 保存完整 V2 主题模板，是视觉规则和 Token 数值的事实源。
-- [basic-tokens.json](basic-tokens.json) 保存 69 个全局变量及固定值，作为模板校验依据。
+- [basic-tokens.json](basic-tokens.json) 保存 70 个全局变量及固定值，作为模板校验依据。
 - [validate_design_themes.py](../../scripts/validate_design_themes.py) 校验索引、模板及变量引用。
 
 每条索引记录包含以下字段：
@@ -34,13 +34,14 @@ Frontmatter 包含 `name`、`description`、`themeId`、`navTheme` 和 `tokens`�
 
 ## Token 契约
 
-`tokens.application-global` 按 `appearance`（含表面和导航）、`colors`、`typography`、`spacing`、`rounded`、`shadow` 分组，完整定义契约中的 69 个基础变量；这是最小集合，允许按角色补充变量。`tokens.custom-page` 可为空，也可组织跨页面与组件复用的项目扩展变量，包括材质、布局、字体、动效等。两组均写入主题 CSS 的 `:root`，分组不是运行时隔离作用域，变量前缀不限定为 `--oyd-*`。递归读取以 `--` 开头的标量叶子，分组名不拼入 CSS 变量名。
+`tokens.application-global` 按 `appearance`（含表面和导航）、`colors`、`typography`、`spacing`、`rounded`、`shadow` 分组，完整定义契约中的 70 个基础变量；这是最小集合，允许按角色补充变量。`tokens.custom-page` 可为空，也可组织跨页面与组件复用的项目扩展变量，包括材质、布局、字体、动效等。两组均写入主题 CSS 的 `:root`，分组不是运行时隔离作用域，变量前缀不限定为 `--oyd-*`。递归读取以 `--` 开头的标量叶子，分组名不拼入 CSS 变量名。
 
 - 字体与间距使用契约固定值；页面标题使用 subhead，表格正文使用 table。
 - 颜色与圆角保留主题差异。Tooltip 固定使用 `#262626` 与 `#FFFFFF`。
 - `--color-white` 和 `--pod-table-cell-color` 通过 `var(--pod-card-bg-color)` 继承内容表面；页面桥接 `--oyd-page-bg` 若存在，使用 `var(--pod-page-bg-color)`。
 - `--color-brand1-6` 使用项目主色占位符，其他品牌档位明确引用这个主色种子推导。`<生成实际色值：…>` 属于推导指令，项目化时替换为实际 CSS 值。
 - 变量名在两层及各分组中均唯一；平台基础与项目扩展均在主题中声明，可无环引用，并按实际设计补充变量。声明与正文中的引用必须存在，不得循环引用，不使用后缀缩写或 `*` 通配写法。
+- 原生导航选中项阴影统一由 `--pod-nav-menu-item-selected-shadow` 控制；不需要额外标记的主题显式写 `none`，需要标记的主题写完整 `box-shadow` 值。该值不绑定方向：左、右、下强调线分别使用正水平偏移、负水平偏移、负垂直偏移的 `inset` 阴影。公共 CSS 模板负责消费该变量，主题模板不保存平台 DOM 选择器。
 - 标量可用双引号、单引号或普通 CSS 文本；数字可以不加引号。不使用 YAML 数组、别名、标签或多行标量。
 
 ## 项目化占位符

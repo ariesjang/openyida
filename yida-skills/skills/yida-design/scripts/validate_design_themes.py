@@ -202,6 +202,8 @@ def validate(skill_root: Path) -> list[str]:
                 errors.append(f"{label} contentTone 必须是 light 或 dark")
             if theme.get("navTheme") not in {"light", "dark"}:
                 errors.append(f"{label} navTheme 必须是 light 或 dark")
+            if not isinstance(theme.get("navigationSummary"), str) or not theme["navigationSummary"].strip():
+                errors.append(f"{label} navigationSummary 必须说明导航与应用整体风格的关系")
         if not isinstance(theme_id, str) or not re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*", theme_id):
             errors.append(f"{label} themeId 格式非法")
             continue

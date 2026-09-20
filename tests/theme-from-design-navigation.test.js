@@ -9,7 +9,7 @@ const { validateThemeCssContent } = require('../lib/app/custom-theme');
 const fixture = require('./fixtures/design-plan.json');
 const template = fs.readFileSync(path.join(__dirname,
   '../yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
-const navigationNames = [
+const navigationColorNames = [
   '--pod-shell-theme-bg-color', '--pod-nav-item-text-color', '--pod-nav-item-text-hover-color',
   '--pod-nav-item-text-selected-color', '--pod-nav-menu-bg-hover-color', '--pod-nav-menu-bg-selected-color',
 ];
@@ -17,7 +17,10 @@ const navigationNames = [
 const themeTones = {
   'soft-inset-surfaces': 'light',
   'dark-inset-hairline': 'dark',
+  'dark-rail-fine-lines': 'dark',
 };
+
+const selectedShadowToken = '--pod-nav-menu-item-selected-shadow';
 
 function design(themeId, primaryColor = '#6F4E37', requestedTone) {
   const plan = JSON.parse(JSON.stringify(fixture));
@@ -52,12 +55,12 @@ test.each([
   const tokens = readDesignTokens(markdown);
   const css = applyDesignTokens(template, markdown);
   const active = cascade(css, tone);
-  for (const name of navigationNames) {expect(active[name]).toBe(tokens[name]);}
-  expect(active['--pod-page-header-bg-color']).toBe(tokens['--pod-shell-theme-bg-color']);
+  for (const name of navigationColorNames) {expect(active[name]).toBe(tokens[name]);}
+  expect(active['--pod-page-header-bg-color']).toBe(tokens['--pod-page-header-bg-color'] || tokens['--pod-shell-theme-bg-color']);
   const other = tone === 'dark' ? 'light' : 'dark';
   const inactive = cascade(css, other);
   const defaults = cascade(template, other);
-  for (const name of navigationNames) {expect(inactive[name]).toBe(defaults[name]);}
+  for (const name of navigationColorNames) {expect(inactive[name]).toBe(defaults[name]);}
   for (const mode of ['white', 'gray']) {
     for (const name of ['--pod-shell-theme-bg-color', '--pod-page-header-bg-color']) {
       expect(cascade(css, mode, 'light')[name]).toBe(cascade(template, mode, 'light')[name]);
@@ -82,7 +85,7 @@ test.each(['soft-inset-surfaces', 'dark-inset-hairline'])('%s preserves template
   const lightTokens = readDesignTokens(lightNavigation);
   const darkTokens = readDesignTokens(darkNavigation);
   for (const name of contentNames) {expect(lightTokens[name]).toBe(darkTokens[name]);}
-  for (const name of navigationNames) {expect(lightTokens[name]).toBe(darkTokens[name]);}
+  for (const name of navigationColorNames) {expect(lightTokens[name]).toBe(darkTokens[name]);}
 });
 
 test.each(['light', 'dark'])('Fast documents infer %s navigation from their shell without Plan metadata', tone => {
@@ -91,7 +94,7 @@ test.each(['light', 'dark'])('Fast documents infer %s navigation from their shel
   const css = applyDesignTokens(template, markdown);
   const active = cascade(css, tone);
   const tokens = readDesignTokens(markdown);
-  for (const name of navigationNames) {expect(active[name]).toBe(tokens[name]);}
+  for (const name of navigationColorNames) {expect(active[name]).toBe(tokens[name]);}
 });
 
 test('changing the selected mode resets its previous mode and preserves unrelated custom CSS', () => {
@@ -99,7 +102,7 @@ test('changing the selected mode resets its previous mode and preserves unrelate
   const next = design('dark-inset-hairline');
   const custom = '\n.local-detail { padding: 7px; }\n';
   const css = applyDesignTokens(applyDesignTokens(template, previous) + custom, next, previous);
-  for (const name of navigationNames) {
+  for (const name of navigationColorNames) {
     expect(cascade(css, 'dark')[name]).toBe(readDesignTokens(next)[name]);
     expect(cascade(css, 'light')[name]).toBe(cascade(template, 'light')[name]);
   }
@@ -111,7 +114,7 @@ test('delta updates preserve hand-edited unchanged navigation colors and page st
   const previous = design('soft-inset-surfaces');
   const next = design('soft-inset-surfaces', '#315BCC');
   const original = applyDesignTokens(template, previous);
-  const customized = original.replaceAll('--pod-nav-item-text-color: #767676;', '--pod-nav-item-text-color: #ABCDEF;')
+  const customized = original.replaceAll(`--pod-nav-item-text-color: ${readDesignTokens(previous)['--pod-nav-item-text-color']};`, '--pod-nav-item-text-color: #ABCDEF;')
     .replace('--corner-2: 8px;', '--corner-2: 11px;') + '\n.local-detail { padding: 7px; }\n';
   const changed = applyDesignTokens(customized, next, previous);
   expect(cascade(changed, 'light')['--pod-nav-item-text-color']).toBe('#ABCDEF');
@@ -121,10 +124,52 @@ test('delta updates preserve hand-edited unchanged navigation colors and page st
   expect(applyDesignTokens(changed, next, next)).toBe(changed);
 });
 
+test('extended navigation tokens survive root and mode overrides, preserve inactive defaults and update incrementally', () => {
+  const previous = design('soft-inset-surfaces');
+  const authored = {
+    '--pod-page-header-bg-color': '#F5EAD4', '--pod-page-header-text-color': '#223344', '--pod-nav-search-text-color': '#493C20',
+    '--pod-nav-popup-bg-color': '#FFF4DF', '--pod-nav-logo-text': '#483818',
+    '--pod-nav-menu-item-height': '43px', '--pod-nav-menu-item-radius': '17px',
+  };
+  const withTokens = (markdown, values) => {
+    const metadata = parseDesignDocument(markdown).metadata;
+    Object.assign(metadata.tokens['application-global'].appearance.navigation, values);
+    return `---\n${Object.entries(metadata).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join('\n')}\n---\n${markdown.split(/\n---\n/).slice(1).join('\n---\n')}`;
+  };
+  const next = withTokens(previous, authored);
+  const css = applyDesignTokens(template, next);
+  for (const [name, value] of Object.entries(authored)) {
+    expect(cascade(css, 'light')[name]).toBe(value);
+    expect(cascade(css, 'dark')[name]).toBe(cascade(template, 'dark')[name]);
+  }
+  const changed = withTokens(next, { '--pod-nav-popup-bg-color': '#FFECCA' });
+  const customized = css.replaceAll('--pod-nav-search-text-color: #493C20;', '--pod-nav-search-text-color: #AABBCC;');
+  const result = applyDesignTokens(customized, changed, next);
+  expect(cascade(result, 'light')['--pod-nav-popup-bg-color']).toBe('#FFECCA');
+  expect(cascade(result, 'light')['--pod-nav-search-text-color']).toBe('#AABBCC');
+  expect(result).not.toContain(': undefined;');
+});
+
 test('mode metadata changes take effect even when token values are unchanged', () => {
   const previous = design('soft-inset-surfaces');
   const next = previous.replace('"navTheme":"light"', '"navTheme":"dark"');
   const css = applyDesignTokens(applyDesignTokens(template, previous), next, previous);
   const tokens = readDesignTokens(next);
-  for (const name of navigationNames) {expect(cascade(css, 'dark')[name]).toBe(tokens[name]);}
+  for (const name of navigationColorNames) {expect(cascade(css, 'dark')[name]).toBe(tokens[name]);}
+});
+
+test('theme-selected navigation shadow flows into CSS and resets to none', () => {
+  const previous = design('dark-rail-fine-lines');
+  const previousCss = applyDesignTokens(template, previous);
+  expect(readDesignTokens(previous)[selectedShadowToken]).toBe('inset 3px 0 0 var(--color-brand1-6)');
+  expect(cascade(previousCss, 'dark')[selectedShadowToken]).toBe('inset 3px 0 0 var(--color-brand1-6)');
+  expect(previousCss).toContain('box-shadow: var(--pod-nav-menu-item-selected-shadow, none);');
+  for (const mode of ['light', 'dark', 'white', 'gray']) {
+    expect(cascade(previousCss, mode)[selectedShadowToken]).toBe('inset 3px 0 0 var(--color-brand1-6)');
+  }
+
+  const next = design('soft-inset-surfaces');
+  const nextCss = applyDesignTokens(previousCss, next, previous);
+  expect(readDesignTokens(next)[selectedShadowToken]).toBe('none');
+  expect(cascade(nextCss, 'light')[selectedShadowToken]).toBe('none');
 });

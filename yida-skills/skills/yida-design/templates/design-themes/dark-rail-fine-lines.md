@@ -13,12 +13,53 @@ tokens:
         "--pod-card-bg-color": "#FFFFFF" # neutral-gray；一级内容表面
         "--pod-table-cell-color": "var(--pod-card-bg-color)" # 表格正文跟随卡片表面
       navigation:
-        "--pod-shell-theme-bg-color": "#1B1B1B" # neutral-gray；深色导航背景，独立于内容区
-        "--pod-nav-item-text-color": "#A0A0A0" # neutral-gray；普通菜单与图标
-        "--pod-nav-item-text-hover-color": "#E7E7E7" # neutral-gray；悬停文字与图标
-        "--pod-nav-item-text-selected-color": "#FFFFFF" # neutral-gray；选中文字与图标
-        "--pod-nav-menu-bg-hover-color": "#272727" # neutral-gray；悬停背景
-        "--pod-nav-menu-bg-selected-color": "#323232" # neutral-gray；选中背景
+        "--pod-shell-theme-bg-color": "#1B1B1B"
+        "--pod-nav-item-text-color": "#A0A0A0"
+        "--pod-nav-item-text-hover-color": "#E7E7E7"
+        "--pod-nav-item-text-selected-color": "#FFFFFF"
+        "--pod-nav-menu-bg-hover-color": "#272727"
+        "--pod-nav-menu-bg-selected-color": "#323232"
+        "--pod-nav-menu-item-selected-shadow": "inset 3px 0 0 var(--color-brand1-6)"
+        "--pod-page-header-bg-color": "var(--pod-shell-theme-bg-color)"
+        "--pod-nav-l-sub-main-bg-color": "var(--pod-shell-theme-bg-color)"
+        "--pod-nav-top-main-border-width": "1px"
+        "--pod-nav-top-main-border-color": "#353535"
+        "--pod-nav-logo-text": "var(--pod-nav-item-text-hover-color)"
+        "--pod-nav-logo-bg": "var(--pod-nav-menu-bg-selected-color)"
+        "--pod-nav-logo-icon": "var(--pod-nav-item-text-selected-color)"
+        "--pod-nav-logo-border": "1px solid #353535"
+        "--pod-nav-logo-border-radius": "2px"
+        "--pod-nav-sub-divider-color": "#353535"
+        "--pod-nav-item-text-disabled-color": "rgba(255,255,255,.30)"
+        "--pod-nav-l-container-bg": "var(--pod-shell-theme-bg-color)"
+        "--pod-nav-l-group-label-color": "var(--pod-nav-item-text-color)"
+        "--pod-nav-l-search-border-color": "#353535"
+        "--pod-nav-popup-bg-color": "var(--pod-shell-theme-bg-color)"
+        "--pod-nav-popup-border-radius": "2px"
+        "--pod-nav-popup-shadow": "0 8px 24px rgba(0,0,0,.24)"
+        "--pod-nav-tab-line-hover-color": "var(--pod-nav-item-text-hover-color)"
+        "--pod-nav-tab-line-selected-color": "var(--pod-nav-item-text-hover-color)"
+        "--pod-nav-search-bg-color": "var(--pod-nav-menu-bg-hover-color)"
+        "--pod-nav-search-bg-hover-color": "var(--pod-nav-menu-bg-hover-color)"
+        "--pod-nav-search-bg-active-color": "var(--pod-nav-menu-bg-hover-color)"
+        "--pod-nav-search-placeholder-color": "var(--pod-nav-item-text-color)"
+        "--pod-nav-search-text-color": "var(--pod-nav-item-text-hover-color)"
+        "--pod-nav-search-icon-color": "var(--pod-nav-item-text-color)"
+        "--pod-nav-search-border-color": "#353535"
+        "--pod-nav-search-border-hover-color": "var(--pod-nav-item-text-hover-color)"
+        "--pod-nav-search-border-active-color": "var(--pod-nav-item-text-hover-color)"
+        "--pod-nav-action-icon-color": "var(--pod-nav-item-text-color)"
+        "--pod-nav-action-border-color": "#353535"
+        "--pod-nav-action-border": "1px solid #353535"
+        "--pod-nav-action-bg-hover-color": "var(--pod-nav-menu-bg-hover-color)"
+        "--pod-nav-action-bg-active-color": "var(--pod-nav-menu-bg-hover-color)"
+        "--pod-nav-menu-item-height": "38px"
+        "--pod-nav-menu-item-radius": "2px"
+        "--pod-nav-menu-font-size": "14px"
+        "--pod-nav-menu-item-selected-font-weight": "500"
+        "--pod-nav-menu-line-height": "20px"
+        "--pod-nav-menu-gap": "8px"
+        "--pod-shell-lshape-border-radius": "2px"
     colors:
       "--color-white": "var(--pod-card-bg-color)" # 全应用基础表面；当前随浅色内容主面，不承担白字语义
       "--color-brand1-1": "<生成实际色值：--color-brand1-6 88% + #FFFFFF 12%，sRGB 逐通道混合>" # 品牌交互悬停
@@ -139,11 +180,15 @@ tokens:
 
 ### 2.2 应用导航
 
-导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+深炭导航与白色工作区形成清楚分区，白字灰底标识当前菜单；细边界和低圆角与正文一致。
 
-仅当项目明确采用自绘导航时，补充以下表达：导航项使用 `--corner-2`，图标与文字水平对齐，图标为轻量描边；内部左右留白使用 `--s-4`，分组间距使用 `--s-6`，分组名用次一级导航文字。已有品牌区可用 `--oyd-shell-brand-panel` 形成小范围更深底面，不能借用品牌派生深色替代壳层色。组间分隔线根据实际导航底色保持低对比，不直接移用内容区的分隔线。
+导航与应用框架、表单、自定义页面和详情页共用设计语言。先按业务入口安排菜单、分组、搜索、品牌区与常用操作，再一起确定导航与正文的明暗、表面、字体、边界、圆角和密度。平台导航使用真实页面菜单；自绘导航按同一套导航 Token 实现。命名模板沿用自身 navTheme，换主色保持导航明暗与内容画布；需要另一导航明暗时改选主题，自由创意按项目明确设计。
 
-若已有数量提醒，允许使用品牌色的小胶囊，仅突出数量，不铺满菜单行。导航弹出层仍遵循白色覆盖层规则；深色导航的白字不直接进入白底弹层。页头的标题、搜索、头像和已有操作属于页头内容，不因此创建第二套导航。
+导航底色使用 --pod-shell-theme-bg-color；普通、悬停和选中文字分别使用 --pod-nav-item-text-color、--pod-nav-item-text-hover-color、--pod-nav-item-text-selected-color；悬停和选中背景使用 --pod-nav-menu-bg-hover-color、--pod-nav-menu-bg-selected-color。图标跟随对应文字状态，当前入口同时用背景或字重表达。
+
+菜单高度、圆角与间距使用 --pod-nav-menu-item-height、--pod-nav-menu-item-radius、--pod-nav-menu-gap；搜索、品牌区、分组、操作和弹出菜单使用 navigation 分组中的对应 Token。弹出菜单的底色、文字与搜索状态成组配套，导航与内容可以分别选择明暗。选中项使用 --pod-nav-menu-item-selected-shadow：none 关闭额外标记，完整 box-shadow 值可表达左、右或底部内阴影，不占据菜单布局空间；该 Token 独立于导航明暗。 本模板选中标记为 inset 3px 0 0 var(--color-brand1-6)。
+
+桌面检查菜单、搜索、选中态与表单的协调；折叠后保留可识别图标和入口名称；窄屏保持菜单可展开、当前页面可定位、键盘焦点可见。提交、编辑、详情与自定义页都沿用这一导航设计。
 
 ### 2.3 页面标题与操作
 
@@ -232,7 +277,7 @@ tokens:
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | Hover                            | 中性控件保持 `--color-fill1-1`，通过边框与图标加深形成变化；品牌交互可使用 `--color-brand1-1`。不抬升整张常驻卡片 |
 | Active / pressed                 | 中性操作用 `--color-fill1-2`；品牌操作用 `--color-brand1-9`，不改变尺寸                                           |
-| Selected                         | 集合或中性选项用 `--color-fill1-2` 配清晰标记；品牌关系用细线或局部品牌色。导航必须使用其六项专用配色             |
+| Selected                         | 集合或中性选项用 `--color-fill1-2` 配清晰标记；品牌关系用细线或局部品牌色。导航使用六项专用颜色与选中项阴影       |
 | Focus                            | 以约 2px 的品牌色外轮廓及清晰间隔表达焦点（推断）；不依赖仅几乎不可见的填充变化                                   |
 | Disabled                         | 使用 `--color-text1-2` 或 `--color-brand1-10`，关闭强调；不把正常辅助说明标成禁用态                               |
 | Error / warning / success / info | 使用平台已有语义色、文字与必要图标；错误字段保留输入结构，边界和说明同步指出问题，不新增同义状态 Token            |
@@ -292,7 +337,7 @@ tokens:
 
 YAML 是变量值的唯一事实源；正文只规定消费关系，独立局部参数在出现处标为推断。全局变量供平台原生页面与自定义页面消费；页面层补充主题色深色对象信息、图表色、认证标志、自绘品牌区和独立指标排版。递归提取以 `--` 开头的标量叶子，分组名称不拼接到 CSS 变量名；平台基础与项目扩展均在主题中声明，可无环引用，并按实际设计补充变量。
 
-导航颜色成组独立确定，需要另一导航明暗时改选主题，不在当前模板中改写六项专用颜色，不改变内容区的文字、填充、卡片或覆盖层。原生导航只配置开放的颜色接口；自绘导航才消费页面层品牌区色。若平台组件不开放细节样式，保留其原生交互与布局能力，在开放范围内落实表面、边界和文字层级。
+导航颜色成组独立确定，需要另一导航明暗时改选主题，不在当前模板中改写六项专用颜色，不改变内容区的文字、填充、卡片或覆盖层。原生导航额外通过 `--pod-nav-menu-item-selected-shadow` 使用不占位的选中标记；自绘导航才消费页面层品牌区色。若平台组件不开放细节样式，保留其原生交互与布局能力，在开放范围内落实表面、边界和文字层级。
 
 需求决定内容，平台约束限定可实现能力，主题规定视觉机制。特色配方不能覆盖真实数据语义、自然内容增长或明确平台限制。未提供具体名称的平台状态变量按语义对接，不杜撰变量接口。
 

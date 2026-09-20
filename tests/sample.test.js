@@ -446,9 +446,12 @@ describe('sample templates', () => {
     const contentShell = renderShell({ open: true, children: '正文' });
     expect(contentShell.props.styles.body.padding).toBe('0 8px 8px');
     expect(contentShell.children.some((child) => child?.props?.className === 'oy-drawer-card')).toBe(true);
-    const drawerBackground = 'var(--pod-shell-theme-bg-color, var(--color-white, #fff))';
+    const drawerBackground = 'var(--pod-page-bg-color, var(--color-white, #fff))';
     expect(contentShell.props.styles.content.background).toBe(drawerBackground);
     expect(frameShell.props.styles.content.background).toBe(drawerBackground);
+    expect(frameShell.props.styles.header.color).toBe('var(--drawer-title-color, var(--color-text1-4, #1f2329))');
+    expect(frameShell.props.styles.content.color).toBe('var(--drawer-content-color, var(--color-text1-4, #1f2329))');
+    expect(pageSource).not.toContain('--pod-page-header-text-color');
     expect(contentShell.props.styles.body.background).toBe('transparent');
     expect(pageSource.match(/\.openyida-form-drawer \.oy-drawer-card \{([^}]+)\}/)[1]).toContain('background: transparent;');
     expect(renderShell({ open: true, background: '#123456' }).props.styles.content.background).toBe('#123456');
@@ -667,11 +670,33 @@ describe('application theme from design.md', () => {
     let withoutExtra = css.replace(rootPattern, root => root.replace(
       /^[ \t]*(--[\w-]+)\s*:[^;]+;\n/gm, (line, name) => originalNames.has(name) ? line : ''
     ));
-    const lightMode = /(\.pod-premium\.is-light\s*\{)([^}]*)(\})/;
-    const originalLightNames = new Set([...template.match(lightMode)[2].matchAll(/(--[\w-]+)\s*:/g)].map(m => m[1]));
-    withoutExtra = withoutExtra.replace(lightMode, (block, start, body, end) => start + body.replace(
-      /^[ \t]*(--[\w-]+)\s*:[^;]+;\n/gm, (line, name) => originalLightNames.has(name) ? line : ''
-    ) + end);
+    const platformNavigationTokens = new Set([...template.matchAll(/(--pod-(?:nav-|shell-|page-header-)[\w-]+)\s*:/g)]
+      .map(match => match[1]));
+    const declarations = source => Object.fromEntries([...source.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)]
+      .map(([, name, value]) => [name, value.trim()]));
+    const rootDefaults = Object.assign({}, ...[...template.matchAll(/^:root\s*\{([^}]+)\}/gm)]
+      .map(match => declarations(match[1])));
+    const designTokens = readDesignTokens(design);
+    const activeTone = plan.visualStyle.forUser.selectedTheme.navTheme;
+    for (const tone of ['light', 'dark']) {
+      const scopedDefaults = { ...rootDefaults };
+      const modeScopes = ['nav', 'is'].map(kind => new RegExp(`(\\.pod-premium\\.${kind}-${tone}\\s*\\{)([^}]*)(\\})`));
+      modeScopes.forEach(pattern => Object.assign(scopedDefaults, declarations(template.match(pattern)[2])));
+      for (const pattern of modeScopes) {
+        const originalNames = new Set(Object.keys(declarations(template.match(pattern)[2])));
+        withoutExtra = withoutExtra.replace(pattern, (block, start, body, end) => start + body.replace(
+          /^[ \t]*(--[\w-]+)\s*:\s*([^;]+);\n/gm, (line, name, value) => {
+            if (originalNames.has(name)) {return line;}
+            // Added mode declarations must be real platform navigation tokens;
+            // the inactive mode restores its own defaults instead of leaking the project palette.
+            expect(platformNavigationTokens.has(name)).toBe(true);
+            expect(designTokens[name]).toBeDefined();
+            expect(value.trim()).toBe(tone === activeTone ? designTokens[name] : scopedDefaults[name]);
+            return '';
+          }
+        ) + end);
+      }
+    }
     const recipe = plan.visualStyle.forUser.selectedTheme.collection === 'application-styles'
       ? fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/theme/application-style-recipes.css'), 'utf8') : '';
     expect(structure(withoutExtra).trim()).toBe(structure(recipe ? template.trimEnd() + '\n\n' + recipe : template).trim());

@@ -337,6 +337,7 @@
   --pod-nav-menu-item-radius: var(--pod-sm-border-radius, 8px);
   --pod-nav-menu-font-size: 14px;
   --pod-nav-menu-item-selected-font-weight: 400;
+  --pod-nav-menu-item-selected-shadow: none;
   --pod-nav-menu-line-height: 20px;
   --pod-nav-menu-icon-size: 16px;
   --pod-nav-menu-arrow-icon-size: 12px;
@@ -373,6 +374,22 @@ body.pod-premium.page-type-submit .vc-shell-without-nav.pod-premium {
   background-position: center top;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+/* 原生详情属于内容区，独立页面和抽屉内都沿用内容画布与前景。 */
+body.pod-premium.page-type-detail .vc-shell-without-nav.pod-premium {
+  background-color: var(--pod-page-bg-color, var(--color-white, #fff));
+  --pod-theme-text-color: var(--color-text1-4, #202020);
+}
+
+/* 详情顶栏的独立图标使用内容文字色，保留按钮自身的禁用状态。 */
+body.pod-premium.page-type-detail .top-banner-area
+  .next-yida-button-iconOnly:not([disabled]):not(.disabled) .next-icon {
+  color: var(--color-text1-3, #737373);
+}
+body.pod-premium.page-type-detail .top-banner-area
+  .next-yida-button-iconOnly:not([disabled]):not(.disabled):hover .next-icon {
+  color: var(--color-text1-4, #202020);
 }
 
 /* 按实际底栏类型适配 PC 固定提交栏，不按有无导航判断。
@@ -523,4 +540,9 @@ body.pod-premium.page-type-submit
   --pod-nav-action-border: 0.5px solid rgba(255, 255, 255, 0.2);
   --pod-nav-action-bg-hover-color: rgba(255, 255, 255, 0.12);
   --pod-nav-action-bg-active-color: rgba(255, 255, 255, 0.16);
+}
+
+/* Theme-controlled active marker; inset shadows do not change menu layout. */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected {
+  box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
 }

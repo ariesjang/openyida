@@ -1,6 +1,6 @@
 # 应用风格模板与自由创意
 
-先决定应用的整体设计语言，再让导航、首页、自定义页面、表单、编辑与详情共同使用它。模板提供可执行的起点；**自由创意是同等可用的独立路径**，从业务推演，不要求先匹配模板。已有应用沿用其设计，不为单页重选风格。
+先决定应用的整体设计语言，再让导航、应用框架、首页、自定义页面、提交/编辑表单与记录详情共同使用它。按 [导航与应用框架](application-theme-consistency.md#导航与应用框架) 同时设计表面、状态、边界、形状、文字和间距。模板提供可执行的起点；**自由创意是同等可用的独立路径**，从业务推演，不要求先匹配模板。已有应用沿用其设计，不为单页重选风格。
 
 ## 找到和导出
 
@@ -46,7 +46,7 @@ openyida sample yida-design application-style --style-id free-creative --output 
 
 - **Fast**：选定方向后导出一套起点，按唯一输出契约补成最终 `design.md`；保留其 `applicationStyle` 消费标记，删除模板 `themeId`，填入真实项目、颜色、页面与引用，完成 `check-design`。然后运行 `openyida sample yida-design app-theme --design-file <design.md> --output <app_theme.css>`。共享生成器会携带这组应用风格的语义类配方，后续重生成保留配方之外的自定义 CSS。
 - **Plan**：`design-plan init` 使用目录中的 `themeId`（`--theme-id`），项目差异放 `visualStyle.tokens`，各页布局写入已有逐页设计。CLI 物化时生成正式 `design.md` 与返回路径中的 `app-theme.css`；文件名沿用 Plan 契约，不另生成第二份应用主题。
-- **实现**：应用级上传一次项目 CSS。Canvas 读取设计里的 Token，并可使用 `.oyd-style-workspace`、`.oyd-style-intro`、`.oyd-style-section`；表单和详情应用同一主题。自定义页面必须落实具体构图。
+- **实现**：应用级上传一次项目 CSS。导航读取完整的 `tokens.application-global.appearance.navigation`，平台导航保留原变量消费关系，自定义导航由组件明确引用。Canvas 读取设计里的 Token，并可使用 `.oyd-style-workspace`、`.oyd-style-intro`、`.oyd-style-section`；框架、表单和详情应用同一主题。自定义页面落实具体构图。
 - **表单**：先在 `design.md` 写清各区域使用的组件、列比例、间距、长字段整行和移动端重排。`form-layout.json` 提供字段与分栏的初始结构；在各列填入 PRD 字段，并按设计调整布局。`--theme compact` 等参数只设置密度，应用 CSS 负责视觉样式。
 
 表单支持在顶部、左侧、主体、右侧和字段之间放置 Tab、按钮组、图片或图形、标题与 `Divider`、分栏、状态区、辅助内容和字段。各组件分别负责导航切换、操作入口、视觉焦点、状态反馈、内容组织或数据采集。普通业务分组和章节分隔使用 `Divider`，横向字段组合使用 `ColumnContainer`。
@@ -70,6 +70,8 @@ Plan 将下列对象写入 `visualStyle.creativeDirection`；Fast 写入最终�
 ```
 
 Plan 的 `visualStyle.tokens` 必须显式提供：画布 `--pod-page-bg-color`、表面 `--pod-card-bg-color`、文字 `--color-text1-4`、控件 `--form-element-medium-corner` / `--form-element-medium-height`、底栏 `--pod-page-footer-bg-color` / `--pod-sticky-footer-box-shadow`，以及自定义页面 `--oyd-content-width` / `--oyd-content-padding` / `--oyd-field-gap` / `--oyd-heading-font` / `--oyd-heading-size` / `--oyd-rule-style`。其余角色同样按完整设计配套，数据管理外层底栏与按钮内层分别决定。Fast 将这些值写入设计的 Token 分组。缺少决策或关键值时生成器报错，不自动选一套模板。
+
+自由创意还需显式写入 [六个基础导航色](application-theme-consistency.md#导航与应用框架) 与 `navTheme`，并按业务布局设计框架、菜单形状、文字、间距及状态。Fast 与 Plan 使用同一完整主题文件。
 
 ## 验收与维护
 

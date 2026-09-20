@@ -2633,7 +2633,8 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.product_design_policy).toBe(workflow.product_design_policy);
     expect(route.product_design_policy).toContain('Fast, Plan and single-page design share yida-design/templates/design-themes');
     expect(route.product_design_policy).toContain('plus scoped custom-page variables');
-    expect(route.product_design_policy).toContain('Each selected template is the authority for navTheme and its six navigation tokens');
+    expect(route.product_design_policy).toContain('Each selected template is the authority for navTheme, its six navigation color tokens, and its selected-item shadow token');
+    expect(route.product_design_policy).toContain('preserves mode-independent navigation appearance tokens');
     expect(route.product_design_policy).toContain('never synthesizes a replacement navigation palette');
   }
   expect(workflow.default_nav_order_policy).toContain('preserves platform navigation for the management workspace');
@@ -2785,26 +2786,53 @@ test('Plan CLI and design-file sample work locally without a login', () => {
     const design = fs.readFileSync(path.join(dir, 'design.md'), 'utf8');
     const tokens = readDesignTokens(design);
     const activeTone = parseDesignDocument(design).metadata.themeProfile.navTheme;
+    const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
+    const platformNavigationTokens = new Set([...template.matchAll(/(--pod-(?:nav-|shell-|page-header-)[\w-]+)\s*:/g)]
+      .map(match => match[1]));
     expect(Object.keys(tokens)).toEqual(expect.arrayContaining(Object.values(contract.groups).flat()));
     expect(Object.keys(tokens).filter(name => !Object.values(contract.groups).flat().includes(name))
-      .every(name => name.startsWith('--oyd-'))).toBe(true);
+      .every(name => name.startsWith('--oyd-') || platformNavigationTokens.has(name))).toBe(true);
+    expect(platformNavigationTokens.has('--pod-nav-unknown-token')).toBe(false);
     for (const [name, value] of Object.entries(contract.fixedValues)) {
       expect(tokens[name]).toBe(value);
     }
-    const result = JSON.parse(runOk(['design-plan', 'patch', input, '--set', 'execution.appConfig.navigationType=custom', '--set', 'visualStyle.tokens.--pod-card-border-radius=16px', '--materialize', '--output-dir', dir, '--json']));
+    const selectedShadow = 'inset 0 -3px 0 var(--color-brand1-6)';
+    const result = JSON.parse(runOk(['design-plan', 'patch', input,
+      '--set', 'execution.appConfig.navigationType=custom',
+      '--set', 'visualStyle.tokens.--pod-card-border-radius=16px',
+      '--set', `visualStyle.tokens.--pod-nav-menu-item-selected-shadow=${selectedShadow}`,
+      '--materialize', '--output-dir', dir, '--json']));
     expect(result.changed).toBe(true);
     const cssPath = path.join(dir, 'app-theme.css');
     runOk(['sample', 'yida-design', 'app-theme', '--design-file', path.join(dir, 'design.md'), '--output', cssPath]);
     const css = fs.readFileSync(cssPath, 'utf8');
     expect(css).toContain('--pod-card-border-radius: 16px');
-    const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
+    const patchedDesign = fs.readFileSync(path.join(dir, 'design.md'), 'utf8');
+    expect(readDesignTokens(patchedDesign)['--pod-nav-menu-item-selected-shadow']).toBe(selectedShadow);
+    expect(patchedDesign).toContain(`| 选中项阴影 | --pod-nav-menu-item-selected-shadow | ${selectedShadow} |`);
+    expect(css).toContain(`--pod-nav-menu-item-selected-shadow: ${selectedShadow};`);
     const scope = (source, tone) => source.match(new RegExp(`\\.pod-premium\\.nav-${tone}\\s*\\{([^}]+)\\}`))[1];
     for (const tone of ['light', 'dark', 'white', 'gray']) {
       const background = tone === activeTone ? tokens['--pod-shell-theme-bg-color']
         : scope(template, tone).match(/--pod-shell-theme-bg-color:\s*([^;]+);/)[1];
       const block = scope(css, tone);
       expect(block).toContain(`--pod-shell-theme-bg-color: ${background};`);
-      if (tone !== activeTone) {expect(block).toBe(scope(template, tone));}
+      if (tone !== activeTone) {
+        const defaults = scope(template, tone);
+        const originalNames = new Set([...defaults.matchAll(/(--[\w-]+)\s*:/g)].map(match => match[1]));
+        const existing = block.replace(/^[ \t]*(--[\w-]+)\s*:[^;]+;\n/gm,
+          (line, name) => originalNames.has(name) ? line : '');
+        expect(existing).toBe(defaults);
+        const rootDefaults = Object.assign({}, ...[...template.matchAll(/^:root\s*\{([^}]+)\}/gm)]
+          .map(match => Object.fromEntries([...match[1].matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)]
+            .map(([, name, value]) => [name, value.trim()]))));
+        for (const [, name, value] of block.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) {
+          if (!originalNames.has(name)) {
+            expect(platformNavigationTokens.has(name)).toBe(true);
+            expect(value.trim()).toBe(rootDefaults[name]);
+          }
+        }
+      }
     }
   } finally {fs.rmSync(dir, { recursive: true, force: true });}
 });

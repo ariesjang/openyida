@@ -1043,6 +1043,7 @@ module.exports = {
     theme_preset_conflict: 'प्रीसेट colour को CSS या themeColor के साथ नहीं भेज सकते। --colour custom उपयोग करें या --colour छोड़ दें।',
     custom_theme_color_required: 'colour=custom के लिए थीम फ़ाइल या मान्य themeColor चाहिए। --theme-file या --theme-color दें।',
     theme_not_persisted: 'सहेजने के बाद ऐप की थीम सेटिंग की पुष्टि नहीं हो सकी। themeVerification जाँचें और update-app <appType> --theme-file <css> से पुनः प्रयास करें; ऐप दोबारा न बनाएँ।',
+    navigation_not_persisted: "नेविगेशन सेटिंग दोबारा पढ़ी नहीं जा सकीं या अनुरोधित मानों से मेल नहीं खातीं। navigationVerification में अपेक्षित मान, वास्तविक मान और पढ़ने की त्रुटियाँ देखें, फिर ऐप की वर्तमान सेटिंग जाँचें।",
     usage: 'Usage: openyida update-app <appType> [--name "New Name"] [--desc "Description"] [--layout slide|ver] [--theme deepBlue]',
     example: 'Example: openyida update-app APP_XXX --name "New App Name" --layout ver --theme deepBlue',
     options: 'Options:\n' +
