@@ -32,6 +32,24 @@ describe('sample templates', () => {
     expect(output).toBe('Hello OpenKuma / OpenKuma');
   });
 
+  test.each([
+    ['--output'], ['--output', '--design-file', 'design.md'],
+    ['--var'], ['--var', 'PRIMARY_COLOR'], ['--var', ' =red'],
+    ['--primary-color', '#123456'], ['--border-radius', '12px'],
+  ])('rejects invalid sample parameters before writing files: %j', async (...options) => {
+    const output = path.join(tmpDir, 'theme.css');
+    await expect(run(['yida-design', 'app-theme', '--output', output, ...options]))
+      .rejects.toMatchObject({ code: 'SAMPLE_ARGUMENT_INVALID' });
+    expect(fs.readdirSync(tmpDir)).toEqual([]);
+  });
+
+  test('theme generation rejects generic variable substitution instead of silently ignoring it', async () => {
+    const output = path.join(tmpDir, 'theme.css');
+    await expect(run(['yida-design', 'app-theme', '--output', output, '--var', 'PRIMARY_COLOR=#123456']))
+      .rejects.toMatchObject({ code: 'SAMPLE_ARGUMENT_INVALID' });
+    expect(fs.existsSync(output)).toBe(false);
+  });
+
   test.each(['side', 'top', 'mixed', 'dock', 'tabs'])('navigation %s copies only the selected layout and compiles with existing content', async (layout) => {
     const output = path.join(tmpDir, `nav-${layout}.jsx`);
     await run(['openyida-page-template', `canvas-nav-${layout}`, '--output', output]);
@@ -49,6 +67,11 @@ describe('sample templates', () => {
     if (layout !== 'tabs') {
       expect(fragment).toContain('--pod-nav-item-text-disabled-color');
       expect(fragment).toContain('--pod-nav-menu-bg-selected-color');
+      expect(fragment).toContain('border: var(--pod-nav-menu-item-border, none)');
+      expect(fragment).toContain('--pod-nav-menu-item-hover-border');
+      expect(fragment).toContain('--pod-nav-menu-item-selected-border');
+      expect(fragment).toContain('box-shadow: var(--pod-nav-menu-item-selected-shadow, none)');
+      expect(fragment).not.toContain('box-shadow: inset');
     }
   });
 

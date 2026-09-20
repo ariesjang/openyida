@@ -2091,3 +2091,10 @@ module.exports.help.cmd_connector_update_action = connectorSafetyMessages.help.c
 Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
   action_config_invalid: '노드 {0}의 승인 작업 설정이 잘못되었습니다: {1}',
 });
+
+module.exports.cli_argument = { invalid: '인수가 잘못되었거나 값이 없습니다: {0}. 명령 도움말을 확인하세요.' };
+
+module.exports.sample_options = {
+  'theme_help': 'app-theme: --output은 CSS 파일이고 --design-file은 완성된 디자인입니다. 디자인을 생략하면 CSS가 초기화됩니다. 테마 값은 디자인에 입력하세요.',
+  'style_help': 'application-style: --style-id는 필수이며 모든 카탈로그 테마를 지원합니다. --output 디렉터리에 파일 3개를 만들며 동일한 파일이 있으면 오류가 납니다.'
+};

@@ -2042,3 +2042,10 @@ module.exports.connector_auth = require('../../lib/core/locales/zh').connector_a
 Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
   action_config_invalid: '節點 {0} 的審批動作設定無效：{1}',
 });
+
+module.exports.cli_argument = { invalid: '參數無效或缺少值：{0}。請按命令說明填寫。' };
+
+module.exports.sample_options = {
+  'theme_help': 'app-theme：--output 指向 CSS 檔案；--design-file 讀取完成的設計。省略設計檔案會重設 CSS，主題值透過設計填寫。',
+  'style_help': 'application-style：--style-id 必填，支援目錄中全部主題；--output 指向目錄，輸出三個檔案，同名檔案存在時報錯。'
+};

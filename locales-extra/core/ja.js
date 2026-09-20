@@ -2017,3 +2017,10 @@ module.exports.help.cmd_connector_update_action = connectorSafetyMessages.help.c
 Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
   action_config_invalid: 'ノード {0} の承認アクション設定が無効です：{1}',
 });
+
+module.exports.cli_argument = { invalid: '引数が無効、または値がありません: {0}。コマンドのヘルプに従ってください。' };
+
+module.exports.sample_options = {
+  'theme_help': 'app-theme: --output は CSS ファイル、--design-file は完成した設計です。設計を省略すると CSS をリセットします。テーマ値は設計に記入します。',
+  'style_help': 'application-style: --style-id は必須で全カタログテーマに対応。--output のディレクトリに3ファイルを出力し、同名ファイルがあればエラーになります。'
+};

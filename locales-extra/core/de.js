@@ -2090,3 +2090,10 @@ module.exports.help.cmd_connector_update_action = connectorSafetyMessages.help.c
 Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
   action_config_invalid: 'Ungültige Genehmigungsaktion für Knoten {0}: {1}',
 });
+
+module.exports.cli_argument = { invalid: 'Ungültiges Argument oder fehlender Wert: {0}. Beachten Sie die Befehlshilfe.' };
+
+module.exports.sample_options = {
+  'theme_help': 'app-theme: --output ist eine CSS-Datei; --design-file liest den fertigen Entwurf. Ohne Entwurf wird CSS zurückgesetzt. Theme-Werte gehören in den Entwurf.',
+  'style_help': 'application-style: --style-id ist für alle Katalog-Themes erforderlich; --output ist ein Ordner für drei Dateien. Vorhandene Dateien führen zu einem Fehler.'
+};

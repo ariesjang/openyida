@@ -2090,3 +2090,10 @@ module.exports.help.cmd_connector_update_action = connectorSafetyMessages.help.c
 Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
   action_config_invalid: 'नोड {0} के लिए अमान्य अनुमोदन कार्रवाई कॉन्फ़िगरेशन: {1}',
 });
+
+module.exports.cli_argument = { invalid: 'अमान्य तर्क या मान गायब है: {0}। कमांड की सहायता देखें।' };
+
+module.exports.sample_options = {
+  'theme_help': 'app-theme: --output एक CSS फ़ाइल है; --design-file पूर्ण डिज़ाइन पढ़ता है। इसे छोड़ने पर CSS रीसेट होता है। थीम के मान डिज़ाइन में भरें।',
+  'style_help': 'application-style: --style-id आवश्यक है और सभी कैटलॉग थीम स्वीकार करता है; --output तीन फ़ाइलों की डायरेक्टरी है। मौजूदा फ़ाइलों पर त्रुटि आती है।'
+};

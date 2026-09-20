@@ -9,7 +9,6 @@ function CanvasNav({ items = [], activeKey, onSelect, title, logo, actions, chil
       .oy-nav-mixed .oy-nav-body { display: flex; flex: 1; }
       .oy-nav-mixed .oy-nav-content { flex: 1; }
       .oy-nav-mixed .oy-nav-menu { display: flex; flex-direction: column; gap: var(--pod-nav-slide-aside-gap, 12px); }
-      .oy-nav-mixed .oy-nav-item[aria-current="page"] { box-shadow: inset 0 -2px var(--pod-nav-tab-line-selected-color, var(--color-brand1-6, #1677ff)); }
       @media (max-width: 767px) {
         .oy-nav-mixed .oy-nav-groups { flex-basis: 100%; }
         .oy-nav-mixed .oy-nav-body { display: block; }

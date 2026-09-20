@@ -2090,3 +2090,10 @@ module.exports.help.cmd_connector_update_action = connectorSafetyMessages.help.c
 Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
   action_config_invalid: 'Cấu hình thao tác phê duyệt không hợp lệ cho nút {0}: {1}',
 });
+
+module.exports.cli_argument = { invalid: 'Tham số không hợp lệ hoặc thiếu giá trị: {0}. Xem hướng dẫn lệnh.' };
+
+module.exports.sample_options = {
+  'theme_help': 'app-theme: --output là tệp CSS; --design-file đọc thiết kế hoàn chỉnh. Bỏ qua thiết kế sẽ đặt lại CSS. Khai báo giá trị giao diện trong thiết kế.',
+  'style_help': 'application-style: bắt buộc --style-id, hỗ trợ mọi giao diện trong danh mục; --output là thư mục chứa ba tệp. Tệp đã tồn tại sẽ gây lỗi.'
+};

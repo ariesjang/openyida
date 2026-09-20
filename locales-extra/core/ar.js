@@ -2092,3 +2092,10 @@ module.exports.help.cmd_connector_update_action = connectorSafetyMessages.help.c
 Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
   action_config_invalid: 'إعداد إجراء الموافقة غير صالح للعقدة {0}: {1}',
 });
+
+module.exports.cli_argument = { invalid: 'وسيطة غير صالحة أو قيمة مفقودة: {0}. راجع تعليمات الأمر.' };
+
+module.exports.sample_options = {
+  'theme_help': 'app-theme: يحدد --output ملف CSS ويقرأ --design-file تصميماً مكتملاً. يؤدي حذفه إلى إعادة ضبط CSS. ضع قيم السمة في التصميم.',
+  'style_help': 'application-style: المعامل --style-id مطلوب ويدعم جميع سمات الكتالوج؛ يحدد --output مجلداً لثلاثة ملفات. وجود الملفات يسبب خطأ.'
+};

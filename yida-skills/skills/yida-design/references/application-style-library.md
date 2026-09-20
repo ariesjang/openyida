@@ -11,7 +11,20 @@ openyida sample yida-design application-style --style-id app-executive --output 
 openyida sample yida-design application-style --style-id free-creative --output prd/my-app/creative-start
 ```
 
-每套导出 `design.md`、`app_theme.css`、`form-layout.json`，并保留已有文件。每份 `design.md` 同时包含自定义页面的逐页设计引导，以及表单的组件位置、布局、样式、状态和响应式引导。设计与 CSS 中的品牌颜色保留占位：`--color-brand1-6` 使用 `{{PRIMARY_COLOR}}`，`--color-brand1-1` 按主色生成悬停色，其余品牌档位保持同源。项目占位符与空字段布局是项目化起点；使用时替换真实项目内容、完成最终设计并生成项目主题与表单布局。上传主题时只选择项目最终维护的 `app-theme.css`。
+每套导出 `design.md`、`app_theme.css`、`form-layout.json`；目标目录中任一同名文件已存在时，CLI 报错并保留原文件。每份 `design.md` 同时包含自定义页面的逐页设计引导，以及表单的组件位置、布局、样式、状态和响应式引导。设计与 CSS 中的品牌颜色保留占位：`--color-brand1-6` 使用 `{{PRIMARY_COLOR}}`，`--color-brand1-1` 按主色生成悬停色，其余品牌档位保持同源。项目占位符与空字段布局是项目化起点；使用时替换真实项目内容、完成最终设计并生成项目主题与表单布局。上传主题时使用项目实际生成的 CSS 路径，`app-theme.css` 与 `app_theme.css` 均可。
+
+## 命令与参数
+
+| 步骤 | 命令与参数 | 输入与结果 |
+| --- | --- | --- |
+| 查询主题 | `openyida design-plan catalog --json` | 从 `themes[].themeId` 或 `creativeOption.themeId` 取值 |
+| 导出三文件 | `openyida sample yida-design application-style --style-id <themeId> --output <目录>` | `--style-id` 必填，支持目录中的全部主题；`--output` 缺省为当前目录下 `.cache/samples/application-style` |
+| 生成或更新 CSS | `openyida sample yida-design app-theme --design-file <design.md> --output <CSS路径>` | 设计中的品牌色和派生颜色先填成实际值；同路径更新保留自定义 CSS，并维护旁边的 `<CSS路径>.tokens.md` 更新记录 |
+| 绑定应用 | `openyida update-app <appType> --theme-file <CSS路径> --nav-theme <light或dark> --layout <side或top或l_shape> --show-app-nav` | 上传后分别核对主题和导航回读，再检查页面实际效果；应用级自绘导航改用 `--hide-app-nav` |
+
+`--style-id` 只用于三文件导出，`--design-file` 只用于主题生成。`--var KEY=VALUE` 用于其他代码示例的占位替换；应用主题的品牌色和导航值写入 `design.md`。`app-theme` 的 `--output` 缺省为 `.cache/samples/app-theme.css`；省略 `--design-file` 会用公共模板重置目标 CSS。三文件导出中的占位 CSS 先经过主题生成，再上传。
+
+`--nav-theme` 选择平台导航明暗，`--layout` 选择结构。平台兼容参数还接受 `white` / `gray`，正式设计使用模板派生的 `light` / `dark`。菜单圆角、普通/悬停/选中边框与选中阴影是[导航 token](application-theme-consistency.md#导航与应用框架)，在 Fast 的设计 token 或 Plan 的 `visualStyle.tokens` 中填写。CLI 读取设计文件后生成消费样式；这些值没有单独的命令行开关。较早的 CSS 在设计提供菜单边框 token 后会补齐缺失的菜单形状规则。
 
 ## 主题明暗双轴
 
@@ -77,4 +90,4 @@ Plan 的 `visualStyle.tokens` 必须显式提供：画布 `--pod-page-bg-color`�
 
 看应用整体，覆盖导航、自定义页、提交、编辑、详情、数据管理内嵌、抽屉和移动端，核对正文/底栏对齐、背景连续、hover/focus、禁用/错误和窄屏布局。应用主题与表单组件树共同作为验收基线。
 
-维护既有主题时修改对应目录的 `design.md` 与 `form-layout.json`；维护应用风格预设时修改 `templates/application-styles.json` 与共用配方，再运行 `node scripts/build-application-styles.js`；随后运行模板、Plan/Fast、原生布局测试及 `check:skills`。该脚本仅用于仓库维护，应用搭建使用上述 CLI。
+维护既有主题时修改对应目录的 `design.md` 与 `form-layout.json`；维护导航时修改 `templates/navigation-styles.json`，维护应用风格预设时修改 `templates/application-styles.json` 与共用配方，再运行 `node scripts/build-application-styles.js`；随后运行模板、Plan/Fast、原生布局测试及 `check:skills`。该脚本仅用于仓库维护，应用搭建使用上述 CLI。

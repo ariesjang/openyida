@@ -1434,7 +1434,8 @@ describe('OpenYida skill contracts', () => {
     expect(outputDesign).toContain('不得另写 Python、Node、Shell 或 `run_workspace_script` 临时脚本');
     expect(outputDesign).toContain('校验脚本只能读取并报告问题，不能改写主题文件');
     expect(outputDesign).toContain('`--pod-nav-menu-item-selected-shadow` 作为方向无关的基础外观 Token 独立透传');
-    expect(navShellPatterns).toContain('| 原生菜单选中标记 | `--pod-nav-menu-item-selected-shadow`');
+    expect(navShellPatterns).toContain('| 菜单选中标记 | `--pod-nav-menu-item-selected-shadow`');
+    expect(navShellPatterns).toContain('`canvas-nav-side/top/mixed/dock` 共用上述菜单圆角、三种边框和选中阴影');
     expect(step2).toContain('导航选中态与按钮不同色不直接判为冲突');
     expect(styleSelection).toContain('沿用已确认主题，只补当前页面');
     expect(canvasStyleGuide).toContain('按本指南把 `design.md` 的布局、材质、密度、图表和控件样式写入 Canvas 页面');
@@ -1517,7 +1518,7 @@ describe('OpenYida skill contracts', () => {
     expect(step4).toContain('`contentTone` 默认 `light`');
     expect(styleLibrary).toContain('## 主题明暗双轴');
     expect(styleLibrary).toContain('深色导航可以搭配浅色内容，浅色导航也可以搭配暗色内容');
-    expect(styleLibrary).toContain('上传主题时只选择项目最终维护的 `app-theme.css`');
+    expect(styleLibrary).toContain('上传主题时使用项目实际生成的 CSS 路径，`app-theme.css` 与 `app_theme.css` 均可');
     expect(styleLibrary).toContain('应用整体明暗以 `contentTone` 为准');
     expect(styleLibrary).not.toMatch(/不能原样当成最终交付|不要把目录中的参考|不等同于暗黑主题/);
     expect(designOutput).toContain('[主题明暗双轴](../references/application-style-library.md#主题明暗双轴)');

@@ -2092,3 +2092,10 @@ module.exports.help.cmd_connector_update_action = connectorSafetyMessages.help.c
 Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
   action_config_invalid: 'Configuration des actions d’approbation invalide pour le nœud {0} : {1}',
 });
+
+module.exports.cli_argument = { invalid: 'Argument invalide ou valeur manquante : {0}. Consultez l’aide de la commande.' };
+
+module.exports.sample_options = {
+  'theme_help': 'app-theme : --output désigne un fichier CSS ; --design-file lit un design finalisé. Sans ce dernier, le CSS est réinitialisé. Définissez les valeurs dans le design.',
+  'style_help': 'application-style : --style-id est requis pour tout thème du catalogue ; --output désigne le dossier des trois fichiers. Un fichier existant provoque une erreur.'
+};

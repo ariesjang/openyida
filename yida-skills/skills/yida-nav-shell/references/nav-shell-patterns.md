@@ -265,13 +265,16 @@ hash 的 `view` 保存任务入口 key，刷新及前进后退恢复选中内容
 | 导航表面与标题 | `--pod-shell-theme-bg-color`、`--pod-nav-logo-text` |
 | 普通 / 悬停 / 选中 / 禁用文字 | `--pod-nav-item-text-*` |
 | 悬停 / 选中背景 | `--pod-nav-menu-bg-hover-color`、`--pod-nav-menu-bg-selected-color` |
-| 原生菜单选中标记 | `--pod-nav-menu-item-selected-shadow`；`none` 关闭，其他值使用完整 `box-shadow`，可表达左、右或底部内阴影 |
+| 普通 / 悬停 / 选中边框 | `--pod-nav-menu-item-border`、`--pod-nav-menu-item-hover-border`、`--pod-nav-menu-item-selected-border`，填写完整边框值，各状态保持相同线宽 |
+| 菜单选中标记 | `--pod-nav-menu-item-selected-shadow`；`none` 关闭，其他值使用完整 `box-shadow`，可表达左、右或底部内阴影 |
 | 分隔线、选中指示、焦点 | `--pod-nav-sub-divider-color`、`--pod-nav-tab-line-selected-color` |
 | 菜单高度、圆角、文字、间距 | `--pod-nav-menu-*`、`--pod-nav-top-tab-*` |
 | 悬浮阴影 | `--pod-nav-popup-shadow` |
 | 页内标签 | `--tab-pure-text-color-*`、`--tab-pure-ink-bar-color` |
 | 自定义页整页画布 | `--pod-page-bg-color`（与原生页面统一）、`--pod-nav-page-padding` |
 | 业务卡片 | `--pod-card-bg-color`、`--pod-card-border` |
+
+`canvas-nav-side/top/mixed/dock` 共用上述菜单圆角、三种边框和选中阴影。已有自绘导航重新导出对应片段、合入页面源码并发布后生效；`canvas-nav-tabs` 继续使用页内标签样式。
 
 主题由 `yida-design` 在应用级生成和配置；导航组件消费已有变量，必要的默认值放在 `var(...)` 回退中。颜色修改在主题文件完成，固定的布局结构留在组件中。导航深浅由导航主题决定，业务内容明暗由页面主题决定，分别验证。
 

@@ -14,9 +14,8 @@ function CanvasNav({ items = [], activeKey, onSelect, title, logo, actions, chil
       .openyida-nav-layout[data-layout="document"][data-scrolled="false"] .oy-nav-top.is-overlay .oy-nav-header:not(.is-expanded) .oy-nav-item:not(:disabled) { color: inherit; }
       .openyida-nav-layout[data-layout="document"][data-scrolled="false"] .oy-nav-top.is-overlay .oy-nav-header:not(.is-expanded) .oy-nav-item:is(:hover,[aria-current="page"]):not(:disabled) { background: var(--openyida-navigation-overlay-active-bg, rgba(255,255,255,.16)); }
       .oy-nav-top.is-floating { padding-top: 16px; box-sizing: border-box; }
-      .oy-nav-top.is-floating .oy-nav-header { position: sticky; top: 16px; z-index: 10; margin: 0 16px; border: 1px solid var(--pod-nav-sub-divider-color, var(--color-line1-1, #ddd)); border-radius: var(--pod-nav-menu-container-radius, 16px); box-shadow: var(--pod-nav-popup-shadow, 0 8px 24px rgba(0,0,0,.12)); }
+      .oy-nav-top.is-floating .oy-nav-header { position: sticky; top: 16px; z-index: 10; margin: 0 16px; border: 1px solid var(--pod-nav-sub-divider-color, var(--color-line1-1, #ddd)); border-radius: var(--pod-shell-lshape-border-radius, 16px); box-shadow: var(--pod-nav-popup-shadow, 0 8px 24px rgba(0,0,0,.12)); }
       .oy-nav-top .oy-nav-menu { display: flex; flex: 1; min-width: 0; overflow-x: auto; }
-      .oy-nav-top .oy-nav-item[aria-current="page"] { box-shadow: inset 0 -2px var(--pod-nav-tab-line-selected-color, var(--color-brand1-6, #1677ff)); }
       .oy-nav-top .oy-nav-toggle { display: none; margin-left: auto; }
       @media (max-width: 767px) {
         .oy-nav-top .oy-nav-header { gap: var(--pod-nav-logo-gap, 8px); }
