@@ -559,7 +559,7 @@ describe('design-plan materialize', () => {
 
   test('rejects a selected theme path that does not match the theme index', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-inset-hairline.md';
+    plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-inset-hairline/design.md';
 
     expect(() => renderDesign(plan)).toThrow(/themeId 与 templatePath/);
   });
@@ -616,7 +616,7 @@ describe('design-plan materialize', () => {
   test.each(['warm-canvas-contrast-panels', 'graphite-bevel-grid'])('carries shared color pairing guidance into %s without overriding project colors', themeId => {
     const { readDesignTokens } = require('../lib/app/theme-from-design');
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
+    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
     plan.visualStyle.tokens = { '--oyd-on-action-color': '#241B18', '--pod-card-bg-color': '#FFF7F2' };
     const design = renderDesign(plan);
     const shared = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/application-theme-consistency.md'), 'utf8');
@@ -636,7 +636,7 @@ describe('design-plan materialize', () => {
     ['dark-inset-hairline', 'dark', 'light'],
   ])('generated %s navigation derives its %s palette from the theme', (themeId, tone, staleTone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
+    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
     plan.visualStyle.forUser.navigationStyle.tone = staleTone;
     const design = renderDesign(plan);
     const section = design.split('### 2.2 应用导航')[1].split('### 2.3 ')[0];
@@ -679,7 +679,7 @@ describe('design-plan materialize', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.visualStyle.forUser.selectedTheme = {
       themeId: 'dark-rail-fine-lines',
-      templatePath: 'templates/design-themes/dark-rail-fine-lines.md',
+      templatePath: 'templates/design-themes/dark-rail-fine-lines/design.md',
     };
     const design = renderDesign(plan);
     expect(design).toContain('| 选中项阴影 | --pod-nav-menu-item-selected-shadow | inset 3px 0 0 var(--color-brand1-6) |');
@@ -742,7 +742,7 @@ describe('design-plan materialize', () => {
     const read = fs.readFileSync;
     const spy = jest.spyOn(fs, 'readFileSync').mockImplementation((file, ...args) => {
       const value = read(file, ...args);
-      return path.basename(String(file)) === 'soft-inset-surfaces.md'
+      return String(file).endsWith(path.join('soft-inset-surfaces', 'design.md'))
         ? value.replace(/## 3\. 基础组件表达[\s\S]*?(?=## 4\.)/, '## 3. 基础组件表达\n\n### 文字层次\n\n正文保持清晰。\n\n') : value;
     });
     try {
@@ -777,7 +777,7 @@ describe('design-plan materialize', () => {
       mustKeep: expect.arrayContaining(['高频动作显眼', '首屏至少两层信息']),
     });
     expect(normalized.visualStyle.internal.selectedTheme.templatePath).toBe(
-      'templates/design-themes/soft-inset-surfaces.md'
+      'templates/design-themes/soft-inset-surfaces/design.md'
     );
     expect(normalized.visualStyle.forUser.themeProfile).toEqual({});
     expect(normalized.visualStyle.forDesignMd).not.toHaveProperty('componentRules');
@@ -836,7 +836,7 @@ describe('design-plan materialize', () => {
   test('theme color recipes preserve neutral surfaces unless the project explicitly overrides them', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     delete plan.visualStyle.forUser.themeProfile;
-    plan.visualStyle.forUser.selectedTheme = { themeId: 'soft-inset-surfaces', templatePath: 'templates/design-themes/soft-inset-surfaces.md' };
+    plan.visualStyle.forUser.selectedTheme = { themeId: 'soft-inset-surfaces', templatePath: 'templates/design-themes/soft-inset-surfaces/design.md' };
     plan.visualStyle.forUser.colorStrategy = { primaryColor: '#2F9E63', primaryColorName: '自然绿意' };
     plan.visualStyle.forUser.navigationStyle.tone = 'light';
     const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-design');
@@ -895,7 +895,7 @@ describe('design-plan materialize', () => {
     ['dark-inset-hairline', 'dark', 'light'],
   ])('selected %s theme derives %s navigation and keeps other modes at defaults', (themeId, tone, staleTone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
+    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
     plan.visualStyle.forUser.navigationStyle.tone = staleTone;
     plan.visualStyle.tokens = {};
     const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-design');
@@ -929,7 +929,7 @@ describe('design-plan materialize', () => {
   test('dark theme surfaces remain dark without an additional color mode', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     delete plan.visualStyle.forUser.themeProfile;
-    plan.visualStyle.forUser.selectedTheme = { themeId: 'dark-inset-hairline', templatePath: 'templates/design-themes/dark-inset-hairline.md' };
+    plan.visualStyle.forUser.selectedTheme = { themeId: 'dark-inset-hairline', templatePath: 'templates/design-themes/dark-inset-hairline/design.md' };
     plan.execution = { ...plan.execution, appConfig: { navigationType: 'custom' } };
     const { readDesignTokens } = require('../lib/app/theme-from-design');
     const tokens = readDesignTokens(renderDesign(plan));
@@ -1045,7 +1045,7 @@ describe('design-plan materialize', () => {
     ['dark-inset-hairline', 'light', 'dark'],
   ])('%s ignores stale %s input and keeps its derived %s navigation palette', (themeId, staleTone, tone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
+    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
     plan.visualStyle.forUser.navigationStyle.tone = staleTone;
     const { readDesignTokens } = require('../lib/app/theme-from-design');
     const { resolveThemeColors } = require('../lib/design-plan/themes');

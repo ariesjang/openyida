@@ -24,7 +24,7 @@ const selectedShadowToken = '--pod-nav-menu-item-selected-shadow';
 
 function design(themeId, primaryColor = '#6F4E37', requestedTone) {
   const plan = JSON.parse(JSON.stringify(fixture));
-  plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
+  plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
   // A stale caller-provided value must not override the selected template.
   plan.visualStyle.forUser.navigationStyle.tone = requestedTone || (themeTones[themeId] === 'dark' ? 'light' : 'dark');
   plan.visualStyle.forUser.colorStrategy.primaryColor = primaryColor;
@@ -172,4 +172,20 @@ test('theme-selected navigation shadow flows into CSS and resets to none', () =>
   const nextCss = applyDesignTokens(previousCss, next, previous);
   expect(readDesignTokens(next)[selectedShadowToken]).toBe('none');
   expect(cascade(nextCss, 'light')[selectedShadowToken]).toBe('none');
+});
+
+test('older generated CSS gains menu shape consumers once and keeps project rules', () => {
+  const previous = design('dark-rail-fine-lines');
+  const oldCss = applyDesignTokens(template, previous)
+    .replace(/\/\* openyida-navigation-shape:start \*\/[\s\S]*?\/\* openyida-navigation-shape:end \*\//, '')
+    + '\n.project-only { border: 7px dotted red; }';
+  const next = design('app-ticket');
+  const css = applyDesignTokens(oldCss, next, previous);
+  expect(cascade(css, 'light')['--pod-nav-menu-item-selected-border']).toBe('3px double #FFE8BC');
+  expect(css).toContain('.deep-shell-nav-tab-list .next-nav-item.next-selected');
+  expect(css).toContain('border-radius: var(--pod-nav-menu-item-radius, 8px);');
+  expect(css).toContain('.project-only { border: 7px dotted red; }');
+  const repeated = applyDesignTokens(css, next, next);
+  expect(repeated.match(/openyida-navigation-shape:start/g)).toHaveLength(1);
+  expect(repeated).toBe(css);
 });

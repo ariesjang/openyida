@@ -24,6 +24,7 @@ tokens:
         "--pod-nav-l-sub-main-bg-color": "var(--pod-shell-theme-bg-color)"
         "--pod-nav-top-main-border-width": "1px"
         "--pod-nav-top-main-border-color": "#353535"
+        "--pod-nav-top-tab-indicator-width": "0px"
         "--pod-nav-logo-text": "var(--pod-nav-item-text-hover-color)"
         "--pod-nav-logo-bg": "var(--pod-nav-menu-bg-selected-color)"
         "--pod-nav-logo-icon": "var(--pod-nav-item-text-selected-color)"
@@ -54,7 +55,10 @@ tokens:
         "--pod-nav-action-bg-hover-color": "var(--pod-nav-menu-bg-hover-color)"
         "--pod-nav-action-bg-active-color": "var(--pod-nav-menu-bg-hover-color)"
         "--pod-nav-menu-item-height": "38px"
-        "--pod-nav-menu-item-radius": "8px"
+        "--pod-nav-menu-item-radius": "12px"
+        "--pod-nav-menu-item-border": "2px solid #535353"
+        "--pod-nav-menu-item-hover-border": "2px solid #888888"
+        "--pod-nav-menu-item-selected-border": "2px solid #BBBBBB"
         "--pod-nav-menu-font-size": "14px"
         "--pod-nav-menu-item-selected-font-weight": "500"
         "--pod-nav-menu-line-height": "20px"
@@ -192,6 +196,8 @@ YAML 是数值事实源，正文定义消费关系。未能直接确定的尺寸
 ### 2.2 应用导航
 
 深炭导航延续暗轮廓内容面，以微亮边界、圆角菜单和明亮选中文字建立清楚层次。
+
+菜单轮廓：圆角 12px；普通边框 2px solid #535353；悬停边框 2px solid #888888；选中边框 2px solid #BBBBBB。这些值同时作用于侧栏和顶部菜单；保持各状态边框宽度一致，用线型、颜色和选中标记表达状态。
 
 导航与应用框架、表单、自定义页面和详情页共用设计语言。先按业务入口安排菜单、分组、搜索、品牌区与常用操作，再一起确定导航与正文的明暗、表面、字体、边界、圆角和密度。平台导航使用真实页面菜单；自绘导航按同一套导航 Token 实现。命名模板沿用自身 navTheme，换主色保持导航明暗与内容画布；需要另一导航明暗时改选主题，自由创意按项目明确设计。
 

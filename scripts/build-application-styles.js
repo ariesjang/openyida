@@ -6,12 +6,12 @@ const fs = require('fs');
 const path = require('path');
 const { parseDesignDocument } = require('../lib/design/document');
 const { resolveThemeColors } = require('../lib/design-plan/themes');
-const { applyDesignTokens } = require('../lib/app/theme-from-design');
+const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-design');
 const root = path.resolve(__dirname, '../yida-skills/skills/yida-design');
 const directory = path.join(root, 'templates/design-themes');
 const profiles = require('../yida-skills/skills/yida-design/templates/application-styles.json');
 const navigationStyles = require('../yida-skills/skills/yida-design/templates/navigation-styles.json');
-const base = parseDesignDocument(fs.readFileSync(path.join(directory, 'dark-inset-hairline.md'), 'utf8'));
+const base = parseDesignDocument(fs.readFileSync(path.join(directory, 'dark-inset-hairline/design.md'), 'utf8'));
 const platformCss = fs.readFileSync(path.join(root, 'references/theme/app-custom-theme-template.css'), 'utf8');
 const index = JSON.parse(fs.readFileSync(path.join(directory, 'index.json'), 'utf8'));
 index.description = '共享主题与应用风格目录；主题明暗双轴定义见 references/application-style-library.md，mode=creative 是独立业务推演入口。';
@@ -32,6 +32,7 @@ function navigationTokens(style, navTheme) {
     '--pod-nav-l-sub-main-bg-color': ref('shell-theme-bg-color'),
     '--pod-nav-top-main-border-width': style.stroke ? `${style.stroke}px` : '1px',
     '--pod-nav-top-main-border-color': p.border,
+    '--pod-nav-top-tab-indicator-width': `${style.topIndicatorWidth || 0}px`,
     '--pod-nav-logo-text': ref('nav-item-text-hover-color'),
     '--pod-nav-logo-bg': ref('nav-menu-bg-selected-color'),
     '--pod-nav-logo-icon': ref('nav-item-text-selected-color'),
@@ -62,7 +63,10 @@ function navigationTokens(style, navTheme) {
     '--pod-nav-action-bg-hover-color': ref('nav-menu-bg-hover-color'),
     '--pod-nav-action-bg-active-color': ref('nav-menu-bg-hover-color'),
     '--pod-nav-menu-item-height': `${itemHeight}px`,
-    '--pod-nav-menu-item-radius': `${radius}px`,
+    '--pod-nav-menu-item-radius': style.menuRadius || `${radius}px`,
+    '--pod-nav-menu-item-border': style.menuBorder || 'none',
+    '--pod-nav-menu-item-hover-border': style.menuHoverBorder || style.menuBorder || 'none',
+    '--pod-nav-menu-item-selected-border': style.menuSelectedBorder || style.menuBorder || 'none',
     '--pod-nav-menu-font-size': '14px',
     '--pod-nav-menu-item-selected-font-weight': String(selectedWeight),
     '--pod-nav-menu-line-height': '20px',
@@ -73,6 +77,8 @@ function navigationTokens(style, navTheme) {
 
 function navigationGuidance(style) {
   return `${style.summary}
+
+菜单轮廓：圆角 ${style.menuRadius || `${style.radius}px`}；普通边框 ${style.menuBorder || 'none'}；悬停边框 ${style.menuHoverBorder || 'none'}；选中边框 ${style.menuSelectedBorder || 'none'}。这些值同时作用于侧栏和顶部菜单；保持各状态边框宽度一致，用线型、颜色和选中标记表达状态。
 
 导航与应用框架、表单、自定义页面和详情页共用设计语言。先按业务入口安排菜单、分组、搜索、品牌区与常用操作，再一起确定导航与正文的明暗、表面、字体、边界、圆角和密度。平台导航使用真实页面菜单；自绘导航按同一套导航 Token 实现。命名模板沿用自身 navTheme，换主色保持导航明暗与内容画布；需要另一导航明暗时改选主题，自由创意按项目明确设计。
 
@@ -90,6 +96,34 @@ function yaml(value, depth = 0) {
   }).join('\n');
 }
 
+function cssTemplate(markdown) {
+  // Resolve only to reuse the platform's scope/recipe writer, then restore every
+  // project-dependent value. The temporary seed never becomes a template default.
+  const metadata = parseDesignDocument(markdown).metadata;
+  if (metadata.applicationStyle?.mode === 'creative') {delete metadata.applicationStyle;}
+  const source = `---\n${yaml(metadata)}\n---\n`;
+  const resolved = resolveThemeColors(source.replace(/\{\{PRIMARY_COLOR\}\}/g, '#2C73A9'));
+  const before = {};
+  const collect = node => Object.entries(node).forEach(([key, value]) => {
+    if (key.startsWith('--')) {before[key] = String(value);}
+    else if (value && typeof value === 'object') {collect(value);}
+  });
+  collect(metadata.tokens);
+  const after = readDesignTokens(resolved);
+  const replacements = Object.entries(before)
+    .filter(([, value]) => /\{\{PRIMARY_COLOR\}\}|<生成实际色值：/.test(value))
+    .map(([name]) => [after[name], `var(${name})`]).sort((a, b) => b[0].length - a[0].length);
+  const values = new Map(replacements);
+  values.set(after['--color-brand1-6'], 'var(--color-brand1-6)');
+  const pattern = new RegExp([...values.keys()].map(value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
+  return applyDesignTokens(platformCss, resolved)
+    .replace(/^(\s*(--[\w-]+)\s*:\s*)([^;\n]+);/gm, (_, prefix, name, value) =>
+      `${prefix}${value.trim() === after[name] && /\{\{|<生成实际色值：/.test(before[name] || '')
+        ? before[name] : value.replace(pattern, color => values.get(color))};`)
+    .replace('本模板默认品牌种子为 coffee 咖啡色；最终配色和圆角以 design.md 的 tokens 为准。',
+      '品牌值保留项目占位和派生说明；先完成 design.md，再生成实际主题 CSS。');
+}
+
 // Shared themes retain their distinct compositions and original palettes. Only
 // their navigation block is materialized, leaving authored prose and comments intact.
 for (const theme of index.themes) {
@@ -102,6 +136,7 @@ for (const theme of index.themes) {
     .replace(/appearance: #[^\n]*/, 'appearance: # 应用外观：应用背景、内容表面与完整导航设计')
     .replace(/### 2\.2 应用导航\n[\s\S]*?(?=### 2\.3 )/, `### 2.2 应用导航\n\n${navigationGuidance(style)}\n\n`);
   fs.writeFileSync(file, source);
+  fs.writeFileSync(path.join(path.dirname(file), 'app_theme.css'), cssTemplate(source));
   theme.navigationSummary = style.summary;
 }
 
@@ -191,7 +226,7 @@ for (const profile of profiles) {
 
 ${free ? '自由创意从使用者、任务频率、内容结构、品牌和环境推导两个有差异的方向，再确定构图、材质、字体和密度。交付前用项目设计值替换全部基础值。' : metadata.description}
 
-导航、应用框架、自定义页面、表单、编辑与详情共用这一套视觉语言。业务内容来自 PRD，按实际行业、页面标题和数据设计。色彩来源：{{COLOR_SOURCE}}；主色由 {{PRIMARY_COLOR}} 实例化，示范配色作为项目起点。
+导航、应用框架、自定义页面、表单、编辑与详情共用这一套视觉语言。业务内容来自 PRD，按实际行业、页面标题和数据设计。色彩来源：{{COLOR_SOURCE}}；主色由 {{PRIMARY_COLOR}} 实例化，品牌悬停色按同源占位说明生成；模板不固定项目品牌色。
 
 ## 2. 页面视觉系统
 
@@ -324,8 +359,7 @@ YAML Token 是唯一数值源。${free ? '记录业务推演依据，并确定�
   const folder = path.join(directory, id);
   fs.mkdirSync(folder, { recursive: true });
   fs.writeFileSync(path.join(folder, 'design.md'), markdown);
-  const resolved = resolveThemeColors(markdown.replace(/\{\{PRIMARY_COLOR\}\}/g, accent));
-  fs.writeFileSync(path.join(folder, 'app_theme.css'), free ? '/* Free creative: author design.md before generating the project CSS. */\n' + platformCss : applyDesignTokens(platformCss, resolved));
+  fs.writeFileSync(path.join(folder, 'app_theme.css'), cssTemplate(markdown));
   const layout = { type: 'ColumnContainer', layout: columns, columnGap: `${gap}px`, rowGap: `${gap}px`, display: 'VERTICAL', mobileRowGap: `${gap}px`, children: columns.split(':').map(() => []) };
   fs.writeFileSync(path.join(folder, 'form-layout.json'), JSON.stringify([layout], null, 2) + '\n');
   index.themes.push({ themeId: id, label, mode: profile.mode || 'template', collection: 'application-styles',

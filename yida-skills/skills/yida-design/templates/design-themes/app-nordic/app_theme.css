@@ -13,7 +13,7 @@
  *    --design-file <design.md> --output <app-theme.css> 生成主题。
  * 2. 修改 design.md 后重跑同一命令，CLI 增量更新 token 并保留其他定制。
  *    省略 --design-file 会重置模板，不用于保留已有定制的更新。
- * 3. 本模板默认品牌种子为 coffee 咖啡色；最终配色和圆角以 design.md 的 tokens 为准。
+ * 3. 品牌值保留项目占位和派生说明；先完成 design.md，再生成实际主题 CSS。
  * 4. 应用品牌色阶只使用平台实际生成的 --color-brand1-1、2、3、5、6、9、10；
  *    CLI 同时生成 --color-brand-1 至 --color-brand-4 和 --color-group，不要补造 4、7、8。
  * 5. 若 design.md 选择其他主色，必须同步替换品牌色阶、基础色阶、图表色组，以及模板中按钮、
@@ -35,13 +35,13 @@
   --color-white: var(--pod-card-bg-color);
 
   /* brand */
-  --color-brand1-1: #677674;
-  --color-brand1-2: #EAECEC;
-  --color-brand1-3: #F8F9F9;
-  --color-brand1-5: #2D3433;
-  --color-brand1-6: #526361;
-  --color-brand1-9: #3E4B4A;
-  --color-brand1-10: #2D3131;
+  --color-brand1-1: <生成实际色值：--color-brand1-6 88% + #FFFFFF 12%，sRGB 逐通道混合>;
+  --color-brand1-2: <生成实际色值：--color-brand1-6 12% + #FFFFFF 88%，sRGB 逐通道混合>;
+  --color-brand1-3: <生成实际色值：--color-brand1-6 4% + #FFFFFF 96%，sRGB 逐通道混合>;
+  --color-brand1-5: <生成实际色值：--color-brand1-6 38% + #171717 62%，sRGB 逐通道混合>;
+  --color-brand1-6: {{PRIMARY_COLOR}};
+  --color-brand1-9: <生成实际色值：--color-brand1-6 76% + #000000 24%，sRGB 逐通道混合>;
+  --color-brand1-10: <生成实际色值：--color-brand1-6 26% + #202020 74%，sRGB 逐通道混合>;
 
   /* line */
   --color-line1-1: #dce4df;
@@ -167,10 +167,10 @@
 
   /* 新主题下变量 */
   /* shell 背景 padding 圆角 */
-  --pod-shell-bg-color-light: var(--color-brand1-2, #EAECEC);
+  --pod-shell-bg-color-light: var(--color-brand1-2, var(--color-brand1-2));
   --pod-shell-bg-color-white: #fff;
   --pod-shell-bg-color-gray: var(--pod-common-bg-color, #f0f2f5);
-  --pod-shell-bg-color-dark: var(--color-brand1-5, #2D3433);
+  --pod-shell-bg-color-dark: var(--color-brand1-5, var(--color-brand1-5));
   --pod-shell-padding: 4px;
   --pod-shell-lshape-border-radius: 14px;
   /* 新版主题shell main 容器相关 暂时不需要这个变量，写死用户不可配置 */
@@ -282,7 +282,7 @@
   --pod-nav-top-tab-item-max-width: 120px;
   --pod-nav-top-tab-item-padding: 0 12px;
   --pod-nav-top-tab-item-inner-padding: 12px 0;
-  --pod-nav-top-tab-indicator-width: 2px;
+  --pod-nav-top-tab-indicator-width: 0px;
 
   /* 新版导航平台 Header、内容行与操作区。 */
   --pod-nav-platform-header-height: 48px;
@@ -302,9 +302,9 @@
     radial-gradient(64px 24px at 31% 0%, transparent, rgba(0, 0, 0, 0.6)),
     linear-gradient(
       161deg,
-      var(--color-brand1-1, #677674) 5.22%,
-      var(--color-brand1-5, #2D3433) 50.54%,
-      var(--color-brand1-9, #3E4B4A) 89.61%
+      var(--color-brand1-1, #4584B3) 5.22%,
+      var(--color-brand1-5, #1F3A4E) 50.54%,
+      var(--color-brand1-9, #215780) 89.61%
     );
   --pod-nav-ai-wenban-text-color: var(--color-text1-5, #fff);
   --pod-nav-logo-gap: 8px;
@@ -325,7 +325,10 @@
   --pod-nav-menu-panel-after-collapse-top: 40px;
   --pod-nav-menu-item-height: 46px;
   --pod-nav-menu-item-padding: 8px;
-  --pod-nav-menu-item-radius: 14px;
+  --pod-nav-menu-item-radius: 999px;
+  --pod-nav-menu-item-border: none;
+  --pod-nav-menu-item-hover-border: none;
+  --pod-nav-menu-item-selected-border: none;
   --pod-nav-menu-font-size: 14px;
   --pod-nav-menu-item-selected-font-weight: 500;
   --pod-nav-menu-item-selected-shadow: none;
@@ -400,11 +403,11 @@
   --oyd-rule-style: solid;
   --oyd-layout-columns: minmax(0, 12fr);
   --oyd-surface-shadow: none;
-  --color-brand-1: #2D3131;
-  --color-brand-2: #677674;
-  --color-brand-3: #526361;
-  --color-brand-4: #3E4B4A;
-  --color-group: #526361, #677674, #2D3433, #EAECEC, #3E4B4A, #F8F9F9;
+  --color-brand-1: var(--color-brand1-10);
+  --color-brand-2: var(--color-brand1-1);
+  --color-brand-3: var(--color-brand1-6);
+  --color-brand-4: var(--color-brand1-9);
+  --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 }
 
 /* 独立提交页（含抽屉 iframe）使用应用外衬；平台默认壳层取导航背景且不消费背景图。 */
@@ -553,6 +556,7 @@ body.pod-premium.page-type-submit
   --pod-nav-l-sub-main-bg-color: var(--pod-shell-theme-bg-color);
   --pod-nav-top-main-border-width: 1px;
   --pod-nav-top-main-border-color: #CDDCCF;
+  --pod-nav-top-tab-indicator-width: 0px;
   --pod-nav-logo-text: var(--pod-nav-item-text-hover-color);
   --pod-nav-logo-icon: var(--pod-nav-item-text-selected-color);
   --pod-nav-logo-border-radius: 14px;
@@ -579,7 +583,10 @@ body.pod-premium.page-type-submit
   --pod-nav-action-bg-hover-color: var(--pod-nav-menu-bg-hover-color);
   --pod-nav-action-bg-active-color: var(--pod-nav-menu-bg-hover-color);
   --pod-nav-menu-item-height: 46px;
-  --pod-nav-menu-item-radius: 14px;
+  --pod-nav-menu-item-radius: 999px;
+  --pod-nav-menu-item-border: none;
+  --pod-nav-menu-item-hover-border: none;
+  --pod-nav-menu-item-selected-border: none;
   --pod-nav-menu-font-size: 14px;
   --pod-nav-menu-item-selected-font-weight: 500;
   --pod-nav-menu-line-height: 20px;
@@ -622,6 +629,7 @@ body.pod-premium.page-type-submit
   --pod-nav-l-sub-main-bg-color: var(--color-white, #fff);
   --pod-nav-top-main-border-width: 1px;
   --pod-nav-top-main-border-color: #00000014;
+  --pod-nav-top-tab-indicator-width: 2px;
   --pod-nav-logo-icon: var(--color-text1-5, #fff);
   --pod-nav-logo-border-radius: 6px;
   --pod-nav-popup-border-radius: var(--corner-3);
@@ -629,16 +637,56 @@ body.pod-premium.page-type-submit
   --pod-nav-search-border-color: transparent;
   --pod-nav-menu-item-height: 36px;
   --pod-nav-menu-item-radius: var(--pod-sm-border-radius, 8px);
+  --pod-nav-menu-item-border: none;
+  --pod-nav-menu-item-hover-border: var(--pod-nav-menu-item-border);
+  --pod-nav-menu-item-selected-border: var(--pod-nav-menu-item-border);
   --pod-nav-menu-font-size: 14px;
   --pod-nav-menu-item-selected-font-weight: 400;
   --pod-nav-menu-line-height: 20px;
   --pod-nav-menu-gap: 8px;
 }
 
-/* Theme-controlled active marker; inset shadows do not change menu layout. */
-.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected {
+/* openyida-navigation-shape:start */
+/* Side/L navigation and top tabs share the same theme-defined menu shape.
+ * Border widths stay constant between states; border-box keeps row height stable. */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item {
+  box-sizing: border-box;
+  border-radius: var(--pod-nav-menu-item-radius, 8px);
+  border: var(--pod-nav-menu-item-border, none);
+}
+/* Native inner rows also have a fixed minimum height. Fit them inside the
+ * bordered item instead of letting a thick outline push content below it. */
+.vc-shell.pod-premium .next-nav.next-line.next-ver.deep-shell-nav-menu-content:not(.next-icon-only) .next-nav-item.next-menu-item > .next-menu-item-inner,
+.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item > .next-menu-item-inner {
+  box-sizing: border-box;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item:hover,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item:hover {
+  border: var(--pod-nav-menu-item-hover-border, var(--pod-nav-menu-item-border, none));
+}
+/* Platform top tabs use transparent backgrounds and zero margin !important.
+ * Match the header scope so theme surfaces and spacing can reveal their shape. */
+.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item {
+  margin-inline: calc(var(--pod-nav-menu-gap, 8px) / 2) !important;
+}
+.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item:hover {
+  background: var(--pod-nav-menu-bg-hover-color) !important;
+  color: var(--pod-nav-item-text-hover-color) !important;
+}
+.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item.next-selected {
+  background: var(--pod-nav-menu-bg-selected-color) !important;
+  color: var(--pod-nav-item-text-selected-color) !important;
+}
+/* Selected state wins over hover, retaining the original inset-shadow marker. */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));
   box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
 }
+/* openyida-navigation-shape:end */
 
 /* OPENYIDA APPLICATION STYLE RECIPES START
  * Opt-in semantic classes for custom pages. Native form structure stays in Schema.

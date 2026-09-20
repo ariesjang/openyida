@@ -15,7 +15,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(0,0,0,.24)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "6px",
+    "menuBorder": "1px solid transparent",
+    "menuHoverBorder": "1px solid #424242",
+    "menuSelectedBorder": "1px solid #626262"
   },
   "dark-rail-fine-lines": {
     "summary": "深炭导航与白色工作区形成清楚分区，白字灰底标识当前菜单；细边界和低圆角与正文一致。",
@@ -33,7 +37,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(0,0,0,.24)",
-    "selectedShadow": "inset 3px 0 0 var(--color-brand1-6)"
+    "selectedShadow": "inset 3px 0 0 var(--color-brand1-6)",
+    "menuRadius": "2px",
+    "menuBorder": "none",
+    "menuHoverBorder": "none",
+    "menuSelectedBorder": "none"
   },
   "dark-rail-signal-panels": {
     "summary": "近黑导航贴合技术面板，菜单以窄间距排列，品牌文字标出当前页面，分组与搜索沿用信号面板的细线。",
@@ -51,7 +59,11 @@
     "gap": 4,
     "selectedWeight": 600,
     "popupShadow": "0 8px 24px rgba(0,0,0,.24)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "0px",
+    "menuBorder": "1px solid #353535",
+    "menuHoverBorder": "1px solid #727272",
+    "menuSelectedBorder": "1px solid var(--color-brand1-6)"
   },
   "graphite-bevel-grid": {
     "summary": "石墨导航以细分隔和低圆角组织菜单，浅字与微亮选中底延续表格网格的密度。",
@@ -69,10 +81,14 @@
     "gap": 4,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(0,0,0,.24)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "2px",
+    "menuBorder": "1px solid #353535",
+    "menuHoverBorder": "1px solid #626262",
+    "menuSelectedBorder": "1px solid #909090"
   },
   "hairline-shared-bands": {
-    "summary": "暗色导航共用一层细边界，菜单使用小圆角与紧凑行距，选中项靠明亮文字和弱填色建立层级。",
+    "summary": "暗色导航共用一层细边界，菜单使用直角与紧凑行距，选中项靠明亮文字和弱填色建立层级。",
     "palette": {
       "background": "#111111",
       "text": "#B0B0B0",
@@ -87,7 +103,12 @@
     "gap": 4,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(0,0,0,.24)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "0px",
+    "menuBorder": "none",
+    "menuHoverBorder": "none",
+    "menuSelectedBorder": "none",
+    "topIndicatorWidth": 2
   },
   "hairline-soft-blocks": {
     "summary": "白色导航接续白色正文，浅灰菜单底和细边界保持轻盈，搜索与菜单弹层沿用同一白面。",
@@ -105,7 +126,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(24,28,31,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "8px",
+    "menuBorder": "1px solid transparent",
+    "menuHoverBorder": "1px solid #DEDEDE",
+    "menuSelectedBorder": "1px solid #A6A6A6"
   },
   "ink-glow-soft-panels": {
     "summary": "浅色导航以柔圆菜单和轻染色搜索区延续内容面板，当前入口采用深色底与白字形成局部焦点。",
@@ -123,7 +148,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(24,28,31,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "20px",
+    "menuBorder": "none",
+    "menuHoverBorder": "none",
+    "menuSelectedBorder": "none"
   },
   "inset-frame-pixel-rhythm": {
     "summary": "微染灰导航承托白色选中菜单，低圆角、细边界和紧凑间距与嵌框工作区保持相同节奏。",
@@ -141,7 +170,11 @@
     "gap": 4,
     "selectedWeight": 600,
     "popupShadow": "0 8px 24px rgba(24,28,31,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "2px",
+    "menuBorder": "1px solid #A6A6A6",
+    "menuHoverBorder": "1px solid #737373",
+    "menuSelectedBorder": "1px solid var(--color-brand1-5)"
   },
   "outlined-texture-duotone": {
     "summary": "深炭导航延续暗轮廓内容面，以微亮边界、圆角菜单和明亮选中文字建立清楚层次。",
@@ -159,7 +192,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(0,0,0,.24)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "12px",
+    "menuBorder": "2px solid #535353",
+    "menuHoverBorder": "2px solid #888888",
+    "menuSelectedBorder": "2px solid #BBBBBB"
   },
   "soft-inset-surfaces": {
     "summary": "冷浅灰导航与白色内容区保持细微层差，菜单圆角柔和，选中与搜索使用中性浅底。",
@@ -177,7 +214,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(24,28,31,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "12px",
+    "menuBorder": "none",
+    "menuHoverBorder": "none",
+    "menuSelectedBorder": "none"
   },
   "soft-outline-rhythm": {
     "summary": "近白导航延续柔边内容区，菜单使用小圆角与舒展间距，浅灰选中底配清晰深色文字。",
@@ -195,7 +236,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(24,28,31,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "12px",
+    "menuBorder": "1px solid #DEDEDE",
+    "menuHoverBorder": "1px solid #A6A6A6",
+    "menuSelectedBorder": "1px solid #737373"
   },
   "soft-rail-bold-band": {
     "summary": "浅灰导航托起白色选中菜单，搜索和分组使用细边界，菜单形状与内容按钮、输入保持一致。",
@@ -213,7 +258,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(24,28,31,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "4px",
+    "menuBorder": "2px solid transparent",
+    "menuHoverBorder": "2px solid #A6A6A6",
+    "menuSelectedBorder": "2px solid var(--color-brand1-6)"
   },
   "soft-spectral-panels": {
     "summary": "近黑导航与画布连为一体，当前菜单用品牌亮底和深字形成局部光点，弹层保持独立暗面。",
@@ -231,7 +280,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(0,0,0,.24)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "999px",
+    "menuBorder": "1px solid transparent",
+    "menuHoverBorder": "1px solid var(--color-brand1-6)",
+    "menuSelectedBorder": "1px solid var(--color-brand1-6)"
   },
   "warm-canvas-contrast-panels": {
     "summary": "微染浅灰导航接续画布，宽松菜单和柔圆轮廓与大面板呼应，当前入口使用深色文字与细指示线。",
@@ -249,7 +302,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(24,28,31,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "16px",
+    "menuBorder": "none",
+    "menuHoverBorder": "none",
+    "menuSelectedBorder": "none"
   },
   "warm-rail-muted-panels": {
     "summary": "低饱和浅灰导航承托白色选中项，短间距、小圆角和细线延续工作区的轻量秩序。",
@@ -267,7 +324,11 @@
     "gap": 8,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(24,28,31,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "4px",
+    "menuBorder": "1px solid transparent",
+    "menuHoverBorder": "1px solid #A6A6A6",
+    "menuSelectedBorder": "1px solid #737373"
   },
   "app-wire": {
     "summary": "浅灰绿导航延续线框画布；方正菜单、标尺般细线与紧凑间距组织入口，深墨绿底白字标出当前页面。",
@@ -285,10 +346,14 @@
     "gap": 4,
     "selectedWeight": 600,
     "popupShadow": "none",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "2px",
+    "menuBorder": "1px solid #AAB7AE",
+    "menuHoverBorder": "1px solid #465149",
+    "menuSelectedBorder": "1px solid #17221B"
   },
   "app-paper": {
-    "summary": "奶油色导航如纸页目录，暖棕文字、圆角题签和舒展间距呼应手账表单，当前入口采用较深的暖纸底。",
+    "summary": "奶油色导航如纸页目录，暖棕文字、不对称圆角题签和舒展间距呼应手账表单，当前入口采用较深的暖纸底。",
     "palette": {
       "background": "#F0E5D1",
       "text": "#745338",
@@ -303,7 +368,11 @@
     "gap": 10,
     "selectedWeight": 500,
     "popupShadow": "0 4px 12px rgba(116,83,56,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "12px 3px 12px 3px",
+    "menuBorder": "1px solid #B49A76",
+    "menuHoverBorder": "1px solid #745338",
+    "menuSelectedBorder": "1px solid #745338"
   },
   "app-sage": {
     "summary": "柔绿导航与植物表面连贯，圆润菜单与宽松行距延续表单控件，选中底如低矮浮雕，深绿文字保持清晰。",
@@ -321,7 +390,11 @@
     "gap": 10,
     "selectedWeight": 600,
     "popupShadow": "inset 0 1px 2px rgba(52,91,73,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "16px",
+    "menuBorder": "none",
+    "menuHoverBorder": "none",
+    "menuSelectedBorder": "none"
   },
   "app-pop": {
     "summary": "明黄导航采用方角菜单和粗墨线，选中项反转为黑底黄字；硬边界与内容区印刷阴影呼应。",
@@ -340,7 +413,11 @@
     "selectedWeight": 700,
     "popupShadow": "4px 4px 0 #211C21",
     "stroke": 3,
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "0px",
+    "menuBorder": "3px solid #211C21",
+    "menuHoverBorder": "3px solid #211C21",
+    "menuSelectedBorder": "3px solid #211C21"
   },
   "app-neon": {
     "summary": "深海蓝导航配青色文字，当前菜单以浅青底深字形成局部微光；搜索和弹层延续技术工作区的蓝色层次。",
@@ -358,7 +435,11 @@
     "gap": 6,
     "selectedWeight": 600,
     "popupShadow": "0 8px 24px rgba(4,12,28,.40)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "10px",
+    "menuBorder": "1px solid #356274",
+    "menuHoverBorder": "1px solid #98CDCF",
+    "menuSelectedBorder": "1px solid #B4F5F1"
   },
   "app-line": {
     "summary": "暖白导航沿用纯文字和下划线节奏，菜单保持直角与宽行距，浅底选中项和细指示线延续单列阅读。",
@@ -376,7 +457,12 @@
     "gap": 12,
     "selectedWeight": 500,
     "popupShadow": "none",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "0px",
+    "menuBorder": "none",
+    "menuHoverBorder": "none",
+    "menuSelectedBorder": "none",
+    "topIndicatorWidth": 2
   },
   "app-glass": {
     "summary": "雾紫导航以柔圆菜单和漫射弹层呼应玻璃表面，较深紫灰底标出当前项，搜索区域保持同色层次。",
@@ -394,7 +480,11 @@
     "gap": 10,
     "selectedWeight": 500,
     "popupShadow": "0 10px 32px rgba(69,52,95,.12)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "24px",
+    "menuBorder": "1px solid #FFFFFF",
+    "menuHoverBorder": "1px solid #FFFFFF",
+    "menuSelectedBorder": "1px solid #7C6996"
   },
   "app-ticket": {
     "summary": "票据纸色导航配棕墨文字，直角菜单、双线分隔和紧凑行距延续单据结构，当前入口采用棕底纸色字。",
@@ -413,7 +503,11 @@
     "selectedWeight": 600,
     "popupShadow": "none",
     "stroke": 2,
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "0px",
+    "menuBorder": "3px double #A7744D",
+    "menuHoverBorder": "3px double #733C26",
+    "menuSelectedBorder": "3px double #FFE8BC"
   },
   "app-editorial": {
     "summary": "暖纸目录用酒红文字、直角菜单与长细线建立编辑节奏；当前入口采用酒红底纸白字，与正文标题呼应。",
@@ -431,10 +525,15 @@
     "gap": 10,
     "selectedWeight": 500,
     "popupShadow": "none",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "0px",
+    "menuBorder": "none",
+    "menuHoverBorder": "none",
+    "menuSelectedBorder": "none",
+    "topIndicatorWidth": 2
   },
   "app-terminal": {
-    "summary": "墨绿导航使用直角与点线分组，紧凑菜单延续日志节奏，当前入口以终端绿底深字清晰定位。",
+    "summary": "墨绿导航使用直角与虚线菜单边框，紧凑菜单延续日志节奏，当前入口以终端绿底深字清晰定位。",
     "palette": {
       "background": "#101E15",
       "text": "#9BCDA5",
@@ -449,7 +548,11 @@
     "gap": 2,
     "selectedWeight": 600,
     "popupShadow": "none",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "0px",
+    "menuBorder": "1px dashed #558966",
+    "menuHoverBorder": "1px dashed #9BCDA5",
+    "menuSelectedBorder": "1px dashed #101E15"
   },
   "app-platinum": {
     "summary": "铂灰导航配低圆角菜单与均衡行距，青灰细线连接合同工作区，当前入口以深灰底浅字形成稳重焦点。",
@@ -467,7 +570,11 @@
     "gap": 6,
     "selectedWeight": 600,
     "popupShadow": "0 6px 18px rgba(53,67,75,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "6px",
+    "menuBorder": "1px solid transparent",
+    "menuHoverBorder": "1px solid #B7C5C0",
+    "menuSelectedBorder": "1px solid #354B51"
   },
   "app-executive": {
     "summary": "墨绿黑导航以香槟金文字和长分隔线组织入口，低圆角菜单延续行政表单，当前项使用金底深字。",
@@ -485,7 +592,11 @@
     "gap": 10,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(0,0,0,.24)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "4px",
+    "menuBorder": "1px solid transparent",
+    "menuHoverBorder": "1px solid #C0B494",
+    "menuSelectedBorder": "1px solid #E7D8B7"
   },
   "app-finance": {
     "summary": "淡蓝导航如图纸索引，紧凑低圆角菜单与细线网格呼应金额表单，当前入口以蓝底白字突出。",
@@ -503,10 +614,14 @@
     "gap": 4,
     "selectedWeight": 600,
     "popupShadow": "0 6px 18px rgba(39,78,120,.12)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "2px",
+    "menuBorder": "1px solid #AFC4DC",
+    "menuHoverBorder": "1px solid #274E78",
+    "menuSelectedBorder": "1px solid #153856"
   },
   "app-nordic": {
-    "summary": "云白导航采用柔圆菜单与宽松留白，浅苔绿选中底衔接单列服务表单，搜索和弹层保持安静的自然色调。",
+    "summary": "云白导航采用胶囊菜单与宽松留白，浅苔绿选中底衔接单列服务表单，搜索和弹层保持安静的自然色调。",
     "palette": {
       "background": "#F5F8F4",
       "text": "#526361",
@@ -521,7 +636,11 @@
     "gap": 12,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(53,76,71,.08)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "999px",
+    "menuBorder": "none",
+    "menuHoverBorder": "none",
+    "menuSelectedBorder": "none"
   },
   "app-teal": {
     "summary": "浅青绿导航与运营状态带相连，适度圆角、稳定行距和清晰分组组织任务入口，选中项为深青底浅字。",
@@ -539,7 +658,11 @@
     "gap": 6,
     "selectedWeight": 600,
     "popupShadow": "0 6px 20px rgba(36,102,95,.12)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "8px",
+    "menuBorder": "1px solid transparent",
+    "menuHoverBorder": "1px solid #A8CFC0",
+    "menuSelectedBorder": "1px solid #154D45"
   },
   "app-amber": {
     "summary": "淡琥珀导航采用短行距、低圆角和细线分组，深棕选中项呼应工单操作，搜索区延续现场清单的紧凑密度。",
@@ -557,7 +680,11 @@
     "gap": 4,
     "selectedWeight": 600,
     "popupShadow": "none",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "3px",
+    "menuBorder": "1px solid #D1B477",
+    "menuHoverBorder": "1px solid #754B13",
+    "menuSelectedBorder": "1px solid #593607"
   },
   "app-graphite": {
     "summary": "蓝石墨导航以低圆角、密集行距和细分隔接续数据表，较亮石墨选中底与浅字保留连续工作区层次。",
@@ -575,7 +702,11 @@
     "gap": 2,
     "selectedWeight": 600,
     "popupShadow": "0 8px 20px rgba(0,0,0,.28)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "2px",
+    "menuBorder": "1px solid #4C5864",
+    "menuHoverBorder": "1px solid #AFB8C2",
+    "menuSelectedBorder": "1px solid #AFB8C2"
   },
   "app-plum": {
     "summary": "浅绛紫导航以柔和菜单与舒展分组延续咨询阅读，当前项采用深紫底浅字，搜索和弹层配同色细边界。",
@@ -593,6 +724,10 @@
     "gap": 10,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(101,58,97,.10)",
-    "selectedShadow": "none"
+    "selectedShadow": "none",
+    "menuRadius": "16px 4px 16px 4px",
+    "menuBorder": "1px solid #BC9AB7",
+    "menuHoverBorder": "1px solid #653A61",
+    "menuSelectedBorder": "1px solid #492746"
   }
 }

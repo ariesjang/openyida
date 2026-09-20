@@ -67,6 +67,10 @@ function withFixture(run) {
     }
     const original = fs.readFileSync(path.join(SKILL, index.themes[0].templatePath), 'utf8');
     const template = path.join(skill, index.themes[0].templatePath);
+    fs.mkdirSync(path.dirname(template), { recursive: true });
+    for (const field of ['cssTemplatePath', 'formLayoutPath']) {
+      fs.copyFileSync(path.join(SKILL, index.themes[0][field]), path.join(skill, index.themes[0][field]));
+    }
     const saveIndex = () => fs.writeFileSync(path.join(themes, 'index.json'), JSON.stringify(index));
     saveIndex();
     fs.writeFileSync(template, original);
@@ -162,6 +166,22 @@ test('validator requires every template to be indexed and every entry to exist',
     expect(result.status).toBe(1);
     expect(result.stdout).toContain('主题模板未登记到索引');
     expect(result.stdout).toContain('索引引用了不存在的主题模板');
+  });
+});
+
+test.each(['design.md', 'app_theme.css', 'form-layout.json'])('validator rejects a missing bundle file: %s', filename => {
+  withFixture(({ skill, template }) => {
+    fs.unlinkSync(path.join(path.dirname(template), filename));
+    expect(validate(skill).status).toBe(1);
+  });
+});
+
+test.each(['--color-brand1-1', '--color-brand1-6'])('validator rejects a fixed CSS template brand color: %s', name => {
+  withFixture(({ skill, template }) => {
+    const cssFile = path.join(path.dirname(template), 'app_theme.css');
+    const css = fs.readFileSync(cssFile, 'utf8').replace(new RegExp(`(${name}: )[^;]+;`), '$1#123456;');
+    fs.writeFileSync(cssFile, css);
+    expect(validate(skill).stdout).toContain(`${name} 必须保留项目颜色占位`);
   });
 });
 

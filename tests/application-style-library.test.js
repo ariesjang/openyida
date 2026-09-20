@@ -234,10 +234,19 @@ test('form skills describe component capabilities with direct instructions', () 
   expect(nativeFormStyles).toContain('普通业务分组和章节分隔使用 `Divider`');
 });
 
-test.each(styles.map(style => [style.themeId, style]))('%s pairs ship valid CSS and compile the form layout', (_id, style) => {
-  const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.cssTemplatePath), 'utf8');
+test.each(themeIndex.filter(theme => theme.mode !== 'creative').map(style => [style.themeId, style]))('%s pairs generate valid CSS and compile the form layout', (_id, style) => {
+  const templateCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.cssTemplatePath), 'utf8');
+  expect(templateCss).toContain('--color-brand1-6: {{PRIMARY_COLOR}};');
+  expect(templateCss).toContain('--color-brand1-1: <生成实际色值：');
+  const template = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.templatePath), 'utf8');
+  const design = resolveThemeColors(template.replace(/\{\{PRIMARY_COLOR\}\}/g, '#357942'));
+  const css = applyDesignTokens(templateCss, design);
   expect(() => validateThemeCssContent(css)).not.toThrow();
-  expect(css.match(/OPENYIDA APPLICATION STYLE RECIPES START/g)).toHaveLength(1);
+  expect(css).not.toMatch(/\{\{|<生成实际色值：/);
+  expect(css).toContain('--color-brand1-6: #357942;');
+  if (style.collection === 'application-styles') {
+    expect(css.match(/OPENYIDA APPLICATION STYLE RECIPES START/g)).toHaveLength(1);
+  }
   const layout = JSON.parse(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.formLayoutPath), 'utf8'));
   expect(layout[0].children.every(column => column.length === 0)).toBe(true);
   if (['app-editorial', 'app-executive'].includes(style.themeId)) {
@@ -282,6 +291,48 @@ test('export writes all three assets and refuses to overwrite authored work', as
   expect(() => exportApplicationStyle('../outside', directory)).toThrow();
   await expect(sample.run(['yida-design', 'application-style', '--style-id', 'app-wire', '--design-file', 'ignored.md']))
     .rejects.toMatchObject({ code: 'APPLICATION_STYLE_SAMPLE_INVALID' });
+});
+
+test('every catalog entry exports exactly three files with unresolved project brand colors', () => {
+  themeIndex.forEach(theme => {
+    const output = path.join(directory, theme.themeId);
+    exportApplicationStyle(theme.themeId, output);
+    expect(fs.readdirSync(output).sort()).toEqual(['app_theme.css', 'design.md', 'form-layout.json']);
+    expect(fs.readFileSync(path.join(output, 'app_theme.css'), 'utf8')).toContain('--color-brand1-6: {{PRIMARY_COLOR}};');
+  });
+});
+
+test('exported CSS accepts a completed design through the CLI and follows later brand changes', async () => {
+  exportApplicationStyle('dark-rail-fine-lines', directory);
+  const cssFile = path.join(directory, 'app_theme.css');
+  const designFile = path.join(directory, 'design.md');
+  const template = fs.readFileSync(designFile, 'utf8');
+  fs.appendFileSync(cssFile, '\n.project-note { padding: 7px; }\n');
+  for (const color of ['#357942', '#936A21']) {
+    const design = resolveThemeColors(template.replace(/\{\{PRIMARY_COLOR\}\}/g, color));
+    fs.writeFileSync(designFile, design);
+    await sample.run(['yida-design', 'app-theme', '--design-file', designFile, '--output', cssFile]);
+    const css = fs.readFileSync(cssFile, 'utf8');
+    const tokens = readDesignTokens(design);
+    for (const name of ['--color-brand1-1', '--color-brand1-6']) {
+      expect(css).toContain(`${name}: ${tokens[name]};`);
+    }
+    expect(css).not.toMatch(/\{\{|<生成实际色值：/);
+    expect(css).toContain('.project-note { padding: 7px; }');
+    expect(css).toContain('--pod-nav-menu-item-selected-shadow: inset 3px 0 0 var(--color-brand1-6);');
+  }
+});
+
+test('historical theme paths resolve to the same design and mismatched paths remain invalid', () => {
+  const { normalizePlan, renderDesign } = require('../lib/design-plan/materialize');
+  const plan = planFor('soft-inset-surfaces');
+  const current = renderDesign(plan);
+  plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/soft-inset-surfaces.md';
+  expect(renderDesign(plan)).toBe(current);
+  const normalized = normalizePlan({ ...plan, schemaVersion: '2.0' });
+  expect(normalized.visualStyle.internal.selectedTheme.templatePath).toBe('templates/design-themes/soft-inset-surfaces/design.md');
+  plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-inset-hairline.md';
+  expect(() => renderDesign(plan)).toThrow();
 });
 
 test.each(['app-editorial', 'app-executive', 'free-creative'])('public CLI exports %s as field columns without a forced introduction', themeId => {

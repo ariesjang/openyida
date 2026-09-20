@@ -24,6 +24,7 @@ tokens:
         "--pod-nav-l-sub-main-bg-color": "var(--pod-shell-theme-bg-color)"
         "--pod-nav-top-main-border-width": "1px"
         "--pod-nav-top-main-border-color": "#353535"
+        "--pod-nav-top-tab-indicator-width": "0px"
         "--pod-nav-logo-text": "var(--pod-nav-item-text-hover-color)"
         "--pod-nav-logo-bg": "var(--pod-nav-menu-bg-selected-color)"
         "--pod-nav-logo-icon": "var(--pod-nav-item-text-selected-color)"
@@ -54,7 +55,10 @@ tokens:
         "--pod-nav-action-bg-hover-color": "var(--pod-nav-menu-bg-hover-color)"
         "--pod-nav-action-bg-active-color": "var(--pod-nav-menu-bg-hover-color)"
         "--pod-nav-menu-item-height": "34px"
-        "--pod-nav-menu-item-radius": "6px"
+        "--pod-nav-menu-item-radius": "2px"
+        "--pod-nav-menu-item-border": "1px solid #353535"
+        "--pod-nav-menu-item-hover-border": "1px solid #626262"
+        "--pod-nav-menu-item-selected-border": "1px solid #909090"
         "--pod-nav-menu-font-size": "14px"
         "--pod-nav-menu-item-selected-font-weight": "500"
         "--pod-nav-menu-line-height": "20px"
@@ -184,6 +188,8 @@ YAML 维护变量值，正文维护角色关系。未能直接确定的尺寸、
 ### 2.2 应用导航
 
 石墨导航以细分隔和低圆角组织菜单，浅字与微亮选中底延续表格网格的密度。
+
+菜单轮廓：圆角 2px；普通边框 1px solid #353535；悬停边框 1px solid #626262；选中边框 1px solid #909090。这些值同时作用于侧栏和顶部菜单；保持各状态边框宽度一致，用线型、颜色和选中标记表达状态。
 
 导航与应用框架、表单、自定义页面和详情页共用设计语言。先按业务入口安排菜单、分组、搜索、品牌区与常用操作，再一起确定导航与正文的明暗、表面、字体、边界、圆角和密度。平台导航使用真实页面菜单；自绘导航按同一套导航 Token 实现。命名模板沿用自身 navTheme，换主色保持导航明暗与内容画布；需要另一导航明暗时改选主题，自由创意按项目明确设计。
 

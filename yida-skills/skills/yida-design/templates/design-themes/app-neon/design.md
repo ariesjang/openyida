@@ -23,6 +23,7 @@ tokens:
         "--pod-nav-l-sub-main-bg-color": "var(--pod-shell-theme-bg-color)"
         "--pod-nav-top-main-border-width": "1px"
         "--pod-nav-top-main-border-color": "#356274"
+        "--pod-nav-top-tab-indicator-width": "0px"
         "--pod-nav-logo-text": "var(--pod-nav-item-text-hover-color)"
         "--pod-nav-logo-bg": "var(--pod-nav-menu-bg-selected-color)"
         "--pod-nav-logo-icon": "var(--pod-nav-item-text-selected-color)"
@@ -54,6 +55,9 @@ tokens:
         "--pod-nav-action-bg-active-color": "var(--pod-nav-menu-bg-hover-color)"
         "--pod-nav-menu-item-height": "42px"
         "--pod-nav-menu-item-radius": "10px"
+        "--pod-nav-menu-item-border": "1px solid #356274"
+        "--pod-nav-menu-item-hover-border": "1px solid #98CDCF"
+        "--pod-nav-menu-item-selected-border": "1px solid #B4F5F1"
         "--pod-nav-menu-font-size": "14px"
         "--pod-nav-menu-item-selected-font-weight": "600"
         "--pod-nav-menu-line-height": "20px"
@@ -188,7 +192,7 @@ themeProfile:
 
 横向监控总览与双列任务区；深海蓝层次、局部青色微光。适合明确要求暗色的技术值守。
 
-导航、应用框架、自定义页面、表单、编辑与详情共用这一套视觉语言。业务内容来自 PRD，按实际行业、页面标题和数据设计。色彩来源：{{COLOR_SOURCE}}；主色由 {{PRIMARY_COLOR}} 实例化，示范配色作为项目起点。
+导航、应用框架、自定义页面、表单、编辑与详情共用这一套视觉语言。业务内容来自 PRD，按实际行业、页面标题和数据设计。色彩来源：{{COLOR_SOURCE}}；主色由 {{PRIMARY_COLOR}} 实例化，品牌悬停色按同源占位说明生成；模板不固定项目品牌色。
 
 ## 2. 页面视觉系统
 
@@ -199,6 +203,8 @@ themeProfile:
 ### 2.2 应用导航
 
 深海蓝导航配青色文字，当前菜单以浅青底深字形成局部微光；搜索和弹层延续技术工作区的蓝色层次。
+
+菜单轮廓：圆角 10px；普通边框 1px solid #356274；悬停边框 1px solid #98CDCF；选中边框 1px solid #B4F5F1。这些值同时作用于侧栏和顶部菜单；保持各状态边框宽度一致，用线型、颜色和选中标记表达状态。
 
 导航与应用框架、表单、自定义页面和详情页共用设计语言。先按业务入口安排菜单、分组、搜索、品牌区与常用操作，再一起确定导航与正文的明暗、表面、字体、边界、圆角和密度。平台导航使用真实页面菜单；自绘导航按同一套导航 Token 实现。命名模板沿用自身 navTheme，换主色保持导航明暗与内容画布；需要另一导航明暗时改选主题，自由创意按项目明确设计。
 

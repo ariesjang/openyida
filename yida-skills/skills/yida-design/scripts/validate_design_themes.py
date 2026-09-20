@@ -207,20 +207,31 @@ def validate(skill_root: Path) -> list[str]:
         if not isinstance(theme_id, str) or not re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*", theme_id):
             errors.append(f"{label} themeId 格式非法")
             continue
-        if template_path not in (f"templates/design-themes/{theme_id}.md", f"templates/design-themes/{theme_id}/design.md"):
+        if template_path != f"templates/design-themes/{theme_id}/design.md":
             errors.append(f"{label} templatePath 必须指向公共主题目录中的同名模板")
             continue
         full_path = (skill_root / template_path).resolve()
-        if full_path.parent not in (template_dir.resolve(), (template_dir / theme_id).resolve()):
+        if full_path.parent != (template_dir / theme_id).resolve():
             errors.append(f"{label} templatePath 不得越出公共主题目录")
             continue
-        if theme.get("collection") == "application-styles":
-            if theme.get("mode") not in ("template", "creative"):
-                errors.append(f"{label} mode 必须是 template 或 creative")
-            for field, filename in (("cssTemplatePath", "app_theme.css"), ("formLayoutPath", "form-layout.json")):
-                expected = f"templates/design-themes/{theme_id}/{filename}"
-                if theme.get(field) != expected or not (skill_root / expected).is_file():
-                    errors.append(f"{label} 缺少配对资产 {field}: {expected}")
+        if theme.get("mode") not in ("template", "creative"):
+            errors.append(f"{label} mode 必须是 template 或 creative")
+        for field, filename in (("cssTemplatePath", "app_theme.css"), ("formLayoutPath", "form-layout.json")):
+            expected = f"templates/design-themes/{theme_id}/{filename}"
+            if theme.get(field) != expected or not (skill_root / expected).is_file():
+                errors.append(f"{label} 缺少配对资产 {field}: {expected}")
+        if full_path.parent.is_dir() and {p.name for p in full_path.parent.iterdir()} != {"design.md", "app_theme.css", "form-layout.json"}:
+            errors.append(f"{label} 主题目录必须只包含 design.md、app_theme.css、form-layout.json 三个文件")
+        try:
+            css = (full_path.parent / "app_theme.css").read_text(encoding="utf-8")
+            for name, pattern in (("--color-brand1-6", r"\{\{PRIMARY_COLOR\}\}"), ("--color-brand1-1", r"<生成实际色值：--color-brand1-6 [^;\n]+>")):
+                if not re.search(r"^\s*" + re.escape(name) + r":\s*" + pattern + r";", css, re.M):
+                    errors.append(f"{label} app_theme.css {name} 必须保留项目颜色占位")
+            layout = json.loads((full_path.parent / "form-layout.json").read_text(encoding="utf-8"))
+            if not isinstance(layout, list) or not layout:
+                errors.append(f"{label} form-layout.json 必须是非空组件数组")
+        except (OSError, ValueError) as exc:
+            errors.append(f"{label} 主题配对资产不可读：{exc}")
         try:
             text = full_path.read_text(encoding="utf-8")
             frontmatter = parse_frontmatter(text)

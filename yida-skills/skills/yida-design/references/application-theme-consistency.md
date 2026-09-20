@@ -22,6 +22,8 @@ Fast、Plan 和单页开发使用同一条链路：设计源文件 → `design.m
 
 平台导航由应用主题及已有平台消费关系实现；自定义导航读取同一份导航 token，并在自身组件内实现形状、布局与交互。只有自定义组件实际引用、或经过核实的平台选择器使用的变量才会改变外观。自定义菜单的聚焦、折叠、拖拽与返回等交互按 `yida-nav-shell` 实现；导航隐藏、权限和页面范围沿用 PRD。
 
+菜单形状使用 `--pod-nav-menu-item-radius`；普通、悬停、选中边框分别使用 `--pod-nav-menu-item-border`、`--pod-nav-menu-item-hover-border`、`--pod-nav-menu-item-selected-border`。三项边框由 OpenYida 主题 CSS 的导航选择器消费，覆盖侧栏、L 型侧栏和顶部菜单。边框填写完整 CSS 值，例如 `none`、`1px solid #AAB7AE`、`3px double #A7744D`；各状态保持同一宽度，避免文字位置跳动。选中阴影继续使用 `--pod-nav-menu-item-selected-shadow`，可与边框组合。验收时查看菜单的实际圆角、线宽、线型和选中标记，分别核对侧栏与顶栏。
+
 Fast 在 `design.md` 的第 2.2 节说明最终导航与框架规则，token 写入 frontmatter；Plan 在 `visualStyle.tokens` 保存项目差异，由 CLI 生成同一设计与主题文件。导航 token 随应用主题一次生成、上传和校验，各页继续消费同一份主题。
 
 ## 平台基础变量是应用主题基础框架

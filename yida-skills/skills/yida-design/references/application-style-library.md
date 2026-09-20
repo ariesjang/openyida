@@ -4,14 +4,14 @@
 
 ## 找到和导出
 
-`openyida design-plan catalog --json` 返回模板 `themes` 与独立的 `creativeOption`。本次新增的 18 套应用风格标记 `collection: application-styles`；已有主题保持兼容。目录元数据提供完整设计、CSS 和原生布局的相对路径，可直接定位对应文件。
+`openyida design-plan catalog --json` 返回模板 `themes` 与独立的 `creativeOption`。全部 34 个主题入口统一采用三文件目录，均可用 `application-style` 导出；其中 18 套应用风格与自由创意仍保留 `collection: application-styles` 分类。目录元数据提供完整设计、CSS 和原生布局的相对路径，可直接定位对应文件。
 
 ```bash
 openyida sample yida-design application-style --style-id app-executive --output prd/my-app/style-start
 openyida sample yida-design application-style --style-id free-creative --output prd/my-app/creative-start
 ```
 
-每套导出 `design.md`、`app_theme.css`、`form-layout.json`，并保留已有文件。每份 `design.md` 同时包含自定义页面的逐页设计引导，以及表单的组件位置、布局、样式、状态和响应式引导。设计中的项目占位符、CSS 示范配色和空字段布局是项目化起点；使用时替换真实项目内容、完成最终设计并生成项目主题与表单布局。上传主题时只选择项目最终维护的 `app-theme.css`。
+每套导出 `design.md`、`app_theme.css`、`form-layout.json`，并保留已有文件。每份 `design.md` 同时包含自定义页面的逐页设计引导，以及表单的组件位置、布局、样式、状态和响应式引导。设计与 CSS 中的品牌颜色保留占位：`--color-brand1-6` 使用 `{{PRIMARY_COLOR}}`，`--color-brand1-1` 按主色生成悬停色，其余品牌档位保持同源。项目占位符与空字段布局是项目化起点；使用时替换真实项目内容、完成最终设计并生成项目主题与表单布局。上传主题时只选择项目最终维护的 `app-theme.css`。
 
 ## 主题明暗双轴
 
@@ -44,7 +44,7 @@ openyida sample yida-design application-style --style-id free-creative --output 
 
 ## Fast 与 Plan 如何消费
 
-- **Fast**：选定方向后导出一套起点，按唯一输出契约补成最终 `design.md`；保留其 `applicationStyle` 消费标记，删除模板 `themeId`，填入真实项目、颜色、页面与引用，完成 `check-design`。然后运行 `openyida sample yida-design app-theme --design-file <design.md> --output <app_theme.css>`。共享生成器会携带这组应用风格的语义类配方，后续重生成保留配方之外的自定义 CSS。
+- **Fast**：选定方向后导出一套起点，按唯一输出契约补成最终 `design.md`；保留模板已有的 `applicationStyle` 消费标记，删除模板 `themeId`，填入真实项目、颜色、页面与引用，完成 `check-design`。然后运行 `openyida sample yida-design app-theme --design-file <design.md> --output <app_theme.css>`。共享生成器会携带这组应用风格的语义类配方，后续重生成保留配方之外的自定义 CSS。
 - **Plan**：`design-plan init` 使用目录中的 `themeId`（`--theme-id`），项目差异放 `visualStyle.tokens`，各页布局写入已有逐页设计。CLI 物化时生成正式 `design.md` 与返回路径中的 `app-theme.css`；文件名沿用 Plan 契约，不另生成第二份应用主题。
 - **实现**：应用级上传一次项目 CSS。导航读取完整的 `tokens.application-global.appearance.navigation`，平台导航保留原变量消费关系，自定义导航由组件明确引用。Canvas 读取设计里的 Token，并可使用 `.oyd-style-workspace`、`.oyd-style-intro`、`.oyd-style-section`；框架、表单和详情应用同一主题。自定义页面落实具体构图。
 - **表单**：先在 `design.md` 写清各区域使用的组件、列比例、间距、长字段整行和移动端重排。`form-layout.json` 提供字段与分栏的初始结构；在各列填入 PRD 字段，并按设计调整布局。`--theme compact` 等参数只设置密度，应用 CSS 负责视觉样式。
@@ -77,4 +77,4 @@ Plan 的 `visualStyle.tokens` 必须显式提供：画布 `--pod-page-bg-color`�
 
 看应用整体，覆盖导航、自定义页、提交、编辑、详情、数据管理内嵌、抽屉和移动端，核对正文/底栏对齐、背景连续、hover/focus、禁用/错误和窄屏布局。应用主题与表单组件树共同作为验收基线。
 
-维护配对资产时修改 `templates/application-styles.json` 与共用配方，再运行 `node scripts/build-application-styles.js`；随后运行模板、Plan/Fast、原生布局测试及 `check:skills`。该脚本仅用于仓库维护，应用搭建使用上述 CLI。
+维护既有主题时修改对应目录的 `design.md` 与 `form-layout.json`；维护应用风格预设时修改 `templates/application-styles.json` 与共用配方，再运行 `node scripts/build-application-styles.js`；随后运行模板、Plan/Fast、原生布局测试及 `check:skills`。该脚本仅用于仓库维护，应用搭建使用上述 CLI。
