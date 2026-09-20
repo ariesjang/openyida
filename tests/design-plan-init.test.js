@@ -109,7 +109,24 @@ test('missing color uses the existing visual-design task and leaves the example 
     expect.objectContaining({ path: 'facts.visualStyle.forUser.colorStrategy.primaryColor' }),
   ]));
   expect(result.parallelTasks.map(task => task.id)).toEqual(['business', 'visual-design']);
-  expect(result.authoring.visualDecision.comparison).toMatchObject({ baseline: 'first_instinct', alternatives: 2, distinctDimensions: 2 });
+  expect(result.authoring.visualDecision).toMatchObject({
+    comparison: { candidateCount: 3, baseline: 'first_instinct', alternatives: 2, distinctDimensions: 2 },
+    execution: 'one_shared_three_direction_generation_pass_for_fast_and_plan',
+    presentation: 'fast_selects_internally; plan_asks_user_when_no_explicit_visual_direction',
+  });
+});
+
+test('initialization derives navigation tone from the selected theme and replaces stale input', () => {
+  brief.visualSelection.navigationStyle.tone = 'dark';
+  save();
+  const result = init();
+  const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+  expect(plan.visualStyle.forUser.navigationStyle).toMatchObject({
+    structure: 'top',
+    tone: 'light',
+    toneSource: 'theme_derived',
+  });
+  expect(fs.readFileSync(result.context, 'utf8')).toContain('tone=light 由已选主题模板派生，不要修改');
 });
 
 test.each([undefined, 'ai_default', 'user_selected'])('visual selection preserves its actual source: %s', source => {
@@ -426,6 +443,11 @@ test('catalog is read-only and its theme IDs initialize through the public CLI w
   const themeIndex = require('../yida-skills/skills/yida-design/templates/design-themes/index.json');
   const patterns = require('../yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/page-patterns/index.json');
   expect(result.themes.map(theme => theme.themeId)).toEqual(themeIndex.themes.map(theme => theme.themeId));
+  for (const theme of result.themes) {
+    expect(theme.styleSummary).toMatch(/(?:深色|浅色)导航/);
+    expect(theme.styleSummary).toMatch(/(?:深色|浅色)内容界面/);
+    expect(theme.styleSummary).not.toMatch(/navTheme\s*=|contentTheme\s*=/);
+  }
   expect(result.pagePatterns).toEqual(patterns.patterns.map(({ id, label, mustKeep }) => ({ id, label, mustKeep })));
   const initialized = JSON.parse(execFileSync(process.execPath, [bin, 'design-plan', 'init', briefPath,
     '--theme-id', result.themes[0].themeId, '--output-dir', path.join(dir, 'catalog-plan'), '--json'], options));
@@ -593,6 +615,8 @@ test('CLI init is permitted locally, documents every argument and runs through t
   expect(command.side_effect).toMatchObject({ kind: 'local_write', mutates_yida: false });
   expect(command.permission.mode).toBe('allow');
   expect(command.args.map(arg => arg.builder_options[0])).toEqual(['--requirement-brief', '--theme-id', '--output-dir', '--json']);
+  expect(command.notes.join(' ')).toContain('There is no navigation-tone argument');
+  expect(command.notes.join(' ')).toContain('toneSource=theme_derived');
   const { execFileSync } = require('child_process');
   const result = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, '../bin/yida.js'), 'design-plan', 'init', briefPath,
     '--theme-id', 'soft-inset-surfaces', '--output-dir', path.join(dir, 'cli-prd'), '--json'], {
@@ -600,6 +624,12 @@ test('CLI init is permitted locally, documents every argument and runs through t
   }));
   expect(result.success).toBe(true);
   expect(fs.existsSync(result.output)).toBe(true);
+});
+
+test('CLI init rejects undeclared navigation tone overrides', async () => {
+  const { run } = require('../lib/design-plan/design-plan');
+  await expect(run(['init', briefPath, '--theme-id', 'soft-inset-surfaces', '--nav-theme', 'dark', '--json']))
+    .rejects.toMatchObject({ code: 'DESIGN_PLAN_INVALID_ARGUMENT' });
 });
 
 

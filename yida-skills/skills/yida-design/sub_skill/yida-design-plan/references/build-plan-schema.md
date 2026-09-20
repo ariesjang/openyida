@@ -317,7 +317,7 @@
 | constraints | 保留 brandColors、preferredTone、forbiddenColors、avoidPatterns、referenceMaterials、accessibilityLevel |
 | forUser.visualDirection | 已选方向的 label、description、source |
 | forUser.colorStrategy | 项目主色、来源与用法；格式沿用紧凑契约 |
-| forUser.navigationStyle | structure=top/side、tone=light/dark、source、selectionReason |
+| forUser.navigationStyle | structure=top/side 由业务导航决定；tone=light/dark 与 toneSource=theme_derived 由 CLI 从所选主题模板派生；另含 source、selectionReason |
 | internal.selectedTheme | themeId、source、customText；label、templatePath 和 summary 由主题索引补齐 |
 | forUser.themeProfile | 由选中主题 token、正文规则和项目视觉选择派生的只读摘要 |
 | forUser.pageApplications | 按 pageId 对应实际页面；最终物化必填 firstScreenFocus/primaryAction/layout/responsive 非空字符串与 acceptanceChecks 非空字符串数组，按需补局部差异和 visualMemoryApplications；记忆点含 name、renderPolicy、target、reason |

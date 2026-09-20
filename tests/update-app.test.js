@@ -269,6 +269,20 @@ describe('update-app helpers', () => {
     });
   });
 
+  test('buildUpdateAppPostData does not invent a light navigation theme', () => {
+    const payload = buildUpdateAppPostData(
+      parseArgs(['APP_1', '--theme', 'podBlue']),
+      {
+        appName: { zh_CN: '应用' },
+        description: { zh_CN: '描述' },
+        mode: 'normal',
+        type: 'single',
+      },
+      { csrfToken: 'csrf' }
+    );
+    expect(payload).not.toHaveProperty('navTheme');
+  });
+
   test('buildUpdateAppPostData preserves security settings without inventing defaults', () => {
     const params = parseArgs(['APP_1', '--nav-theme', 'light']);
     const currentApp = {

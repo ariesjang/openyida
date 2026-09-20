@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "近黑画布承载紧凑炭灰面板，细描边与横向分隔建立秩序；窄图标导航以局部色条指示位置，数据量表和低亮面积趋势按内容启用，品牌强调与测量色阶各司其职。"
 themeId: dark-rail-signal-panels
+navTheme: dark
 tokens:
   application-global:
     appearance: # 应用外观：应用背景、内容表面与导航配色，共 11 个变量
@@ -148,9 +149,9 @@ YAML 保存变量值，正文约定消费关系。局部尺寸及未展示的状
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
-原生导航只配置开放的六项颜色，结构、宽度、布局与折叠由平台处理。内容明暗与导航明暗分别确定；中性壳层保持无色相灰，需要主题色的前景或背景引用相应 Brand Token。
+原生导航只配置开放的六项颜色，结构、宽度、布局与折叠由平台处理。内容明暗与导航明暗分别记录，导航沿用本模板 navTheme；中性壳层保持无色相灰，需要主题色的前景或背景引用相应 Brand Token。
 
 仅当项目明确采用自绘图标轨道时，使用以下视觉补充：轨道宽建议 64 CSS px（推断），菜单命中区采用 `--s-10` 见方、`--corner-2`；图标使用一致线型和灰阶，选中时变为专属导航强调色，同时出现中性选中底盒与轨道外缘短竖线。指示线建议宽 3 CSS px（推断），颜色跟随导航选中前景，不能只靠图标变色判断位置。
 

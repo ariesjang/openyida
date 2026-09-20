@@ -2503,6 +2503,11 @@ test('Plan and navigation commands are discoverable with their existing permissi
   expect(commands.get('update-app').usage).toContain('[--layout side|top|l_shape]');
   expect(commands.get('update-app').usage).toContain('[--hide-app-nav|--show-app-nav]');
   expect(commands.get('update-app').usage).not.toContain('--nav-type');
+  expect(commands.get('design-plan.init').notes.join(' ')).toContain('There is no navigation-tone argument');
+  expect(commands.get('design-plan.materialize').notes.join(' ')).toContain('does not synthesize a light/dark replacement palette');
+  expect(commands.get('design-plan.patch').notes.join(' ')).toContain('derived and cannot be patched');
+  const navThemeArg = commands.get('update-app').args.find(arg => arg.name === 'navTheme');
+  expect(navThemeArg.description).toContain('no implicit light default');
   expect(summary.full_app_artifact_route.plan_command_ids).toEqual(['design-plan.catalog', ...local.slice(0, 4)]);
   expect(commands.get('design-plan.catalog')).toMatchObject({ requires_login: false, permission: { mode: 'allow' }, side_effect: { kind: 'local_read', mutates_yida: false, mutates_local: false } });
   expect(summary.builder_path.command_contract.canonical_builder_command_ids).toContain('design-plan.catalog');
@@ -2552,15 +2557,21 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.entry_navigation_contract.runtime.applies_to).toContain('Confirmed page-owned application menus only');
 
     expect(route.navigation_policy).toContain('Persistent filters/state alone do not justify custom application navigation');
+    expect(route.navigation_policy).toContain('Navigation tone is derived from the final selected theme template');
+    expect(route.navigation_policy).toContain('never guessed from the business brief or implicitly defaulted to light');
     expect(route.navigation_policy).toContain('Custom top navigation defaults to edge-to-edge, not floating');
     expect(route.navigation_policy).toContain('start transparent, add a surface on scroll, restore transparency at the top');
     expect(route.navigation_policy).toContain('floating requires an explicit design');
     expect(route.navigation_policy).not.toContain('offer exactly two');
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
+    expect(route.design_mode_policy).toContain('Fast and Plan share one three-direction visual generation rule');
+    expect(route.design_mode_policy).toContain('generate exactly three directions and use ask_human');
     expect(route.design_mode_policy).not.toContain('Confirm unresolved navigation');
     expect(route.product_design_policy).toBe(workflow.product_design_policy);
     expect(route.product_design_policy).toContain('Fast, Plan and single-page design share yida-design/templates/design-themes');
     expect(route.product_design_policy).toContain('plus scoped custom-page variables');
+    expect(route.product_design_policy).toContain('Each selected template is the authority for navTheme and its six navigation tokens');
+    expect(route.product_design_policy).toContain('never synthesizes a replacement navigation palette');
   }
   expect(workflow.default_nav_order_policy).toContain('preserves platform navigation for the management workspace');
   expect(workflow.entry_navigation_contract).toMatchObject({
@@ -2698,8 +2709,11 @@ test('Plan CLI and design-file sample work locally without a login', () => {
     expect(fs.existsSync(path.join(dir, 'design.md'))).toBe(false);
     runOk(['design-plan', 'materialize', input, '--json']);
     const { readDesignTokens } = require('../lib/app/theme-from-design');
+    const { parseDesignDocument } = require('../lib/design/document');
     const contract = require('../yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json');
-    const tokens = readDesignTokens(fs.readFileSync(path.join(dir, 'design.md'), 'utf8'));
+    const design = fs.readFileSync(path.join(dir, 'design.md'), 'utf8');
+    const tokens = readDesignTokens(design);
+    const activeTone = parseDesignDocument(design).metadata.themeProfile.navTheme;
     expect(Object.keys(tokens)).toEqual(expect.arrayContaining(Object.values(contract.groups).flat()));
     expect(Object.keys(tokens).filter(name => !Object.values(contract.groups).flat().includes(name))
       .every(name => name.startsWith('--oyd-'))).toBe(true);
@@ -2714,12 +2728,12 @@ test('Plan CLI and design-file sample work locally without a login', () => {
     expect(css).toContain('--pod-card-border-radius: 16px');
     const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
     const scope = (source, tone) => source.match(new RegExp(`\\.pod-premium\\.nav-${tone}\\s*\\{([^}]+)\\}`))[1];
-    for (const tone of ['dark', 'white', 'gray']) {
-      const background = tone === 'dark' ? tokens['--pod-shell-theme-bg-color']
+    for (const tone of ['light', 'dark', 'white', 'gray']) {
+      const background = tone === activeTone ? tokens['--pod-shell-theme-bg-color']
         : scope(template, tone).match(/--pod-shell-theme-bg-color:\s*([^;]+);/)[1];
       const block = scope(css, tone);
       expect(block).toContain(`--pod-shell-theme-bg-color: ${background};`);
-      if (tone !== 'dark') {expect(block).toBe(scope(template, tone));}
+      if (tone !== activeTone) {expect(block).toBe(scope(template, tone));}
     }
   } finally {fs.rmSync(dir, { recursive: true, force: true });}
 });

@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "近黑画布与平整暗面板以单层细描边、小圆角和稳定对齐构成秩序；并列指标可共享外框，以短竖线分组，色彩集中于变化读数、分类比例和离散等级标记。"
 themeId: hairline-shared-bands
+navTheme: dark
 tokens:
   application-global:
     appearance: # 应用外观：应用背景、内容表面与导航配色，共 11 个变量
@@ -138,13 +139,13 @@ YAML 是变量值事实源，正文规定消费关系。局部线宽和未展示
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
-原生导航仅配置上述六项颜色，布局、尺寸、菜单结构和折叠由平台处理。导航明暗与内容明暗独立；中性壳层使用无色相灰，需要主题色的角色引用对应品牌派生档。
+原生导航仅配置上述六项颜色，布局、尺寸、菜单结构和折叠由平台处理。导航明暗与内容明暗独立，导航沿用本模板 navTheme；中性壳层使用无色相灰，需要主题色的角色引用对应品牌派生档。
 
 自绘导航已被项目确定时，菜单项使用 `--corner-2`，图标与文本间隔 `--s-2`，水平留白 `--s-3`、上下 `--s-2`。分组标题使用 caption 与正常导航文字色，组间留 `--s-6`；必要选中轮廓使用弱细线。搜索、账户信息和分组入口只在实际功能存在时出现，不照搬示例菜单。
 
-导航弹出菜单使用 `--color-fill1-5` 与既定内容前景；导航前景和背景按项目明暗成组配对，换主色不切换导航明暗或改写内容区 Text、Fill、pop-up。
+导航弹出菜单使用 `--color-fill1-5` 与既定内容前景；导航前景和背景按本模板 navTheme 成组配对，换主色不改写导航明暗或改写内容区 Text、Fill、pop-up。
 
 ### 2.3 页面标题与操作
 

@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "主题浅灰画布与白色柔圆面板构成浅色主体，少量近黑强调表面承托底缘光晕和半透明内层；细线图标、轻字重、胶囊筛选与有条件的色阶和条纹图形形成节奏。"
 themeId: ink-glow-soft-panels
+navTheme: light
 tokens:
   application-global:
     appearance:
@@ -151,13 +152,13 @@ tokens:
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
 原生导航只使用上述六项颜色，结构、宽度、分组、折叠和收纳交由平台；不依赖渐变能力。导航悬停与选中底分别引用 `--color-brand1-3` 和 `--color-brand1-5`；它们保持品牌浅深变体语义，导航对象仍消费自身专属角色。
 
 项目明确采用自绘导航时，可沿用以下表达：菜单使用 `--corner-2`，线性图标与文字间隔 `--s-3`；分组标题用说明文字规格，组间留白 `--s-6`，分界细线使用 `--color-line1-2`；标识区与菜单保留独立空隙。已选菜单可在专用选中背景之上叠加低位光晕，局部品牌光不超过菜单下半部，保持专用选中文字可读。该装饰仅用于自绘菜单，与导航选中底共享品牌来源；不改写角色映射，也不要求新增导航层级。
 
-导航弹出菜单回到独立白色覆盖层；其文字使用浅表面前景，避免继承选中菜单的白字。导航文字和底色按项目的六项配色成组使用；换主色不自动切换导航明暗。
+导航弹出菜单回到独立白色覆盖层；其文字使用浅表面前景，避免继承选中菜单的白字。导航文字和底色沿用本模板六项配色；换主色不改写导航明暗。
 
 ### 2.3 页面标题与操作
 

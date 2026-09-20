@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "主题色微染浅灰画布承托平整白色圆角卡片，顶部导航和双行摘要形成清楚层级；普通指标以浅色和局部强调区分主次，深色面板按内容与配色需要选用，胶囊操作、细横条和数据色与整页协调。"
 themeId: warm-canvas-contrast-panels
+navTheme: light
 tokens:
   application-global:
     appearance:
@@ -160,7 +161,7 @@ tokens:
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
 项目确定自绘导航时，采用顶部单行组织：已有品牌入口在左、实际页面导航横向排列、工具与头像在末端。当前项使用 `--pod-nav-item-text-selected-color` 的约 1px 细下划线，背景仍与导航连续；不包成饱和胶囊或白色大标签。菜单项之间使用 `--s-5` 或 `--s-6`，导航区底部使用一条 `--color-line1-2` 分隔线。具体宽度、折叠与窄屏形式在项目页面设计中确定。
 

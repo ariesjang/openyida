@@ -16,13 +16,13 @@
 | `themeId` | 唯一的小写连字符 ID，与模板 frontmatter 和文件名一致 |
 | `label` | 唯一的用户可读名称 |
 | `templatePath` | `templates/design-themes/<themeId>.md`，相对公共 `yida-design` 根目录 |
-| `styleSummary` | 从模板“风格摘要”精简约 150–250 字，保留外观、核心差异、偏离风险与真实内容适用条件 |
+| `styleSummary` | 以“深色/浅色导航，深色/浅色内容界面。”开头，再从模板“风格摘要”精简约 150–250 字；使用自然语言，避免把 `dark` 误解为纯黑色，同时保留外观、核心差异、偏离风险与真实内容适用条件 |
 
 一条索引记录对应一份模板，所有模板均须登记。修改风格摘要后同步修改索引摘要，不增加原文没有的特征或另一组关键词。`openyida design-plan catalog --json` 返回同一份索引；三种设计入口不得维护平行主题清单。主题不按业务领域或产品形态限制候选资格，具体布局与特色表达由真实内容决定。
 
 ## V2 模板结构
 
-Frontmatter 包含 `name`、`description`、`themeId` 和 `tokens`。正文依次包含五个章节：
+Frontmatter 包含 `name`、`description`、`themeId`、`navTheme` 和 `tokens`；`navTheme` 只允许 `light` 或 `dark`，并与主题导航 Token 的实际明暗一致。正文依次包含五个章节：
 
 1. 风格摘要
 2. 页面视觉系统

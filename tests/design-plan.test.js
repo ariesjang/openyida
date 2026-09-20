@@ -631,10 +631,13 @@ describe('design-plan materialize', () => {
     expect(validateDesignDocument(design).success).toBe(true);
   });
 
-  test.each(['light', 'dark'])('generated %s navigation has one final palette in its own section', tone => {
+  test.each([
+    ['soft-outline-rhythm', 'light', 'dark'],
+    ['dark-inset-hairline', 'dark', 'light'],
+  ])('generated %s navigation derives its %s palette from the theme', (themeId, tone, staleTone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.visualStyle.forUser.selectedTheme = { themeId: 'soft-outline-rhythm', templatePath: 'templates/design-themes/soft-outline-rhythm.md' };
-    plan.visualStyle.forUser.navigationStyle.tone = tone;
+    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
+    plan.visualStyle.forUser.navigationStyle.tone = staleTone;
     const design = renderDesign(plan);
     const section = design.split('### 2.2 应用导航')[1].split('### 2.3 ')[0];
     expect(section).toContain(`导航明暗：${tone === 'dark' ? '深色' : '浅色'}`);
@@ -764,12 +767,12 @@ describe('design-plan materialize', () => {
     expect(prd).not.toContain('主题模板：');
     expect(compactDesign).toContain('- 视觉方向：稳重流程型');
     expect(compactDesign).toContain('- 导航类型：平台侧边导航');
-    expect(compactDesign).toContain('- 导航明暗：深色');
+    expect(compactDesign).toContain('- 导航明暗：浅色');
     expect(compactDesign).toContain('- 导航背景：`--pod-shell-theme-bg-color`');
     expect(compactDesign).not.toMatch(/^themeId:/m);
     expect(compactDesign).not.toContain('soft-inset-surfaces');
     expect(html).toContain('<strong>导航结构：</strong>平台侧边导航');
-    expect(html).toContain('<strong>导航明暗：</strong>深色');
+    expect(html).toContain('<strong>导航明暗：</strong>浅色');
     expect(html).toContain('高频流程处理需要稳定入口，深色导航加强模块边界。');
   });
 
@@ -847,9 +850,13 @@ describe('design-plan materialize', () => {
     }
   );
 
-  test.each(['light', 'dark'])('selected %s navigation keeps theme colors while other modes keep defaults', tone => {
+  test.each([
+    ['soft-inset-surfaces', 'light', 'dark'],
+    ['dark-inset-hairline', 'dark', 'light'],
+  ])('selected %s theme derives %s navigation and keeps other modes at defaults', (themeId, tone, staleTone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.visualStyle.forUser.navigationStyle.tone = tone;
+    plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
+    plan.visualStyle.forUser.navigationStyle.tone = staleTone;
     plan.visualStyle.tokens = {};
     const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-design');
     const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
@@ -993,14 +1000,16 @@ describe('design-plan materialize', () => {
   });
 
   test.each([
-    ['soft-inset-surfaces', 'dark', '#D6D6D6', '#FFFFFF'],
-    ['dark-inset-hairline', 'light', '#606060', '#171717'],
-  ])('changing %s navigation to %s adapts every navigation role and keeps page surfaces', (themeId, tone, foreground, selectedForeground) => {
+    ['soft-inset-surfaces', 'dark', 'light', '#767676', '#303030'],
+    ['dark-inset-hairline', 'light', 'dark', '#A8A8A8', '#ECECEC'],
+  ])('%s ignores stale %s input and keeps its derived %s navigation palette', (themeId, staleTone, tone, foreground, selectedForeground) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
-    plan.visualStyle.forUser.navigationStyle.tone = tone;
+    plan.visualStyle.forUser.navigationStyle.tone = staleTone;
     const { readDesignTokens } = require('../lib/app/theme-from-design');
-    const tokens = readDesignTokens(renderDesign(plan));
+    const design = renderDesign(plan);
+    const tokens = readDesignTokens(design);
+    expect(parseDesignDocument(design).metadata.themeProfile.navTheme).toBe(tone);
     expect(tokens['--pod-nav-item-text-color']).toBe(foreground);
     expect(tokens['--pod-nav-item-text-selected-color']).toBe(selectedForeground);
     expect(tokens['--pod-nav-menu-bg-hover-color']).not.toBe(tokens['--pod-shell-theme-bg-color']);
@@ -1141,6 +1150,9 @@ describe('design-plan materialize', () => {
     expect(() => patchPlan(input, ['meta.revision=manual'])).toThrow(/自动维护/);
     expect(() => patchPlan(input, ['meta={}'])).toThrow(/自动维护/);
     expect(() => patchPlan(input, ['meta.planState[0]=true'])).toThrow(/自动维护/);
+    expect(() => patchPlan(input, ['visualStyle.forUser.navigationStyle.tone=dark'])).toThrow(/导航明暗由所选主题模板派生/);
+    expect(() => patchPlan(input, ['visualStyle.forUser.navigationStyle.toneSource=user_selected'])).toThrow(/导航明暗由所选主题模板派生/);
+    expect(() => patchPlan(input, ['execution.appConfig.navTheme=dark'])).toThrow(/导航明暗由所选主题模板派生/);
     expect(() => patchPlan(input, ['meta.projectName[0]=X'])).toThrow(/字段路径不存在/);
     expect(() => patchPlan(input, ['meta.__proto__.polluted=true'])).toThrow(/危险字段路径/);
     expect(fs.readFileSync(input, 'utf8')).toBe(before);
@@ -1220,7 +1232,7 @@ describe('design-plan materialize', () => {
 
   test('business navigation cannot silently override visual choices', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.execution = { appConfig: { navTheme: 'light' } };
+    plan.execution = { appConfig: { navTheme: 'dark' } };
     expect(() => renderPrd(plan)).toThrow(/视觉事实冲突/);
   });
 

@@ -92,7 +92,7 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
   "forUser": {
     "visualDirection": {"label":"清晰柔和","description":"突出待办与业务状态，浅色界面搭配暖棕色重点操作","source":"user_selected"},
     "colorStrategy": {"primaryColor":"#6F4E37","primaryColorName":"暖棕色","source":"user_selected","usage":"暖棕浅底、白色卡片与品牌焦点协调"},
-    "navigationStyle": {"structure":"side","tone":"light","source":"user_selected","selectionReason":"沿用已选的左侧导航"},
+    "navigationStyle": {"structure":"side","tone":"light","toneSource":"theme_derived","source":"user_selected","selectionReason":"沿用已选的左侧导航；浅色导航由主题模板派生"},
     "iconSystem": {"library":"lucide-react","mappings":{"新建采购":"Plus"}},
     "pageApplications": [
       {"pageId":"page-1","primaryAction":"列表标题右侧的新建采购按钮打开原生采购表单，成功后刷新列表","firstScreenFocus":"先看到待处理采购数量与最紧急记录，主操作紧邻列表标题","layout":"顶部单行筛选与主操作，下方连续采购列表；必要提示放列表右侧窄栏，列表随记录自然增长","responsive":"窄屏筛选换行，提示移到列表下方，表格保留关键列并允许横向滚动","acceptanceChecks":["首屏可找到待处理记录与新建采购操作","窄屏主操作和错误恢复入口可用"],"visualMemoryApplications":[{"name":"摘要拼接组","renderPolicy":"prd_match_only","target":"采购待办摘要","reason":"页面已有并列的待办状态"}]}
@@ -104,7 +104,7 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 }
 ```
 
-- 已选主题取当前上下文；主色为 6 位 HEX。导航 structure 为 top/side，tone 为 light/dark；它与整页暗色风格分开记录。
+- 已选主题取当前上下文；主色为 6 位 HEX。导航 `structure` 为模型维护的 top/side；`tone` 为 CLI 从所选主题模板 `navTheme` 派生的 light/dark，并带 `toneSource=theme_derived`，模型不得修改。导航与内容界面的明暗分开记录。
 - 每个实际自定义页使用相同 pageId，最终物化前必须填写 firstScreenFocus、layout、primaryAction、responsive 四项具体说明和 acceptanceChecks 非空字符串数组；内容须具体到当前页，不能只写继承主题。纯原生页无需增加记录。
 - 视觉记忆点按适用条件绑定真实区块，无匹配时保留空数组。草稿缺逐页决定可预览，最终产物拒绝缺项；旧计划沿用同一规则，补齐后再物化。
 - `visualStyle.evidence/constraints` 保留实际视觉依据和约束。

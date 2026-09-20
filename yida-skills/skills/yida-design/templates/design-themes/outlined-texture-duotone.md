@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "深炭内容面由暗外线与微亮内沿勾勒，卡片底栏和表头以灰阶带承接；品牌焦点与任务操作共用主题色来源、分别消费数据与操作角色，数据图形局部叠加细斜纹。"
 themeId: outlined-texture-duotone
+navTheme: dark
 tokens:
   application-global:
     appearance: # 应用外观：应用背景、内容表面与导航配色，共 11 个变量
@@ -149,9 +150,9 @@ YAML 是数值事实源，正文定义消费关系。未能直接确定的尺寸
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
-原生导航只配置上述六项，尺寸、结构、折叠和排序由平台决定。导航与内容明暗分别确定；壳层当前使用中性灰，需要主题色时引用相应品牌浅深变体，保留导航专用角色。页头的标题、检索和全局动作不构成新增导航。
+原生导航只配置上述六项，尺寸、结构、折叠和排序由平台决定。导航与内容明暗分别记录，导航沿用本模板 navTheme；壳层当前使用中性灰，需要主题色时引用相应品牌浅深变体，保留导航专用角色。页头的标题、检索和全局动作不构成新增导航。
 
 只有项目确定自绘导航时，才采用这些补充：菜单行以 `--corner-2` 围合，左右留白 `--s-4`、上下 `--s-3`；细线图标与文案间隔 `--s-3`，真实计数在行尾对齐。选中行可采用双层轮廓，非选中行保持安静。分组说明使用 caption 规格，分组之间留白 `--s-6`，无需把每组围成独立盒。
 

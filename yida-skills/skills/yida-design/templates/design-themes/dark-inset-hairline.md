@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "墨黑画布上分布炭灰卡片，成组内容在卡片内回落为黑色内嵌面，以细边界形成轻微内凹层次；浅灰文字组织信息，色彩集中于品牌标识、数据细线和小型状态反馈。"
 themeId: dark-inset-hairline
+navTheme: dark
 tokens:
   application-global:
     appearance:
@@ -142,7 +143,7 @@ YAML 是变量值事实源。本节定义视觉对象如何消费变量；局部
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
 原生导航仅配置上述开放颜色，结构、尺寸、菜单排列和折叠由平台处理。页头不等于导航，不因标题区出现搜索或用户信息就增设一层菜单。
 
@@ -153,7 +154,7 @@ YAML 是变量值事实源。本节定义视觉对象如何消费变量；局部
 - 导航与内容以一条弱分界线区隔；品牌标识保留自己的局部强调，普通入口沿用中性配色。字母标识只有在真实分类存在时采用独立分类颜色。
 - 弹出的菜单仍使用 `--color-fill1-5`，文字按内容前景配套，不直接继承导航文字与选中底色。
 
-导航明暗沿用项目选择；换主色不自动切换导航明暗，也不改写内容画布、卡片或覆盖层。
+导航明暗沿用本模板 navTheme；换主色不改写导航明暗，也不改写内容画布、卡片或覆盖层。
 
 ### 2.3 页面标题与操作
 

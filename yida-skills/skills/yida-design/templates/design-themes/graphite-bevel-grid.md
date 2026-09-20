@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "相近明度的石墨灰画布与暗面板，以细网格、轻微边缘高光和紧凑排版建立秩序；彩色短柱、微型方标及描边标签在局部呈现受控的渐变质感。"
 themeId: graphite-bevel-grid
+navTheme: dark
 tokens:
   application-global:
     appearance:
@@ -141,9 +142,9 @@ YAML 维护变量值，正文维护角色关系。未能直接确定的尺寸、
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
-原生导航只配置这六项颜色，结构、尺寸、排列和折叠由平台管理。导航与内容明暗独立确定；壳层需要主题色时引用相应 Brand Token，保留导航的独立角色。
+原生导航只配置这六项颜色，结构、尺寸、排列和折叠由平台管理。导航与内容明暗彼此独立，导航沿用本模板 navTheme；壳层需要主题色时引用相应 Brand Token，保留导航的独立角色。
 
 项目已确定自绘导航时，采用细线图标与紧凑单行文字，图标和文字间隔 `--s-2`，菜单左右内边距 `--s-3`、上下 `--s-2`，圆角 `--corner-2`。分组之间以 `--s-5` 留白和弱横线分隔；分组标题使用 caption 规格，不降到禁用灰。选中项可加微弱上缘高光，主要识别仍来自专用选中文字与背景。
 

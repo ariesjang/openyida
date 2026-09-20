@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "以主题色轻染的浅灰外衬、近白画布和柔圆白面板构成低对比分层；导航以独立配色标记选中，细线图标、浅色圆形标记与局部主题色强调组织阅读，浮层以独立白面和克制投影浮起。"
 themeId: soft-inset-surfaces
+navTheme: light
 tokens:
   application-global:
     appearance:
@@ -139,9 +140,9 @@ tokens:
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
-六项颜色不引用内容区的 Text、Fill、卡片或页面变量。导航切换明暗时成组确定其配色；需要主题强调时引用相应 Brand Token，保留导航的独立使用职责。`--color-brand1-3` 和 `--color-brand1-5` 保持主题派生浅色与深色语义，应用外观可按用途引用。本主题默认只提供浅色方案，出现模式开关不等于已定义深色内容方案。
+六项颜色不引用内容区的 Text、Fill、卡片或页面变量。导航六色按本模板 navTheme 成组配对；需要另一种导航明暗时改选主题，不在项目化阶段重算这组配色。需要主题强调时引用相应 Brand Token，保留导航的独立使用职责。`--color-brand1-3` 和 `--color-brand1-5` 保持主题派生浅色与深色语义，应用外观可按用途引用。本主题只提供浅色方案，出现模式开关不等于已定义深色内容方案。
 
 仅当项目已确定自绘导航时，先按第五部分「自定义导航视觉设计指南」确定形态、容器关系与选中表达。默认侧栏采用 `--corner-2` 的圆角菜单和中性选中底面；顶部导航的下划线、紧凑导航的胶囊等按指南选择。导航背景、普通文字、悬停与选中文字仍沿用本节专属变量，形态变化不另建一套配色。
 

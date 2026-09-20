@@ -20,7 +20,7 @@
 2. 按 [模式路由](../../yida-design/references/design-mode.md) 确定执行方式，沿用用户最后一次明确选择。
 3. AI 根据有效功能、`userTasks` 与 `entryRecommendation`，按 [导航决策](../../yida-design/references/navigation-decision.md) 规划各入口的页面和菜单，补齐稳定 `pageScenes` 与主题映射。新增建议标记来源，范围遵守 explicitScope。
 
-Fast / Plan 的主题与配色统一按[设计方向比较](../../yida-design/references/theme-selection.md#设计方向比较)在本轮规划中选定，结果写回 brief，后续直接复用。
+Fast / Plan 的主题与配色统一按[设计方向比较](../../yida-design/references/theme-selection.md#设计方向比较)在本轮规划中选定，结果写回 brief，后续直接复用。两种模式使用同一组三方向生成规则：Fast 内部选一套；Plan 在用户未给出明确完整风格时，先由 `yida-design-plan` 生成恰好三套候选并调用 `ask_human`，获得选择后才能继续 Plan 初始化。
 
 进入 2.1 前校验规划字段完整性和 `intake.designMode`。页面、导航、主题等建议随整体搭建方案展示。
 
@@ -76,7 +76,7 @@ Fast 设计就绪后按 [素材调度](parallel-work.md#素材与页面同时推
 
 ## 主题文件实现指令
 
-在设计中确定配色、导航明暗和布局。未禁止 `theme-file` 时，Plan 使用 CLI 返回的 `outputs.theme`，Fast 按 [主题文件生成与更新](../../yida-design/workflow/output-design.md#cli-token-契约fast--plan-共用) 准备主题 CSS；用户确认计划或主题后即可启动 CSS 生成，不等待表单或页面开发。Plan 已生成当前版本的 CSS 时直接复用。拿到真实 appType 后，在应用级配置同一份主题文件，与表单创建和页面开发并行；页面组件按已确认契约消费主题 token。若 `theme-file` 被禁止，跳过生成、复制、修改和上传，沿用现有平台主题并在交付中说明未更改主题。详见 [主题与业务资源的依赖](parallel-work.md#主题与业务资源的依赖)。
+在设计中确定配色、主题和布局；导航明暗由所选主题模板派生。未禁止 `theme-file` 时，Plan 使用 CLI 返回的 `outputs.theme`，Fast 按 [主题文件生成与更新](../../yida-design/workflow/output-design.md#cli-token-契约fast--plan-共用) 准备主题 CSS；用户确认计划或主题后即可启动 CSS 生成，不等待表单或页面开发。Plan 已生成当前版本的 CSS 时直接复用。拿到真实 appType 后，在应用级配置同一份主题文件，与表单创建和页面开发并行；页面组件按已确认契约消费主题 token。若 `theme-file` 被禁止，跳过生成、复制、修改和上传，沿用现有平台主题并在交付中说明未更改主题。详见 [主题与业务资源的依赖](parallel-work.md#主题与业务资源的依赖)。
 
 ## 产出
 

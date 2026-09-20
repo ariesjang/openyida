@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "微染灰底框包裹白色内面板，以细描边、浅双轮廓和紧凑留白建立层次；无衬线正文搭配等宽标题与数字，主题色操作、低饱和彩色状态，以及按需启用的主题色阶像素矩阵和纤细柱线。"
 themeId: inset-frame-pixel-rhythm
+navTheme: light
 tokens:
   application-global:
     appearance:
@@ -144,13 +145,13 @@ tokens:
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
 原生导航仅配置这六项配色。导航位置、尺寸、分组、排列与收纳由项目已有结构和平台处理，不因本主题额外建立侧栏或顶部导航。
 
 项目确定自绘导航时，可增加以下表达：菜单项使用 `--corner-2`，选中项有 `--color-line1-2` 细描边；分组标题采用全局说明字号，但文字保持清晰；组间用 `--s-6` 留白和弱分割线，组内保留紧凑纵向节奏。已有的组织切换或用户入口可作为独立白色/微染灰薄面，标识及头像用小圆角方形，避免每个菜单都附图标底盒。具体宽度、入口数量和定位在项目页面设计中确定。
 
-导航弹出菜单属于独立覆盖层，使用 `--color-fill1-5` 与内容前景。如果项目另行选择深色导航，只成组调整六项导航色，不联动内容画布和浮层明暗。
+导航弹出菜单属于独立覆盖层，使用 `--color-fill1-5` 与内容前景。导航明暗沿用本模板 navTheme；需要深色导航时改选对应主题，不在当前模板内改写六项导航色，也不联动内容画布和浮层明暗。
 
 ### 2.3 页面标题与操作
 

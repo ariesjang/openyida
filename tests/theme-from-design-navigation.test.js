@@ -13,10 +13,16 @@ const navigationNames = [
   '--pod-nav-item-text-selected-color', '--pod-nav-menu-bg-hover-color', '--pod-nav-menu-bg-selected-color',
 ];
 
-function design(themeId, tone, primaryColor = '#6F4E37') {
+const themeTones = {
+  'soft-inset-surfaces': 'light',
+  'dark-inset-hairline': 'dark',
+};
+
+function design(themeId, primaryColor = '#6F4E37') {
   const plan = JSON.parse(JSON.stringify(fixture));
   plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
-  plan.visualStyle.forUser.navigationStyle.tone = tone;
+  // A stale caller-provided value must not override the selected template.
+  plan.visualStyle.forUser.navigationStyle.tone = themeTones[themeId] === 'dark' ? 'light' : 'dark';
   plan.visualStyle.forUser.colorStrategy.primaryColor = primaryColor;
   return renderDesign(plan);
 }
@@ -38,10 +44,10 @@ function cascade(css, navigation, tone = navigation) {
 }
 
 test.each([
-  ['soft-inset-surfaces', 'light'], ['soft-inset-surfaces', 'dark'],
-  ['dark-inset-hairline', 'light'], ['dark-inset-hairline', 'dark'],
-])('%s in %s mode applies all six navigation colors through every CSS override', (themeId, tone) => {
-  const markdown = design(themeId, tone);
+  ['soft-inset-surfaces', 'light'],
+  ['dark-inset-hairline', 'dark'],
+])('%s derives %s mode and applies all six navigation colors through every CSS override', (themeId, tone) => {
+  const markdown = design(themeId);
   const tokens = readDesignTokens(markdown);
   const css = applyDesignTokens(template, markdown);
   const active = cascade(css, tone);
@@ -62,7 +68,7 @@ test.each([
 
 test.each(['light', 'dark'])('Fast documents infer %s navigation from their shell without Plan metadata', tone => {
   const theme = tone === 'dark' ? 'dark-inset-hairline' : 'soft-inset-surfaces';
-  const markdown = design(theme, tone).replace(/^themeProfile:.*\n/m, '');
+  const markdown = design(theme).replace(/^themeProfile:.*\n/m, '');
   const css = applyDesignTokens(template, markdown);
   const active = cascade(css, tone);
   const tokens = readDesignTokens(markdown);
@@ -70,8 +76,8 @@ test.each(['light', 'dark'])('Fast documents infer %s navigation from their shel
 });
 
 test('changing the selected mode resets its previous mode and preserves unrelated custom CSS', () => {
-  const previous = design('soft-inset-surfaces', 'light');
-  const next = design('soft-inset-surfaces', 'dark');
+  const previous = design('soft-inset-surfaces');
+  const next = design('dark-inset-hairline');
   const custom = '\n.local-detail { padding: 7px; }\n';
   const css = applyDesignTokens(applyDesignTokens(template, previous) + custom, next, previous);
   for (const name of navigationNames) {
@@ -83,21 +89,21 @@ test('changing the selected mode resets its previous mode and preserves unrelate
 });
 
 test('delta updates preserve hand-edited unchanged navigation colors and page styles', () => {
-  const previous = design('soft-inset-surfaces', 'dark');
-  const next = design('soft-inset-surfaces', 'dark', '#315BCC');
+  const previous = design('soft-inset-surfaces');
+  const next = design('soft-inset-surfaces', '#315BCC');
   const original = applyDesignTokens(template, previous);
-  const customized = original.replaceAll('--pod-nav-item-text-color: #D6D6D6;', '--pod-nav-item-text-color: #ABCDEF;')
+  const customized = original.replaceAll('--pod-nav-item-text-color: #767676;', '--pod-nav-item-text-color: #ABCDEF;')
     .replace('--corner-2: 8px;', '--corner-2: 11px;') + '\n.local-detail { padding: 7px; }\n';
   const changed = applyDesignTokens(customized, next, previous);
-  expect(cascade(changed, 'dark')['--pod-nav-item-text-color']).toBe('#ABCDEF');
-  expect(cascade(changed, 'dark')['--pod-shell-theme-bg-color']).toBe(readDesignTokens(next)['--pod-shell-theme-bg-color']);
+  expect(cascade(changed, 'light')['--pod-nav-item-text-color']).toBe('#ABCDEF');
+  expect(cascade(changed, 'light')['--pod-shell-theme-bg-color']).toBe(readDesignTokens(next)['--pod-shell-theme-bg-color']);
   expect(changed).toContain('--corner-2: 11px;');
   expect(changed).toContain('.local-detail { padding: 7px; }');
   expect(applyDesignTokens(changed, next, next)).toBe(changed);
 });
 
 test('mode metadata changes take effect even when token values are unchanged', () => {
-  const previous = design('soft-inset-surfaces', 'light');
+  const previous = design('soft-inset-surfaces');
   const next = previous.replace('"navTheme":"light"', '"navTheme":"dark"');
   const css = applyDesignTokens(applyDesignTokens(template, previous), next, previous);
   const tokens = readDesignTokens(next);

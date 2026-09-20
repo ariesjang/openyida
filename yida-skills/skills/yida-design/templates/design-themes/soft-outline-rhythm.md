@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "近白画布上的细描边柔圆面板，通过组间留缝、组内浅底分段和有分工的形状尺度形成清楚、舒展的内容节奏；有对应数据图形时，以同色轻渐变形成柔和层次。具体组件与页面结构由真实需求决定。"
 themeId: soft-outline-rhythm
+navTheme: light
 tokens:
   application-global:
     appearance: # 应用外观：应用背景、内容表面与导航配色，共 11 个变量
@@ -145,7 +146,7 @@ YAML 定义变量值；本部分说明变量用于哪些视觉对象，以及对
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
 原生导航的尺寸、菜单排布和折叠由平台处理。
 

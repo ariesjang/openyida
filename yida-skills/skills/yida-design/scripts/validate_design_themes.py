@@ -211,6 +211,16 @@ def validate(skill_root: Path) -> list[str]:
             continue
         if frontmatter.get("themeId") != theme_id:
             errors.append(f"{template_path} 的 themeId 与索引不一致")
+        nav_theme = frontmatter.get("navTheme")
+        if nav_theme not in {"light", "dark"}:
+            errors.append(f"{template_path} 的 navTheme 必须是 light 或 dark")
+        style_summary = theme.get("styleSummary", "")
+        nav_match = re.search(r"(深色|浅色)导航", style_summary)
+        content_match = re.search(r"(深色|浅色)内容界面", style_summary)
+        if not nav_match or not content_match:
+            errors.append(f"{label} styleSummary 必须用自然语言说明深色或浅色导航，以及深色或浅色内容界面")
+        elif nav_theme in {"light", "dark"} and nav_match.group(1) != {"light": "浅色", "dark": "深色"}[nav_theme]:
+            errors.append(f"{label} styleSummary 的导航明暗与主题模板 navTheme 不一致")
         validate_tokens(frontmatter, text, template_path, contract, errors)
         headings = re.findall(r"^## (.+)$", text, re.M)
         if headings != list(REQUIRED_HEADINGS):

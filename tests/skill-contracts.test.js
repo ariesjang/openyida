@@ -28,6 +28,16 @@ function isSampleRoutingGuidanceFile(file) {
 }
 
 describe('OpenYida skill contracts', () => {
+  test('Fast and Plan share three visual directions while Plan requires a style choice', () => {
+    const shared = readSkill('yida-skills/skills/yida-design/references/theme-selection.md');
+    const plan = readSkill('yida-skills/skills/yida-app/workflow/plan/workflow.md');
+    const interaction = readSkill('yida-skills/skills/yida-design/references/ask-human-interaction-contract.md');
+    expect(shared).toContain('Fast 与 Plan 使用下面同一套三方向生成规则和候选字段');
+    expect(shared).toContain('Plan 在用户没有明确完整风格时必须展示同样三套方向并通过 `ask_human` 选择');
+    expect(plan).toContain('获得选择或已有明确完整风格后，再继续主题映射和初始化');
+    expect(interaction).toContain('必须使用“应用设计风格”交互展示共用规则生成的三套候选');
+  });
+
   test('platform workspace pages keep cross-module navigation with the host in Fast and Plan', () => {
     const guide = readSkill('yida-skills/skills/yida-canvas-custom-page/references/navigation-and-entry-guide.md');
     expect(guide).toContain('即便使用 React 状态切换');
@@ -1486,7 +1496,7 @@ describe('OpenYida skill contracts', () => {
     expect(step4).toContain('视觉方向要从“高级 / 简洁 / 商务”继续落细');
     expect(step4).toContain('主色：先按行业、品牌、业务情绪和视觉目标做创意判断，可选择平台预置主题，也可设计自定义品牌色盘');
     expect(step4).toContain('界面明暗：默认浅色');
-    expect(step4).toContain('导航明暗：`themeProfile.navTheme` 单独按导航方案记录');
+    expect(step4).toContain('导航明暗：`themeProfile.navTheme` 从所选主题模板的 `navTheme` 派生');
     const overlayGuide = readSkill('yida-skills/skills/yida-design/references/theme/theme-token-presets.md');
     expect(overlayGuide).toContain('`navTheme=dark` 只表示导航深色，不触发本节');
     expect(overlayGuide).toContain('允许在复制后的 `app-theme.css` 末尾追加精确 classname 规则');

@@ -43,7 +43,7 @@
 | `name` | 项目自己的视觉方向名称，不写主题模板名称 |
 | `themeColor` | 当前主色，使用 6 位 HEX，与 `--color-brand1-6` 的最终值一致 |
 | `themeColorSource` | 实际来源，如 `user-specified`、`application-theme` 或 `business-inferred`；不伪造模板默认品牌色 |
-| `navTheme` | 当前导航明暗 `light` 或 `dark`；与页面画布明暗分开 |
+| `navTheme` | 从所选主题模板派生的导航明暗 `light` 或 `dark`；与页面画布明暗分开，不由 AI 默认填写 |
 | `themeDelivery` | `app-custom-theme-file` 或 `current-app-theme` |
 | `themeFile` | 当前主题 CSS 的实际交付路径；继承当前应用且没有本地主题文件时为空字符串 |
 | 既有导航配置 | 保留 navigationType、layoutDirection、hideAppNav、logoSource 等已确认配置，不重新推断入口范围 |
@@ -108,7 +108,7 @@ Fast 写入 `design.md`；Plan 写入 `visualStyle.forUser.iconSystem.colorPairs
 
 用户确认的整体氛围高于模板默认灰阶。根据品牌和已确认方向协调页面、卡片、导航、填充、边界和交互，同时保留文字可读性和独立状态语义；不能只改按钮，也不能统一抹掉主题原有层次与材质。
 
-Fast 与 Plan 使用同一主题的颜色推导、组件规则和页面设计标准。主色按主题公式推导，其余变量沿用主题；项目差异直接写入 token。Plan 输入使用 `visualStyle.tokens`，Fast 写入 `design.md.tokens`，最终设计相同。导航六色成组处理，导航明暗不带动内容画布变暗或变白。用户明确保留中性参考或只改强调色时尊重该范围。
+Fast 与 Plan 使用同一主题的颜色推导、组件规则和页面设计标准。主色按主题公式推导，其余变量沿用主题；项目差异直接写入 token。Plan 输入使用 `visualStyle.tokens`，Fast 写入 `design.md.tokens`，最终设计相同。导航六色直接沿用主题模板，CLI 不再根据 `navigationStyle.tone` 生成另一套默认导航色；导航明暗不带动内容画布变暗或变白。用户明确保留中性参考或只改强调色时尊重该范围。
 
 圆角、padding、gap、密度、背景与卡片关系按选中主题和真实任务执行，通用参考值仅补未定义项。同色画布与面板可通过边界、共容器和留白建立层次；渐变、玻璃、阴影、纹理不互相强制绑定。需要动效时提供 reduced motion 降级，装饰不覆盖内容与操作。
 

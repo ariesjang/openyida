@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "近黑画布托起稍亮的主题暗面大圆角面板，品牌实心交互与细线图形形成轻柔对比；数据焦点仅局部发亮，主题同色阶与独立酸黄、暗红序列共同区分真实数据。"
 themeId: soft-spectral-panels
+navTheme: dark
 tokens:
   application-global:
     appearance: # 应用外观：应用背景、内容表面与导航配色，共 11 个变量
@@ -141,7 +142,7 @@ YAML 维护变量值，正文维护角色关系。主题暗面、偏色灰和同
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
 原生导航只配置六项颜色角色，结构、尺寸、排序和折叠由平台处理；需要主题色的导航值直接引用对应 Brand Token，不绑定内容区 Text 或 Fill。导航与内容各自保持项目确定的明暗配对，共享品牌来源不合并两者职责。
 
@@ -308,7 +309,7 @@ YAML 是已声明变量的唯一数值来源。全局变量供原生与自定义
 - 品牌种子为 `{{PRIMARY_COLOR}}`。没有品牌输入时从项目已选品牌或明确的色彩来源确定并记录，不保留固定色相兜底；用户给定种子不静默替换。
 - 品牌派生公式以 YAML 为准：将种子与基底解析为 8 位 sRGB，逐通道取 round(a × seed + b × base)，a + b = 1，限制为 0–255 后输出六位十六进制。直接混合编码后的 sRGB，不执行线性光转换；项目文档替换全部生成标记。
 - 七个 Brand Token 保留各自用途；appearance 的主题角色引用对应浅深变体。卡片使用 `--color-brand1-5` 的深色变体，由 `--pod-card-bg-color` 承接表面职责；`--color-brand1-10` 仅服务品牌禁用状态。近黑画布保持中性，导航使用项目配色，主题暗面、偏色灰、同色数据序列、焦点和热力尺度随主色重算；酸黄、暗红分类及平台状态保留自身语义。
-- 导航六项保持独立角色并通过 Brand 引用同步主题色，不引用内容 Text／Fill。基础表面 `--color-white`、内容表面和 pop-up 保留暗色模式及既定前景，导航按项目选择成组配色；换主色不自动改换明暗模式。
+- 导航六项保持独立角色并通过 Brand 引用同步主题色，不引用内容 Text／Fill。基础表面 `--color-white`、内容表面和 pop-up 保留暗色模式及既定前景，导航沿用本模板 navTheme 对应的成组配色；换主色不自动改换明暗模式。
 - 文字、导航和品牌操作保留设计稿的底色、前景与状态配对，不按主色亮度自动挑选黑白前景、反转明暗或修改中性色值。图形保留直接读数、线型和边界等既定表达，主题派生仅按 YAML 的固定比例生成。
 
 局部推断参数可按平台能力调整，保留低饱和主题暗底、大圆角、实心品牌交互与局部读数亮点的关系。字号和间距沿全局固定档位；不得为图形丰富度补造曲线、日期、媒体或业务指标。

@@ -2,6 +2,7 @@
 name: "{{PROJECT_NAME}}"
 description: "独立导航与白色画布相邻，以浅灰平面块、细描边白色面板和开放表格区分内容；无衬线大数字保持中等字重，主题色集中于小型标记、细折线及等距刻度，主题派生分类色、独立类别色与状态色按角色使用。"
 themeId: hairline-soft-blocks
+navTheme: light
 tokens:
   application-global:
     appearance:
@@ -105,7 +106,7 @@ tokens:
 
 **细线白面 · 浅灰拼块（hairline-soft-blocks）**
 
-导航与白色内容区以一条轻分界线建立区域关系，导航明暗按项目选择。内容由浅灰平面摘要块、细描边白色面板和直接展开在画布上的表格组成；不同内容采用不同边界强度。无衬线字体贯穿页面，核心数字通过字号与留白突出，字重保持克制。主题色只占少量面积，主要落在图标标记、细折线和刻度条上。
+导航与白色内容区以一条轻分界线建立区域关系，导航明暗采用本模板 navTheme。内容由浅灰平面摘要块、细描边白色面板和直接展开在画布上的表格组成；不同内容采用不同边界强度。无衬线字体贯穿页面，核心数字通过字号与留白突出，字重保持克制。主题色只占少量面积，主要落在图标标记、细折线和刻度条上。
 
 | 核心特征 | 可见表现 | 主要偏离风险 |
 | --- | --- | --- |
@@ -144,7 +145,7 @@ tokens:
 
 ### 2.2 应用导航
 
-导航按项目确定的明暗成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
+导航采用本模板 navTheme 对应的成组配色，独立于内容画布。背景使用 `--pod-shell-theme-bg-color`，普通文字与图标使用 `--pod-nav-item-text-color`；悬停文字与背景使用 `--pod-nav-item-text-hover-color`、`--pod-nav-menu-bg-hover-color`，选中文字与背景使用 `--pod-nav-item-text-selected-color`、`--pod-nav-menu-bg-selected-color`。图标跟随对应文字状态，颜色以项目 tokens 为准。
 
 原生导航只配置本节六项颜色，图标默认随文字。结构、宽度、分组、折叠和菜单排列交由项目及平台处理，不为复现某个导航细节新增一套导航。
 

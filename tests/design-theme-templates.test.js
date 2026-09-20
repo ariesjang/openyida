@@ -72,6 +72,8 @@ test.each([
   ['unquoted spacing', source => source.replace('"--s-5": 20px', '"--s-5": 22px'), '--s-5 应使用固定值'],
   ['numeric font weight', source => source.replace('"--font-weight-subhead": 500', '"--font-weight-subhead": 600'), '--font-weight-subhead 应使用固定值'],
   ['missing appearance token', source => source.replace(/^.*"--pod-nav-item-text-color":.*\n/m, ''), '全局变量集合'],
+  ['missing nav theme', source => source.replace(/^navTheme:.*\n/m, ''), 'navTheme 必须是 light 或 dark'],
+  ['invalid nav theme', source => source.replace(/^navTheme:.*$/m, 'navTheme: auto'), 'navTheme 必须是 light 或 dark'],
   ['cross-group cycle', source => source.replace('"--pod-page-bg-color": "#000000"', '"--pod-page-bg-color": "var(--oyd-inset-surface)"').replace('"--oyd-inset-surface": "#000000"', '"--oyd-inset-surface": "var(--pod-page-bg-color)"'), '变量循环引用'],
   ['unsupported brand slot', source => source.replace('  custom-page:\n', '  custom-page:\n    "--color-brand1-4": "#FFFFFF"\n'), '不支持的品牌色阶'],
   ['duplicate variable across scopes', source => source.replace('  custom-page:\n', '  custom-page:\n    "--color-white": "#FFFFFF"\n'), '页面层重复定义全局变量'],
@@ -112,6 +114,8 @@ test('templates accept extra global and project variables with shared references
 
 test.each([
   ['missing summary', index => { delete index.themes[0].styleSummary; }, 'styleSummary'],
+  ['missing theme modes in summary', index => { index.themes[0].styleSummary = index.themes[0].styleSummary.replace(/^[^。]+。/, ''); }, 'styleSummary 必须用自然语言说明深色或浅色导航，以及深色或浅色内容界面'],
+  ['mismatched nav theme in summary', index => { index.themes[0].styleSummary = index.themes[0].styleSummary.replace('深色导航', '浅色导航'); }, 'styleSummary 的导航明暗与主题模板 navTheme 不一致'],
   ['duplicate IDs', index => { index.themes.push({ ...index.themes[0] }); }, '重复 themeId'],
   ['unsafe theme ID', index => { index.themes[0].themeId = '../outside'; }, 'themeId 格式非法'],
   ['path traversal', index => { index.themes[0].templatePath = '../outside.md'; }, 'templatePath 必须指向公共主题目录'],
