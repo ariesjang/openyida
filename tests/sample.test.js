@@ -446,12 +446,12 @@ describe('sample templates', () => {
     const contentShell = renderShell({ open: true, children: '正文' });
     expect(contentShell.props.styles.body.padding).toBe('0 8px 8px');
     expect(contentShell.children.some((child) => child?.props?.className === 'oy-drawer-card')).toBe(true);
-    const drawerBackground = 'var(--pod-page-bg-color, var(--color-white, #fff))';
+    const drawerBackground = 'var(--pod-shell-theme-bg-color, var(--color-white, #fff))';
     expect(contentShell.props.styles.content.background).toBe(drawerBackground);
     expect(frameShell.props.styles.content.background).toBe(drawerBackground);
-    expect(frameShell.props.styles.header.color).toBe('var(--drawer-title-color, var(--color-text1-4, #1f2329))');
-    expect(frameShell.props.styles.content.color).toBe('var(--drawer-content-color, var(--color-text1-4, #1f2329))');
-    expect(pageSource).not.toContain('--pod-page-header-text-color');
+    expect(frameShell.props.styles.header.color).toBe('var(--drawer-title-color, var(--pod-page-header-text-color, var(--color-text1-4, #1f2329)))');
+    expect(frameShell.props.styles.content.color).toBe('var(--drawer-content-color, var(--pod-page-header-text-color, var(--color-text1-4, #1f2329)))');
+    expect(pageSource).toContain('--pod-page-header-text-color');
     expect(contentShell.props.styles.body.background).toBe('transparent');
     expect(pageSource.match(/\.openyida-form-drawer \.oy-drawer-card \{([^}]+)\}/)[1]).toContain('background: transparent;');
     expect(renderShell({ open: true, background: '#123456' }).props.styles.content.background).toBe('#123456');

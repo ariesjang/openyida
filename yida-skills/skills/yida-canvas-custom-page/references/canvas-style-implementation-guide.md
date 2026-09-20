@@ -319,7 +319,7 @@ antd 页面统一使用 [CanvasThemeProvider](canvas-theme-provider.md) 读取�
 | colorPrimary / colorLink | --color-brand1-6，主操作、链接与选中焦点 |
 | colorBgLayout | --pod-page-bg-color，回退 --color-white；与页面根容器一致 |
 | colorBgContainer | --pod-card-bg-color，回退 --color-white |
-| colorBgElevated | --pod-card-bg-color，普通浮层表面；Drawer 通过组件级 colorBgElevated 单独使用 --pod-page-bg-color，回退 --color-white |
+| colorBgElevated | --pod-card-bg-color，普通浮层表面；Drawer 通过组件级 colorBgElevated 单独使用 --pod-shell-theme-bg-color，回退 --color-white |
 | colorText / colorTextHeading | --color-text1-4，正文与标题 |
 | colorTextSecondary / colorTextDescription | --color-text1-3，辅助说明 |
 | colorTextPlaceholder | --color-text1-10，表头与 placeholder 层级 |

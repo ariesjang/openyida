@@ -65,7 +65,7 @@ function buildYidaFormUrl(request, currentAppType) {
 function CanvasDrawer({
   open, title, onClose, onOpenInNewWindow, extra, children,
   contentMode = 'content',
-  background = 'var(--pod-page-bg-color, var(--color-white, #fff))',
+  background = 'var(--pod-shell-theme-bg-color, var(--color-white, #fff))',
 }) {
   const [fullScreen, setFullScreen] = useState(false);
   const [drawerWidth, setDrawerWidth] = useState(null);
@@ -138,11 +138,11 @@ function CanvasDrawer({
           border: 0;
           border-radius: 8px;
           background: transparent;
-          color: var(--drawer-close-color, var(--color-text1-4, #1f2329));
+          color: var(--drawer-close-color, var(--pod-page-header-text-color, var(--color-text1-4, #1f2329)));
           cursor: pointer;
         }
         .openyida-form-drawer .oy-drawer-action:hover {
-          color: var(--drawer-close-color-hovered, var(--color-text1-4, #1f2329));
+          color: var(--drawer-close-color-hovered, var(--pod-page-header-text-color, var(--color-text1-4, #1f2329)));
           background: var(--drawer-close-bg-hovered, var(--pod-overlay-color-hover, rgba(83, 88, 97, 0.16)));
         }
         .openyida-form-drawer .oy-drawer-action:focus-visible {
@@ -215,7 +215,7 @@ function CanvasDrawer({
           },
           content: {
             background,
-            color: 'var(--drawer-content-color, var(--color-text1-4, #1f2329))',
+            color: 'var(--drawer-content-color, var(--pod-page-header-text-color, var(--color-text1-4, #1f2329)))',
             borderLeft: 'var(--drawer-border-width, 0px) var(--drawer-border-style, solid) var(--drawer-border-color, transparent)',
             borderRadius: fullScreen ? 0 : 'var(--pod-drawer-border-radius, var(--pod-drawer-radius, var(--drawer-corner, 20px))) 0 0 var(--pod-drawer-border-radius, var(--pod-drawer-radius, var(--drawer-corner, 20px)))',
             overflow: 'hidden',
@@ -226,7 +226,7 @@ function CanvasDrawer({
             height: 'var(--pod-nav-platform-header-height, 48px)',
             minHeight: 'var(--pod-nav-platform-header-height, 48px)',
             flex: '0 0 var(--pod-nav-platform-header-height, 48px)',
-            color: 'var(--drawer-title-color, var(--color-text1-4, #1f2329))',
+            color: 'var(--drawer-title-color, var(--pod-page-header-text-color, var(--color-text1-4, #1f2329)))',
             fontSize: 'var(--pod-page-title-font-size, 16px)',
             fontWeight: 'var(--pod-page-title-font-weight, 500)',
             padding: '0 var(--drawer-title-padding-left-right, 20px)',
