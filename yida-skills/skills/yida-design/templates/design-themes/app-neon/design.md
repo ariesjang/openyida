@@ -168,7 +168,7 @@ applicationStyle:
 
 ### 原生结构与介绍区
 
-小号技术编号与发光横线。原生表单用 ColumnContainer 的 6:6 栏比例承载业务字段；columnGap=22px、rowGap=22px、display=VERTICAL。介绍标题、说明由 Divider 的 title/description 承载，章节同样用 Divider；有语义的文案不能放到 CSS content。模板附有 form-layout.json，只示范结构，不创建虚假业务字段。若当前平台 Divider 不支持所需长说明或标题排版，降级成顶部标题说明并记录限制，不注入 HTML/JS。自定义页面可用语义 HTML 丰富同一版式。
+原生表单先按填写任务决定是否需要介绍，不直接复制应用首页的构图。form-layout.json 只提供 6:6 字段分栏，不预置介绍栏或占位标题；columnGap=22px、rowGap=22px、display=VERTICAL。简单新增/编辑可直接从字段开始；一句必要提示放顶部或字段旁；多步骤任务可用步骤提示；只有独立且需持续参考的材料清单、规则或上下文，加上足够的容器宽度，才考虑侧栏。不能因主题名称自动套 3:9，不能让介绍重复弹窗标题或首组标题。介绍与章节可用 Divider.title/description，业务文案不放 CSS content；无需说明时直接省略，不注入 HTML/JS。
 
 ### 组件状态
 
@@ -182,7 +182,7 @@ applicationStyle:
 
 ### R1 介绍与正文的关系
 
-小号技术编号与发光横线。应用首页、内容详情与表单使用同一标题语法；只有任务确需上下文时展示介绍区。原生场景使用 form-layout.json，自定义页面可用 .oyd-style-intro 与 .oyd-style-section；外层 .oyd-style-workspace 中用 .oyd-style-layout 消费列比例，全宽区使用 .oyd-style-wide。介绍栏方案将介绍和正文作为网格的两个子项。伪元素只画空的装饰线，不承载可读内容。窄容器回到纵向阅读。
+小号技术编号与发光横线是有相应内容时的可选构图，不是每张表单的固定结构。应用首页、详情与表单继承字体、材质和标题语法，不要求同一版式。先判断无介绍、顶部短说明、分组内提示、步骤提示或侧栏哪一种能帮助当前任务；不得为多样性随机轮换。原生 form-layout.json 仅含字段分栏；自定义页面可用 .oyd-style-intro 与 .oyd-style-section，在 .oyd-style-workspace 内按任务组织 .oyd-style-layout。侧栏需在 design.md 写清独立内容、持续参考价值和容器宽度依据；抽屉空间不足时移到顶部或省略，不压缩字段。伪元素只画装饰，不承载文案。
 
 ### R2 材质与信息密度
 

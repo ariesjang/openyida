@@ -116,7 +116,7 @@ ${intro}。标题字体消费 --oyd-heading-font 与 --oyd-heading-size，辅助
 
 ### 原生结构与介绍区
 
-${intro}。原生表单用 ColumnContainer 的 ${profile.rail ? '3:9 外层承载介绍和字段，右列再按业务分栏' : columns + ' 栏比例承载业务字段'}；columnGap=${gap}px、rowGap=${gap}px、display=VERTICAL。介绍标题、说明由 Divider 的 title/description 承载，章节同样用 Divider；有语义的文案不能放到 CSS content。模板附有 form-layout.json，只示范结构，不创建虚假业务字段。若当前平台 Divider 不支持所需长说明或标题排版，降级成顶部标题说明并记录限制，不注入 HTML/JS。自定义页面可用语义 HTML 丰富同一版式。
+原生表单先按填写任务决定是否需要介绍，不直接复制应用首页的构图。form-layout.json 只提供 ${columns} 字段分栏，不预置介绍栏或占位标题；columnGap=${gap}px、rowGap=${gap}px、display=VERTICAL。简单新增/编辑可直接从字段开始；一句必要提示放顶部或字段旁；多步骤任务可用步骤提示；只有独立且需持续参考的材料清单、规则或上下文，加上足够的容器宽度，才考虑侧栏。不能因主题名称自动套 3:9，不能让介绍重复弹窗标题或首组标题。介绍与章节可用 Divider.title/description，业务文案不放 CSS content；无需说明时直接省略，不注入 HTML/JS。
 
 ### 组件状态
 
@@ -130,7 +130,7 @@ ${intro}。原生表单用 ColumnContainer 的 ${profile.rail ? '3:9 外层承�
 
 ### R1 介绍与正文的关系
 
-${intro}。应用首页、内容详情与表单使用同一标题语法；只有任务确需上下文时展示介绍区。原生场景使用 form-layout.json，自定义页面可用 .oyd-style-intro 与 .oyd-style-section；外层 .oyd-style-workspace 中用 .oyd-style-layout 消费列比例，全宽区使用 .oyd-style-wide。介绍栏方案将介绍和正文作为网格的两个子项。伪元素只画空的装饰线，不承载可读内容。窄容器回到纵向阅读。
+${intro}是有相应内容时的可选构图，不是每张表单的固定结构。应用首页、详情与表单继承字体、材质和标题语法，不要求同一版式。先判断无介绍、顶部短说明、分组内提示、步骤提示或侧栏哪一种能帮助当前任务；不得为多样性随机轮换。原生 form-layout.json 仅含字段分栏；自定义页面可用 .oyd-style-intro 与 .oyd-style-section，在 .oyd-style-workspace 内按任务组织 .oyd-style-layout。侧栏需在 design.md 写清独立内容、持续参考价值和容器宽度依据；抽屉空间不足时移到顶部或省略，不压缩字段。伪元素只画装饰，不承载文案。
 
 ### R2 材质与信息密度
 
@@ -185,9 +185,7 @@ YAML Token 是唯一数值源。${free ? '必须记录业务推演依据，并�
   fs.writeFileSync(path.join(folder, 'design.md'), markdown);
   const resolved = resolveThemeColors(markdown.replace(/\{\{PRIMARY_COLOR\}\}/g, accent));
   fs.writeFileSync(path.join(folder, 'app_theme.css'), free ? '/* Free creative: author design.md before generating the project CSS. */\n' + platformCss : applyDesignTokens(platformCss, resolved));
-  const divider = { type: 'Divider', title: '填写真实业务标题', description: '填写这项业务的用途、要求或材料说明', colorType: 'theme', titleColor: 'var(--pod-form-label-color)', backgroundColor: 'var(--color-brand1-6)', secondaryColor: 'var(--color-line1-1)' };
-  const layout = { type: 'ColumnContainer', layout: profile.rail ? '3:9' : columns, columnGap: `${gap}px`, rowGap: `${gap}px`, display: 'VERTICAL', mobileRowGap: `${gap}px`, children: [] };
-  layout.children = profile.rail ? [[divider], []] : columns.split(':').map((_, index) => index ? [] : [divider]);
+  const layout = { type: 'ColumnContainer', layout: columns, columnGap: `${gap}px`, rowGap: `${gap}px`, display: 'VERTICAL', mobileRowGap: `${gap}px`, children: columns.split(':').map(() => []) };
   fs.writeFileSync(path.join(folder, 'form-layout.json'), JSON.stringify([layout], null, 2) + '\n');
   index.themes.push({ themeId: id, label, mode: profile.mode || 'template', collection: 'application-styles', templatePath: `templates/design-themes/${id}/design.md`, cssTemplatePath: `templates/design-themes/${id}/app_theme.css`, formLayoutPath: `templates/design-themes/${id}/form-layout.json`, previewPrimaryColor: accent, styleSummary: metadata.description });
 }

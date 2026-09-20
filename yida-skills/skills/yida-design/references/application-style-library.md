@@ -11,7 +11,7 @@ openyida sample yida-design application-style --style-id app-executive --output 
 openyida sample yida-design application-style --style-id free-creative --output prd/my-app/creative-start
 ```
 
-每套导出 `design.md`、`app_theme.css`、`form-layout.json`。导出拒绝覆盖现有文件。这里的设计保留项目占位符，CSS 为示范配色，布局只有结构和占位标题：三者都是设计起点，不能原样当成最终交付或直接发布。不要把目录中的参考 `app_theme.css` 与项目正在维护的主题同时上传。
+每套导出 `design.md`、`app_theme.css`、`form-layout.json`。导出拒绝覆盖现有文件。设计保留项目占位符，CSS 为示范配色，布局只含空字段列，不预置介绍栏和占位标题：三者都是设计起点，不能原样当成最终交付或直接发布。不要把目录中的参考 `app_theme.css` 与项目正在维护的主题同时上传。
 
 ## 18 个应用方向
 
@@ -43,9 +43,11 @@ openyida sample yida-design application-style --style-id free-creative --output 
 - **Fast**：选定方向后导出一套起点，按唯一输出契约补成最终 `design.md`；保留其 `applicationStyle` 消费标记，删除模板 `themeId`，填入真实项目、颜色、页面与引用，完成 `check-design`。然后运行 `openyida sample yida-design app-theme --design-file <design.md> --output <app_theme.css>`。共享生成器会携带这组应用风格的语义类配方，后续重生成保留配方之外的自定义 CSS。
 - **Plan**：`design-plan init` 使用目录中的 `themeId`（`--theme-id`），项目差异放 `visualStyle.tokens`，各页布局写入已有逐页设计。CLI 物化时生成正式 `design.md` 与返回路径中的 `app-theme.css`；文件名沿用 Plan 契约，不另生成第二份应用主题。
 - **实现**：应用级上传一次项目 CSS。Canvas 读取设计里的 Token，并可使用 `.oyd-style-workspace`、`.oyd-style-intro`、`.oyd-style-section`；原生页面通过平台 Token 与 Schema 消费。类名不是自动布局引擎，自定义页面必须落实具体构图。
-- **原生表单**：读取 `form-layout.json`，替换标题说明，在各列填入 PRD 的真实字段，再交给 `create-form`。`design.md` 不会自动变成 Schema；按设计设置列比例、间距、移动端纵向排列和长字段整行。`--theme compact` 等密度参数不能替代明确的 Schema 和应用 CSS。
+- **原生表单**：读取 `form-layout.json`，在各列填入 PRD 的真实字段，仅按任务需要添加标题说明，再交给 `create-form`。`design.md` 不会自动变成 Schema；按设计设置列比例、间距、移动端纵向排列和长字段整行。`--theme compact` 等密度参数不能替代明确的 Schema 和应用 CSS。
 
-布局结构可以比普通字段更丰富：截图式介绍栏由外层 `ColumnContainer` 的 `3:9` 布局、左列 `Divider.title/description` 和右列业务字段组成；章节使用原生 Divider。业务文字不能写进伪元素。Divider 展示效果不足时，降级为顶部介绍，不能写加载代码或跨 iframe 注入。原生展示效果仍需在当前平台版本验证。
+布局可以丰富，但不能把介绍栏变成默认套路。先按[原生表单布局判断](native-form-styles.md#应用风格先于表单选型)选择直接填写、顶部短说明、分组提示、步骤提示或独立侧栏。侧栏必须有需持续参考的实际内容，并有足够的容器空间；不能因为应用是杂志风就自动加上。标题不重复弹窗标题或首组标题，不用空泛说明凑版式。
+
+确有侧栏需求时，可自行组成外层 `ColumnContainer`，左列用 `Divider.title/description`，右列放真实字段；比例按内容与宽度确定，`3:9` 仅是可选示例。抽屉/iframe 内按实际可用宽度判断，必要时移到顶部或省略。业务文字不能写进伪元素，不写加载代码或跨 iframe 注入；展示效果仍须在当前平台版本验证。
 
 ## 自由创意必须能独立完成
 

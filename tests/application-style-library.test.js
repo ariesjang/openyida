@@ -3,6 +3,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { execFileSync } = require('child_process');
 const { loadThemeIndex, DESIGN_SKILL_ROOT, resolveThemeColors } = require('../lib/design-plan/themes');
 const { catalog } = require('../lib/design-plan/init');
 const { materialize } = require('../lib/design-plan/materialize');
@@ -38,6 +39,10 @@ test.each(styles.map(style => [style.themeId, style]))('%s pairs ship valid CSS 
   expect(() => validateThemeCssContent(css)).not.toThrow();
   expect(css.match(/OPENYIDA APPLICATION STYLE RECIPES START/g)).toHaveLength(1);
   const layout = JSON.parse(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.formLayoutPath), 'utf8'));
+  expect(layout[0].children.every(column => column.length === 0)).toBe(true);
+  if (['app-editorial', 'app-executive'].includes(style.themeId)) {
+    expect(layout[0].layout).not.toBe('3:9');
+  }
   // Populate a real business field: decorative components are not data fields.
   layout[0].children[layout[0].children.length - 1].push({ type: 'TextField', label: '申请事由', required: true });
   expect(() => form.validateFormFieldDefinitions(layout)).not.toThrow();
@@ -68,6 +73,27 @@ test('export writes all three assets and refuses to overwrite authored work', as
   expect(() => exportApplicationStyle('../outside', directory)).toThrow();
   await expect(sample.run(['yida-design', 'application-style', '--style-id', 'app-wire', '--design-file', 'ignored.md']))
     .rejects.toMatchObject({ code: 'APPLICATION_STYLE_SAMPLE_INVALID' });
+});
+
+test.each(['app-editorial', 'app-executive', 'free-creative'])('public CLI exports %s as field columns without a forced introduction', themeId => {
+  const result = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, '../bin/yida.js'),
+    'sample', 'yida-design', 'application-style', '--style-id', themeId, '--output', directory], {
+    cwd: directory, encoding: 'utf8', env: { ...process.env, OPENYIDA_SKIP_UPDATE_CHECK: '1' },
+  }));
+  expect(result.success).toBe(true);
+  const layout = JSON.parse(fs.readFileSync(path.join(directory, 'form-layout.json'), 'utf8'));
+  expect(layout[0].children.every(column => column.length === 0)).toBe(true);
+  expect(layout[0].layout).not.toBe('3:9');
+});
+
+test('a business-authored reference sidebar remains supported by the native compiler', () => {
+  const layout = { type: 'ColumnContainer', layout: '3:9', columnGap: '24px', display: 'VERTICAL',
+    children: [[{ type: 'Divider', title: '提交材料', description: '逐项核对盖章合同、报价单与验收记录。' }],
+      [{ type: 'AttachmentField', label: '盖章合同' }]] };
+  expect(() => form.validateFormFieldDefinitions([layout])).not.toThrow();
+  const node = form.buildFormNodeComponent(layout);
+  expect(node.componentName).toBe('ColumnsLayout');
+  expect(JSON.stringify(node)).toContain('提交材料');
 });
 
 test('free creative rejects absent business decisions and explicit design tokens, then renders authored decisions', () => {
