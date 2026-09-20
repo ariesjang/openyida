@@ -790,6 +790,27 @@ describe('CLI offline smoke', () => {
         expect.objectContaining({ name: 'formTitle', source: 'positional', required: true }),
         expect.objectContaining({ name: 'fieldsJsonFile', source: 'positional', required: true }),
         expect.objectContaining({
+          name: 'layout',
+          source: 'option',
+          builder_options: ['--layout'],
+          default: 'single',
+          values: ['single', 'double', 'card', 'section'],
+        }),
+        expect.objectContaining({
+          name: 'theme',
+          source: 'option',
+          builder_options: ['--theme'],
+          default: 'default',
+          values: ['default', 'compact', 'comfortable'],
+        }),
+        expect.objectContaining({
+          name: 'labelAlign',
+          source: 'option',
+          builder_options: ['--label-align'],
+          default: 'top',
+          values: ['top', 'left', 'right'],
+        }),
+        expect.objectContaining({
           name: 'icon',
           source: 'option',
           required: false,
@@ -797,6 +818,14 @@ describe('CLI offline smoke', () => {
           default: 'auto',
           value_catalog_command_id: 'create-form.icons',
         }),
+        expect.objectContaining({
+          name: 'contentLocale',
+          source: 'option',
+          builder_options: ['--locale', '--content-locale', '--lang'],
+          values: ['zh_CN', 'en_US', 'ja_JP'],
+        }),
+        expect.objectContaining({ name: 'open', source: 'option', builder_options: ['--open'] }),
+        expect.objectContaining({ name: 'noOpen', source: 'option', builder_options: ['--no-open'] }),
       ],
       canonical: {
         command_id: 'create-form.create',
@@ -845,9 +874,6 @@ describe('CLI offline smoke', () => {
       mutates_yida: false,
       mutates_local: false,
     });
-    expect(commandById['form-detail-style.check']).toBeUndefined();
-    expect(commandById['form-detail-style.apply']).toBeUndefined();
-    expect(commandById['form-detail-style.remove']).toBeUndefined();
     expect(commandById['create-form.validate']).toBeUndefined();
     expect(commandById['create-form.validate-fields'].requires_login).toBe(false);
     expect(commandById['create-form.validate-fields'].side_effect).toMatchObject({
@@ -1163,7 +1189,7 @@ describe('CLI offline smoke', () => {
     ]);
   });
 
-  test('commands validate recognizes the manifest-declared create-form icon option', () => {
+  test('commands validate recognizes every manifest-declared create-form option', () => {
     const output = runOk([
       'commands',
       'validate',
@@ -1174,8 +1200,17 @@ describe('CLI offline smoke', () => {
       'APP_xxx',
       '访客登记',
       '.cache/openyida/visitor/fields.json',
+      '--layout',
+      'section',
+      '--theme',
+      'comfortable',
+      '--label-align',
+      'right',
       '--icon',
       'name-card',
+      '--locale',
+      'en_US',
+      '--no-open',
     ]);
     const parsed = JSON.parse(output);
 
@@ -1186,9 +1221,14 @@ describe('CLI offline smoke', () => {
         appType: 'APP_xxx',
         formTitle: '访客登记',
         fieldsJsonFile: '.cache/openyida/visitor/fields.json',
+        layout: 'section',
+        theme: 'comfortable',
+        labelAlign: 'right',
         icon: 'name-card',
+        contentLocale: 'en_US',
+        noOpen: true,
       },
-      display: 'openyida create-form create APP_xxx "访客登记" .cache/openyida/visitor/fields.json --icon name-card',
+      display: 'openyida create-form create APP_xxx "访客登记" .cache/openyida/visitor/fields.json --layout section --theme comfortable --label-align right --icon name-card --locale en_US --no-open',
     });
   });
 
@@ -1220,7 +1260,7 @@ describe('CLI offline smoke', () => {
     expect(parsed.argv.slice(0, manifestEntry.path.length)).toEqual(manifestEntry.path);
   });
 
-  test('commands build recognizes the manifest-declared create-form icon option', () => {
+  test('commands build renders every manifest-declared create-form option', () => {
     const output = runOk([
       'commands',
       'build',
@@ -1231,8 +1271,17 @@ describe('CLI offline smoke', () => {
       '访客登记',
       '--fields-json-file',
       '.cache/openyida/visitor/fields.json',
+      '--layout',
+      'card',
+      '--theme',
+      'compact',
+      '--label-align',
+      'left',
       '--icon',
       'name-card',
+      '--locale',
+      'ja_JP',
+      '--open',
       '--json',
     ]);
     const parsed = JSON.parse(output);
@@ -1246,11 +1295,25 @@ describe('CLI offline smoke', () => {
         'APP_xxx',
         '访客登记',
         '.cache/openyida/visitor/fields.json',
+        '--layout',
+        'card',
+        '--theme',
+        'compact',
+        '--label-align',
+        'left',
         '--icon',
         'name-card',
+        '--locale',
+        'ja_JP',
+        '--open',
       ],
       params: {
+        layout: 'card',
+        theme: 'compact',
+        labelAlign: 'left',
         icon: 'name-card',
+        contentLocale: 'ja_JP',
+        open: true,
       },
     });
   });
@@ -2619,6 +2682,14 @@ test('plain user-facing guidance is available from manifest and both agent capab
   expect(fs.existsSync(path.join(ROOT, visual.reference.split('#')[0]))).toBe(true);
   expect(visual.reference).toBe('yida-skills/skills/yida-design/references/theme-selection.md#设计方向比较');
   expect(fs.readFileSync(path.join(ROOT, visual.reference.split('#')[0]), 'utf8')).toContain('## 设计方向比较');
+  expect(visual.nativeFormLayout).toMatchObject({
+    model: 'component_based_native_form_layout',
+    regions: ['top', 'left', 'main', 'right', 'between_fields'],
+    components: ['tabs', 'button_groups', 'images', 'graphics', 'status_blocks', 'dividers', 'columns', 'fields'],
+  });
+  expect(visual.nativeFormLayout.rules).toContain('preserve_existing_component_tree');
+  expect(visual.nativeFormLayout.rules).toContain('use_divider_for_business_groups');
+  expect(visual.nativeFormLayout.forbidden).toEqual(['generic_filler_copy', 'random_layout_rotation']);
 });
 
 test('asset fallback and completion policies are shared by the CLI, manifest and agent summary', () => {
