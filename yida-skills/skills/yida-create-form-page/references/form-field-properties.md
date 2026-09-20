@@ -18,30 +18,28 @@
 
 ---
 
-## 表单展示/布局组件
+## 表单组件与布局
 
-字段 JSON 中可使用的展示/布局组件如下；生成表单时只从这张清单里选择，不要编造新的布局组件名。
+表单支持在顶部、左侧、主体、右侧和字段之间组合 Tab、按钮组、图片、状态区、`Divider`、`ColumnContainer` 与业务字段。`create-form` 字段 JSON 使用下表中的结构组件；更新表单时保留其他已有组件。
 
-| 组件 | 用法 | 典型场景 |
+| 结构组件 | 用法 | 典型场景 |
 | --- | --- | --- |
 | `Divider` | 作为独立字段插入字段数组，用 `title` 表达章节标题，按页面用途显式选择 `dividerType` | 普通业务分组、章节分隔、字段较多时提升可读性 |
 | `ColumnContainer` | 用二维 `children` 表达多列，每个子数组是一列；内部字段仍按普通字段 JSON 写 | 开始/结束日期、姓名/工号、部门/岗位、金额/币种、联系人/电话等短字段成组 |
-| `GroupContainer` / `PageSection` | 作为容器包住一整块 `children`，标题写 `title`，映射到 `PageSection` | 需要折叠、边框、整块隐藏、整块权限或平台分组容器语义的少量特殊分组 |
-
-默认结构是 `Divider` 做章节标题和分隔，`ColumnContainer` 做局部左右/多列布局。普通业务分组不要用 `GroupContainer` / `PageSection`，它们不是普通章节标题的替代品。
 
 ### 布局决策规则
 
-默认表单是单列。不要为了“更高级”默认把整表改成双列，也不要用 `GroupContainer` / `PageSection` 做普通分组。
+先按业务任务确定区域、组件作用和响应式行为，再选择单列、局部多列、全局双列、卡片或章节布局。不要从字段数量机械推导固定结构，也不要把 `Divider` 当成每个分组的必选组件。
 
-- 默认单列：字段较少、流程表单、移动端优先、长文本、说明、附件、地址、子表、审批意见、需要逐项认真填写的字段。
+- 单列：适合字段较少、流程表单、移动端优先、长文本、附件、地址、子表、审批意见或需要逐项认真填写的内容。
 - 局部多列：短字段且天然成对或成组时使用 `ColumnContainer`，例如开始/结束日期、姓名/工号、部门/岗位、金额/币种、联系人/电话。
-- 全局 `--layout double`：只有用户明确要求“整个表单双列”时才使用；一般更推荐在字段 JSON 内用 `ColumnContainer` 做局部多列。
-- 语义分组：按业务含义分段，不按字段数量平均分。常见分组包括“基本信息”“业务信息”“时间计划”“补充材料”“审批信息”。
+- 全局布局：`--layout single|double|card|section` 设置整表布局起点；按业务和设备选择，再结合页面内容调整组件位置。
+- 语义结构：按业务含义组织区域和层级。普通业务分组和章节分隔使用 `Divider`。
 
-推荐结构：
+常用结构示例：
 
 ```text
+ColumnContainer > Field
 Divider > ColumnContainer > Field
 Divider > Field
 ```
@@ -105,7 +103,7 @@ OpenYida 支持以下 **23 个可见样式**，不接受 `none`（无分割线�
 
 `form-fields` 示例仅演示布局，其中的分割线不代表推荐默认值；复用示例时按当前页面重新选择。
 
-把“页面 → 样式 → 选择理由”写在现有 `design.md` 对应页面说明里，Fast 与 Plan 使用同一规则。原生表单通过字段 JSON 配置，Canvas 分组标题参考相同外观原则手写，不向原生表单注入 CSS。
+把“页面 → 样式 → 选择理由”写在现有 `design.md` 对应页面说明里，Fast 与 Plan 使用同一规则。表单结构通过组件树配置，Canvas 分组标题按相同外观原则实现。
 
 未提供样式时 CLI 以 `bold-with-thin` 兜底，不替 AI 决定业务风格。显式的不支持值会报错，不静默替换。`dividerType` 写入 `props.type`；也接受历史别名 `dividerStyle`、`styleType`、`typeStyle` 和 `props.type`，按此前顺序取值，新生成统一用 `dividerType`。
 
@@ -114,7 +112,7 @@ OpenYida 支持以下 **23 个可见样式**，不接受 `none`（无分割线�
 | 属性 | 默认值 | 说明 |
 | --- | --- | --- |
 | `behavior` | `"NORMAL"` | 默认状态，支持 `"NORMAL"` / `"HIDDEN"` |
-| `dividerType` | `"bold-with-thin"`（遗漏时兜底） | 从上表按页面选型，写入 Schema 的 `props.type`，不是 CLI 参数 |
+| `dividerType` | `"bold-with-thin"`（遗漏时兜底） | 从上表按页面选型，写入 `Divider.props.type`，不是 CLI 参数 |
 | `showTitle` | `true` | 是否显示标题 |
 | `title` | `"标题"` | 分割线标题，写入 `props.title` |
 | `description` | `""` | 标题描述，写入 `props.description` |
@@ -135,32 +133,11 @@ OpenYida 支持以下 **23 个可见样式**，不接受 `none`（无分割线�
 | `rowGap` | `"16px"` | 多行场景行间距，写入 `props.rowGap` |
 | `display` | `"VERTICAL"` | 移动端排列方式，支持 `"VERTICAL"` / `"HORIZONTAL"` |
 | `mobileRowGap` | `"0px"` | 移动端垂直布局行间距 |
-| `children` | `[]` | 二维数组，每个子数组是一列内的字段或展示组件 |
+| `children` | `[]` | 二维数组，每个子数组是一列内的字段或其他表单组件 |
 
-### GroupContainer / PageSection
+### 分组组件
 
-`GroupContainer` 是 `PageSection` 的别名，映射到 `componentName: "PageSection"`。标题写入 `props.title`，不会写 `props.label`。
-
-默认不要为了普通字段分段而使用本组件。普通分段应写成 `Divider` + 后续字段，横向字段排布应写成 `Divider` + `ColumnContainer`。只有当整块内容需要作为一个容器被折叠、加边框、整体隐藏或承接平台分组样式时，才使用 `GroupContainer` / `PageSection`。
-
-| 属性 | 默认值 | 说明 |
-| --- | --- | --- |
-| `behavior` | `"NORMAL"` | 默认状态，支持 `"NORMAL"` / `"HIDDEN"` |
-| `label` / `title` | `"分组"` | 分组标题，写入 `props.title` |
-| `showHeader` | `true` | 是否显示头部 |
-| `tooltip` / `tips` | `""` | 用户提示，写入 `props.tooltip` |
-| `showHeadDivider` | `true` | 是否显示头部分割线 |
-| `sectionHeaderStyle` | `"origin"` | 分组头部样式 |
-| `sectionHeaderBgColor` | `"#0089ff"` | 头部背景配色 |
-| `sectionHeaderTitleColor` | `"#171A1D"` | 标题颜色 |
-| `pcStyle` | `{ "value": "origin" }` | PC 端布局样式 |
-| `showBorder` | `false` | PC 端显示边框 |
-| `withMargin` | `false` | PC 端外边距 |
-| `withPadding` | `true` | PC 端内边距 |
-| `mobileStyle` | `{ "value": "origin" }` | Mobile 端布局样式 |
-| `showBorderMobile` | `false` | Mobile 端显示边框 |
-| `withMarginMobile` | `false` | Mobile 端外边距 |
-| `withPaddingMobile` | `false` | Mobile 端内边距 |
+普通业务分组和章节分隔使用 `Divider`，横向字段排布使用 `ColumnContainer`。
 
 ---
 

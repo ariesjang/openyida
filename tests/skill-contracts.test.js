@@ -422,8 +422,6 @@ describe('OpenYida skill contracts', () => {
     expect(postinstall).toContain("['plugin', 'add', CODEX_PLUGIN_NAME + '@' + CODEX_MARKETPLACE_NAME, '--json']");
     expect(postinstall).toContain('应用主题只在应用级统一配置');
     expect(postinstall).toContain('\\`YidaCodeCanvas\\` 页面只在 \\`YidaComp\\` 内消费现有主题 token');
-    expect(postinstall).not.toContain('iframe 中加载同一应用级自定义主题 CSS');
-    expect(postinstall).not.toContain('拿到真实 formUuid 后默认注入 formDetail CSS');
   });
 
   test('skills index carries machine routing hints for high-confusion skills', () => {
@@ -1032,21 +1030,33 @@ describe('OpenYida skill contracts', () => {
     expect(createForm).toContain('未在当前应用、当前提交链路验证的限制不能作为字段改型依据');
   });
 
-  test('native form pages rely on platform rendering', () => {
+  test('form skill describes supported structure and theme capabilities directly', () => {
     const root = readSkill('yida-skills/SKILL.md');
     const appStep4 = readSkill('yida-skills/skills/yida-app/workflow/step-4-forms-processes.md');
     const createForm = readSkill('yida-skills/skills/yida-create-form-page/SKILL.md');
     const manifest = readSkill('lib/core/command-manifest.js');
+    const readme = readSkill('README.md');
+    const readmeZh = readSkill('README_zhCN.md');
+    const formProperties = readSkill('yida-skills/skills/yida-create-form-page/references/form-field-properties.md');
 
     expect(root).toContain('默认完成即停止');
     expect(appStep4).toContain('字段结构有 Divider 分组');
     expect(appStep4).toContain('拿到真实 `formUuid` 后写入资源上下文');
-    expect(createForm).toContain('严禁为原生表单或 `formDetail` 生成、注入 CSS、JS、HTML 或主题代码');
-    expect(createForm).toContain('字段 JSON 和表单 Schema JS 只承载表单结构与业务动作');
+    expect(createForm).toContain('可创建 19 种业务字段、Divider 与 ColumnContainer');
+    expect(createForm).toContain('按钮组/操作入口执行业务动作');
+    expect(createForm).toContain('普通业务分组和章节分隔使用 `Divider`');
+    expect(createForm).toContain('横向字段组合使用 `ColumnContainer`');
     expect(createForm).toContain('## 表单布局样式');
-    expect(manifest).toContain('Never inject CSS, JavaScript, HTML, or theme code into native forms or formDetail pages');
-    expect(manifest).not.toContain('FormOpenContainer iframes so all contexts use aligned theme variables');
-    expect(manifest).not.toContain("'form-detail-style.apply'");
+    expect(createForm).toContain('字体、控件、状态、背景与底栏规则写入同一份应用主题 CSS');
+    expect(readme).toContain('action groups trigger business actions');
+    expect(readmeZh).toContain('操作按钮组执行业务动作');
+    [createForm, readme, readmeZh, formProperties].forEach(content => {
+      expect(content).not.toMatch(/展示布局组件|展示组件/);
+    });
+    expect(manifest).toContain('Native forms use a component tree with top, left, main, right and between-field regions');
+    expect(manifest).not.toMatch(/field-and-group list|Schema capability limit|silently flatten/);
+    expect(manifest).toContain('Use yida-create-form-page for form structure and business actions');
+    expect(manifest).toContain('apply shared app configuration, application theme, and navigation order afterward');
   });
 
   test('Canvas form data pages use yida JS API bridge before endpoint fallback', () => {
@@ -1490,6 +1500,9 @@ describe('OpenYida skill contracts', () => {
     const visualEngine = readSkill('yida-skills/skills/yida-design/references/visual-decision-engine.md');
     const dashboardTheme = readSkill('yida-skills/skills/yida-dashboard/references/theme-presets.md');
     const chartSpec = readSkill('yida-skills/skills/yida-chart/references/echarts-design-spec.md');
+    const styleLibrary = readSkill('yida-skills/skills/yida-design/references/application-style-library.md');
+    const designOutput = readSkill('yida-skills/skills/yida-design/workflow/output-design.md');
+    const visualThemeSelection = readSkill('yida-skills/skills/yida-design/sub_skill/yida-design-plan/references/visual-theme-selection.md');
 
     expect(step4).toContain('PRD 只写应用主题色和风格摘要；`design.md` 写完整 `themeProfile`');
     expect(pageUiux).toContain('工作台、门户、列表、详情、普通看板和数据大屏默认都是浅底 / light 模式');
@@ -1497,6 +1510,17 @@ describe('OpenYida skill contracts', () => {
     expect(step4).toContain('主色：先按行业、品牌、业务情绪和视觉目标做创意判断，可选择平台预置主题，也可设计自定义品牌色盘');
     expect(step4).toContain('界面明暗：默认浅色');
     expect(step4).toContain('导航明暗：`themeProfile.navTheme` 从所选主题模板的 `navTheme` 派生');
+    expect(step4).toContain('按[主题明暗双轴]');
+    expect(step4).toContain('`contentTone` 默认 `light`');
+    expect(styleLibrary).toContain('## 主题明暗双轴');
+    expect(styleLibrary).toContain('深色导航可以搭配浅色内容，浅色导航也可以搭配暗色内容');
+    expect(styleLibrary).toContain('上传主题时只选择项目最终维护的 `app-theme.css`');
+    expect(styleLibrary).toContain('应用整体明暗以 `contentTone` 为准');
+    expect(styleLibrary).not.toMatch(/不能原样当成最终交付|不要把目录中的参考|不等同于暗黑主题/);
+    expect(designOutput).toContain('[主题明暗双轴](../references/application-style-library.md#主题明暗双轴)');
+    expect(designOutput).toContain('| `contentTone` | `light` 或 `dark` |');
+    expect(visualThemeSelection).toContain('[主题明暗双轴](../../../references/application-style-library.md#主题明暗双轴)');
+    expect(visualThemeSelection).toContain('自由创意的导航明暗由项目设计决定');
     const overlayGuide = readSkill('yida-skills/skills/yida-design/references/theme/theme-token-presets.md');
     expect(overlayGuide).toContain('`navTheme=dark` 只表示导航深色，不触发本节');
     expect(overlayGuide).toContain('允许在复制后的 `app-theme.css` 末尾追加精确 classname 规则');
@@ -1682,7 +1706,8 @@ describe('OpenYida skill contracts', () => {
     expect(formSkill).toContain('先用 Read 确认任务文件存在');
     expect(formSkill).toContain('保持当前执行单元，后续只接收该任务的最终结果');
     expect(formSkill).toContain('不要再调用 `create-form batch --help`、`create-form batch --check`');
-    expect(formSkill).toContain('执行普通批量创建无需再查 help、sample 或 CLI 源码');
+    expect(formSkill.match(/create-form batch --help/g)).toHaveLength(1);
+    expect(formSkill).not.toContain('试跑 batch 探测路径');
     expect(formSkill).toContain('确认 `projectRoot` → Write 一个任务文件 → Read 确认文件 → 唯一一次真实 batch');
     expect(formSkill).toContain('"formUuid": { "$form": "customer" }');
     expect(formSkill).toContain('`FORM_BATCH_PARTIAL_FAILURE` + `rerun_unchanged_plan`');
@@ -1721,9 +1746,6 @@ describe('OpenYida skill contracts', () => {
     expect(navGuide).toContain('useYidaFormOpen(appType, reload)');
     expect(navGuide).toContain('window.__OPENYIDA_UTILS__');
     expect(navGuide).toContain('openyida sample openyida-page-template canvas-navigation');
-    expect(navGuide).not.toContain('installYidaGlobalThemeIntoFrame');
-    expect(navGuide).not.toContain('themeTokens');
-    expect(navGuide).not.toContain('onLoad={syncThemeToIframe}');
     expect(navGuide).toContain('`FormOpenContainer` 只负责打开原生提交页或详情页');
     expect(navGuide).toContain('`50vw`');
     expect(navGuide).toContain('退出全屏或关闭后重新打开保留已调整的宽度');
@@ -1749,8 +1771,6 @@ describe('OpenYida skill contracts', () => {
     expect(codingGuide).toContain("state.formOpenRequest.drawerWidth || '50vw'");
     expect(codingGuide).toContain('FormOpenContainer');
     expect(codingGuide).toContain('formOpenRequest');
-    expect(codingGuide).not.toContain('installYidaGlobalThemeIntoFrame');
-    expect(codingGuide).not.toContain('iframe 由主题运行时加载与应用一致的自定义主题 CSS');
     expect(codingGuide).toContain("'/submission/' + formUuid + '?isRenderNav=false'");
     expect(codingGuide).toContain("'/formDetail/' + formUuid");
     expect(codingGuide).toContain('&isRenderNav=false');

@@ -11,16 +11,16 @@
 ```text
 应用场景与视觉证据
   → AI 定义项目视觉方向
-  → 绑定主题索引中的可落地基底
+  → 选择命名模板，或自由创意独立推演
   → 用户选择一套完整方向
   → 风格、配色和主题选择；导航结构沿用业务规划
-  → 导航明暗由所选主题模板派生
+  → 命名模板的导航明暗由模板派生；自由创意明确设计导航明暗
   → CLI 读取所选完整模板并生成 design.md
 ```
 
-先按[设计方向比较](../../../references/theme-selection.md#设计方向比较)根据项目需求发展风格，再匹配主题索引中的模板。匹配成功后，将方案提供给用户选择。
+先按[设计方向比较](../../../references/theme-selection.md#设计方向比较)根据项目需求发展风格，可匹配主题索引中的模板，也可独立推演。按[应用风格与自由创意](../../../references/application-style-library.md)交付。
 
-应用编排先根据业务需求确定导航结构。视觉设计沿用该结果，设计各页面共用的配色、背景、圆角和组件样式；导航明暗采用所选主题模板的 `navTheme`。页面内容、布局和操作顺序按业务规划执行。
+应用编排先根据业务需求确定导航结构。视觉设计沿用该结果，设计各页面共用的配色、背景、圆角和组件样式；命名模板的导航明暗采用模板 `navTheme`；自由创意由项目设计明确填写。页面内容、布局和操作顺序按业务规划执行。
 
 主色按所选主题的公式推导，其他颜色沿用主题。已选方向承诺的画布、卡片、填充、字体或辅助色与模板不同时，将具体差异写入 `visualStyle.tokens`，不等待用户逐个指定色值。`description` 和 `colorStrategy.usage` 只说明用途，不会被编译成配色。按 [共用主题规则](../../../references/application-theme-consistency.md) 完成变量后再交接页面；渐变和图片按公共输出契约处理。Fast 与 Plan 使用相同规则。
 
@@ -30,7 +30,7 @@
 
 ## 候选结构与约束
 
-生成恰好三套候选，每套包含：
+生成三项选择：两个具体视觉方向，加一项“自由创意：根据业务重新推演”。用户已明确风格时直接沿用，无需重选。具体方向包含：
 
 ```json
 {
@@ -40,6 +40,7 @@
   "themeId": "<有效索引记录，仅内部>",
   "primaryColor": "#6F4E37",
   "primaryColorName": "暖咖啡棕",
+  "contentTone": "light",
   "recommendationReason": "适合需要持续查看关系历史和推进状态的日常工作。"
 }
 ```
@@ -48,12 +49,12 @@
 
 1. 第一项为推荐项。
 2. `directionLabel`、`description` 和 `recommendationReason` 由 AI 根据项目的用户、任务和界面效果编写。
-3. `themeId` 必须来自索引，三项绑定不同记录；模板路径由索引在选择后确定性补齐。
-4. 候选保持已确认的导航结构，但不输出 `navigationTone`。候选可以通过不同主题呈现深色或浅色导航差异，这个差异来自主题模板，而不是 AI 单独填写字段；优先至少两项视觉维度不同。用户约束固定的部分保持不变。
+3. `themeId` 必须来自索引，两个模板方向绑定不同记录，自由创意使用 catalog.creativeOption；模板路径由索引在选择后确定性补齐。
+4. 模板候选保持已确认的导航结构，但不输出 `navigationTone`。候选可以通过不同主题呈现深色或浅色导航差异，这个差异来自主题模板，而不是 AI 单独填写字段；优先至少两项视觉维度不同。用户约束固定的部分保持不变。
 5. 配色依据品牌素材、用户偏好和实际使用场景选择，并写清理由。用户明确菜单明暗时，将其作为主题筛选条件；用户未明确时不推导菜单明暗。
 6. 用户明确品牌色时保留该颜色，通过主题基底、材质和组件表达形成差异。
 7. 项目色彩和已确定的导航结构可覆盖模板对应输入；导航明暗不得覆盖模板 `navTheme`。用户导航明暗要求或表面层级、形状语言、组件机制等核心视觉特征与模板冲突时必须换一个基底。
-8. 方案缺少匹配模板时，重新设计并匹配，完成后再展示。
+8. 方案缺少匹配模板时走自由创意，填写独立设计决策和 Token。自由创意的导航明暗由项目设计决定，写入 navigationStyle.tone；内容与导航按[主题明暗双轴](../../../references/application-style-library.md#主题明暗双轴)分别设计。
 
 平台导航沿用 `navigationType` 对应的顶部、侧边或 L 型布局。自定义导航由视觉设计细化顶部、侧边等菜单样式，按该入口已确定的配置范围实施。
 
@@ -91,9 +92,9 @@
       "description": "<second.description> <second.recommendationReason>"
     },
     {
-      "value": "<third.directionId>",
-      "label": "<third.directionLabel>",
-      "description": "<third.description> <third.recommendationReason>"
+      "value": "free-creative",
+      "label": "自由创意",
+      "description": "根据这项业务重新推演构图、材质和表单布局，不从现成模板选取。"
     }
   ],
   "allowCustom": true,
@@ -136,14 +137,14 @@
 }
 ```
 
-`build-plan.json` 保存选中方案；完整候选保留在 `ask_human` 问答历史中。CLI 读取模板后补入 `navigationStyle.tone` 和 `toneSource=theme_derived`。上例只展示选择事实，已选方向需要的画布、字体、辅助色等差异还须写入同级 `tokens`，见 [共用主题示例](../../../references/application-theme-consistency.md#先把风格落到变量)。
+`build-plan.json` 保存选中方案；完整候选保留在 `ask_human` 问答历史中。命名模板由 CLI 补入 `navigationStyle.tone` 和 `toneSource=theme_derived`；自由创意在 visual.json 中明确编写 tone=light|dark，CLI 标记 toneSource=project_defined，后续可通过 patch 修改该 tone。上例只展示选择事实，已选方向需要的画布、字体、辅助色等差异还须写入同级 `tokens`，见 [共用主题示例](../../../references/application-theme-consistency.md#先把风格落到变量)。
 
 ## 直接选择与自定义输入
 
 - 只有用户已明确完整视觉风格、指定现有主题，或要求严格继承可信品牌/模板时，AI 才直接匹配一个有效基底并写入，`source=user_explicit | material_extracted`。单独的主题色、导航结构或导航明暗只作为候选约束，不视为已给出完整风格；导航明暗也不另存为可覆盖模板的输入。
 - 用户在三套候选中明确采用推荐方案时，选择第一项，`source=user_selected`。
 - 用户自由描述新方向时，先匹配核心视觉特征最近且不违反硬约束的模板。能够匹配则记录原文为 `customText` 并写入项目覆盖项。
-- 所有模板都不支持时，只问一次：采用最接近的可用基底，或返回三套方向重新选择。收到选择后继续规划。
+- 所有模板都不支持时，沿用自由创意选项，从已确认业务独立推演并继续规划。
 
 ## 运行时读取边界
 

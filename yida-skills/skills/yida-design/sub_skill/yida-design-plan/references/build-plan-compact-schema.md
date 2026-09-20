@@ -85,6 +85,8 @@ CLI 校验源事实，使用预置模板整批生成 `prd.md`、`design.md` 和 
 
 `visualStyle` 保存项目选择和差异：
 
+应用风格可选择目录中的模板，也可使用 `catalog.creativeOption` 的独立创意入口。后者必须补齐 `visualStyle.creativeDirection`（业务推演、构图、字体、材质、表单布局）与显式设计 Token；详见[应用风格模板与自由创意](../../../references/application-style-library.md)。初始化不会把缺失创意决策标成已完成。
+
 在 `visual.json` 中它位于 `facts.visualStyle`。沿用 init 生成的 `forUser.visualDirection` 和 `forUser.navigationStyle` 对象，只编辑内部字段，不改成字符串或数组。`DESIGN_PLAN_VISUAL_FIELD_TYPE_INVALID` 会给出字段路径与对象示例；示例只说明结构，实际值沿用已确认的视觉选择。
 
 ```json
@@ -156,3 +158,5 @@ PRD 实施交接中的 `pages[].navigationPolicy` 与 `pageSpecHandoff` 同级�
 ## 可选字段 patch 与完成校验
 
 CLI 集中返回可独立检查的问题及字段路径，再执行完整业务、主题和 HTML 校验。按问题清单一次补齐源事实后重试；草稿空值表示待规划，全部校验通过才写入派生产物。仅做诊断时使用 `--check`。
+
+自由创意（`free-creative`）没有模板导航默认值：在 `navigationStyle.tone` 明确填写项目设计的 `light` 或 `dark`，CLI 标记 `toneSource=project_defined`；此路径可通过 patch 调整 tone，并同步配套导航 Token。命名模板仍按模板派生导航明暗。

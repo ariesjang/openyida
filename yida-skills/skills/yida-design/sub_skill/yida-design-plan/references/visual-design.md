@@ -54,3 +54,5 @@ CLI 校验主题绑定、解析变量与项目覆盖，生成正文五章，将�
 `build-plan.json`、PRD、设计与 HTML 对应同一 revision。CLI 调用公共 `check-design` 检查格式、变量和引用后，主题 CSS 使用返回的 `outputs.theme`。页面实现只读取最终 PRD 与 design.md；HTML 按 [展示规范](../assets/README.md#需求确认内容范围) 呈现整体风格、主色、导航与需用户补充的素材，详细逐页视觉规则保留在 design.md。
 
 页面任务变化时同步逐页应用，主题差异变化时更新 tokens；旧输出不能手改后假装与当前计划一致。普通页面设计不重新发起一轮视觉选择提问，只有新证据造成已选方向冲突时才回到选择阶段。
+
+自由创意（`free-creative`）没有模板导航默认值：在 `navigationStyle.tone` 明确填写项目设计的 `light` 或 `dark`，CLI 标记 `toneSource=project_defined`；此路径可通过 patch 调整 tone，并同步配套导航 Token。命名模板仍按模板派生导航明暗。

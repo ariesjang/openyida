@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-design');
+const { parseDesignDocument } = require('../lib/design/document');
 const { renderDesign } = require('../lib/design-plan/materialize');
 const { validateThemeCssContent } = require('../lib/app/custom-theme');
 const fixture = require('./fixtures/design-plan.json');
@@ -18,11 +19,11 @@ const themeTones = {
   'dark-inset-hairline': 'dark',
 };
 
-function design(themeId, primaryColor = '#6F4E37') {
+function design(themeId, primaryColor = '#6F4E37', requestedTone) {
   const plan = JSON.parse(JSON.stringify(fixture));
   plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}.md` };
   // A stale caller-provided value must not override the selected template.
-  plan.visualStyle.forUser.navigationStyle.tone = themeTones[themeId] === 'dark' ? 'light' : 'dark';
+  plan.visualStyle.forUser.navigationStyle.tone = requestedTone || (themeTones[themeId] === 'dark' ? 'light' : 'dark');
   plan.visualStyle.forUser.colorStrategy.primaryColor = primaryColor;
   return renderDesign(plan);
 }
@@ -64,6 +65,24 @@ test.each([
   }
   expect(applyDesignTokens(css, markdown)).toBe(css);
   expect(applyDesignTokens(css, markdown, markdown)).toBe(css);
+});
+
+test.each(['soft-inset-surfaces', 'dark-inset-hairline'])('%s preserves template navigation and content despite stale caller tone', themeId => {
+  const lightNavigation = design(themeId, '#6F4E37', 'light');
+  const darkNavigation = design(themeId, '#6F4E37', 'dark');
+  const lightMetadata = parseDesignDocument(lightNavigation).metadata;
+  const darkMetadata = parseDesignDocument(darkNavigation).metadata;
+  const contentNames = [
+    '--pod-app-root-bg-color', '--pod-page-bg-color', '--pod-card-bg-color',
+    '--color-text1-4', '--color-fill1-1', '--color-fill1-5',
+  ];
+  expect(lightMetadata.themeProfile.contentTone).toBe(darkMetadata.themeProfile.contentTone);
+  expect(lightMetadata.themeProfile.navTheme).toBe(themeTones[themeId]);
+  expect(darkMetadata.themeProfile.navTheme).toBe(themeTones[themeId]);
+  const lightTokens = readDesignTokens(lightNavigation);
+  const darkTokens = readDesignTokens(darkNavigation);
+  for (const name of contentNames) {expect(lightTokens[name]).toBe(darkTokens[name]);}
+  for (const name of navigationNames) {expect(lightTokens[name]).toBe(darkTokens[name]);}
 });
 
 test.each(['light', 'dark'])('Fast documents infer %s navigation from their shell without Plan metadata', tone => {

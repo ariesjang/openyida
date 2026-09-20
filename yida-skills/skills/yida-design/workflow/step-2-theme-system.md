@@ -65,6 +65,7 @@
 - 语义色：成功、警告、错误、信息保持稳定，不随意改成品牌色。
 - 界面明暗：默认浅色；用户选择暗色、黑色或夜间主题时，按 [暗色主题浮层适配](../references/theme/theme-token-presets.md#暗色主题浮层适配) 确定浮层 token 与必要的 class 覆盖。
 - 导航明暗：`themeProfile.navTheme` 从所选主题模板的 `navTheme` 派生；深色导航可以搭配浅色内容界面。用户明确要求另一种导航明暗时重新匹配主题，不在项目化阶段改写模板导航 Token。
+- 明暗双轴：按[主题明暗双轴](../references/application-style-library.md#主题明暗双轴)分别填写 `themeProfile.contentTone` 与 `themeProfile.navTheme`。`contentTone` 默认 `light`；自由创意的导航明暗由项目设计明确填写，并配套导航 Token。
 - `design.md` 的 `themeProfile.colorMode` 是宜搭配色模式，例如 `gradient`，不表示暗黑模式。
 
 主题 CSS 就绪后，将主题文件路径、`navTheme`、`logoSource` 和 `layoutDirection` 写入 `design.md`。获取真实 `appType` 后，必须执行 `openyida update-app <appType> --theme-file <CSS路径>` 更新应用基础设置，并以 `themeVerification.verified=true` 确认资源已绑定；后续修改 CSS 也须重新上传保存。平台负责整套应用的主题一致性；只有 `YidaCodeCanvas` 页面源码需要在组件内部使用主题 token。
@@ -89,7 +90,11 @@
 
 统一按钮、卡片、表格、标签、抽屉、弹窗、图标、空态、加载态和错误态，并写入 `design.md` 与应用主题 CSS。
 
+包含表单时，按 [表单样式与提交页背景](../references/native-form-styles.md) 从已选应用风格推导提交、编辑和详情的字体、控件、密度、布局、标签节奏、背景及底栏。修改详情页时，同时设计只读字段数据框的背景、文字、圆角、指示线、阴影、字号、行高、最小高度、内距和元素间距，并将对应 `--pod-field-preview-*` 与 `--form-element-medium-font-size` 写入设计源。布局决策写入 `design.md` 并落实到表单配置；主题变量和经核实的样式规则归同一份应用主题 CSS。应用主题覆盖导航、自定义页面、表单、编辑和详情，形成一致的视觉语言。
+
 指标卡与按钮按[配色规则](../references/application-theme-consistency.md#指标卡与按钮配色)成组设计，明确普通信息、重点信息、主操作与次操作的颜色关系，不能仅写“深色强调”或“跟随主题”。
+
+表单主题同时显式确定 `--pod-page-footer-bg-color` 和 `--pod-sticky-footer-box-shadow`，写入设计源的 token 并生成到应用 CSS；背景及阴影随应用材质选择，不一律透明，也不漏配后沿用默认阴影。
 
 ## 产出
 
@@ -100,7 +105,7 @@
 - 主题交付摘要：<平台预置 / 应用自定义主题文件 / 继承当前应用>
 
 design.md 的机器字段与正文分工按 output-design.md：
-- themeProfile：项目方向名称、真实主色及来源、navTheme、themeDelivery、themeFile 与既有导航配置。
+- themeProfile：项目方向名称、真实主色及来源、contentTone、navTheme、themeDelivery、themeFile 与既有导航配置。
 - tokens：选中主题的全局和局部变量，以及明确的项目差异。
 - 正文：色彩角色、字体层级和组件规则；不再复制一组 customThemeTemplate/customThemeFile/themeColorToken 交接字段。
 ```
@@ -108,3 +113,6 @@ design.md 的机器字段与正文分工按 output-design.md：
 ## 下一步
 
 → [页面结构和交互设计](step-4-wireframe-interaction.md)
+
+
+应用整体设计可使用[应用风格模板或自由创意](../references/application-style-library.md)。导航、自定义页面、表单与详情继承同一设计语言；自由创意从业务推演，不强制选模板。模板中的表单布局 JSON 提供结构起点，使用时填入真实字段并核对间距和响应式。

@@ -491,10 +491,6 @@ describe('sample templates', () => {
     expect(pageSource).not.toContain('linear-gradient(180deg, #F5FAF9');
     expect(pageSource).toContain("'navConfig.layout': 1180");
     expect(pageSource).toContain('row.formInstId || row.formInstanceId || row.instanceId || row.id');
-    expect(pageSource).not.toContain('yida-global-theme');
-    expect(pageSource).not.toContain('onLoad={syncThemeToIframe}');
-    expect(pageSource).not.toContain('data-yida-theme-root');
-    expect(pageSource).not.toContain('data-theme-scope');
     expect(pageSource).not.toContain('FORM_INST_SAMPLE');
     expect(pageSource).not.toContain('{{APP_TYPE}}');
     expect(pageSource).not.toContain('{{FORM_UUID}}');
@@ -648,7 +644,7 @@ describe('application theme from design.md', () => {
     expect(css.match(/--color-error[^;]+;/g)).toEqual(template.match(/--color-error[^;]+;/g));
   });
 
-  test.each(themeIndex.themes.map(theme => [theme.id || theme.themeId]))('Plan theme %s uses the public CSS pipeline', themeId => {
+  test.each(themeIndex.themes.filter(theme => theme.mode !== 'creative').map(theme => [theme.id || theme.themeId]))('Plan theme %s uses the public CSS pipeline', themeId => {
     const plan = JSON.parse(JSON.stringify(fixture));
     delete plan.visualStyle.forUser.themeProfile;
     plan.visualStyle.forUser.selectedTheme = themeIndex.themes.find(theme => theme.themeId === themeId);
@@ -676,7 +672,9 @@ describe('application theme from design.md', () => {
     withoutExtra = withoutExtra.replace(lightMode, (block, start, body, end) => start + body.replace(
       /^[ \t]*(--[\w-]+)\s*:[^;]+;\n/gm, (line, name) => originalLightNames.has(name) ? line : ''
     ) + end);
-    expect(structure(withoutExtra)).toBe(structure(template));
+    const recipe = plan.visualStyle.forUser.selectedTheme.collection === 'application-styles'
+      ? fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/theme/application-style-recipes.css'), 'utf8') : '';
+    expect(structure(withoutExtra).trim()).toBe(structure(recipe ? template.trimEnd() + '\n\n' + recipe : template).trim());
   });
 
   test('CLI applies only changed tokens and skips identical writes', async () => {

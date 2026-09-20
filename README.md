@@ -183,7 +183,7 @@ openyida get-schema APP_XXX FORM_XXX --compact --resolve-fields "Customer Name,S
 openyida get-schema APP_XXX --all --output-dir .cache/schemas
 ```
 
-Form definitions support 19 business field types plus verified presentation/layout components. Prefer `Divider` for section titles and `ColumnContainer` (mapped to `ColumnsLayout` + `Column`) for multi-column layout; use `GroupContainer` / `PageSection` only when an actual grouping container is needed.
+Native forms use a component tree: business fields capture data, tabs switch content, action groups trigger business actions, images establish visual focus, status areas provide feedback, and `Divider` plus `ColumnContainer` organize hierarchy and columns. `create-form` field definitions create 19 business field types plus `Divider` and `ColumnContainer` (mapped to `ColumnsLayout` + `Column`), while updates retain other existing components.
 
 ### Custom Page Development
 
@@ -415,7 +415,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | Command | Description |
 |---------|-------------|
 | `openyida create-form batch <appType> <plan.json> [--concurrency 1..4] [--check] [--json]` | Create forms concurrently by dependency |
-| `openyida create-form create <appType> "<formTitle>" <fieldsJsonFile> [--icon auto\|<iconName>] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Create a form page |
+| `openyida create-form create <appType> "<formTitle>" <fieldsJsonFile> [--layout single\|double\|card\|section] [--theme default\|compact\|comfortable] [--label-align top\|left\|right] [--icon auto\|<iconName>] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Create a form page |
 | `openyida create-form icons [--json]` | List available form navigation icons |
 | `openyida create-form validate-fields <fieldsJsonOrFile> [--json]` | Validate form field JSON locally |
 | `openyida create-form update <appType> <formUuid> (<changesJsonOrFile> \| --data-file <changesJsonOrFile>) [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Update a form page |
@@ -523,7 +523,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida a2a <serve\|agent-card> [options]` | Start local read-only A2A adapter or print Agent Card |
 | `openyida bridge start [--token <pair-token>] [--port 6736] [--origin https://demo.aliwork.com] [--open\|--no-open]` | Start OpenYida local web bridge service |
 | `openyida copy [--force]` | Copy project working directory |
-| `openyida sample [--list] [<skill> <name>] [--output <file>] [--var KEY=VALUE ...] [--design-file <design.md>]` | Output code samples/templates |
+| `openyida sample [--list] [<skill> <name>] [--output <file-or-directory>] [--var KEY=VALUE ...] [--design-file <design.md>] [--style-id <themeId\|free-creative>]` | Output code samples/templates |
 | `openyida doctor [--fix]` | Environment diagnostics & auto-fix |
 | `openyida db-seq-fix [--fix]` | Detect and repair PostgreSQL sequence drift |
 | `openyida formula evaluate <formula\|file> [--schema file]` | Static-check Yida formula syntax and field refs |

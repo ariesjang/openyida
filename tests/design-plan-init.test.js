@@ -442,7 +442,8 @@ test('catalog is read-only and its theme IDs initialize through the public CLI w
   expect(fs.readdirSync(dir)).toEqual(before);
   const themeIndex = require('../yida-skills/skills/yida-design/templates/design-themes/index.json');
   const patterns = require('../yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/page-patterns/index.json');
-  expect(result.themes.map(theme => theme.themeId)).toEqual(themeIndex.themes.map(theme => theme.themeId));
+  expect(result.themes.map(theme => theme.themeId)).toEqual(themeIndex.themes.filter(theme => theme.mode !== 'creative').map(theme => theme.themeId));
+  expect(result.creativeOption).toMatchObject({ themeId: 'free-creative', mode: 'creative' });
   for (const theme of result.themes) {
     expect(theme.styleSummary).toMatch(/(?:深色|浅色)导航/);
     expect(theme.styleSummary).toMatch(/(?:深色|浅色)内容界面/);
@@ -505,6 +506,20 @@ test('returned materialize command handles spaces, quotes and shell expressions 
 test.each(require('../yida-skills/skills/yida-design/templates/design-themes/index.json').themes)(
   'initializes and materializes shared theme $themeId with its current summary and token contract', theme => {
     delete brief.visualSelection.visualDirection;
+    if (theme.mode === 'creative') {
+      const { CREATIVE_TOKENS } = require('../lib/app/application-style');
+      const { resolveThemeColors, themeTemplatePath } = require('../lib/design-plan/themes');
+      const tokens = require('../lib/app/theme-from-design').readDesignTokens(resolveThemeColors(
+        fs.readFileSync(themeTemplatePath(theme), 'utf8').replace(/\{\{PRIMARY_COLOR\}\}/g, '#6F4E37')));
+      brief.visualSelection.tokens = Object.fromEntries(CREATIVE_TOKENS.map(key => [key, tokens[key]]));
+      brief.visualSelection.creativeDirection = {
+        businessRationale: '采购人员需要连续核对记录，以对齐和清楚分组提高效率。',
+        composition: '顶部待办摘要、左侧记录清单、右侧采购上下文。',
+        typography: '正文使用平台字体，金额采用等宽数字，标题分级。',
+        material: '暖灰工作面与白色记录面，以铜色细线强调当前任务。',
+        formLayout: '短字段双列，附件整行，字段间距24px，窄屏单列。',
+      };
+    }
     save();
     const result = initialize(briefPath, { themeId: theme.themeId, outputDir: path.join(dir, 'prd') });
     const initialized = JSON.parse(fs.readFileSync(result.output, 'utf8'));
@@ -530,6 +545,14 @@ test.each(require('../yida-skills/skills/yida-design/templates/design-themes/ind
     expect(require('../lib/app/theme-from-design').readDesignTokens(design)['--color-brand1-6']).toBe('#6F4E37');
     expect(fs.readFileSync(output.outputs.prd, 'utf8')).toContain('采购');
   });
+
+test('free creative initialization remains pending until independent decisions are authored', () => {
+  save();
+  const result = initialize(briefPath, { themeId: 'free-creative', outputDir: path.join(dir, 'creative') });
+  expect(result.preparedInputs.visualReady).toBe(false);
+  const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+  expect(collectIssues(plan).some(issue => issue.path.startsWith('visualStyle.creativeDirection.'))).toBe(true);
+});
 
 test.each([
   b => {b.intake.confirmed = false;},
@@ -665,4 +688,15 @@ test('authoring context places execution examples at their actual fragment paths
   expect(examples.businessFragment.facts.execution.interactionStates.error).toBeTruthy();
   expect(examples.businessFragment.facts).not.toHaveProperty('sampleDataPlan');
   expect(examples.businessFragment.facts.businessFlows[0]).toEqual(expect.objectContaining({ trigger: expect.any(String), nodes: expect.any(Array), rules: expect.any(Array) }));
+});
+
+
+test.each(['dark', undefined])('free creative preserves authored tone without inventing a template default: %s', tone => {
+  brief.visualSelection.navigationStyle.tone = tone;
+  save();
+  const result = initialize(briefPath, { themeId: 'free-creative', outputDir: path.join(dir, 'creative') });
+  const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+  expect(plan.visualStyle.forUser.navigationStyle).toMatchObject({ tone: tone || '', toneSource: 'project_defined' });
+  expect(result.authoring.pendingFields.some(field => field.path === 'facts.visualStyle.forUser.navigationStyle.tone')).toBe(!tone);
+  expect(fs.readFileSync(result.context, 'utf8')).toContain('自由创意需明确填写');
 });
