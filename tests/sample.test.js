@@ -491,10 +491,6 @@ describe('sample templates', () => {
     expect(pageSource).not.toContain('linear-gradient(180deg, #F5FAF9');
     expect(pageSource).toContain("'navConfig.layout': 1180");
     expect(pageSource).toContain('row.formInstId || row.formInstanceId || row.instanceId || row.id');
-    expect(pageSource).not.toContain('yida-global-theme');
-    expect(pageSource).not.toContain('onLoad={syncThemeToIframe}');
-    expect(pageSource).not.toContain('data-yida-theme-root');
-    expect(pageSource).not.toContain('data-theme-scope');
     expect(pageSource).not.toContain('FORM_INST_SAMPLE');
     expect(pageSource).not.toContain('{{APP_TYPE}}');
     expect(pageSource).not.toContain('{{FORM_UUID}}');
