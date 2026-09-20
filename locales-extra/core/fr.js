@@ -171,6 +171,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_entry_mode_required: 'Choisissez un mode : pages métier partagées (unified), interfaces usager et gestion séparées (service-management), interface usager seule (frontend-only) ou gestion métier seule (backend-only).',
+    design_plan_backend_only_roles: 'En mode backend-only, chaque entrée doit utiliser le rôle management.',
     design_plan_local_menu_binding: 'Le menu local {0} nécessite une page hôte et viewKey : le sceneKey de l’entrée {1} doit correspondre à celui de la page, resource au name de la page et viewKey doit être renseigné. Tous les rôles sont concernés.',
     design_plan_visual_object_required: '{0} doit être un objet, pas une chaîne ni un tableau. Conservez la structure générée par init et remplissez les valeurs. Exemple : {1}.',
     help: '\n' +

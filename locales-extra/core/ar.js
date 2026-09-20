@@ -171,6 +171,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_entry_mode_required: 'اختر طريقة الاستخدام: صفحات عمل مشتركة (unified)، واجهة للمستخدم وأخرى لمعالجة الأعمال (service-management)، واجهة المستخدم فقط (frontend-only)، أو معالجة الأعمال فقط (backend-only).',
+    design_plan_backend_only_roles: 'في وضع backend-only، يجب أن تكون قيمة role لكل مدخل هي management.',
     design_plan_local_menu_binding: 'تحتاج القائمة المحلية {0} إلى صفحة مضيفة وviewKey: يجب أن يطابق sceneKey للمدخل {1} قيمة الصفحة، وأن يساوي resource اسم الصفحة name، وألا يكون viewKey فارغًا. ينطبق ذلك على جميع الأدوار.',
     design_plan_visual_object_required: 'يجب أن يكون {0} كائنًا وليس نصًا أو مصفوفة. احتفظ بالبنية التي أنشأها init وأكمل القيم. مثال: {1}.',
     help: '\n' +

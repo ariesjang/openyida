@@ -584,7 +584,7 @@ describe('OpenYida skill contracts', () => {
     expect(skill).toContain('use_skill("yida-data-source-connectors")');
     expect(step9).toContain('准备 2-3 句业务交付总结，并给一个名为“应用访问入口”的入口组');
     expect(step9).toContain('新增、修改或发布单个具体页面时，交付当前页面并保持单页范围');
-    expect(step9).toContain('统一工作区或前后台双入口包含经验证的“业务管理入口”');
+    expect(step9).toContain('不分前后台时提供经验证的“系统入口”，分前后台或只有访问后台时提供经验证的“业务后台入口”');
     expect(step9).toContain('一次完整应用 run 交付一组用户可见的“应用访问入口”');
     expect(step9).toContain('用户或调用方明确要求资源清单、资源 UUID/ID、发布状态或测试数据摘要时');
     expect(step9).toContain('终态 artifact 的 `description` 包含简洁的“交付清单”');
@@ -598,7 +598,7 @@ describe('OpenYida skill contracts', () => {
     expect(step9).toContain('前台：`{base_url}/{appType}/custom/{formUuid}`');
     expect(step9).toContain('`application_entry_policy.entries.admin=include`');
     expect(step9).toContain('前台、业务后台、开发者管理后台');
-    expect(step9).toContain('统一工作区时为“应用工作台、开发者管理后台”');
+    expect(step9).toContain('不分前后台时为“系统入口、开发者管理后台”');
     expect(step9).toContain('不得静默省略或声明交付完成');
     expect(step9).not.toContain('值为 `omit` 时不得输出');
     expect(step9).toContain('不把 `g.alicdn.com` 的 `index.css`、`index.js`、`index.html`、`locales/*.json`');

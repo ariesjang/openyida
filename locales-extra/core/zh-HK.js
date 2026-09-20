@@ -172,6 +172,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_entry_mode_required: '請明確入口方式：不分前後台（unified）、分前後台（service-management）、只有訪問前台（frontend-only）或只有訪問後台（backend-only）。',
+    design_plan_backend_only_roles: '只有訪問後台（backend-only）時，每個入口的 role 必須為 management。',
     design_plan_local_menu_binding: '本頁選單 {0} 必須關聯承載頁面和 viewKey：入口 {1} 的 sceneKey 對應頁面 sceneKey，resource 等於頁面 name，viewKey 不可空白。此規則適用於所有入口角色。',
     design_plan_visual_object_required: '{0} 必須為物件，不能寫成字串或陣列。保留 init 產生的結構並填入值。範例：{1}。',
     help: '\n' +

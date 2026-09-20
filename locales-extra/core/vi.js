@@ -171,6 +171,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_entry_mode_required: 'Chọn cách sử dụng: trang nghiệp vụ dùng chung (unified), tách trang người dùng và xử lý nghiệp vụ (service-management), chỉ trang người dùng (frontend-only), hoặc chỉ trang xử lý nghiệp vụ (backend-only).',
+    design_plan_backend_only_roles: 'Với backend-only, mọi điểm truy cập phải có role là management.',
     design_plan_local_menu_binding: 'Menu nội bộ {0} cần trang chứa và viewKey: sceneKey của lối vào {1} phải khớp sceneKey của trang, resource bằng name của trang và viewKey không được trống. Áp dụng cho mọi vai trò.',
     design_plan_visual_object_required: '{0} phải là đối tượng, không phải chuỗi hoặc mảng. Giữ cấu trúc do init tạo và điền giá trị. Ví dụ: {1}.',
     help: '\n' +

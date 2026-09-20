@@ -171,6 +171,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_entry_mode_required: '사용 방식을 선택하세요: 공통 업무 화면(unified), 이용자 화면과 업무 처리 화면 분리(service-management), 이용자 화면만(frontend-only), 업무 처리 화면만(backend-only).',
+    design_plan_backend_only_roles: 'backend-only에서는 모든 진입점의 role이 management여야 합니다.',
     design_plan_local_menu_binding: '로컬 메뉴 {0}에는 호스트 페이지와 viewKey가 필요합니다. 진입점 {1}의 sceneKey는 페이지 sceneKey와, resource는 페이지 name과 일치해야 하며 viewKey는 비어 있으면 안 됩니다. 모든 역할에 적용됩니다.',
     design_plan_visual_object_required: '{0}은 문자열이나 배열이 아닌 객체여야 합니다. init이 생성한 구조를 유지하고 값을 입력하세요. 예: {1}.',
     help: '\n' +

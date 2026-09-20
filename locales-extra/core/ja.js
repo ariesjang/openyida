@@ -171,6 +171,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_entry_mode_required: '利用方式を選択してください：共通の業務画面（unified）、利用者画面と業務処理画面を分離（service-management）、利用者画面のみ（frontend-only）、業務処理画面のみ（backend-only）。',
+    design_plan_backend_only_roles: 'backend-only では、すべての入口の role を management にしてください。',
     design_plan_local_menu_binding: 'ローカルメニュー {0} には表示ページと viewKey が必要です。入口 {1} の sceneKey はページの sceneKey、resource はページの name と一致し、viewKey は空でない必要があります。すべての役割に適用されます。',
     design_plan_visual_object_required: '{0} は文字列や配列ではなくオブジェクトで指定してください。init が生成した構造を維持して値を入力します。例: {1}。',
     help: '\n' +

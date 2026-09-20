@@ -2640,7 +2640,7 @@ test('command and agent navigation policies align with AI intake decisions', () 
   expect(workflow.default_nav_order_policy).toContain('preserves platform navigation for the management workspace');
   expect(workflow.entry_navigation_contract).toMatchObject({
     plan_path: 'execution.entryRecommendation',
-    modes: ['unified', 'service-management', 'frontend-only'],
+    modes: ['unified', 'service-management', 'frontend-only', 'backend-only'],
     local_menu_binding: expect.stringContaining('management/workspace'),
     leaf_access_required: expect.stringContaining('Every leaf menu'),
     runtime: {

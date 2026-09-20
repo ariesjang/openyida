@@ -171,6 +171,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_entry_mode_required: 'उपयोग का तरीका चुनें: साझा कार्य पृष्ठ (unified), उपयोगकर्ता और कार्य प्रबंधन के अलग पृष्ठ (service-management), केवल उपयोगकर्ता पृष्ठ (frontend-only), या केवल कार्य प्रबंधन पृष्ठ (backend-only)।',
+    design_plan_backend_only_roles: 'backend-only में प्रत्येक प्रवेश बिंदु का role management होना चाहिए।',
     design_plan_local_menu_binding: 'स्थानीय मेनू {0} को होस्ट पेज और viewKey चाहिए: प्रवेश {1} का sceneKey पेज के sceneKey से, resource पेज के name से मेल खाए और viewKey खाली न हो। यह सभी भूमिकाओं पर लागू है।',
     design_plan_visual_object_required: '{0} एक ऑब्जेक्ट होना चाहिए, स्ट्रिंग या ऐरे नहीं। init द्वारा बनाई संरचना बनाए रखें और मान भरें। उदाहरण: {1}।',
     help: '\n' +

@@ -171,6 +171,8 @@ module.exports = {
   },
 
   cli: {
+    design_plan_entry_mode_required: 'Zugangsmodus wählen: gemeinsame Geschäftsseiten (unified), getrennte Nutzer- und Bearbeitungsseiten (service-management), nur Nutzerseiten (frontend-only) oder nur Geschäftsbearbeitung (backend-only).',
+    design_plan_backend_only_roles: 'Bei backend-only muss jeder Einstieg die Rolle management verwenden.',
     design_plan_local_menu_binding: 'Das lokale Menü {0} benötigt eine Trägerseite und viewKey: sceneKey des Einstiegs {1} muss dem sceneKey der Seite entsprechen, resource ihrem name; viewKey darf nicht leer sein. Dies gilt für alle Rollen.',
     design_plan_visual_object_required: '{0} muss ein Objekt sein, keine Zeichenfolge oder Liste. Behalten Sie die von init erzeugte Struktur bei und ergänzen Sie die Werte. Beispiel: {1}.',
     help: '\n' +
