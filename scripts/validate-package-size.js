@@ -20,8 +20,10 @@ const path = require('path');
 // All 34 themes now ship three-file bundles; 15 migrated themes add CSS and layout assets.
 // Navigation borders add three state tokens, top-tab surfaces and shared CSS consumers.
 // Anonymous form submission guidance adds about 14 KiB of required runtime skill content.
+// app-entry/fix-theme commands and WAF-safe authoring guidance push the gzipped tarball
+// past the previous 2128 KiB ratchet (CI Node 20 gzip runs ~2 KiB heavier than newer Node).
 // Retain modest growth headroom and round budgets to 16 KiB boundaries.
-const MAX_TARBALL_BYTES = 2128 * 1024;
+const MAX_TARBALL_BYTES = 2144 * 1024;
 const MAX_UNPACKED_BYTES = 8000 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
