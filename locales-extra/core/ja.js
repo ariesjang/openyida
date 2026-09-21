@@ -5,6 +5,14 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  app_entry: {
+    desc_get: 'Read frontend and management runtime entries',
+    desc_set: 'Register application entries with partial update and readback',
+    usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
+    invalid_url: '現在のアプリのページ、公開ページ、短縮リンクの完全な http:// または https:// URL を入力してください。相対パス、デザイナー URL、一時認証パラメーターは使用できません。',
+    invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
+    readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+  },
   design_plan: {
     rebase_required: '初回生成前は business.json/visual.json を修正してください。元計画が変わった場合はファイルを保持し、元コマンドに --rebase-parts を追加してください。',
     baseline_missing: '元の作業領域から対応する .build-plan-base.json を復元してください。信頼できる基準がなければ下書きを保持して問題を報告してください。',
@@ -1242,6 +1250,14 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: '行 {0}: 遷移先に appType がありません。canvas-navigation と確認済み ID で /{appType}/{pageType}/{formUuid} を構築し、/custom/ 単独のパスを避けてください。',
+    canvas_theme_fixed_brand_allowed: '行 {0}: ConfigProvider がブランドの操作色（{1}）を固定しています。--allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND が設定されているため一時的に許可されます。早めに canvas-theme へ移行してください。この回避策は今後のバージョンで削除されます。',
+    canvas_theme_fixed_brand_relaxed: '{0} 行目の ConfigProvider がブランド操作色（{1}）をハードコードしています。既定では公開をブロックしなくなり、そのまま続行します。ただしこの色はアプリテーマに追従しません。--fix-theme で自動移行するか、canvas-theme へ手動移行してください。CI で強制的に失敗させるには --strict-theme を使用します。',
+    fix_theme_detected: '固定されたブランド操作色の上書きが {0} 件見つかりました。自動移行できます：ハードコードされた上書きを削除し、アプリケーションテーマに解決を任せます。',
+    fix_theme_item: '  · 行 {0} {1}：{2}',
+    fix_theme_confirm: 'テーマを今すぐ自動移行しますか？この操作はソースファイルを書き換えます（固定されたブランド色の上書きを削除）。[y/N]',
+    fix_theme_applied: 'テーマ移行を適用し、ソースに書き戻しました：{0}',
+    fix_theme_skipped: 'テーマ移行をスキップしました。ソースは変更されていません。手動で canvas-theme へ移行するか、--allow-fixed-brand で一時的に回避してください。',
+    fix_theme_flag_hint: '非対話環境では自動移行しません。ソースを自動的に書き換えるには --fix-theme を付けて再実行してください。',
     canvas_theme_fixed_brand: '行 {0}: ConfigProvider がブランド色を固定しています。canvas-theme で解決したテーマ色を使い、CSS var は DOM スタイルにのみ直接使用してください。',
     canvas_navigation_local_platform: '行 {0}: ローカルビューをプラットフォームナビゲーションで絞り込んでいます。mode=local またはローカル状態を使い、実際のページには formUuid/navUuid を指定して権限を検証してください。',
     canvas_navigation_document_flex: '行 {0}: document にゼロ基準の flex が使用されています。canvas-nav-content を更新し、document は自然な高さのブロック、workspace は固定高さの flex を使用してください。',

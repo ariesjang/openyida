@@ -5,6 +5,14 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  app_entry: {
+    desc_get: 'Read frontend and management runtime entries',
+    desc_set: 'Register application entries with partial update and readback',
+    usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
+    invalid_url: 'Indica una URL completa http:// o https:// de una página, página pública o enlace corto de la aplicación actual. No se admiten rutas relativas, URL del diseñador ni parámetros temporales de autenticación.',
+    invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
+    readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+  },
   design_plan: {
     rebase_required: 'Antes de la primera generación, corrija business.json/visual.json. Si cambió el plan principal, conserve los archivos y añada --rebase-parts al comando original.',
     baseline_missing: 'Restaure el .build-plan-base.json correspondiente desde el espacio original. Sin una base fiable, conserve los borradores e informe del bloqueo.',
@@ -1293,6 +1301,14 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'Línea {0}: falta appType en el destino. Use canvas-navigation e ID verificados para /{appType}/{pageType}/{formUuid}, no una ruta /custom/ aislada.',
+    canvas_theme_fixed_brand_allowed: 'Línea {0}: ConfigProvider fija un color de interacción de marca ({1}); permitido por ahora porque --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND está activado. Migre pronto a canvas-theme; este bypass se eliminará en una versión posterior.',
+    canvas_theme_fixed_brand_relaxed: 'Línea {0}: ConfigProvider codifica un color de interacción de marca ({1}). La publicación ya no se bloquea de forma predeterminada y continúa tal cual, pero este color no seguirá el tema de la aplicación. Agrega --fix-theme para migrar automáticamente, o migra manualmente a canvas-theme; usa --strict-theme para fallar en CI.',
+    fix_theme_detected: 'Se encontraron {0} anulación(es) de color de interacción de marca codificada(s) que se pueden migrar automáticamente: elimine las anulaciones codificadas y deje que el tema de la aplicación las resuelva.',
+    fix_theme_item: '  · Línea {0} {1}: {2}',
+    fix_theme_confirm: '¿Migrar el tema automáticamente ahora? Esto reescribe tu archivo fuente (elimina las anulaciones de color de marca codificadas). [s/N]',
+    fix_theme_applied: 'Migración de tema aplicada y reescrita en la fuente: {0}',
+    fix_theme_skipped: 'Migración de tema omitida; la fuente no se modificó. Migra manualmente a canvas-theme o pasa --allow-fixed-brand para omitir temporalmente.',
+    fix_theme_flag_hint: 'Entorno no interactivo: sin migración automática. Vuelve a ejecutar con --fix-theme para reescribir la fuente automáticamente.',
     canvas_theme_fixed_brand: 'Línea {0}: ConfigProvider fija un color de marca. Use canvas-theme con colores resueltos del tema; reserve CSS var para estilos DOM.',
     canvas_navigation_local_platform: 'Línea {0}: las vistas locales se filtran por la navegación de plataforma. Use mode=local o estado local; vincule páginas reales a formUuid/navUuid y compruebe los permisos declarados.',
     canvas_navigation_document_flex: 'Línea {0}: document usa flex con base cero. Actualice canvas-nav-content: altura natural y bloques para document, flex de altura fija para workspace.',

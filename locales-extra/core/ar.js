@@ -5,6 +5,14 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  app_entry: {
+    desc_get: 'Read frontend and management runtime entries',
+    desc_set: 'Register application entries with partial update and readback',
+    usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
+    invalid_url: 'أدخل عنوان URL كاملاً يبدأ بـ http:// أو https:// لصفحة أو صفحة عامة أو رابط مختصر في التطبيق الحالي. المسارات النسبية وعناوين المصمم ومعلمات المصادقة المؤقتة غير مدعومة.',
+    invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
+    readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+  },
   design_plan: {
     rebase_required: 'قبل الإنشاء الأول، صحح business.json/visual.json. إذا تغيرت الخطة الرئيسية، احتفظ بالملفات وأضف --rebase-parts إلى الأمر الأصلي.',
     baseline_missing: 'استعد ملف .build-plan-base.json المطابق من مساحة العمل الأصلية. عند غياب أساس موثوق، احتفظ بالمسودات وأبلغ عن العائق.',
@@ -1291,6 +1299,14 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'السطر {0}: عنوان التنقل يفتقد appType. استخدم canvas-navigation ومعرّفات موثّقة لبناء /{appType}/{pageType}/{formUuid} بدلاً من /custom/ وحده.',
+    canvas_theme_fixed_brand_allowed: 'السطر {0}: يثبّت ConfigProvider لون تفاعل العلامة ({1})؛ يُسمح به مؤقتًا لأن --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND مُفعّل. رحّل إلى canvas-theme قريبًا؛ سيُزال هذا التجاوز في إصدار لاحق.',
+    canvas_theme_fixed_brand_relaxed: 'السطر {0}: يضمّن ConfigProvider لون تفاعل علامة تجارية ({1}). لم يعد النشر محظورًا افتراضيًا ويستمر كما هو، لكن هذا اللون لن يتبع سمة التطبيق. أضف --fix-theme للترحيل تلقائيًا، أو رحّل يدويًا إلى canvas-theme؛ استخدم --strict-theme للفشل الصارم في CI.',
+    fix_theme_detected: 'تم العثور على {0} تجاوز(ات) للون تفاعل العلامة التجارية مضمّنة يمكن ترحيلها تلقائيًا: أزل التجاوزات المضمّنة ودع سمة التطبيق تحلها.',
+    fix_theme_item: '  · السطر {0} {1}: {2}',
+    fix_theme_confirm: 'هل تريد ترحيل السمة تلقائيًا الآن؟ يؤدي هذا إلى إعادة كتابة ملف المصدر (إزالة تجاوزات لون العلامة التجارية المضمّنة). [y/N]',
+    fix_theme_applied: 'تم تطبيق ترحيل السمة وإعادة كتابته في المصدر: {0}',
+    fix_theme_skipped: 'تم تخطي ترحيل السمة؛ لم يتغير المصدر. رحّل يدويًا إلى canvas-theme، أو مرّر --allow-fixed-brand للتجاوز مؤقتًا.',
+    fix_theme_flag_hint: 'بيئة غير تفاعلية: لا ترحيل تلقائي. أعد التشغيل مع --fix-theme لإعادة كتابة المصدر تلقائيًا.',
     canvas_theme_fixed_brand: 'السطر {0}: يثبت ConfigProvider لون العلامة التجارية. استخدم canvas-theme وألوان السمة المحللة؛ استخدم CSS var مباشرة في أنماط DOM فقط.',
     canvas_navigation_local_platform: 'السطر {0}: تتم تصفية العروض المحلية عبر تنقل المنصة. استخدم mode=local أو حالة محلية، واربط الصفحات الفعلية بـ formUuid/navUuid وتحقق من الصلاحيات المعلنة.',
     canvas_navigation_document_flex: 'السطر {0}: يستخدم document تخطيط flex بأساس صفر. حدّث canvas-nav-content: ارتفاع طبيعي وكتل لـ document، وارتفاع ثابت مع flex لـ workspace.',

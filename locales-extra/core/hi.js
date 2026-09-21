@@ -5,6 +5,14 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  app_entry: {
+    desc_get: 'Read frontend and management runtime entries',
+    desc_set: 'Register application entries with partial update and readback',
+    usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
+    invalid_url: 'वर्तमान ऐप के पेज, सार्वजनिक पेज या छोटे लिंक का पूरा http:// या https:// URL दें। सापेक्ष पथ, डिज़ाइनर URL और अस्थायी प्रमाणीकरण पैरामीटर समर्थित नहीं हैं।',
+    invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
+    readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+  },
   design_plan: {
     rebase_required: 'पहली बार बनाने से पहले business.json/visual.json सुधारें। मुख्य योजना बदली हो तो फ़ाइलें सुरक्षित रखें और मूल कमांड में --rebase-parts जोड़ें।',
     baseline_missing: 'मूल कार्यक्षेत्र से संबंधित .build-plan-base.json बहाल करें। विश्वसनीय आधार न मिले तो मसौदे सुरक्षित रखें और अवरोध बताएँ।',
@@ -1291,6 +1299,14 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'पंक्ति {0}: नेविगेशन में appType नहीं है। canvas-navigation और सत्यापित ID से /{appType}/{pageType}/{formUuid} बनाएँ; केवल /custom/ पथ न दें।',
+    canvas_theme_fixed_brand_allowed: 'पंक्ति {0}: ConfigProvider ब्रांड इंटरैक्शन रंग ({1}) को हार्डकोड करता है; अभी अनुमति है क्योंकि --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND सेट है। जल्द ही canvas-theme पर माइग्रेट करें; यह बायपास बाद के संस्करण में हटा दिया जाएगा।',
+    canvas_theme_fixed_brand_relaxed: 'पंक्ति {0}: ConfigProvider एक ब्रांड इंटरैक्शन रंग ({1}) को हार्डकोड करता है। प्रकाशन अब डिफ़ॉल्ट रूप से अवरुद्ध नहीं होता और यथावत जारी रहता है, लेकिन यह रंग एप्लिकेशन थीम का अनुसरण नहीं करेगा। स्वतः माइग्रेट करने के लिए --fix-theme जोड़ें, या canvas-theme में मैन्युअल रूप से माइग्रेट करें; CI में हार्ड-फेल करने के लिए --strict-theme का उपयोग करें।',
+    fix_theme_detected: '{0} हार्डकोडेड ब्रांड इंटरैक्शन रंग ओवरराइड मिले जिन्हें स्वतः माइग्रेट किया जा सकता है: हार्डकोडेड ओवरराइड हटाएँ और एप्लिकेशन थीम को उन्हें हल करने दें।',
+    fix_theme_item: '  · पंक्ति {0} {1}: {2}',
+    fix_theme_confirm: 'क्या अभी थीम स्वतः माइग्रेट करें? यह आपकी स्रोत फ़ाइल को फिर से लिखता है (हार्डकोडेड ब्रांड-रंग ओवरराइड हटाता है)। [y/N]',
+    fix_theme_applied: 'थीम माइग्रेशन लागू किया गया और स्रोत में वापस लिखा गया: {0}',
+    fix_theme_skipped: 'थीम माइग्रेशन छोड़ा गया; स्रोत अपरिवर्तित। canvas-theme में मैन्युअल रूप से माइग्रेट करें, या अस्थायी रूप से बायपास करने के लिए --allow-fixed-brand पास करें।',
+    fix_theme_flag_hint: 'गैर-संवादात्मक वातावरण: कोई स्वतः माइग्रेशन नहीं। स्रोत को स्वतः फिर से लिखने के लिए --fix-theme के साथ पुनः चलाएँ।',
     canvas_theme_fixed_brand: 'पंक्ति {0}: ConfigProvider में ब्रांड रंग स्थिर है। canvas-theme से प्राप्त थीम रंग उपयोग करें; CSS var सीधे केवल DOM स्टाइल में दें।',
     canvas_navigation_local_platform: 'पंक्ति {0}: स्थानीय व्यू प्लेटफ़ॉर्म मेनू से फ़िल्टर हो रहे हैं। mode=local या स्थानीय स्टेट उपयोग करें; वास्तविक पेजों को formUuid/navUuid से जोड़ें और घोषित अनुमतियाँ जाँचें।',
     canvas_navigation_document_flex: 'पंक्ति {0}: document में शून्य आधार वाला flex है। canvas-nav-content अपडेट करें: document के लिए प्राकृतिक ऊँचाई और ब्लॉक, workspace के लिए निश्चित ऊँचाई वाला flex।',

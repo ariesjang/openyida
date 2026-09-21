@@ -5,6 +5,14 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  app_entry: {
+    desc_get: 'Read frontend and management runtime entries',
+    desc_set: 'Register application entries with partial update and readback',
+    usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
+    invalid_url: 'Indiquez une URL complète http:// ou https:// de page, de page publique ou un lien court de cette application. Les chemins relatifs, les URL du concepteur et les paramètres temporaires d’authentification ne sont pas pris en charge.',
+    invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
+    readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+  },
   design_plan: {
     rebase_required: 'Avant la première génération, corrigez business.json/visual.json. Si le plan principal a changé, conservez les fichiers et ajoutez --rebase-parts à la commande initiale.',
     baseline_missing: 'Restaurez le fichier .build-plan-base.json correspondant depuis son espace initial. Sans base fiable, conservez les brouillons et signalez le blocage.',
@@ -1293,6 +1301,14 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'Ligne {0} : appType manque dans la destination. Utilisez canvas-navigation et des ID vérifiés pour /{appType}/{pageType}/{formUuid}, sans chemin /custom/ isolé.',
+    canvas_theme_fixed_brand_allowed: 'Ligne {0} : ConfigProvider fige une couleur d’interaction de marque ({1}) ; autorisé pour l’instant car --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND est défini. Migrez bientôt vers canvas-theme ; ce contournement sera supprimé dans une version ultérieure.',
+    canvas_theme_fixed_brand_relaxed: 'Ligne {0} : ConfigProvider fige une couleur d’interaction de marque ({1}). La publication n’est plus bloquée par défaut et continue telle quelle, mais cette couleur ne suivra pas le thème de l’application. Ajoutez --fix-theme pour migrer automatiquement, ou migrez manuellement vers canvas-theme ; utilisez --strict-theme pour échouer en CI.',
+    fix_theme_detected: '{0} redéfinition(s) de couleur d’interaction de marque figée(s) détectée(s), migrables automatiquement : supprimez les redéfinitions figées et laissez le thème de l’application les résoudre.',
+    fix_theme_item: '  · Ligne {0} {1} : {2}',
+    fix_theme_confirm: 'Migrer le thème automatiquement maintenant ? Cette opération réécrit votre fichier source (supprime les redéfinitions de couleur de marque figées). [o/N]',
+    fix_theme_applied: 'Migration du thème appliquée et réécrite dans la source : {0}',
+    fix_theme_skipped: 'Migration du thème ignorée ; source inchangée. Migrez manuellement vers canvas-theme, ou passez --allow-fixed-brand pour contourner temporairement.',
+    fix_theme_flag_hint: 'Environnement non interactif : pas de migration automatique. Relancez avec --fix-theme pour réécrire la source automatiquement.',
     canvas_theme_fixed_brand: 'Ligne {0} : ConfigProvider fixe une couleur de marque. Utilisez canvas-theme et les couleurs résolues du thème ; réservez CSS var aux styles DOM.',
     canvas_navigation_local_platform: 'Ligne {0} : les vues locales sont filtrées par la navigation de la plateforme. Utilisez mode=local ou un état local ; liez les vraies pages à formUuid/navUuid et vérifiez les droits déclarés.',
     canvas_navigation_document_flex: 'Ligne {0} : document utilise un flex de base zéro. Actualisez canvas-nav-content : hauteur naturelle et blocs pour document, flex à hauteur fixe pour workspace.',

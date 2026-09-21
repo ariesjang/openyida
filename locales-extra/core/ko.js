@@ -5,6 +5,14 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  app_entry: {
+    desc_get: 'Read frontend and management runtime entries',
+    desc_set: 'Register application entries with partial update and readback',
+    usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
+    invalid_url: '현재 앱의 페이지, 공개 페이지 또는 단축 링크에 대한 완전한 http:// 또는 https:// URL을 입력하세요. 상대 경로, 디자이너 URL 및 임시 인증 매개변수는 지원하지 않습니다.',
+    invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
+    readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+  },
   design_plan: {
     rebase_required: '최초 생성 전에는 business.json/visual.json을 수정하세요. 원본 계획이 변경되었다면 파일을 유지하고 기존 명령에 --rebase-parts를 추가하세요.',
     baseline_missing: '원래 작업 공간에서 일치하는 .build-plan-base.json을 복원하세요. 신뢰할 기준이 없으면 초안을 유지하고 차단 사유를 보고하세요.',
@@ -1292,6 +1300,14 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: '{0}행: 이동 주소에 appType이 없습니다. canvas-navigation과 확인된 ID로 /{appType}/{pageType}/{formUuid}를 구성하세요. /custom/ 단독 경로는 사용하지 마세요.',
+    canvas_theme_fixed_brand_allowed: '{0}행: ConfigProvider가 브랜드 상호작용 색상({1})을 하드코딩했습니다. --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND가 설정되어 임시로 허용됩니다. 곧 canvas-theme로 마이그레이션하세요. 이 우회는 이후 버전에서 제거됩니다.',
+    canvas_theme_fixed_brand_relaxed: '{0}행의 ConfigProvider가 브랜드 상호작용 색상({1})을 하드코딩했습니다. 기본적으로 더 이상 게시를 차단하지 않고 그대로 계속합니다. 다만 이 색상은 애플리케이션 테마를 따르지 않습니다. --fix-theme로 자동 마이그레이션하거나 canvas-theme로 수동 마이그레이션하세요. CI에서 강제 실패하려면 --strict-theme를 사용하세요.',
+    fix_theme_detected: '하드코딩된 브랜드 상호작용 색상 재정의 {0}건을 발견했습니다. 자동 마이그레이션 가능: 하드코딩된 재정의를 제거하고 애플리케이션 테마가 해석하도록 합니다.',
+    fix_theme_item: '  · {0}행 {1}: {2}',
+    fix_theme_confirm: '지금 테마를 자동 마이그레이션할까요? 이 작업은 소스 파일을 다시 씁니다(하드코딩된 브랜드 색상 재정의 제거). [y/N]',
+    fix_theme_applied: '테마 마이그레이션을 적용하고 소스에 다시 기록했습니다: {0}',
+    fix_theme_skipped: '테마 마이그레이션을 건너뛰었습니다. 소스는 변경되지 않았습니다. canvas-theme로 수동 마이그레이션하거나 --allow-fixed-brand로 임시 우회하세요.',
+    fix_theme_flag_hint: '비대화형 환경에서는 자동 마이그레이션하지 않습니다. 소스를 자동으로 다시 쓰려면 --fix-theme를 추가하여 다시 실행하세요.',
     canvas_theme_fixed_brand: '{0}행: ConfigProvider가 브랜드 색상을 고정했습니다. canvas-theme으로 해석한 테마 색상을 사용하고 CSS var는 DOM 스타일에 직접 사용하세요.',
     canvas_navigation_local_platform: '{0}행: 로컬 뷰를 플랫폼 메뉴로 필터링하고 있습니다. mode=local 또는 로컬 상태를 사용하고 실제 페이지에는 formUuid/navUuid를 지정하며 권한을 확인하세요.',
     canvas_navigation_document_flex: '{0}행: document에 기준 크기 0인 flex를 사용했습니다. canvas-nav-content를 갱신하세요. document는 자연 높이의 블록, workspace는 고정 높이 flex를 사용합니다.',

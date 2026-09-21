@@ -5,6 +5,14 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  app_entry: {
+    desc_get: 'Read frontend and management runtime entries',
+    desc_set: 'Register application entries with partial update and readback',
+    usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
+    invalid_url: '請提供目前組織、應用的完整訪問 URL（http:// 或 https://）；支援頁面地址、公開地址和短連結，不支援相對路徑、開發後台及臨時驗證參數。',
+    invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
+    readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+  },
   design_plan: {
     rebase_required: '首次物化前請修正 business.json/visual.json；主計劃已變更時，保留現有檔案並在原命令加入 --rebase-parts。',
     baseline_missing: '請從原工作區恢復匹配的 .build-plan-base.json；缺少可信基線時保留草稿並報告阻塞。',
@@ -1230,6 +1238,14 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: '第 {0} 行的跳轉地址缺少 appType。請用 canvas-navigation 與真實 ID 建立 /{appType}/{pageType}/{formUuid}，不要直接跳轉 /custom/ 等路徑。',
+    canvas_theme_fixed_brand_allowed: '第 {0} 行的 ConfigProvider 寫死了品牌互動色（{1}），因已設定 --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND 暫時放行。請盡快遷移到 canvas-theme（應用主題解析），此旁路將在後續版本移除。',
+    canvas_theme_fixed_brand_relaxed: '第 {0} 行的 ConfigProvider 寫死了品牌互動色（{1}）。預設不再阻斷發佈，已按原樣繼續；但該色值不會跟隨應用主題。建議加 --fix-theme 自動遷移，或手動遷移到 canvas-theme；如需在 CI 強制攔截可加 --strict-theme。',
+    fix_theme_detected: '偵測到 {0} 處寫死的品牌互動色覆蓋，可自動遷移：移除這些硬編碼覆蓋，交由應用主題解析。',
+    fix_theme_item: '  · 第 {0} 行 {1}：{2}',
+    fix_theme_confirm: '是否自動遷移主題？此操作會改寫你的原始碼檔案（移除寫死的品牌色覆蓋）。[y/N]',
+    fix_theme_applied: '已完成主題遷移並寫回原始碼：{0}',
+    fix_theme_skipped: '已略過主題遷移，未改動原始碼；你可以手動遷移到 canvas-theme，或加 --allow-fixed-brand 臨時放行。',
+    fix_theme_flag_hint: '非互動環境未自動遷移；如需自動改寫請重新執行並加 --fix-theme。',
     canvas_theme_fixed_brand: '第 {0} 行的 ConfigProvider 固定了品牌互動色。請使用 canvas-theme 解析應用主題；CSS var 用於 DOM 樣式，不直接傳給 antd 色值。',
     canvas_navigation_local_platform: '第 {0} 行把本頁選單交給平台導航過濾。請使用 mode=local 或直接切換本頁視圖；實際頁面需 formUuid/navUuid，仍須檢查權限。',
     canvas_navigation_document_flex: '第 {0} 行仍使用工作區 flex 零基準佈局，可能壓縮長頁。請重新提取 canvas-nav-content：document 使用自然高度與區塊佈局，workspace 才使用固定高度 flex。',

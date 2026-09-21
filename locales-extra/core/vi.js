@@ -5,6 +5,14 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  app_entry: {
+    desc_get: 'Read frontend and management runtime entries',
+    desc_set: 'Register application entries with partial update and readback',
+    usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
+    invalid_url: 'Cung cấp URL http:// hoặc https:// đầy đủ của trang, trang công khai hoặc liên kết rút gọn trong ứng dụng hiện tại. Không hỗ trợ đường dẫn tương đối, URL trình thiết kế và tham số xác thực tạm thời.',
+    invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
+    readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+  },
   design_plan: {
     rebase_required: 'Trước lần tạo đầu tiên, sửa business.json/visual.json. Nếu kế hoạch chính đã thay đổi, giữ các tệp và thêm --rebase-parts vào lệnh ban đầu.',
     baseline_missing: 'Khôi phục .build-plan-base.json tương ứng từ không gian làm việc gốc. Nếu thiếu bản gốc đáng tin cậy, giữ bản nháp và báo nguyên nhân bị chặn.',
@@ -1291,6 +1299,14 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'Dòng {0}: đích điều hướng thiếu appType. Dùng canvas-navigation và ID đã xác minh để tạo /{appType}/{pageType}/{formUuid}, không dùng riêng /custom/.',
+    canvas_theme_fixed_brand_allowed: 'Dòng {0}: ConfigProvider cố định màu tương tác thương hiệu ({1}); tạm thời được phép vì --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND đã bật. Hãy sớm chuyển sang canvas-theme; lối tắt này sẽ bị gỡ ở phiên bản sau.',
+    canvas_theme_fixed_brand_relaxed: 'Dòng {0}: ConfigProvider mã hóa cứng màu tương tác thương hiệu ({1}). Việc xuất bản không còn bị chặn theo mặc định và tiếp tục như hiện trạng, nhưng màu này sẽ không theo chủ đề ứng dụng. Thêm --fix-theme để tự động di chuyển, hoặc di chuyển thủ công sang canvas-theme; dùng --strict-theme để thất bại cứng trong CI.',
+    fix_theme_detected: 'Đã phát hiện {0} ghi đè màu tương tác thương hiệu được mã hóa cứng có thể tự động di chuyển: xóa các ghi đè mã hóa cứng và để chủ đề ứng dụng phân giải chúng.',
+    fix_theme_item: '  · Dòng {0} {1}: {2}',
+    fix_theme_confirm: 'Tự động di chuyển chủ đề ngay bây giờ? Thao tác này sẽ ghi lại tệp nguồn của bạn (xóa các ghi đè màu thương hiệu mã hóa cứng). [y/N]',
+    fix_theme_applied: 'Đã áp dụng di chuyển chủ đề và ghi lại vào nguồn: {0}',
+    fix_theme_skipped: 'Đã bỏ qua di chuyển chủ đề; nguồn không thay đổi. Hãy di chuyển thủ công sang canvas-theme, hoặc dùng --allow-fixed-brand để tạm thời bỏ qua.',
+    fix_theme_flag_hint: 'Môi trường không tương tác: không tự động di chuyển. Chạy lại với --fix-theme để tự động ghi lại nguồn.',
     canvas_theme_fixed_brand: 'Dòng {0}: ConfigProvider cố định màu thương hiệu. Dùng canvas-theme với màu đã phân giải từ chủ đề; chỉ dùng CSS var trực tiếp trong kiểu DOM.',
     canvas_navigation_local_platform: 'Dòng {0}: các chế độ xem nội bộ bị lọc qua menu nền tảng. Dùng mode=local hoặc trạng thái nội bộ; gắn trang thật với formUuid/navUuid và kiểm tra quyền đã khai báo.',
     canvas_navigation_document_flex: 'Dòng {0}: document dùng flex với cơ sở bằng 0. Cập nhật canvas-nav-content: chiều cao tự nhiên và khối cho document, flex có chiều cao cố định cho workspace.',
