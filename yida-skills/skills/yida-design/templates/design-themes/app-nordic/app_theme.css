@@ -172,7 +172,7 @@
   --pod-shell-bg-color-gray: var(--pod-common-bg-color, #f0f2f5);
   --pod-shell-bg-color-dark: var(--color-brand1-5, var(--color-brand1-5));
   --pod-shell-padding: 4px;
-  --pod-shell-lshape-border-radius: 14px;
+  --pod-shell-lshape-border-radius: 24px;
   /* 新版主题shell main 容器相关 暂时不需要这个变量，写死用户不可配置 */
   --pod-shell-content-container-padding: 0px;
   --pod-shell-content-container-margin: 0px;
@@ -263,9 +263,8 @@
   --pod-nav-l-header-gap: 28px;
   --pod-nav-l-header-padding: 8px 16px;
   --pod-nav-l-aside-padding: 8px;
-  --pod-nav-slide-aside-gap: 12px;
-  --pod-nav-slide-aside-padding: 8px 8px 8px
-    calc(8px - var(--pod-shell-padding, 4px));
+  --pod-nav-slide-aside-gap: 20px;
+  --pod-nav-slide-aside-padding: 16px 14px;
   --pod-nav-slide-aside-collapsed-padding: 8px 12px 8px
     calc(12px - var(--pod-shell-padding, 4px));
   --pod-nav-slide-collapsed-menu-gap: 4px;
@@ -312,7 +311,7 @@
   --pod-nav-logo-bg: var(--pod-nav-menu-bg-selected-color);
   --pod-nav-logo-border: 1px solid #CDDCCF;
   --pod-nav-logo-icon: var(--pod-nav-item-text-selected-color);
-  --pod-nav-logo-border-radius: 14px;
+  --pod-nav-logo-border-radius: 999px;
   --pod-nav-logo-size: 32px;
   --pod-nav-logo-img-size: calc(var(--pod-nav-logo-size, 32px) - 6px);
 
@@ -323,19 +322,19 @@
   --pod-nav-menu-panel-search-padding-top: 8px;
   --pod-nav-menu-panel-top: 12px;
   --pod-nav-menu-panel-after-collapse-top: 40px;
-  --pod-nav-menu-item-height: 46px;
-  --pod-nav-menu-item-padding: 8px;
+  --pod-nav-menu-item-height: 52px;
+  --pod-nav-menu-item-padding: 12px 18px;
   --pod-nav-menu-item-radius: 999px;
-  --pod-nav-menu-item-border: none;
-  --pod-nav-menu-item-hover-border: none;
-  --pod-nav-menu-item-selected-border: none;
-  --pod-nav-menu-font-size: 14px;
+  --pod-nav-menu-item-border: 2px solid transparent;
+  --pod-nav-menu-item-hover-border: 2px solid #8AA996;
+  --pod-nav-menu-item-selected-border: 2px solid #355D4D;
+  --pod-nav-menu-font-size: 15px;
   --pod-nav-menu-item-selected-font-weight: 500;
-  --pod-nav-menu-item-selected-shadow: none;
+  --pod-nav-menu-item-selected-shadow: 0 5px 12px rgba(42,74,60,.16);
   --pod-nav-menu-line-height: 20px;
   --pod-nav-menu-icon-size: 16px;
   --pod-nav-menu-arrow-icon-size: 12px;
-  --pod-nav-menu-gap: 12px;
+  --pod-nav-menu-gap: 14px;
   --pod-nav-menu-item-gap: 4px;
   --pod-nav-popup-width: 220px;
   --pod-nav-popup-max-height: 400px;
@@ -359,12 +358,12 @@
   --page-bg: var(--pod-page-bg-color, #fff);
   --card-bg: var(--pod-card-bg-color, #fff);
   --popup-bg: var(--color-fill1-5, #fff);
-  --pod-shell-theme-bg-color: #F5F8F4;
+  --pod-shell-theme-bg-color: #E4EEE6;
   --pod-nav-item-text-color: #526361;
   --pod-nav-item-text-hover-color: #354C47;
-  --pod-nav-item-text-selected-color: #354C47;
-  --pod-nav-menu-bg-hover-color: #E7EFE8;
-  --pod-nav-menu-bg-selected-color: #DCE8DE;
+  --pod-nav-item-text-selected-color: #FFFFFF;
+  --pod-nav-menu-bg-hover-color: #D2E4D8;
+  --pod-nav-menu-bg-selected-color: #355D4D;
   --pod-nav-logo-text: var(--pod-nav-item-text-hover-color);
   --pod-nav-sub-divider-color: #CDDCCF;
   --pod-nav-item-text-disabled-color: rgba(24,28,31,.30);
@@ -494,9 +493,9 @@ body.pod-premium.page-type-submit
   --pod-nav-item-text-color: #526361;
   --pod-nav-item-text-hover-color: #354C47;
   --pod-nav-item-text-disabled-color: rgba(24,28,31,.30);
-  --pod-nav-item-text-selected-color: #354C47;
-  --pod-nav-menu-bg-hover-color: #E7EFE8;
-  --pod-nav-menu-bg-selected-color: #DCE8DE;
+  --pod-nav-item-text-selected-color: #FFFFFF;
+  --pod-nav-menu-bg-hover-color: #D2E4D8;
+  --pod-nav-menu-bg-selected-color: #355D4D;
   --pod-nav-l-container-bg: var(--pod-shell-theme-bg-color);
   --pod-nav-l-group-label-color: var(--pod-nav-item-text-color);
   --pod-nav-l-search-border-color: #CDDCCF;
@@ -520,9 +519,9 @@ body.pod-premium.page-type-submit
 }
 
 .pod-premium.nav-light {
-  --pod-shell-theme-bg-color: #F5F8F4;
+  --pod-shell-theme-bg-color: #E4EEE6;
   --pod-page-header-bg-color: var(--pod-shell-theme-bg-color);
-  --pod-shell-lshape-border-radius: 14px;
+  --pod-shell-lshape-border-radius: 24px;
 }
 
 .pod-premium.nav-dark {
@@ -546,20 +545,20 @@ body.pod-premium.page-type-submit
   --pod-page-header-text-color: var(--pod-theme-text-color, var(--color-text1-4, #202020));
   --pod-nav-logo-bg: var(--pod-nav-menu-bg-selected-color);
   --pod-nav-logo-border: 1px solid #CDDCCF;
-  --pod-nav-item-text-selected-color: #354C47;
-  --pod-nav-menu-bg-selected-color: #DCE8DE;
+  --pod-nav-item-text-selected-color: #FFFFFF;
+  --pod-nav-menu-bg-selected-color: #355D4D;
   --pod-nav-popup-bg-color: var(--pod-shell-theme-bg-color);
   --pod-nav-action-icon-color: var(--pod-nav-item-text-color);
   --pod-nav-item-text-color: #526361;
   --pod-nav-item-text-hover-color: #354C47;
-  --pod-nav-menu-bg-hover-color: #E7EFE8;
+  --pod-nav-menu-bg-hover-color: #D2E4D8;
   --pod-nav-l-sub-main-bg-color: var(--pod-shell-theme-bg-color);
   --pod-nav-top-main-border-width: 1px;
   --pod-nav-top-main-border-color: #CDDCCF;
   --pod-nav-top-tab-indicator-width: 0px;
   --pod-nav-logo-text: var(--pod-nav-item-text-hover-color);
   --pod-nav-logo-icon: var(--pod-nav-item-text-selected-color);
-  --pod-nav-logo-border-radius: 14px;
+  --pod-nav-logo-border-radius: 999px;
   --pod-nav-sub-divider-color: #CDDCCF;
   --pod-nav-item-text-disabled-color: rgba(24,28,31,.30);
   --pod-nav-l-container-bg: var(--pod-shell-theme-bg-color);
@@ -582,15 +581,18 @@ body.pod-premium.page-type-submit
   --pod-nav-action-border: 1px solid #CDDCCF;
   --pod-nav-action-bg-hover-color: var(--pod-nav-menu-bg-hover-color);
   --pod-nav-action-bg-active-color: var(--pod-nav-menu-bg-hover-color);
-  --pod-nav-menu-item-height: 46px;
+  --pod-nav-menu-item-height: 52px;
   --pod-nav-menu-item-radius: 999px;
-  --pod-nav-menu-item-border: none;
-  --pod-nav-menu-item-hover-border: none;
-  --pod-nav-menu-item-selected-border: none;
-  --pod-nav-menu-font-size: 14px;
+  --pod-nav-menu-item-border: 2px solid transparent;
+  --pod-nav-menu-item-hover-border: 2px solid #8AA996;
+  --pod-nav-menu-item-selected-border: 2px solid #355D4D;
+  --pod-nav-menu-font-size: 15px;
   --pod-nav-menu-item-selected-font-weight: 500;
   --pod-nav-menu-line-height: 20px;
-  --pod-nav-menu-gap: 12px;
+  --pod-nav-menu-gap: 14px;
+  --pod-nav-menu-item-padding: 12px 18px;
+  --pod-nav-slide-aside-gap: 20px;
+  --pod-nav-slide-aside-padding: 16px 14px;
 }
 
 .pod-premium.is-dark {
@@ -644,6 +646,10 @@ body.pod-premium.page-type-submit
   --pod-nav-menu-item-selected-font-weight: 400;
   --pod-nav-menu-line-height: 20px;
   --pod-nav-menu-gap: 8px;
+  --pod-nav-menu-item-padding: 8px;
+  --pod-nav-slide-aside-gap: 12px;
+  --pod-nav-slide-aside-padding: 8px 8px 8px
+    calc(8px - var(--pod-shell-padding, 4px));
 }
 
 /* openyida-navigation-shape:start */

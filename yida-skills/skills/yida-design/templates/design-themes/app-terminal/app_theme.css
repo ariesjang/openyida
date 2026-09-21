@@ -257,12 +257,12 @@
   --pod-nav-page-bg-color: var(--color-white, #fff);
   --pod-nav-page-white-bg-color: rgba(246, 247, 247, 1);
   --pod-nav-page-padding: var(--pod-lg-gap-pad-margin, 16px);
-  --pod-nav-top-main-border-width: 1px;
-  --pod-nav-top-main-border-color: #558966;
-  --pod-nav-l-sub-main-bg-color: var(--pod-shell-theme-bg-color);
+  --pod-nav-top-main-border-width: 2px;
+  --pod-nav-top-main-border-color: #6BAC7B;
+  --pod-nav-l-sub-main-bg-color: #101E15;
   --pod-nav-l-header-gap: 28px;
-  --pod-nav-l-header-padding: 8px 16px;
-  --pod-nav-l-aside-padding: 8px;
+  --pod-nav-l-header-padding: 12px 20px;
+  --pod-nav-l-aside-padding: 12px;
   --pod-nav-slide-aside-gap: 12px;
   --pod-nav-slide-aside-padding: 8px 8px 8px
     calc(8px - var(--pod-shell-padding, 4px));
@@ -323,19 +323,19 @@
   --pod-nav-menu-panel-search-padding-top: 8px;
   --pod-nav-menu-panel-top: 12px;
   --pod-nav-menu-panel-after-collapse-top: 40px;
-  --pod-nav-menu-item-height: 34px;
-  --pod-nav-menu-item-padding: 8px;
+  --pod-nav-menu-item-height: 36px;
+  --pod-nav-menu-item-padding: 8px 16px;
   --pod-nav-menu-item-radius: 0px;
-  --pod-nav-menu-item-border: 1px dashed #558966;
-  --pod-nav-menu-item-hover-border: 1px dashed #9BCDA5;
-  --pod-nav-menu-item-selected-border: 1px dashed #101E15;
+  --pod-nav-menu-item-border: 1px dashed #42654C;
+  --pod-nav-menu-item-hover-border: 1px dashed #9FE5AD;
+  --pod-nav-menu-item-selected-border: 1px dashed #9FE5AD;
   --pod-nav-menu-font-size: 14px;
   --pod-nav-menu-item-selected-font-weight: 600;
-  --pod-nav-menu-item-selected-shadow: none;
+  --pod-nav-menu-item-selected-shadow: inset 5px 0 0 #9FE5AD, inset -5px 0 0 #9FE5AD;
   --pod-nav-menu-line-height: 20px;
   --pod-nav-menu-icon-size: 16px;
   --pod-nav-menu-arrow-icon-size: 12px;
-  --pod-nav-menu-gap: 2px;
+  --pod-nav-menu-gap: 4px;
   --pod-nav-menu-item-gap: 4px;
   --pod-nav-popup-width: 220px;
   --pod-nav-popup-max-height: 400px;
@@ -359,16 +359,16 @@
   --page-bg: var(--pod-page-bg-color, #fff);
   --card-bg: var(--pod-card-bg-color, #fff);
   --popup-bg: var(--color-fill1-5, #fff);
-  --pod-shell-theme-bg-color: #101E15;
+  --pod-shell-theme-bg-color: #09150F;
   --pod-nav-item-text-color: #9BCDA5;
   --pod-nav-item-text-hover-color: #C5F4CB;
-  --pod-nav-item-text-selected-color: #0E1813;
+  --pod-nav-item-text-selected-color: #D2FFD9;
   --pod-nav-menu-bg-hover-color: #203627;
-  --pod-nav-menu-bg-selected-color: #9FE5AD;
+  --pod-nav-menu-bg-selected-color: #203D2B;
   --pod-nav-logo-text: var(--pod-nav-item-text-hover-color);
   --pod-nav-sub-divider-color: #558966;
   --pod-nav-item-text-disabled-color: rgba(255,255,255,.30);
-  --pod-nav-l-container-bg: var(--pod-shell-theme-bg-color);
+  --pod-nav-l-container-bg: #101E15;
   --pod-nav-l-group-label-color: var(--pod-nav-item-text-color);
   --pod-nav-l-search-border-color: #558966;
   --pod-nav-popup-bg-color: var(--pod-shell-theme-bg-color);
@@ -494,10 +494,10 @@ body.pod-premium.page-type-submit
   --pod-nav-item-text-color: #9BCDA5;
   --pod-nav-item-text-hover-color: #C5F4CB;
   --pod-nav-item-text-disabled-color: rgba(255,255,255,.30);
-  --pod-nav-item-text-selected-color: #0E1813;
+  --pod-nav-item-text-selected-color: #D2FFD9;
   --pod-nav-menu-bg-hover-color: #203627;
-  --pod-nav-menu-bg-selected-color: #9FE5AD;
-  --pod-nav-l-container-bg: var(--pod-shell-theme-bg-color);
+  --pod-nav-menu-bg-selected-color: #203D2B;
+  --pod-nav-l-container-bg: #101E15;
   --pod-nav-l-group-label-color: var(--pod-nav-item-text-color);
   --pod-nav-l-search-border-color: #558966;
   --pod-nav-popup-bg-color: var(--pod-shell-theme-bg-color);
@@ -526,7 +526,7 @@ body.pod-premium.page-type-submit
 }
 
 .pod-premium.nav-dark {
-  --pod-shell-theme-bg-color: #101E15;
+  --pod-shell-theme-bg-color: #09150F;
   --pod-page-header-bg-color: var(--pod-shell-theme-bg-color);
   --pod-shell-lshape-border-radius: 0px;
 }
@@ -591,6 +591,9 @@ body.pod-premium.page-type-submit
   --pod-nav-menu-item-selected-font-weight: 400;
   --pod-nav-menu-line-height: 20px;
   --pod-nav-menu-gap: 8px;
+  --pod-nav-menu-item-padding: 8px;
+  --pod-nav-l-header-padding: 8px 16px;
+  --pod-nav-l-aside-padding: 8px;
 }
 
 .pod-premium.is-dark {
@@ -604,10 +607,10 @@ body.pod-premium.page-type-submit
   --pod-nav-item-text-color: #9BCDA5;
   --pod-nav-item-text-hover-color: #C5F4CB;
   --pod-nav-item-text-disabled-color: rgba(255,255,255,.30);
-  --pod-nav-item-text-selected-color: #0E1813;
+  --pod-nav-item-text-selected-color: #D2FFD9;
   --pod-nav-menu-bg-hover-color: #203627;
-  --pod-nav-menu-bg-selected-color: #9FE5AD;
-  --pod-nav-l-container-bg: var(--pod-shell-theme-bg-color);
+  --pod-nav-menu-bg-selected-color: #203D2B;
+  --pod-nav-l-container-bg: #101E15;
   --pod-nav-l-group-label-color: var(--pod-nav-item-text-color);
   --pod-nav-l-search-border-color: #558966;
   --pod-nav-popup-bg-color: var(--pod-shell-theme-bg-color);
@@ -626,24 +629,27 @@ body.pod-premium.page-type-submit
   --pod-nav-action-border: 1px solid #558966;
   --pod-nav-action-bg-hover-color: var(--pod-nav-menu-bg-hover-color);
   --pod-nav-action-bg-active-color: var(--pod-nav-menu-bg-hover-color);
-  --pod-nav-l-sub-main-bg-color: var(--pod-shell-theme-bg-color);
-  --pod-nav-top-main-border-width: 1px;
-  --pod-nav-top-main-border-color: #558966;
+  --pod-nav-l-sub-main-bg-color: #101E15;
+  --pod-nav-top-main-border-width: 2px;
+  --pod-nav-top-main-border-color: #6BAC7B;
   --pod-nav-top-tab-indicator-width: 0px;
   --pod-nav-logo-icon: var(--pod-nav-item-text-selected-color);
   --pod-nav-logo-border-radius: 0px;
   --pod-nav-popup-border-radius: 0px;
   --pod-nav-popup-shadow: none;
   --pod-nav-search-border-color: #558966;
-  --pod-nav-menu-item-height: 34px;
+  --pod-nav-menu-item-height: 36px;
   --pod-nav-menu-item-radius: 0px;
-  --pod-nav-menu-item-border: 1px dashed #558966;
-  --pod-nav-menu-item-hover-border: 1px dashed #9BCDA5;
-  --pod-nav-menu-item-selected-border: 1px dashed #101E15;
+  --pod-nav-menu-item-border: 1px dashed #42654C;
+  --pod-nav-menu-item-hover-border: 1px dashed #9FE5AD;
+  --pod-nav-menu-item-selected-border: 1px dashed #9FE5AD;
   --pod-nav-menu-font-size: 14px;
   --pod-nav-menu-item-selected-font-weight: 600;
   --pod-nav-menu-line-height: 20px;
-  --pod-nav-menu-gap: 2px;
+  --pod-nav-menu-gap: 4px;
+  --pod-nav-menu-item-padding: 8px 16px;
+  --pod-nav-l-header-padding: 12px 20px;
+  --pod-nav-l-aside-padding: 12px;
 }
 
 /* openyida-navigation-shape:start */

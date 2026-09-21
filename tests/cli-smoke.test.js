@@ -2691,6 +2691,13 @@ test('plain user-facing guidance is available from manifest and both agent capab
   expect(summary.full_app_artifact_route.visual_decision_policy).toEqual(visual);
   expect(capabilities.commands.core_workflows.full_app_build.visual_decision_policy).toEqual(visual);
   expect(capabilities.recommended.default_full_app_workflow.visual_decision_policy).toEqual(visual);
+  expect(visual.applicationStyle.navigationShape).toMatchObject({
+    inputs: ['radius', 'normal_hover_selected_borders', 'selected_shadow', 'item_height', 'padding', 'gap', 'shell_spacing'],
+    authoring: { fast: 'design.md tokens.application-global.appearance.navigation', plan: 'visualStyle.tokens' },
+    verification: expect.arrayContaining(['native_data_management', 'custom_page', 'submission', 'record_detail']),
+  });
+  const [navigationReference, navigationAnchor] = visual.applicationStyle.navigationShape.reference.split('#');
+  expect(fs.readFileSync(path.join(ROOT, navigationReference), 'utf8')).toContain(`### ${navigationAnchor}`);
   expect(fs.existsSync(path.join(ROOT, visual.reference.split('#')[0]))).toBe(true);
   expect(visual.reference).toBe('yida-skills/skills/yida-design/references/theme-selection.md#设计方向比较');
   expect(fs.readFileSync(path.join(ROOT, visual.reference.split('#')[0]), 'utf8')).toContain('## 设计方向比较');

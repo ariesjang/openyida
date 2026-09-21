@@ -12,17 +12,17 @@ tokens:
         "--pod-card-bg-color": "#15231a"
         "--pod-table-cell-color": "var(--pod-card-bg-color)"
       navigation:
-        "--pod-shell-theme-bg-color": "#101E15"
+        "--pod-shell-theme-bg-color": "#09150F"
         "--pod-nav-item-text-color": "#9BCDA5"
         "--pod-nav-item-text-hover-color": "#C5F4CB"
-        "--pod-nav-item-text-selected-color": "#0E1813"
+        "--pod-nav-item-text-selected-color": "#D2FFD9"
         "--pod-nav-menu-bg-hover-color": "#203627"
-        "--pod-nav-menu-bg-selected-color": "#9FE5AD"
-        "--pod-nav-menu-item-selected-shadow": "none"
+        "--pod-nav-menu-bg-selected-color": "#203D2B"
+        "--pod-nav-menu-item-selected-shadow": "inset 5px 0 0 #9FE5AD, inset -5px 0 0 #9FE5AD"
         "--pod-page-header-bg-color": "var(--pod-shell-theme-bg-color)"
-        "--pod-nav-l-sub-main-bg-color": "var(--pod-shell-theme-bg-color)"
-        "--pod-nav-top-main-border-width": "1px"
-        "--pod-nav-top-main-border-color": "#558966"
+        "--pod-nav-l-sub-main-bg-color": "#101E15"
+        "--pod-nav-top-main-border-width": "2px"
+        "--pod-nav-top-main-border-color": "#6BAC7B"
         "--pod-nav-top-tab-indicator-width": "0px"
         "--pod-nav-logo-text": "var(--pod-nav-item-text-hover-color)"
         "--pod-nav-logo-bg": "var(--pod-nav-menu-bg-selected-color)"
@@ -31,7 +31,7 @@ tokens:
         "--pod-nav-logo-border-radius": "0px"
         "--pod-nav-sub-divider-color": "#558966"
         "--pod-nav-item-text-disabled-color": "rgba(255,255,255,.30)"
-        "--pod-nav-l-container-bg": "var(--pod-shell-theme-bg-color)"
+        "--pod-nav-l-container-bg": "#101E15"
         "--pod-nav-l-group-label-color": "var(--pod-nav-item-text-color)"
         "--pod-nav-l-search-border-color": "#558966"
         "--pod-nav-popup-bg-color": "var(--pod-shell-theme-bg-color)"
@@ -53,16 +53,19 @@ tokens:
         "--pod-nav-action-border": "1px solid #558966"
         "--pod-nav-action-bg-hover-color": "var(--pod-nav-menu-bg-hover-color)"
         "--pod-nav-action-bg-active-color": "var(--pod-nav-menu-bg-hover-color)"
-        "--pod-nav-menu-item-height": "34px"
+        "--pod-nav-menu-item-height": "36px"
         "--pod-nav-menu-item-radius": "0px"
-        "--pod-nav-menu-item-border": "1px dashed #558966"
-        "--pod-nav-menu-item-hover-border": "1px dashed #9BCDA5"
-        "--pod-nav-menu-item-selected-border": "1px dashed #101E15"
+        "--pod-nav-menu-item-border": "1px dashed #42654C"
+        "--pod-nav-menu-item-hover-border": "1px dashed #9FE5AD"
+        "--pod-nav-menu-item-selected-border": "1px dashed #9FE5AD"
         "--pod-nav-menu-font-size": "14px"
         "--pod-nav-menu-item-selected-font-weight": "600"
         "--pod-nav-menu-line-height": "20px"
-        "--pod-nav-menu-gap": "2px"
+        "--pod-nav-menu-gap": "4px"
         "--pod-shell-lshape-border-radius": "0px"
+        "--pod-nav-menu-item-padding": "8px 16px"
+        "--pod-nav-l-header-padding": "12px 20px"
+        "--pod-nav-l-aside-padding": "12px"
       native-form:
         "--form-element-medium-corner": "0px"
         "--form-element-medium-height": "40px"
@@ -202,15 +205,17 @@ themeProfile:
 
 ### 2.2 应用导航
 
-墨绿导航使用直角与虚线菜单边框，紧凑菜单延续日志节奏，当前入口以终端绿底深字清晰定位。
+深绿导航使用紧凑方角和虚线菜单，选中项保持暗底亮字，左右内阴影形成终端括号；L 形框架分清顶栏与侧栏，等宽日志延续相同节奏。
 
-菜单轮廓：圆角 0px；普通边框 1px dashed #558966；悬停边框 1px dashed #9BCDA5；选中边框 1px dashed #101E15。这些值同时作用于侧栏和顶部菜单；保持各状态边框宽度一致，用线型、颜色和选中标记表达状态。
+菜单轮廓使用 --pod-nav-menu-item-radius、--pod-nav-menu-item-border、--pod-nav-menu-item-hover-border、--pod-nav-menu-item-selected-border。侧栏和顶部菜单共用轮廓，各状态保持相同边框宽度，文字位置稳定；具体数值以本项目 Token 为准。
+
+导航示例：顶部与侧栏组成 L 形深绿框架；侧栏菜单 36px 紧凑行高、零圆角、1px 虚线；选中项保留深色底，亮绿文字，左右各一条 5px 内阴影形成终端括号。 实际导航布局沿用业务规划。
 
 导航与应用框架、表单、自定义页面和详情页共用设计语言。先按业务入口安排菜单、分组、搜索、品牌区与常用操作，再一起确定导航与正文的明暗、表面、字体、边界、圆角和密度。平台导航使用真实页面菜单；自绘导航按同一套导航 Token 实现。命名模板沿用自身 navTheme，换主色保持导航明暗与内容画布；需要另一导航明暗时改选主题，自由创意按项目明确设计。
 
 导航底色使用 --pod-shell-theme-bg-color；普通、悬停和选中文字分别使用 --pod-nav-item-text-color、--pod-nav-item-text-hover-color、--pod-nav-item-text-selected-color；悬停和选中背景使用 --pod-nav-menu-bg-hover-color、--pod-nav-menu-bg-selected-color。图标跟随对应文字状态，当前入口同时用背景或字重表达。
 
-菜单高度、圆角与间距使用 --pod-nav-menu-item-height、--pod-nav-menu-item-radius、--pod-nav-menu-gap；搜索、品牌区、分组、操作和弹出菜单使用 navigation 分组中的对应 Token。弹出菜单的底色、文字与搜索状态成组配套，导航与内容可以分别选择明暗。选中项使用 --pod-nav-menu-item-selected-shadow：none 关闭额外标记，完整 box-shadow 值可表达左、右或底部内阴影，不占据菜单布局空间；该 Token 独立于导航明暗。
+菜单高度、圆角与间距使用 --pod-nav-menu-item-height、--pod-nav-menu-item-radius、--pod-nav-menu-gap；搜索、品牌区、分组、操作和弹出菜单使用 navigation 分组中的对应 Token。弹出菜单的底色、文字与搜索状态成组配套，导航与内容可以分别选择明暗。选中项使用 --pod-nav-menu-item-selected-shadow：none 关闭额外标记，完整 box-shadow 值可表达左、右或底部内阴影，不占据菜单布局空间；该 Token 独立于导航明暗。菜单高度、文字行高、内距和框架留白一起调整，给外阴影、长标题与键盘焦点留出空间。
 
 桌面检查菜单、搜索、选中态与表单的协调；折叠后保留可识别图标和入口名称；窄屏保持菜单可展开、当前页面可定位、键盘焦点可见。提交、编辑、详情与自定义页都沿用这一导航设计。 当前模板使用 contentTone: dark、navTheme: dark。
 

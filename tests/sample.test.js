@@ -62,7 +62,8 @@ describe('sample templates', () => {
     for (const other of ['side', 'top', 'mixed', 'dock'].filter(name => name !== layout)) {
       expect(fragment).not.toContain(`oy-nav-${other} `);
     }
-    expect(Buffer.byteLength(fragment)).toBeLessThan(['side', 'mixed'].includes(layout) ? 14000 : layout === 'top' ? 8000 : 7000);
+    const fragmentBudgets = { side: 14000, mixed: 14500, top: 8500, dock: 7000, tabs: 7000 };
+    expect(Buffer.byteLength(fragment)).toBeLessThan(fragmentBudgets[layout]);
     expect(fragment.includes('function CanvasSidebar')).toBe(['side', 'mixed'].includes(layout));
     if (layout !== 'tabs') {
       expect(fragment).toContain('--pod-nav-item-text-disabled-color');
@@ -72,6 +73,23 @@ describe('sample templates', () => {
       expect(fragment).toContain('--pod-nav-menu-item-selected-border');
       expect(fragment).toContain('box-shadow: var(--pod-nav-menu-item-selected-shadow, none)');
       expect(fragment).not.toContain('box-shadow: inset');
+      expect(fragment).toContain('padding: var(--pod-nav-menu-item-padding, 8px 12px)');
+      expect(fragment).toContain('line-height: var(--pod-nav-menu-line-height, 20px)');
+    }
+    if (['top', 'mixed'].includes(layout)) {
+      const menuSelector = layout === 'top' ? '.oy-nav-top .oy-nav-menu' : '.oy-nav-mixed .oy-nav-groups';
+      expect(fragment).toContain(`${menuSelector} .oy-nav-item { min-height: var(--pod-nav-top-tab-height, 40px); padding: var(--pod-nav-top-tab-item-padding, 0 12px); max-width: var(--pod-nav-top-tab-item-max-width, 240px); }`);
+      expect(fragment).toContain('padding: calc(var(--pod-nav-menu-gap, 8px) / 2)');
+      expect(fragment).toContain('min-height: var(--pod-nav-platform-header-height, 48px)');
+    }
+    if (['side', 'top', 'mixed'].includes(layout)) {
+      expect(fragment).toContain('gap: var(--pod-nav-menu-gap, 8px)');
+    }
+    if (['side', 'mixed'].includes(layout)) {
+      expect(fragment).toContain('padding: var(--pod-nav-slide-aside-padding, 8px)');
+      if (layout === 'mixed') {
+        expect(fragment).toContain('.oy-canvas-nav.oy-nav-mixed .oy-nav-sidebar { padding: var(--pod-nav-l-aside-padding, 8px); }');
+      }
     }
   });
 

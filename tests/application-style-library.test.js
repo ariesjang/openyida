@@ -128,6 +128,21 @@ test('application preset navigation text is readable in ordinary, hover and sele
   });
 });
 
+test.each(themeIndex.filter(theme => theme.mode !== 'creative'))('$themeId bundles the same navigation values as its design source', theme => {
+  const metadata = parseDesignDocument(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8')).metadata;
+  const expected = metadata.tokens['application-global'].appearance.navigation;
+  const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8')
+    .replace(/\{\{PRIMARY_COLOR\}\}/g, '#123456');
+  const blocks = [...css.matchAll(/(^:root|^\.pod-premium\.(?:nav|is)-(?:light|dark))\s*\{([^}]*)\}/gm)];
+  const values = {};
+  const read = body => Object.assign(values, Object.fromEntries([...body.matchAll(/^\s*(--[\w-]+)\s*:\s*([^;]+);/gm)]
+    .map(match => [match[1], match[2].trim()])));
+  blocks.filter(([, selector]) => selector === ':root').forEach(([, , body]) => read(body));
+  blocks.filter(([, selector]) => [`.pod-premium.nav-${theme.navTheme}`, `.pod-premium.is-${theme.navTheme}`].includes(selector))
+    .forEach(([, , body]) => read(body));
+  expect(values).toMatchObject(expected);
+});
+
 test('all nineteen form-layout starters use supported types and direct capability language', () => {
   expect(applicationStyles).toHaveLength(19);
   const supportedTypes = new Set([...BUSINESS_FIELD_TYPES, ...PRESENTATION_FIELD_TYPES]);

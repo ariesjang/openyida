@@ -24,7 +24,7 @@ openyida sample yida-design application-style --style-id free-creative --output 
 
 `--style-id` 只用于三文件导出，`--design-file` 只用于主题生成。`--var KEY=VALUE` 用于其他代码示例的占位替换；应用主题的品牌色和导航值写入 `design.md`。`app-theme` 的 `--output` 缺省为 `.cache/samples/app-theme.css`；省略 `--design-file` 会用公共模板重置目标 CSS。三文件导出中的占位 CSS 先经过主题生成，再上传。
 
-`--nav-theme` 选择平台导航明暗，`--layout` 选择结构。平台兼容参数还接受 `white` / `gray`，正式设计使用模板派生的 `light` / `dark`。菜单圆角、普通/悬停/选中边框与选中阴影是[导航 token](application-theme-consistency.md#导航与应用框架)，在 Fast 的设计 token 或 Plan 的 `visualStyle.tokens` 中填写。CLI 读取设计文件后生成消费样式；这些值没有单独的命令行开关。较早的 CSS 在设计提供菜单边框 token 后会补齐缺失的菜单形状规则。
+`--nav-theme` 选择平台导航明暗，`--layout` 选择结构。平台兼容参数还接受 `white` / `gray`，正式设计使用模板派生的 `light` / `dark`。菜单圆角、普通/悬停/选中边框、选中阴影、项高、内距与间距是[导航 token](application-theme-consistency.md#导航与应用框架)，在 Fast 的设计 token 或 Plan 的 `visualStyle.tokens` 中填写。CLI 读取设计文件后生成消费样式；这些值没有单独的命令行开关。较早的 CSS 在设计提供菜单边框 token 后会补齐缺失的菜单形状规则。四种差异明显的组合及访问态验收方式见[案例经验](application-theme-consistency.md#导航形状与密度的案例经验)。
 
 ## 主题明暗双轴
 

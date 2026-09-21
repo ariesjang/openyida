@@ -181,11 +181,50 @@ test('older generated CSS gains menu shape consumers once and keeps project rule
     + '\n.project-only { border: 7px dotted red; }';
   const next = design('app-ticket');
   const css = applyDesignTokens(oldCss, next, previous);
-  expect(cascade(css, 'light')['--pod-nav-menu-item-selected-border']).toBe('3px double #FFE8BC');
+  expect(cascade(css, 'light')['--pod-nav-menu-item-selected-border']).toBe('5px double #542B1B');
   expect(css).toContain('.deep-shell-nav-tab-list .next-nav-item.next-selected');
   expect(css).toContain('border-radius: var(--pod-nav-menu-item-radius, 8px);');
   expect(css).toContain('.project-only { border: 7px dotted red; }');
   const repeated = applyDesignTokens(css, next, next);
   expect(repeated.match(/openyida-navigation-shape:start/g)).toHaveLength(1);
   expect(repeated).toBe(css);
+});
+
+test.each([
+  ['app-pop', 'light', '0px', '3px solid #211C21', '5px 5px 0 #F07098', '16px'],
+  ['app-nordic', 'light', '999px', '2px solid #355D4D', '0 5px 12px rgba(42,74,60,.16)', '14px'],
+  ['app-ticket', 'light', '0px', '5px double #542B1B', '4px 4px 0 #9D714C', '14px'],
+  ['app-terminal', 'dark', '0px', '1px dashed #9FE5AD', 'inset 5px 0 0 #9FE5AD, inset -5px 0 0 #9FE5AD', '4px'],
+])('%s retains the verified case shape in Plan, bundled CSS and Fast generation', (id, tone, radius, border, shadow, gap) => {
+  const markdown = design(id);
+  const expected = {
+    '--pod-nav-menu-item-radius': radius,
+    '--pod-nav-menu-item-selected-border': border,
+    '--pod-nav-menu-item-selected-shadow': shadow,
+    '--pod-nav-menu-gap': gap,
+  };
+  expect(readDesignTokens(markdown)).toMatchObject(expected);
+  const bundle = fs.readFileSync(path.join(__dirname, `../yida-skills/skills/yida-design/templates/design-themes/${id}/app_theme.css`), 'utf8');
+  // Placeholders are authoring values, not CSS block delimiters.
+  expect(cascade(bundle.replace(/\{\{PRIMARY_COLOR\}\}/g, '#6F4E37'), tone)).toMatchObject(expected);
+  expect(cascade(applyDesignTokens(template, markdown), tone)).toMatchObject(expected);
+  expect(cascade(applyDesignTokens(bundle, markdown), tone)).toMatchObject(expected);
+  expect(markdown).toContain(`| 选中边框 | --pod-nav-menu-item-selected-border | ${border} |`);
+});
+
+test('project overrides replace case measurements in the navigation prose and generated CSS', () => {
+  const plan = JSON.parse(JSON.stringify(fixture));
+  plan.visualStyle.forUser.selectedTheme = { themeId: 'app-nordic', templatePath: 'templates/design-themes/app-nordic/design.md' };
+  plan.visualStyle.tokens = {
+    '--pod-nav-menu-item-radius': '12px', '--pod-nav-menu-item-selected-border': '2px solid #123456',
+    '--pod-nav-menu-item-height': '48px', '--pod-nav-menu-item-padding': '10px 16px',
+    '--pod-nav-menu-item-selected-shadow': 'none',
+  };
+  const markdown = renderDesign(plan);
+  const section = markdown.split('### 2.2 应用导航')[1].split('### 2.3 ')[0];
+  expect(section).toContain('| 菜单圆角 | --pod-nav-menu-item-radius | 12px |');
+  expect(section).toContain('| 菜单内距 | --pod-nav-menu-item-padding | 10px 16px |');
+  expect(section).toContain('| 选中项阴影 | --pod-nav-menu-item-selected-shadow | none |');
+  expect(section).not.toMatch(/999px|52px|导航示例：/);
+  expect(cascade(applyDesignTokens(template, markdown), 'light')).toMatchObject(plan.visualStyle.tokens);
 });

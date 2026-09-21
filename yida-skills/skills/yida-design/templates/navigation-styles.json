@@ -397,7 +397,7 @@
     "menuSelectedBorder": "none"
   },
   "app-pop": {
-    "summary": "明黄导航采用方角菜单和粗墨线，选中项反转为黑底黄字；硬边界与内容区印刷阴影呼应。",
+    "summary": "明黄导航使用方角粗墨线菜单，选中项黑底黄字并带粉色硬偏移阴影；顶栏为较高的印刷色带，宽菜单留出完整标题，与内容区粗线和硬阴影呼应。",
     "palette": {
       "background": "#FFDE59",
       "text": "#211C21",
@@ -409,15 +409,23 @@
     },
     "radius": 0,
     "itemHeight": 46,
-    "gap": 8,
+    "gap": 16,
     "selectedWeight": 700,
     "popupShadow": "4px 4px 0 #211C21",
     "stroke": 3,
-    "selectedShadow": "none",
+    "selectedShadow": "5px 5px 0 #F07098",
     "menuRadius": "0px",
     "menuBorder": "3px solid #211C21",
     "menuHoverBorder": "3px solid #211C21",
-    "menuSelectedBorder": "3px solid #211C21"
+    "menuSelectedBorder": "3px solid #211C21",
+    "example": "顶部使用 68px 高的黄色导航带；菜单为 3px 墨黑方框，选中项黑底黄字并带 5px 粉色硬阴影；菜单间距 16px，文字完整显示。",
+    "tokens": {
+      "--pod-nav-top-tab-height": "44px",
+      "--pod-nav-top-tab-item-max-width": "240px",
+      "--pod-nav-top-tab-item-padding": "0 20px",
+      "--pod-nav-platform-header-height": "68px",
+      "--pod-nav-top-header-padding": "10px 20px"
+    }
   },
   "app-neon": {
     "summary": "深海蓝导航配青色文字，当前菜单以浅青底深字形成局部微光；搜索和弹层延续技术工作区的蓝色层次。",
@@ -487,27 +495,35 @@
     "menuSelectedBorder": "1px solid #7C6996"
   },
   "app-ticket": {
-    "summary": "票据纸色导航配棕墨文字，直角菜单、双线分隔和紧凑行距延续单据结构，当前入口采用棕底纸色字。",
+    "summary": "米黄纸色导航使用棕墨文字和方角双线菜单框，选中项浅纸底配棕色硬偏移阴影；菜单边框与单据、详情字段的纸张层次呼应。",
     "palette": {
-      "background": "#FFE8BC",
+      "background": "#EAD9B4",
       "text": "#733C26",
       "hoverText": "#572711",
-      "selectedText": "#FFF2D5",
-      "hoverBackground": "#EED5A5",
-      "selectedBackground": "#733C26",
+      "selectedText": "#542B1B",
+      "hoverBackground": "#F7EACF",
+      "selectedBackground": "#FFF9EB",
       "border": "#A7744D"
     },
     "radius": 0,
-    "itemHeight": 40,
-    "gap": 4,
+    "itemHeight": 50,
+    "gap": 14,
     "selectedWeight": 600,
     "popupShadow": "none",
     "stroke": 2,
-    "selectedShadow": "none",
+    "selectedShadow": "4px 4px 0 #9D714C",
     "menuRadius": "0px",
-    "menuBorder": "3px double #A7744D",
-    "menuHoverBorder": "3px double #733C26",
-    "menuSelectedBorder": "3px double #FFE8BC"
+    "menuBorder": "5px double #AD8963",
+    "menuHoverBorder": "5px double #733C26",
+    "menuSelectedBorder": "5px double #542B1B",
+    "example": "米黄色侧栏内使用 5px 棕色双线菜单框；菜单完全方角、行高 50px，选中项浅纸底配棕色偏移阴影，保持墨色正文。普通、悬停、选中边框均为双线，强度逐级提升。",
+    "tokens": {
+      "--pod-nav-menu-item-padding": "10px 14px",
+      "--pod-nav-slide-aside-padding": "16px 14px",
+      "--pod-nav-logo-border": "3px double #733C26",
+      "--pod-nav-logo-border-radius": "0px",
+      "--pod-shell-lshape-border-radius": "0px"
+    }
   },
   "app-editorial": {
     "summary": "暖纸目录用酒红文字、直角菜单与长细线建立编辑节奏；当前入口采用酒红底纸白字，与正文标题呼应。",
@@ -533,26 +549,37 @@
     "topIndicatorWidth": 2
   },
   "app-terminal": {
-    "summary": "墨绿导航使用直角与虚线菜单边框，紧凑菜单延续日志节奏，当前入口以终端绿底深字清晰定位。",
+    "summary": "深绿导航使用紧凑方角和虚线菜单，选中项保持暗底亮字，左右内阴影形成终端括号；L 形框架分清顶栏与侧栏，等宽日志延续相同节奏。",
     "palette": {
-      "background": "#101E15",
+      "background": "#09150F",
       "text": "#9BCDA5",
       "hoverText": "#C5F4CB",
-      "selectedText": "#0E1813",
+      "selectedText": "#D2FFD9",
       "hoverBackground": "#203627",
-      "selectedBackground": "#9FE5AD",
+      "selectedBackground": "#203D2B",
       "border": "#558966"
     },
     "radius": 0,
-    "itemHeight": 34,
-    "gap": 2,
+    "itemHeight": 36,
+    "gap": 4,
     "selectedWeight": 600,
     "popupShadow": "none",
-    "selectedShadow": "none",
+    "selectedShadow": "inset 5px 0 0 #9FE5AD, inset -5px 0 0 #9FE5AD",
     "menuRadius": "0px",
-    "menuBorder": "1px dashed #558966",
-    "menuHoverBorder": "1px dashed #9BCDA5",
-    "menuSelectedBorder": "1px dashed #101E15"
+    "menuBorder": "1px dashed #42654C",
+    "menuHoverBorder": "1px dashed #9FE5AD",
+    "menuSelectedBorder": "1px dashed #9FE5AD",
+    "example": "顶部与侧栏组成 L 形深绿框架；侧栏菜单 36px 紧凑行高、零圆角、1px 虚线；选中项保留深色底，亮绿文字，左右各一条 5px 内阴影形成终端括号。",
+    "stroke": 2,
+    "tokens": {
+      "--pod-nav-l-container-bg": "#101E15",
+      "--pod-nav-l-sub-main-bg-color": "#101E15",
+      "--pod-nav-menu-item-padding": "8px 16px",
+      "--pod-nav-l-header-padding": "12px 20px",
+      "--pod-nav-l-aside-padding": "12px",
+      "--pod-nav-top-main-border-color": "#6BAC7B",
+      "--pod-shell-lshape-border-radius": "0px"
+    }
   },
   "app-platinum": {
     "summary": "铂灰导航配低圆角菜单与均衡行距，青灰细线连接合同工作区，当前入口以深灰底浅字形成稳重焦点。",
@@ -621,26 +648,35 @@
     "menuSelectedBorder": "1px solid #153856"
   },
   "app-nordic": {
-    "summary": "云白导航采用胶囊菜单与宽松留白，浅苔绿选中底衔接单列服务表单，搜索和弹层保持安静的自然色调。",
+    "summary": "柔绿导航使用宽松胶囊菜单，透明边框预留位置，悬停浅绿描边，选中项深绿底白字配轻阴影；圆润品牌区与单列服务表单保持舒展节奏。",
     "palette": {
-      "background": "#F5F8F4",
+      "background": "#E4EEE6",
       "text": "#526361",
       "hoverText": "#354C47",
-      "selectedText": "#354C47",
-      "hoverBackground": "#E7EFE8",
-      "selectedBackground": "#DCE8DE",
+      "selectedText": "#FFFFFF",
+      "hoverBackground": "#D2E4D8",
+      "selectedBackground": "#355D4D",
       "border": "#CDDCCF"
     },
     "radius": 14,
-    "itemHeight": 46,
-    "gap": 12,
+    "itemHeight": 52,
+    "gap": 14,
     "selectedWeight": 500,
     "popupShadow": "0 8px 24px rgba(53,76,71,.08)",
-    "selectedShadow": "none",
+    "selectedShadow": "0 5px 12px rgba(42,74,60,.16)",
     "menuRadius": "999px",
-    "menuBorder": "none",
-    "menuHoverBorder": "none",
-    "menuSelectedBorder": "none"
+    "menuBorder": "2px solid transparent",
+    "menuHoverBorder": "2px solid #8AA996",
+    "menuSelectedBorder": "2px solid #355D4D",
+    "example": "左侧导航采用柔绿底和 52px 高的宽松胶囊；选中项深绿底白字、2px 深绿边框，悬停浅绿边框，普通项保留透明边界。菜单间距 14px、内距 12px 18px。",
+    "tokens": {
+      "--pod-nav-menu-item-padding": "12px 18px",
+      "--pod-nav-slide-aside-gap": "20px",
+      "--pod-nav-slide-aside-padding": "16px 14px",
+      "--pod-nav-menu-font-size": "15px",
+      "--pod-nav-logo-border-radius": "999px",
+      "--pod-shell-lshape-border-radius": "24px"
+    }
   },
   "app-teal": {
     "summary": "浅青绿导航与运营状态带相连，适度圆角、稳定行距和清晰分组组织任务入口，选中项为深青底浅字。",
