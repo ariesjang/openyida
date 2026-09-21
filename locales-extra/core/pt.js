@@ -1295,6 +1295,12 @@ module.exports = {
   publish: {
     canvas_path_missing_app_type: 'Linha {0}: falta appType no destino. Use canvas-navigation e IDs verificados para /{appType}/{pageType}/{formUuid}, não uma rota /custom/ isolada.',
     canvas_theme_fixed_brand_allowed: 'Linha {0}: ConfigProvider fixa uma cor de interação da marca ({1}); permitido por enquanto porque --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND está definido. Migre para canvas-theme em breve; este desvio será removido em uma versão posterior.',
+    fix_theme_detected: 'Encontrada(s) {0} substituição(ões) de cor de interação de marca codificada(s) que podem ser migradas automaticamente: remova as substituições codificadas e deixe o tema da aplicação resolvê-las.',
+    fix_theme_item: '  · Linha {0} {1}: {2}',
+    fix_theme_confirm: 'Migrar o tema automaticamente agora? Isso reescreve seu arquivo de origem (remove as substituições de cor de marca codificadas). [s/N]',
+    fix_theme_applied: 'Migração de tema aplicada e gravada de volta na origem: {0}',
+    fix_theme_skipped: 'Migração de tema ignorada; origem inalterada. Migre manualmente para canvas-theme ou use --allow-fixed-brand para contornar temporariamente.',
+    fix_theme_flag_hint: 'Ambiente não interativo: sem migração automática. Execute novamente com --fix-theme para reescrever a origem automaticamente.',
     canvas_theme_fixed_brand: 'Linha {0}: ConfigProvider fixa uma cor da marca. Use canvas-theme com cores resolvidas do tema; reserve CSS var para estilos DOM.',
     canvas_navigation_local_platform: 'Linha {0}: vistas locais estão sendo filtradas pela navegação da plataforma. Use mode=local ou estado local; associe páginas reais a formUuid/navUuid e verifique as permissões declaradas.',
     canvas_navigation_document_flex: 'Linha {0}: document usa flex com base zero. Atualize canvas-nav-content: altura natural e blocos para document, flex de altura fixa para workspace.',

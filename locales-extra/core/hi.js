@@ -1293,6 +1293,12 @@ module.exports = {
   publish: {
     canvas_path_missing_app_type: 'पंक्ति {0}: नेविगेशन में appType नहीं है। canvas-navigation और सत्यापित ID से /{appType}/{pageType}/{formUuid} बनाएँ; केवल /custom/ पथ न दें।',
     canvas_theme_fixed_brand_allowed: 'पंक्ति {0}: ConfigProvider ब्रांड इंटरैक्शन रंग ({1}) को हार्डकोड करता है; अभी अनुमति है क्योंकि --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND सेट है। जल्द ही canvas-theme पर माइग्रेट करें; यह बायपास बाद के संस्करण में हटा दिया जाएगा।',
+    fix_theme_detected: '{0} हार्डकोडेड ब्रांड इंटरैक्शन रंग ओवरराइड मिले जिन्हें स्वतः माइग्रेट किया जा सकता है: हार्डकोडेड ओवरराइड हटाएँ और एप्लिकेशन थीम को उन्हें हल करने दें।',
+    fix_theme_item: '  · पंक्ति {0} {1}: {2}',
+    fix_theme_confirm: 'क्या अभी थीम स्वतः माइग्रेट करें? यह आपकी स्रोत फ़ाइल को फिर से लिखता है (हार्डकोडेड ब्रांड-रंग ओवरराइड हटाता है)। [y/N]',
+    fix_theme_applied: 'थीम माइग्रेशन लागू किया गया और स्रोत में वापस लिखा गया: {0}',
+    fix_theme_skipped: 'थीम माइग्रेशन छोड़ा गया; स्रोत अपरिवर्तित। canvas-theme में मैन्युअल रूप से माइग्रेट करें, या अस्थायी रूप से बायपास करने के लिए --allow-fixed-brand पास करें।',
+    fix_theme_flag_hint: 'गैर-संवादात्मक वातावरण: कोई स्वतः माइग्रेशन नहीं। स्रोत को स्वतः फिर से लिखने के लिए --fix-theme के साथ पुनः चलाएँ।',
     canvas_theme_fixed_brand: 'पंक्ति {0}: ConfigProvider में ब्रांड रंग स्थिर है। canvas-theme से प्राप्त थीम रंग उपयोग करें; CSS var सीधे केवल DOM स्टाइल में दें।',
     canvas_navigation_local_platform: 'पंक्ति {0}: स्थानीय व्यू प्लेटफ़ॉर्म मेनू से फ़िल्टर हो रहे हैं। mode=local या स्थानीय स्टेट उपयोग करें; वास्तविक पेजों को formUuid/navUuid से जोड़ें और घोषित अनुमतियाँ जाँचें।',
     canvas_navigation_document_flex: 'पंक्ति {0}: document में शून्य आधार वाला flex है। canvas-nav-content अपडेट करें: document के लिए प्राकृतिक ऊँचाई और ब्लॉक, workspace के लिए निश्चित ऊँचाई वाला flex।',

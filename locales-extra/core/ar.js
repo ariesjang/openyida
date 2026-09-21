@@ -1293,6 +1293,12 @@ module.exports = {
   publish: {
     canvas_path_missing_app_type: 'السطر {0}: عنوان التنقل يفتقد appType. استخدم canvas-navigation ومعرّفات موثّقة لبناء /{appType}/{pageType}/{formUuid} بدلاً من /custom/ وحده.',
     canvas_theme_fixed_brand_allowed: 'السطر {0}: يثبّت ConfigProvider لون تفاعل العلامة ({1})؛ يُسمح به مؤقتًا لأن --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND مُفعّل. رحّل إلى canvas-theme قريبًا؛ سيُزال هذا التجاوز في إصدار لاحق.',
+    fix_theme_detected: 'تم العثور على {0} تجاوز(ات) للون تفاعل العلامة التجارية مضمّنة يمكن ترحيلها تلقائيًا: أزل التجاوزات المضمّنة ودع سمة التطبيق تحلها.',
+    fix_theme_item: '  · السطر {0} {1}: {2}',
+    fix_theme_confirm: 'هل تريد ترحيل السمة تلقائيًا الآن؟ يؤدي هذا إلى إعادة كتابة ملف المصدر (إزالة تجاوزات لون العلامة التجارية المضمّنة). [y/N]',
+    fix_theme_applied: 'تم تطبيق ترحيل السمة وإعادة كتابته في المصدر: {0}',
+    fix_theme_skipped: 'تم تخطي ترحيل السمة؛ لم يتغير المصدر. رحّل يدويًا إلى canvas-theme، أو مرّر --allow-fixed-brand للتجاوز مؤقتًا.',
+    fix_theme_flag_hint: 'بيئة غير تفاعلية: لا ترحيل تلقائي. أعد التشغيل مع --fix-theme لإعادة كتابة المصدر تلقائيًا.',
     canvas_theme_fixed_brand: 'السطر {0}: يثبت ConfigProvider لون العلامة التجارية. استخدم canvas-theme وألوان السمة المحللة؛ استخدم CSS var مباشرة في أنماط DOM فقط.',
     canvas_navigation_local_platform: 'السطر {0}: تتم تصفية العروض المحلية عبر تنقل المنصة. استخدم mode=local أو حالة محلية، واربط الصفحات الفعلية بـ formUuid/navUuid وتحقق من الصلاحيات المعلنة.',
     canvas_navigation_document_flex: 'السطر {0}: يستخدم document تخطيط flex بأساس صفر. حدّث canvas-nav-content: ارتفاع طبيعي وكتل لـ document، وارتفاع ثابت مع flex لـ workspace.',
