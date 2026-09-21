@@ -1293,6 +1293,7 @@ module.exports = {
   publish: {
     canvas_path_missing_app_type: 'Zeile {0}: Im Navigationsziel fehlt appType. Nutzen Sie canvas-navigation und echte IDs für /{appType}/{pageType}/{formUuid} statt /custom/.',
     canvas_theme_fixed_brand_allowed: 'Zeile {0}: ConfigProvider codiert eine Marken-Interaktionsfarbe fest ({1}); vorerst erlaubt, da --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND gesetzt ist. Migrieren Sie bald zu canvas-theme; dieser Bypass wird in einer späteren Version entfernt.',
+    canvas_theme_fixed_brand_relaxed: 'Zeile {0}: ConfigProvider codiert eine Marken-Interaktionsfarbe ({1}) fest. Die Veröffentlichung wird standardmäßig nicht mehr blockiert und wird unverändert fortgesetzt, aber diese Farbe folgt nicht dem Anwendungsthema. Fügen Sie --fix-theme für die automatische Migration hinzu oder migrieren Sie manuell zu canvas-theme; verwenden Sie --strict-theme, um in CI hart zu scheitern.',
     fix_theme_detected: '{0} fest codierte Überschreibung(en) der Marken-Interaktionsfarbe gefunden, die automatisch migriert werden können: Entfernen Sie die fest codierten Überschreibungen und überlassen Sie die Auflösung dem Anwendungsthema.',
     fix_theme_item: '  · Zeile {0} {1}: {2}',
     fix_theme_confirm: 'Thema jetzt automatisch migrieren? Dies überschreibt Ihre Quelldatei (entfernt die fest codierten Markenfarb-Überschreibungen). [j/N]',

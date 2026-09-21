@@ -1244,6 +1244,7 @@ module.exports = {
   publish: {
     canvas_path_missing_app_type: '行 {0}: 遷移先に appType がありません。canvas-navigation と確認済み ID で /{appType}/{pageType}/{formUuid} を構築し、/custom/ 単独のパスを避けてください。',
     canvas_theme_fixed_brand_allowed: '行 {0}: ConfigProvider がブランドの操作色（{1}）を固定しています。--allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND が設定されているため一時的に許可されます。早めに canvas-theme へ移行してください。この回避策は今後のバージョンで削除されます。',
+    canvas_theme_fixed_brand_relaxed: '{0} 行目の ConfigProvider がブランド操作色（{1}）をハードコードしています。既定では公開をブロックしなくなり、そのまま続行します。ただしこの色はアプリテーマに追従しません。--fix-theme で自動移行するか、canvas-theme へ手動移行してください。CI で強制的に失敗させるには --strict-theme を使用します。',
     fix_theme_detected: '固定されたブランド操作色の上書きが {0} 件見つかりました。自動移行できます：ハードコードされた上書きを削除し、アプリケーションテーマに解決を任せます。',
     fix_theme_item: '  · 行 {0} {1}：{2}',
     fix_theme_confirm: 'テーマを今すぐ自動移行しますか？この操作はソースファイルを書き換えます（固定されたブランド色の上書きを削除）。[y/N]',

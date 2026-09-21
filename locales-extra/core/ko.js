@@ -1294,6 +1294,7 @@ module.exports = {
   publish: {
     canvas_path_missing_app_type: '{0}행: 이동 주소에 appType이 없습니다. canvas-navigation과 확인된 ID로 /{appType}/{pageType}/{formUuid}를 구성하세요. /custom/ 단독 경로는 사용하지 마세요.',
     canvas_theme_fixed_brand_allowed: '{0}행: ConfigProvider가 브랜드 상호작용 색상({1})을 하드코딩했습니다. --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND가 설정되어 임시로 허용됩니다. 곧 canvas-theme로 마이그레이션하세요. 이 우회는 이후 버전에서 제거됩니다.',
+    canvas_theme_fixed_brand_relaxed: '{0}행의 ConfigProvider가 브랜드 상호작용 색상({1})을 하드코딩했습니다. 기본적으로 더 이상 게시를 차단하지 않고 그대로 계속합니다. 다만 이 색상은 애플리케이션 테마를 따르지 않습니다. --fix-theme로 자동 마이그레이션하거나 canvas-theme로 수동 마이그레이션하세요. CI에서 강제 실패하려면 --strict-theme를 사용하세요.',
     fix_theme_detected: '하드코딩된 브랜드 상호작용 색상 재정의 {0}건을 발견했습니다. 자동 마이그레이션 가능: 하드코딩된 재정의를 제거하고 애플리케이션 테마가 해석하도록 합니다.',
     fix_theme_item: '  · {0}행 {1}: {2}',
     fix_theme_confirm: '지금 테마를 자동 마이그레이션할까요? 이 작업은 소스 파일을 다시 씁니다(하드코딩된 브랜드 색상 재정의 제거). [y/N]',

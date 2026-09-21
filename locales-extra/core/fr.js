@@ -1295,6 +1295,7 @@ module.exports = {
   publish: {
     canvas_path_missing_app_type: 'Ligne {0} : appType manque dans la destination. Utilisez canvas-navigation et des ID vérifiés pour /{appType}/{pageType}/{formUuid}, sans chemin /custom/ isolé.',
     canvas_theme_fixed_brand_allowed: 'Ligne {0} : ConfigProvider fige une couleur d’interaction de marque ({1}) ; autorisé pour l’instant car --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND est défini. Migrez bientôt vers canvas-theme ; ce contournement sera supprimé dans une version ultérieure.',
+    canvas_theme_fixed_brand_relaxed: 'Ligne {0} : ConfigProvider fige une couleur d’interaction de marque ({1}). La publication n’est plus bloquée par défaut et continue telle quelle, mais cette couleur ne suivra pas le thème de l’application. Ajoutez --fix-theme pour migrer automatiquement, ou migrez manuellement vers canvas-theme ; utilisez --strict-theme pour échouer en CI.',
     fix_theme_detected: '{0} redéfinition(s) de couleur d’interaction de marque figée(s) détectée(s), migrables automatiquement : supprimez les redéfinitions figées et laissez le thème de l’application les résoudre.',
     fix_theme_item: '  · Ligne {0} {1} : {2}',
     fix_theme_confirm: 'Migrer le thème automatiquement maintenant ? Cette opération réécrit votre fichier source (supprime les redéfinitions de couleur de marque figées). [o/N]',

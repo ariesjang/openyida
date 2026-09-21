@@ -1293,6 +1293,7 @@ module.exports = {
   publish: {
     canvas_path_missing_app_type: 'Dòng {0}: đích điều hướng thiếu appType. Dùng canvas-navigation và ID đã xác minh để tạo /{appType}/{pageType}/{formUuid}, không dùng riêng /custom/.',
     canvas_theme_fixed_brand_allowed: 'Dòng {0}: ConfigProvider cố định màu tương tác thương hiệu ({1}); tạm thời được phép vì --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND đã bật. Hãy sớm chuyển sang canvas-theme; lối tắt này sẽ bị gỡ ở phiên bản sau.',
+    canvas_theme_fixed_brand_relaxed: 'Dòng {0}: ConfigProvider mã hóa cứng màu tương tác thương hiệu ({1}). Việc xuất bản không còn bị chặn theo mặc định và tiếp tục như hiện trạng, nhưng màu này sẽ không theo chủ đề ứng dụng. Thêm --fix-theme để tự động di chuyển, hoặc di chuyển thủ công sang canvas-theme; dùng --strict-theme để thất bại cứng trong CI.',
     fix_theme_detected: 'Đã phát hiện {0} ghi đè màu tương tác thương hiệu được mã hóa cứng có thể tự động di chuyển: xóa các ghi đè mã hóa cứng và để chủ đề ứng dụng phân giải chúng.',
     fix_theme_item: '  · Dòng {0} {1}: {2}',
     fix_theme_confirm: 'Tự động di chuyển chủ đề ngay bây giờ? Thao tác này sẽ ghi lại tệp nguồn của bạn (xóa các ghi đè màu thương hiệu mã hóa cứng). [y/N]',

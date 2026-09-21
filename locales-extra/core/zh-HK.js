@@ -1232,6 +1232,7 @@ module.exports = {
   publish: {
     canvas_path_missing_app_type: '第 {0} 行的跳轉地址缺少 appType。請用 canvas-navigation 與真實 ID 建立 /{appType}/{pageType}/{formUuid}，不要直接跳轉 /custom/ 等路徑。',
     canvas_theme_fixed_brand_allowed: '第 {0} 行的 ConfigProvider 寫死了品牌互動色（{1}），因已設定 --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND 暫時放行。請盡快遷移到 canvas-theme（應用主題解析），此旁路將在後續版本移除。',
+    canvas_theme_fixed_brand_relaxed: '第 {0} 行的 ConfigProvider 寫死了品牌互動色（{1}）。預設不再阻斷發佈，已按原樣繼續；但該色值不會跟隨應用主題。建議加 --fix-theme 自動遷移，或手動遷移到 canvas-theme；如需在 CI 強制攔截可加 --strict-theme。',
     fix_theme_detected: '偵測到 {0} 處寫死的品牌互動色覆蓋，可自動遷移：移除這些硬編碼覆蓋，交由應用主題解析。',
     fix_theme_item: '  · 第 {0} 行 {1}：{2}',
     fix_theme_confirm: '是否自動遷移主題？此操作會改寫你的原始碼檔案（移除寫死的品牌色覆蓋）。[y/N]',
