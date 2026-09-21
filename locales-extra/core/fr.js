@@ -1294,6 +1294,7 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'Ligne {0} : appType manque dans la destination. Utilisez canvas-navigation et des ID vérifiés pour /{appType}/{pageType}/{formUuid}, sans chemin /custom/ isolé.',
+    canvas_theme_fixed_brand_allowed: 'Ligne {0} : ConfigProvider fige une couleur d’interaction de marque ({1}) ; autorisé pour l’instant car --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND est défini. Migrez bientôt vers canvas-theme ; ce contournement sera supprimé dans une version ultérieure.',
     canvas_theme_fixed_brand: 'Ligne {0} : ConfigProvider fixe une couleur de marque. Utilisez canvas-theme et les couleurs résolues du thème ; réservez CSS var aux styles DOM.',
     canvas_navigation_local_platform: 'Ligne {0} : les vues locales sont filtrées par la navigation de la plateforme. Utilisez mode=local ou un état local ; liez les vraies pages à formUuid/navUuid et vérifiez les droits déclarés.',
     canvas_navigation_document_flex: 'Ligne {0} : document utilise un flex de base zéro. Actualisez canvas-nav-content : hauteur naturelle et blocs pour document, flex à hauteur fixe pour workspace.',

@@ -102,3 +102,35 @@ test('namespace ConfigProvider fixed tokens are checked', () => {
   expect(() => assertCanvasThemeStructure("import * as UI from 'antd'; const color='orange'; function YidaComp(){return <UI.ConfigProvider theme={{token:{colorPrimary:color}}}><div/></UI.ConfigProvider>}"))
     .toThrow(expect.objectContaining({ code: 'OPENYIDA_CANVAS_THEME_FIXED_BRAND' }));
 });
+
+const fixedBrand = "import {ConfigProvider} from 'antd'; function YidaComp(){return <ConfigProvider theme={{token:{colorPrimary:'#1677ff'}}}><div/></ConfigProvider>}";
+
+test('fixed brand error carries local-only, non-network recovery metadata', () => {
+  let caught;
+  try { compileCanvasLocal(fixedBrand, { sourcePath: 'page.canvas.jsx' }); } catch (error) { caught = error; }
+  expect(caught).toMatchObject({
+    code: 'OPENYIDA_CANVAS_THEME_FIXED_BRAND',
+    details: { stage: 'canvas_compile', retryable: false, retrySafe: true, sideEffectState: 'none',
+      nextAction: { type: 'edit_source_then_recheck' }, field: 'colorPrimary', value: '#1677ff' },
+  });
+});
+
+test('downgrades fixed brand to a warning when explicitly allowed via option', () => {
+  const warnings = [];
+  expect(compileCanvasLocal(fixedBrand, { allowFixedBrand: true, onThemeWarning: message => warnings.push(message) }).runtimeCode).toBeTruthy();
+  expect(warnings).toHaveLength(1);
+});
+
+test('honors OPENYIDA_CANVAS_ALLOW_FIXED_BRAND env as the bypass switch', () => {
+  const previous = process.env.OPENYIDA_CANVAS_ALLOW_FIXED_BRAND;
+  process.env.OPENYIDA_CANVAS_ALLOW_FIXED_BRAND = '1';
+  try {
+    const warnings = [];
+    expect(assertCanvasThemeStructure(fixedBrand, { onThemeWarning: message => warnings.push(message) })).toBeUndefined();
+    expect(warnings).toHaveLength(1);
+  } finally {
+    if (previous === undefined) { delete process.env.OPENYIDA_CANVAS_ALLOW_FIXED_BRAND; }
+    else { process.env.OPENYIDA_CANVAS_ALLOW_FIXED_BRAND = previous; }
+  }
+});
+

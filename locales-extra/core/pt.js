@@ -1294,6 +1294,7 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'Linha {0}: falta appType no destino. Use canvas-navigation e IDs verificados para /{appType}/{pageType}/{formUuid}, não uma rota /custom/ isolada.',
+    canvas_theme_fixed_brand_allowed: 'Linha {0}: ConfigProvider fixa uma cor de interação da marca ({1}); permitido por enquanto porque --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND está definido. Migre para canvas-theme em breve; este desvio será removido em uma versão posterior.',
     canvas_theme_fixed_brand: 'Linha {0}: ConfigProvider fixa uma cor da marca. Use canvas-theme com cores resolvidas do tema; reserve CSS var para estilos DOM.',
     canvas_navigation_local_platform: 'Linha {0}: vistas locais estão sendo filtradas pela navegação da plataforma. Use mode=local ou estado local; associe páginas reais a formUuid/navUuid e verifique as permissões declaradas.',
     canvas_navigation_document_flex: 'Linha {0}: document usa flex com base zero. Atualize canvas-nav-content: altura natural e blocos para document, flex de altura fixa para workspace.',

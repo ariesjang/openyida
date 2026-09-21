@@ -1292,6 +1292,7 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'السطر {0}: عنوان التنقل يفتقد appType. استخدم canvas-navigation ومعرّفات موثّقة لبناء /{appType}/{pageType}/{formUuid} بدلاً من /custom/ وحده.',
+    canvas_theme_fixed_brand_allowed: 'السطر {0}: يثبّت ConfigProvider لون تفاعل العلامة ({1})؛ يُسمح به مؤقتًا لأن --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND مُفعّل. رحّل إلى canvas-theme قريبًا؛ سيُزال هذا التجاوز في إصدار لاحق.',
     canvas_theme_fixed_brand: 'السطر {0}: يثبت ConfigProvider لون العلامة التجارية. استخدم canvas-theme وألوان السمة المحللة؛ استخدم CSS var مباشرة في أنماط DOM فقط.',
     canvas_navigation_local_platform: 'السطر {0}: تتم تصفية العروض المحلية عبر تنقل المنصة. استخدم mode=local أو حالة محلية، واربط الصفحات الفعلية بـ formUuid/navUuid وتحقق من الصلاحيات المعلنة.',
     canvas_navigation_document_flex: 'السطر {0}: يستخدم document تخطيط flex بأساس صفر. حدّث canvas-nav-content: ارتفاع طبيعي وكتل لـ document، وارتفاع ثابت مع flex لـ workspace.',

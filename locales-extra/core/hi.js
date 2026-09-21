@@ -1292,6 +1292,7 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'पंक्ति {0}: नेविगेशन में appType नहीं है। canvas-navigation और सत्यापित ID से /{appType}/{pageType}/{formUuid} बनाएँ; केवल /custom/ पथ न दें।',
+    canvas_theme_fixed_brand_allowed: 'पंक्ति {0}: ConfigProvider ब्रांड इंटरैक्शन रंग ({1}) को हार्डकोड करता है; अभी अनुमति है क्योंकि --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND सेट है। जल्द ही canvas-theme पर माइग्रेट करें; यह बायपास बाद के संस्करण में हटा दिया जाएगा।',
     canvas_theme_fixed_brand: 'पंक्ति {0}: ConfigProvider में ब्रांड रंग स्थिर है। canvas-theme से प्राप्त थीम रंग उपयोग करें; CSS var सीधे केवल DOM स्टाइल में दें।',
     canvas_navigation_local_platform: 'पंक्ति {0}: स्थानीय व्यू प्लेटफ़ॉर्म मेनू से फ़िल्टर हो रहे हैं। mode=local या स्थानीय स्टेट उपयोग करें; वास्तविक पेजों को formUuid/navUuid से जोड़ें और घोषित अनुमतियाँ जाँचें।',
     canvas_navigation_document_flex: 'पंक्ति {0}: document में शून्य आधार वाला flex है। canvas-nav-content अपडेट करें: document के लिए प्राकृतिक ऊँचाई और ब्लॉक, workspace के लिए निश्चित ऊँचाई वाला flex।',

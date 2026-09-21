@@ -1292,6 +1292,7 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'Dòng {0}: đích điều hướng thiếu appType. Dùng canvas-navigation và ID đã xác minh để tạo /{appType}/{pageType}/{formUuid}, không dùng riêng /custom/.',
+    canvas_theme_fixed_brand_allowed: 'Dòng {0}: ConfigProvider cố định màu tương tác thương hiệu ({1}); tạm thời được phép vì --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND đã bật. Hãy sớm chuyển sang canvas-theme; lối tắt này sẽ bị gỡ ở phiên bản sau.',
     canvas_theme_fixed_brand: 'Dòng {0}: ConfigProvider cố định màu thương hiệu. Dùng canvas-theme với màu đã phân giải từ chủ đề; chỉ dùng CSS var trực tiếp trong kiểu DOM.',
     canvas_navigation_local_platform: 'Dòng {0}: các chế độ xem nội bộ bị lọc qua menu nền tảng. Dùng mode=local hoặc trạng thái nội bộ; gắn trang thật với formUuid/navUuid và kiểm tra quyền đã khai báo.',
     canvas_navigation_document_flex: 'Dòng {0}: document dùng flex với cơ sở bằng 0. Cập nhật canvas-nav-content: chiều cao tự nhiên và khối cho document, flex có chiều cao cố định cho workspace.',

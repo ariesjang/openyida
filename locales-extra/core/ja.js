@@ -1243,6 +1243,7 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: '行 {0}: 遷移先に appType がありません。canvas-navigation と確認済み ID で /{appType}/{pageType}/{formUuid} を構築し、/custom/ 単独のパスを避けてください。',
+    canvas_theme_fixed_brand_allowed: '行 {0}: ConfigProvider がブランドの操作色（{1}）を固定しています。--allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND が設定されているため一時的に許可されます。早めに canvas-theme へ移行してください。この回避策は今後のバージョンで削除されます。',
     canvas_theme_fixed_brand: '行 {0}: ConfigProvider がブランド色を固定しています。canvas-theme で解決したテーマ色を使い、CSS var は DOM スタイルにのみ直接使用してください。',
     canvas_navigation_local_platform: '行 {0}: ローカルビューをプラットフォームナビゲーションで絞り込んでいます。mode=local またはローカル状態を使い、実際のページには formUuid/navUuid を指定して権限を検証してください。',
     canvas_navigation_document_flex: '行 {0}: document にゼロ基準の flex が使用されています。canvas-nav-content を更新し、document は自然な高さのブロック、workspace は固定高さの flex を使用してください。',

@@ -1292,6 +1292,7 @@ module.exports = {
   },
   publish: {
     canvas_path_missing_app_type: 'Zeile {0}: Im Navigationsziel fehlt appType. Nutzen Sie canvas-navigation und echte IDs für /{appType}/{pageType}/{formUuid} statt /custom/.',
+    canvas_theme_fixed_brand_allowed: 'Zeile {0}: ConfigProvider codiert eine Marken-Interaktionsfarbe fest ({1}); vorerst erlaubt, da --allow-fixed-brand / OPENYIDA_CANVAS_ALLOW_FIXED_BRAND gesetzt ist. Migrieren Sie bald zu canvas-theme; dieser Bypass wird in einer späteren Version entfernt.',
     canvas_theme_fixed_brand: 'Zeile {0}: ConfigProvider setzt eine feste Markenfarbe. Nutzen Sie canvas-theme mit aufgelösten Anwendungsfarben; CSS var gehört in DOM-Stile, nicht in antd-Farbwerte.',
     canvas_navigation_local_platform: 'Zeile {0}: Lokale Ansichten werden durch Plattformmenüs gefiltert. Nutzen Sie mode=local oder lokalen Zustand; echte Seiten benötigen formUuid/navUuid und Berechtigungsprüfungen.',
     canvas_navigation_document_flex: 'Zeile {0}: document verwendet Flex mit Basis null. Aktualisieren Sie canvas-nav-content: natürliche Blockhöhe für document, feste Flex-Höhe für workspace.',
