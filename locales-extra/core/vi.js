@@ -5,6 +5,13 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  design_plan: {
+    rebase_required: 'Trước lần tạo đầu tiên, sửa business.json/visual.json. Nếu kế hoạch chính đã thay đổi, giữ các tệp và thêm --rebase-parts vào lệnh ban đầu.',
+    baseline_missing: 'Khôi phục .build-plan-base.json tương ứng từ không gian làm việc gốc. Nếu thiếu bản gốc đáng tin cậy, giữ bản nháp và báo nguyên nhân bị chặn.',
+    rebase_stage_invalid: 'Chỉ hợp nhất bản nháp trước lần tạo đầu tiên. Với kế hoạch đã hiển thị hoặc tạo, dùng patch --materialize.',
+    rebase_conflict: 'Cùng một trường có các thay đổi khác nhau. Kiểm tra conflicts và chọn giá trị hiện tại hoặc gốc trong phần kế hoạch. Chưa lưu tệp nào.',
+    repair_page_bindings: 'Sửa pageApplications trong visual.json để khớp từng mục customPageDetails trong business.json, không thêm biểu mẫu gốc. visualMemoryApplications phải là mảng; dùng [] nếu không có mục phù hợp. Giữ bản nháp, sửa các trường được liệt kê rồi chạy lại lệnh ban đầu. Không xóa thư mục hoặc chạy lại init.',
+  },
   design_document: {
     update_conflict: "Không thể cập nhật {0} ({1}): nội dung hiện tại xung đột với phiên bản được tạo trước đó. Hãy đối chiếu thay đổi cục bộ trong phần này với dữ liệu kế hoạch rồi thử lại. Chưa lưu tệp nào.",
     theme_css_invalid: 'CSS giao diện gần dòng {0} có dấu ngoặc, chuỗi hoặc chú thích chưa đóng hoặc không khớp. Hãy sửa rồi thử lại.',

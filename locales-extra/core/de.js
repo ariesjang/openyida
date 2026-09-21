@@ -5,6 +5,13 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  design_plan: {
+    rebase_required: 'Vor der ersten Ausgabe business.json/visual.json korrigieren. Bei geänderter Hauptplanung Dateien behalten und --rebase-parts zum ursprünglichen Befehl ergänzen.',
+    baseline_missing: 'Passende .build-plan-base.json aus dem ursprünglichen Arbeitsbereich wiederherstellen. Ohne verlässliche Basis Entwürfe behalten und die Blockade melden.',
+    rebase_stage_invalid: 'Basisabgleich gilt nur vor der ersten Ausgabe. Für bereits angezeigte oder erzeugte Pläne patch --materialize verwenden.',
+    rebase_conflict: 'Dasselbe Feld wurde unterschiedlich geändert. conflicts prüfen und im Teilplan den aktuellen oder ursprünglichen Wert wählen. Keine Dateien gespeichert.',
+    repair_page_bindings: 'Ordnen Sie pageApplications in visual.json den customPageDetails in business.json eins zu eins zu, ohne native Formulare. visualMemoryApplications muss ein Array sein; verwenden Sie bei Bedarf []. Behalten Sie den Entwurf, korrigieren Sie die angegebenen Felder und wiederholen Sie den ursprünglichen Befehl. Löschen Sie das Verzeichnis nicht und führen Sie init nicht erneut aus.',
+  },
   design_document: {
     update_conflict: "{0} ({1}) kann nicht aktualisiert werden: Der Inhalt weicht von der letzten generierten Version ab. Gleichen Sie die lokale Änderung in diesem Abschnitt mit den Plandaten ab und versuchen Sie es erneut. Es wurden keine Dateien gespeichert.",
     theme_css_invalid: 'Das Theme-CSS enthält nahe Zeile {0} eine nicht geschlossene oder falsch gepaarte Klammer, Zeichenfolge oder einen Kommentar. Bitte korrigieren und erneut versuchen.',

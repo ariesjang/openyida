@@ -23,7 +23,8 @@ const path = require('path');
 // Retain modest growth headroom and round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 2128 * 1024;
 const MAX_UNPACKED_BYTES = 8000 * 1024;
-const MAX_ENTRY_COUNT = 600;
+// Plan confirmation payload and explicit part rebase add two runtime modules.
+const MAX_ENTRY_COUNT = 602;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -42,6 +43,8 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/asset/asset-execution.js',
   'lib/app/canvas-icon-exports.json',
   'lib/design-plan/preview.js',
+  'lib/design-plan/confirmation.js',
+  'lib/design-plan/rebase.js',
   'lib/design-plan/entry-navigation.js',
   'lib/design-plan/navigation-policy.js',
   'yida-skills/skills/yida-app/references/entry-navigation.md',
