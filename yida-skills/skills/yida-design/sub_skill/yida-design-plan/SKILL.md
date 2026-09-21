@@ -21,10 +21,20 @@ description: Plan 模式的视觉设计分支。基于需求选择视觉方向�
 
 1. 读取 CLI 返回的 `authoring-context.md` 与 [紧凑计划契约](references/build-plan-compact-schema.md)，沿用 pageId 和 sceneKey。
 2. 为每个真实自定义页填写 `firstScreenFocus`、`layout`、`primaryAction`、`responsive` 与 `acceptanceChecks`；前四项为具体非空说明，验收为非空字符串数组。公共主题不能代替这些决定。纯原生表单应用不增加虚构页记录。
-3. 按 [整体主题规则](../../references/application-theme-consistency.md#导航与应用框架) 核对导航、应用框架、原生表单、记录详情与自定义页面的配色、形状、文字、间距和状态。按实际内容补 `visualMemoryApplications`、页面局部差异与素材策略。完整主题由 CLI 注入，复杂组件定制时再读模板对应章节。
+3. 按 [整体主题规则](../../references/application-theme-consistency.md#导航与应用框架) 核对导航、应用框架、原生表单、记录详情与自定义页面的配色、形状、文字、间距和状态。每项必须保留 `visualMemoryApplications` 数组；没有匹配的主题记忆点时填写 `[]`，不要省略或写成字符串。按实际内容补页面局部差异与素材策略。完整主题由 CLI 注入，复杂组件定制时再读模板对应章节。
 4. 全局和局部 token 遵守 [基础变量契约](../../templates/design-themes/basic-tokens.json)，明确项目差异写 `visualStyle.tokens`，主色写 `forUser.colorStrategy.primaryColor`；沿用主题的字号、间距和组件圆角。
 5. CLI 按 [公共输出契约](../../workflow/output-design.md) 生成 frontmatter、anchor 索引和五章正文，并调用同一 `check-design` 校验。缺少逐页决定时只保留可预览草稿，补齐后再生成最终产物；旧计划同样不得以继承主题套话补过门槛。
 
 用户选择整体暗色或黑色主题时，按 [暗色主题浮层适配](../../references/theme/theme-token-presets.md#暗色主题浮层适配) 补齐 `visualStyle.tokens`；内容界面明暗与导航明暗分别描述，导航明暗仍由所选主题模板确定。
 
 首版提交前，将基础视觉与 `pageApplications` 一次补齐到已有 `visual.json`。仅超大需求需要中间展示时才按 [按模块更新方案](../../../yida-app/workflow/incremental-preview.md) 提交。主流程负责生成方案、展示和确认，主题 CSS 使用 CLI 返回的 `outputs.theme`。
+
+## 校验失败时定点修复
+
+遇到 `DESIGN_PLAN_PAGE_BINDINGS_REQUIRED` 时，保留现有计划和预览，按以下顺序修复：
+
+1. **定位**：读取错误 `details.issues` 中每项的 `sourcePath`、`path` 和 `code`，修改对应源文件。若问题来自 `business.json`，先按已确认需求修正页面事实，再核对视觉绑定。
+2. **修改**：以 `business.json` 的 `facts.pages.customPageDetails` 为准，让 `visual.json` 的 `facts.visualStyle.forUser.pageApplications` 与自定义页一一对应；原生表单和数据模型不加入。按 `missing_page` 补项、`unexpected_page` 移除多余绑定、`duplicate_page` 合并重复项；按 `expected_array`、`expected_object`、`expected_nonempty_string` 修正指定字段。每项 `visualMemoryApplications` 必须为数组，无适用内容填 `[]`。
+3. **回读并重试**：确认修改已写入源文件，再重试原 `materialize` 命令。写入失败、跳过或结果未知时，先回读核实，不能仅凭发起过工具调用认定修复完成。
+
+修复仅涉及错误字段，保留 `build-plan.json`、`business.json`、`visual.json` 和已有预览；不因字段校验失败删除目录、重新 `init`、重写整份 PRD 或扩大需求范围。

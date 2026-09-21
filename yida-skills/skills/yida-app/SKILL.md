@@ -13,9 +13,17 @@ description: 创建完整宜搭应用，或补齐已有应用时使用。先确�
 
 首次需求澄清优先进入 Step 2 的 2.0；首问前不执行 Step 1 的环境和资源预检，已有明确资源引用作为需求上下文保留。澄清完成后再按需核验资源、补齐规划输入。
 
-`intake.designMode` 沿用用户最后一次明确选择，其他问题的回答只更新对应字段。Plan 收到与当前 revision 匹配的 `confirm_build` 后进入资源实施；选择 `continue_editing` 时修改当前计划，生成新 revision 后再确认。素材进度同步保留已有确认。
+已有任务先按 [续做与恢复](#续做与恢复) 定位当前阶段。
 
-Plan 模式只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-design.md` 和精确路径 `workflow/plan/workflow.md`；后者已经包含完整 Plan 入口。禁止用 Glob 查找 Plan 文件，也不要额外读取 `workflow/plan/step-1-understand.md` 或 `workflow/plan/step-2-confirm.md`。Plan 确认恢复后，若 `explicitScope.allowInferredResources=false`，直接读取 `workflow/step-4-forms-processes.md` 实施范围内资源，不再重读 Step 1、调用 list-forms 或做应用设置预检。
+需求确认不能替代当前 Plan revision 的批准或工具权限确认。`intake.designMode` 沿用用户最后一次明确选择，其他问题的回答只更新对应字段。Plan 收到与当前 revision 匹配的 `confirm_build` 后进入资源实施；选择 `continue_editing` 时修改当前计划，生成新 revision 后再确认。素材进度更新不改变已有的需求确认和模式选择。
+
+Plan 规划阶段的工作流入口只读取 `workflow/step-1-resource-context.md`、`workflow/step-2-design.md` 和精确路径 `workflow/plan/workflow.md`；后者已经包含完整 Plan 入口。禁止用 Glob 查找 Plan 文件，也不要额外读取 `workflow/plan/step-1-understand.md` 或 `workflow/plan/step-2-confirm.md`。此读取范围不限制确认后的实施、验收和交付，各阶段按需读取对应 workflow。Plan 确认恢复后，若 `explicitScope.allowInferredResources=false`，直接读取 `workflow/step-4-forms-processes.md` 实施范围内资源，不再重读 Step 1、调用 list-forms 或做应用设置预检。
+
+## 续做与恢复
+
+先判断本轮是否已有有效需求确认：历史回答或同任务 `intake.confirmed=true` 覆盖当前范围且未被撤回时，复用答案、PRD、设计和资源回执，从未完成阶段继续。刷新、恢复、压缩或用户说“继续”不触发重新首问；仅应用已存在也不代表需求已确认。状态不明时先只读核对当前任务材料；范围变更、材料缺失或冲突按 [需求分析的适用阶段与续做](../yida-requirement-analysis/workflow/prepare-brief.md#适用阶段与续做) 处理。
+
+已发布但尚未完成本轮导航、验收或交付时，按缺项进入 [Step 8](workflow/step-8-publish-navigation.md) 或 [Step 9](workflow/step-9-output-finish.md)，不返回需求首问。发布成功回执不能替代实际验收。
 
 ## 执行步骤（进行时展示给用户）
 
