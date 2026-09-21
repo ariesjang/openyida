@@ -18,13 +18,14 @@ description: >
 
 1. 需求识别与分析
 2. 设计功能和页面
-3. 生成PRD方案&确认
+3. 确认搭建方案
 4. 创建应用
 5. 搭建表单与审批流
 6. 准备示例数据
-7. 搭建业务页面
-8. 发布页面与配置导航
-9. 检查功能并交付
+7. 准备页面图片
+8. 搭建业务页面
+9. 发布页面与配置导航
+10. 检查功能并交付
 
 **Fast 模式**
 
@@ -33,13 +34,14 @@ description: >
 3. 创建应用
 4. 搭建表单与审批流
 5. 准备示例数据
-6. 搭建业务页面
-7. 发布页面与配置导航
-8. 检查功能并交付
+6. 准备页面图片
+7. 搭建业务页面
+8. 发布页面与配置导航
+9. 检查功能并交付
 
-已有应用时，直接省略“创建应用”，不另列“复用现有应用”待办，后续步骤重新编号；无需示例数据时跳过对应步骤。步骤状态按真实进度更新，有独立输入的工作可同时进行。
+按本轮范围选用步骤：已有应用时省略“创建应用”，无需示例数据或图片时省略对应步骤，并重新编号。
 
-禁区：待办标题、说明和进度不出现技能名、命令、文件路径、登录账号、内部资源 ID；这些留在工具调用里。用户明确询问技术细节时再解释。
+每项待办对应一个阶段，直接使用上方短标题。创建应用、表单、数据、图片、页面和发布分别展示。执行中保持标题与列表顺序稳定，完成后标记完成并保留记录。图片准备与表单、页面搭建可同时进行，列表顺序仅用于展示。业务细节写在进度消息中，任务编号、命令、路径、授权依据和耗时写入内部执行记录；用户要求的耗时统计集中放入报告。素材采集与应用创建同时进行时，进度描述统一为“素材采集&应用创建”；单独进行时使用对应阶段名称。图片数量、用途及任务详情归入内部执行记录。
 
 ## 执行步骤
 
@@ -104,8 +106,8 @@ description: >
 | `yida-skills/design` | 完整应用需求分析、PRD、视觉设计、单页 UI 改造、应用主题色、全局换肤、图片素材 | `yida-requirement-analysis`、`yida-prd`、`yida-design`、`yida-image-assets` |
 | `yida-skills/form` | 表单字段、公式、校验、业务关联规则、批量录入、数据记录 | `yida-create-form-page`、`yida-formula`、`yida-formula-evaluate`、`yida-business-rule`、`yida-canvas-table-form`、`yida-table-form`、`yida-data-management` |
 | `yida-skills/process` | 审批、流程表单、流程规则、节点/分支/字段权限、流程代理 | `yida-create-process`、`yida-process-rule`、`yida-agent-center` |
-| `yida-skills/page` | 自定义展示页、页面源码开发、平台 JSX 组件页面维护、页面发布、页面内导航、PPT 页面 | `yida-create-page`、`yida-canvas-custom-page`、`yida-custom-page`、`yida-canvas-data-binding`、`yida-canvas-upgrade`、`yida-publish-page`、`yida-openyida-publish-guard`、`yida-density`、`yida-nav-shell`、`yida-ppt-slider` |
-| `yida-skills/analytics` | 聚合表、虚拟视图、报表、统计、图表、Recharts、ECharts、看板、驾驶舱、大屏 | `yida-aggregate-table`、`yida-report`、`yida-rechart`、`yida-chart`、`yida-dashboard` |
+| `yida-skills/page` | 工作台、办事门户、任务看板、自定义展示页、页面源码开发、平台 JSX 组件页面维护、页面发布、页面内导航、PPT 页面 | `yida-create-page`、`yida-canvas-custom-page`、`yida-custom-page`、`yida-canvas-data-binding`、`yida-canvas-upgrade`、`yida-publish-page`、`yida-openyida-publish-guard`、`yida-density`、`yida-nav-shell`、`yida-ppt-slider` |
+| `yida-skills/analytics` | 聚合表、虚拟视图、报表、统计、图表、Recharts、ECharts、经营分析看板、驾驶舱、大屏 | `yida-aggregate-table`、`yida-report`、`yida-rechart`、`yida-chart`、`yida-dashboard` |
 | `yida-skills/integration` | 连接器、钉钉开放平台、外部 API、执行动作、设计器数据源、集成自动化、逻辑流 | `yida-integration`、`yida-dingtalk-openapi`、`yida-connector`、`yida-connector-safe-actions`、`yida-data-source-connectors` |
 | `yida-skills/access` | 平台/应用/表单/页面权限、公开访问、分享 | `yida-corp-manager`、`yida-app-permission`、`yida-form-permission`、`yida-page-config` |
 | `yida-skills/ops` | Sequence、主键冲突、VOC 反馈 | `yida-db-seq-fix`、`yida-voc` |
@@ -141,7 +143,8 @@ description: >
 | 已有 `.oyd.jsx` / `renderJsx` 迁到 `YidaCodeCanvas` 组件实现 | `yida-canvas-upgrade` |
 | 高级图表、可视化、看板图表 | 默认 `yida-rechart` |
 | 明确 ECharts、维护旧 ECharts 页面、复杂 option 超出 Recharts 能力 | `yida-chart` |
-| 产品化经营看板/驾驶舱交付 | `yida-dashboard` |
+| 产品化经营分析看板/驾驶舱交付 | `yida-dashboard`，按指标分析任务触发 |
+| 待办、操作队列、业务工作台或办事门户页面 | `yida-canvas-custom-page`；接真实数据时加载 `yida-canvas-data-binding`，不因页面名称或辅助统计转为经营看板 |
 | 批量录入、表格填写、多行编辑 | 默认 `yida-canvas-table-form`；已检测到平台 JSX 组件页面、native 页面或存量源码使用 `this.utils.yida.saveFormData` 时用 `yida-table-form` |
 | 页面视觉方向、页面美化、去 AI 味 | `yida-design` 只产出或更新 `prd/<项目名>/design.md`；若业务/页面契约也变化，由 `yida-prd` 更新 `prd.md`；实现阶段默认交给 `yida-canvas-custom-page` |
 | 应用级主题、品牌色、全局换肤 | `yida-design` |
@@ -192,9 +195,9 @@ description: >
 - 不把 OpenYida 业务中间文件写到仓库根目录或系统临时目录。
 
 20. **报表和可视化先分流**：标准统计与原生报表用 `yida-report`；定制图表页面默认用 `yida-rechart`；只有明确 ECharts、维护旧 ECharts 页面或复杂 option 超出 Recharts 能力时用 `yida-chart`。
-21. **应用主题只有一份**：涉及应用蓝图、页面视觉、应用主题色、品牌色、全局换肤或 `--color-brand1-*` 时先读 `yida-design`。`app-theme.css` 只在应用级统一配置，由平台作用于应用壳、原生表单、详情页和自定义页面外层。严禁在页面级重复写入、同步或向上层注入主题样式；`YidaCodeCanvas` 源码只在 `YidaComp` 内消费现有主题 token。
+21. **应用主题只有一份**：涉及应用蓝图、页面视觉、应用主题色、品牌色、全局换肤或 `--color-brand1-*` 时先读 `yida-design`。导航、应用框架、提交/编辑表单、记录详情和自定义页面按[整体主题规则](skills/yida-design/references/application-theme-consistency.md#导航与应用框架)一起设计。`app-theme.css` 只在应用级统一配置，各类页面消费同一份主题 token。严禁在页面级重复写入、同步或向上层注入主题样式；`YidaCodeCanvas` 源码只在 `YidaComp` 内消费现有主题 token。
 22. **默认完成即停止**：完整应用默认以资源发布成功、轻量导航排序完成、示例数据就绪并输出一组有明确名称的应用入口与业务交付总结为 doneWhen；截图、精细导航整理和额外深读属于 optionalAfterDone，除非用户明确要求。
-23. **说清楚做什么**：对话、任务列表、步骤标题、进度和提问面向非技术用户。用日常用语和短句，一句话说一件事，先说结果或动作，再补必要原因。功能写谁能做什么；进度写当前动作和下一步；失败写问题、影响和处理办法；待核实的结果如实说明。文件名、路径、技能名和调用方式留在内部执行。PRD 业务说明、HTML 和消息使用功能与体验描述；接口参数、配置键值及内部 ID 留在 Agent 实施交接，遵循[用户可见表达契约](skills/yida-design/references/ask-human-interaction-contract.md)。交付卡片的 `description` 写 2-3 句业务交付总结、核验结果与剩余事项，卡片包含一组“应用访问入口”；宿主没有交付工具时，在最终回复中给出相同内容。不得把需求信息文件、PRD、视觉设计、build manifest、资源清单、Schema 或每个表单/流程/报表分别登记成用户可见交付物；含统一工作区或业务管理范围时给工作台入口，前台页面经 PRD 标记为 `standalone` 且导航配置回读通过时给独立业务入口；明确仅前台时不追加工作台或后台，其他场景仅按 capability 和交付范围增加开发后台入口。
+23. **说清楚做什么**：对话、任务列表、步骤标题、进度和提问面向非技术用户。用日常用语和短句，一句话说一件事，先说结果或动作，再补必要原因。功能写谁能做什么；进度写当前动作和下一步；失败写问题、影响和处理办法；待核实的结果如实说明。文件名、路径、技能名和调用方式留在内部执行。PRD 业务说明、HTML 和消息使用功能与体验描述；接口参数、配置键值及内部 ID 留在 Agent 实施交接，遵循[用户可见表达契约](skills/yida-design/references/ask-human-interaction-contract.md)。交付卡片的 `description` 写 2-3 句业务交付总结、核验结果与剩余事项，卡片包含一组“应用访问入口”；宿主没有交付工具时，在最终回复中给出相同内容。不得把需求信息文件、PRD、视觉设计、build manifest、资源清单、Schema 或每个表单/流程/报表分别登记成用户可见交付物；不分前后台或包含业务后台时，给出经验证的业务页面入口，前台页面经 PRD 标记为 `standalone` 且导航配置回读通过时给独立业务入口；完整应用默认再提供开发者管理后台 `adminUrl`，不因云端登录方式省略；明确仅业务后台时交付业务后台与开发者管理后台，不追加前台；明确仅前台时不追加业务后台，仍交付前台与开发者管理后台两个地址。有前后台时交付前台、业务后台、开发者管理后台三个地址；不分前后台时交付系统入口与开发者管理后台。用户明确排除的入口和单页任务范围优先。
 24. **任务复盘沉淀**：用户多次纠正、平台接口假成功、页面骨架共性质量问题、线上回读验收方法、一次性脚本可产品化等情况，完成前判断是否需要沉淀到 CLI、测试或 skill。
 
 常见问题见 [常见问题解决方案](references/execution-rules.md)。

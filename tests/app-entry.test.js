@@ -24,6 +24,7 @@ afterEach(() => jest.restoreAllMocks());
 test.each([
   `${origin}/APP/custom/FORM`, `${origin}/APP/workbench`, `${origin}/APP/manage/FORM`,
   `${origin}/APP/workbench/FORM?viewUuid=VIEW&corpid=ding123&hideLeftNav=true#tab`,
+  `${origin}/APP/workbench?corpid=ding123&locale=zh_CN`,
   `${origin}/APP/submission/FORM?processCode=PROC&noShowTopBottom=true`,
   `${origin}/o/public-alias`, `${origin}/o/public-alias/FORM-123`, `${origin}/s/app-alias`,
   'https://enterprise.example.com/o/public',

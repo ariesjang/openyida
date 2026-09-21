@@ -61,11 +61,11 @@ function buildYidaFormUrl(request, currentAppType) {
   return '';
 }
 
-/** 抽屉外壳默认跟随应用主题，background 可为当前抽屉指定颜色、渐变或 CSS token。 */
+/** 抽屉默认使用内容画布与正文文字，background 可为当前抽屉指定颜色、渐变或 CSS token。 */
 function CanvasDrawer({
   open, title, onClose, onOpenInNewWindow, extra, children,
   contentMode = 'content',
-  background = 'var(--pod-shell-theme-bg-color, var(--drawer-bg, var(--color-brand1-1, #f4f6ff)))',
+  background = 'var(--pod-shell-theme-bg-color, var(--color-white, #fff))',
 }) {
   const [fullScreen, setFullScreen] = useState(false);
   const [drawerWidth, setDrawerWidth] = useState(null);
@@ -138,7 +138,7 @@ function CanvasDrawer({
           border: 0;
           border-radius: 8px;
           background: transparent;
-          color: var(--drawer-close-color, var(--pod-page-header-text-color, var(--color-text1-3, #666)));
+          color: var(--drawer-close-color, var(--pod-page-header-text-color, var(--color-text1-4, #1f2329)));
           cursor: pointer;
         }
         .openyida-form-drawer .oy-drawer-action:hover {
@@ -159,7 +159,7 @@ function CanvasDrawer({
           height: 100%;
           min-height: 0;
           overflow: auto;
-          background: var(--pod-card-bg-color, var(--drawer-bg, var(--color-white, #fff)));
+          background: transparent;
           border-radius: var(--pod-card-border-radius, 20px);
         }
         .openyida-form-drawer .oy-drawer-resize {
@@ -215,7 +215,7 @@ function CanvasDrawer({
           },
           content: {
             background,
-            color: 'var(--drawer-content-color, var(--color-text1-4, #1f2329))',
+            color: 'var(--drawer-content-color, var(--pod-page-header-text-color, var(--color-text1-4, #1f2329)))',
             borderLeft: 'var(--drawer-border-width, 0px) var(--drawer-border-style, solid) var(--drawer-border-color, transparent)',
             borderRadius: fullScreen ? 0 : 'var(--pod-drawer-border-radius, var(--pod-drawer-radius, var(--drawer-corner, 20px))) 0 0 var(--pod-drawer-border-radius, var(--pod-drawer-radius, var(--drawer-corner, 20px)))',
             overflow: 'hidden',
@@ -233,6 +233,7 @@ function CanvasDrawer({
             borderBottom: 'var(--drawer-title-border-width, 0px) solid var(--drawer-title-border-color, var(--drawer-border-color, transparent))',
           },
           body: {
+            background: 'transparent',
             display: 'flex', flexDirection: 'column', flex: '1 1 0',
             padding: contentMode === 'iframe' ? 0 : '0 8px 8px',
             minHeight: 0, overflow: 'hidden',

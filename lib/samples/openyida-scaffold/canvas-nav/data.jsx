@@ -1,6 +1,20 @@
-/** 平台菜单沿用导航显示规则；独立入口按当前访问者的资源、视图和操作授权过滤。 */
+/** local 只切页内视图；platform 沿用平台导航；independent 按真实资源权限过滤。 */
+function validateCanvasNavigationItems(items, mode) {
+  if (!['local', 'platform', 'independent'].includes(mode)) throw new Error('未知导航模式');
+  for (const item of items) {
+    if (Array.isArray(item.children) && item.children.length) {
+      validateCanvasNavigationItems(item.children, mode);
+    } else if (mode === 'local') {
+      if (item.targetType !== 'local' || !String(item.key || '').trim() || !String(item.viewKey || '').trim()
+        || item.href || item.url) throw new Error('local 模式只接受含 key/viewKey 的本页菜单，真实页面请使用 platform 或 independent');
+    } else if (mode === 'platform' && (item.targetType === 'local' || (!item.formUuid && !item.navUuid))) {
+      throw new Error('页内菜单不能按平台导航过滤：使用 mode=local 或直接管理本地视图；真实页面需绑定 formUuid/navUuid');
+    }
+  }
+}
+
 function filterCanvasNavigation(items, navs, hiddenNav = [], { mode = 'platform', access } = {}) {
-  if (!['platform', 'independent'].includes(mode)) throw new Error('未知导航模式');
+  validateCanvasNavigationItems(items, mode);
   const isHidden = value => value === true || value === 'y' || value === 'true';
   const visibleIds = new Set();
   function collectVisible(nodes) {
@@ -25,9 +39,9 @@ function filterCanvasNavigation(items, navs, hiddenNav = [], { mode = 'platform'
   }
   function allowed(item, leaf) {
     const requirements = item.access;
-    if (requirements === undefined) return mode === 'platform' || (!leaf && !item.formUuid && !item.navUuid);
+    if (requirements === undefined) return mode === 'local' || mode === 'platform' || (!leaf && !item.formUuid && !item.navUuid);
     if (!Array.isArray(requirements) || !requirements.length || !requirements.every(validRequirement)) return false;
-    if (leaf) {
+    if (leaf && mode !== 'local') {
       const operation = item.targetType === 'submission' ? 'OPERATE_CREATE' : 'OPERATE_VIEW';
       if (!item.formUuid || !requirements.some(requirement => requirement.formUuid === item.formUuid
         && (requirement.viewUuid || '') === (item.viewUuid || item.params?.viewUuid || '') && requirement.operation === operation)) return false;
@@ -45,7 +59,7 @@ function filterCanvasNavigation(items, navs, hiddenNav = [], { mode = 'platform'
         return children.length ? [{ ...item, children }] : [];
       }
       if (!allowed(item, true)) return [];
-      return mode === 'independent' || visibleIds.has(resourceId) ? [item] : [];
+      return mode !== 'platform' || visibleIds.has(resourceId) ? [item] : [];
     });
   }
   return filterItems(items);
@@ -88,8 +102,8 @@ function buildCanvasNavigationUrl(item, appType, { embedded = false } = {}) {
 /** resolveAccess 是调用方对真实权限服务的适配，不是平台已有的接口或静态授权清单。 */
 async function loadCanvasNavigation({ items, appType, formUuid, csrfToken, hiddenNav = [], signal, mode = 'platform', resolveAccess }) {
   if (!Array.isArray(items)) throw new Error('缺少 PRD 导航配置');
-  if (!appType) throw new Error('缺少应用标识');
-  if (!['platform', 'independent'].includes(mode)) throw new Error('未知导航模式');
+  validateCanvasNavigationItems(items, mode);
+  if (mode !== 'local' && !appType) throw new Error('缺少应用标识');
   let needsAccess = mode === 'independent';
   const requirements = [];
   function collect(nodes) {
@@ -104,13 +118,14 @@ async function loadCanvasNavigation({ items, appType, formUuid, csrfToken, hidde
   collect(items);
   let access;
   if (needsAccess) {
+    if (!appType) throw new Error('权限查询需要应用标识');
     if (typeof resolveAccess !== 'function') throw new Error('缺少当前访问者的权限查询能力');
     access = await resolveAccess({ appType, requirements, signal });
     if (access?.appType !== appType || !Array.isArray(access.grants)) throw new Error('权限查询失败，请重试');
   }
   if (signal?.aborted) throw new Error('导航加载已取消');
   // 独立菜单不依赖平台树是否含有被隐藏的资源；授权必须来自上述实时权限查询。
-  if (mode === 'independent') return filterCanvasNavigation(items, [], [], { mode, access });
+  if (mode !== 'platform') return filterCanvasNavigation(items, [], [], { mode, access });
   const query = new URLSearchParams({ _api: 'nattyFetch', _mock: 'false' });
   if (formUuid) query.set('formUuid', formUuid);
   if (csrfToken) query.set('_csrf_token', csrfToken);

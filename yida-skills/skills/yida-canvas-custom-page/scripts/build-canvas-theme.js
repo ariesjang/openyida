@@ -104,10 +104,12 @@ function run(args) {
     result = page.replace(marker, () => provider);
   } else {
     result = provider + `
-import { Button, Space, Modal } from 'antd';
+import { Button, Space, Modal, Tabs, Segmented, Radio } from 'antd';
 function ThemePreviewContent() {
   const { status, token } = useCanvasThemeContext();
   const [modal, holder] = Modal.useModal();
+  const [category, setCategory] = React.useState('全部');
+  const categories = ['全部', '人像摄影', '风光摄影', '商业静物', '婚礼纪实'];
   return <section style={{ margin: 24, padding: 24, background: 'var(--pod-card-bg-color, var(--color-white, #fff))' }}>
     {holder}
     <h2>Canvas 主题预览</h2>
@@ -115,8 +117,15 @@ function ThemePreviewContent() {
     <Space wrap>
       <Button type="primary">主操作</Button><Button>次操作</Button>
       <Button danger>危险操作</Button><Button disabled>禁用</Button>
+      <Button type="link">主题链接</Button>
       <Button onClick={() => modal.confirm({ title: '主题确认弹窗', content: '检查按钮与页面主题是否一致' })}>打开弹窗</Button>
     </Space>
+    <h3>分类筛选</h3>
+    <Segmented options={categories} value={category} onChange={setCategory} />
+    <p>当前分类：{category}</p>
+    <Radio.Group value={category} onChange={event => setCategory(event.target.value)} optionType="button" options={categories} />
+    <h3>内容视图</h3>
+    <Tabs items={[{key:'works',label:'作品',children:'作品内容'}, {key:'albums',label:'相册',children:'相册内容'}, {key:'disabled',label:'暂不可用',disabled:true}]} />
   </section>;
 }
 function YidaComp() {

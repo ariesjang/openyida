@@ -526,6 +526,7 @@ function printManifestCommandHelp(commandName) {
   printCommandUsage(...entries.flatMap((entry) => [
     entry.usage,
     entry.description,
+    ...(entry.notes || []),
     ...(entry.examples || []),
   ]));
   return true;
@@ -697,7 +698,10 @@ async function main() {
         console.log(JSON.stringify(listAuthProfiles(buildTokenLoginOptions(authArgs)), null, 2));
       } else if (subCommand === 'profile') {
         const profileSubCommand = authArgs[0];
-        if (profileSubCommand === 'switch') {
+        if (profileSubCommand === 'list') {
+          const { listAuthProfiles } = require('../lib/auth/profile');
+          console.log(JSON.stringify(listAuthProfiles(buildTokenLoginOptions(authArgs.slice(1))), null, 2));
+        } else if (profileSubCommand === 'switch') {
           const target = getFirstPositionalArg(authArgs, 1);
           const { switchAuthProfile } = require('../lib/auth/profile');
           console.log(JSON.stringify(switchAuthProfile(target, buildTokenLoginOptions(authArgs)), null, 2));
@@ -797,6 +801,12 @@ async function main() {
 
     case 'check-prd-completeness': {
       const { run } = require('../lib/app/check-prd-completeness');
+      await run(args);
+      break;
+    }
+
+    case 'check-design': {
+      const { run } = require('../lib/design/check-design');
       await run(args);
       break;
     }
@@ -1012,9 +1022,6 @@ async function main() {
     }
 
     case 'create-process': {
-      if (args.length < 2) {
-        throwCliUsage(t('cli.create_process_usage'), t('cli.create_process_example'));
-      }
       const { run: runCreateProcess } = require('../lib/process/create-process');
       await runCreateProcess(args);
       break;

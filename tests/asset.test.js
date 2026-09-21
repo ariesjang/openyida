@@ -102,7 +102,7 @@ describe('host asset capabilities', () => {
     expect(local.online_search.available).toBe(true);
     expect(local.image_search.available).toBe(true);
     expect(local.image_generation.available).toBe(true);
-    expect(local.requires_host_tool_inventory_check).toBe(false);
+    expect(local.requires_host_tool_inventory_check).toBe(true);
   });
 
   test('accepts explicit independent declarations ahead of runtime defaults', () => {
@@ -118,7 +118,7 @@ describe('host asset capabilities', () => {
     expect(capabilities.online_search.available).toBe(true);
     expect(capabilities.image_search.available).toBe(false);
     expect(capabilities.image_generation.available).toBe(true);
-    expect(capabilities.requires_host_tool_inventory_check).toBe(false);
+    expect(capabilities.requires_host_tool_inventory_check).toBe(true);
     expect(readDeclaredCapability('unexpected').status).toBe('unknown');
   });
 
@@ -190,7 +190,7 @@ describe('ai-image (honest, agent-delegated image sourcing)', () => {
       expect(typeof lib.site).toBe('string');
       expect(typeof lib.deliveryPolicy).toBe('string');
     });
-    expect(libs.find((lib) => lib.name === 'Unsplash').deliveryPolicy).toContain('宜搭附件');
+    expect(libs.find((lib) => lib.name === 'Unsplash').deliveryPolicy).toContain('直接使用 API 返回的图片地址');
     // returned as copies, not the internal objects
     libs[0].name = 'MUTATED';
     expect(getFreeStockLibraries()[0].name).not.toBe('MUTATED');
@@ -203,7 +203,7 @@ describe('ai-image (honest, agent-delegated image sourcing)', () => {
     expect(g.libraries.length).toBeGreaterThan(0);
     const rulesText = g.rules.join('\n');
     expect(rulesText).toContain('不编造图片 URL');
-    expect(rulesText).toContain('宜搭图片附件');
+    expect(rulesText).toContain('允许外链的图片经格式和尺寸检查后直接使用');
     expect(rulesText).toContain('联网搜图仅使用 Unsplash / Pexels');
   });
 });
@@ -271,16 +271,16 @@ describe('resolveOne (controlled ctx, no network)', () => {
   });
 
   test('stock providers default to Yida attachment delivery', () => {
-    expect(getExternalDeliveryPolicy('https://images.unsplash.com/photo-1')).toBe('yida-attachment');
-    expect(getExternalDeliveryPolicy('https://images.pexels.com/photos/1/x.jpg')).toBe('yida-attachment');
+    expect(getExternalDeliveryPolicy('https://images.unsplash.com/photo-1')).toBe('original-url');
+    expect(getExternalDeliveryPolicy('https://images.pexels.com/photos/1/x.jpg')).toBe('original-url');
   });
 
-  test('collected images download and upload without an opt-in flag', async () => {
+  test('collected images use verified direct URLs without downloading or uploading', async () => {
     const ctx = uploadedImageContext();
     const r = await resolveOne('https://images.unsplash.com/photo-1', ctx);
-    expect(r).toMatchObject({ resolved: true, source: 'yida-attachment', reason: 'OK' });
-    expect(ctx.downloadFn).toHaveBeenCalledTimes(1);
-    expect(ctx.uploadFn).toHaveBeenCalledTimes(1);
+    expect(r).toMatchObject({ resolved: true, source: 'external', reason: 'OK_DIRECT' });
+    expect(ctx.downloadFn).not.toHaveBeenCalled();
+    expect(ctx.uploadFn).not.toHaveBeenCalled();
   });
 
   test('default stock collection blocks Pixabay before URL verification', async () => {
@@ -375,6 +375,7 @@ describe('resolveOne (controlled ctx, no network)', () => {
       const result = await resolveOne(tmp, {
         assetSource: 'search',
         provider: 'unsplash',
+        rehostAllowed: true,
         online: true,
         canUpload: true,
         uploadFn,
@@ -389,6 +390,14 @@ describe('resolveOne (controlled ctx, no network)', () => {
 });
 
 describe('asset command parsing', () => {
+  test.each(['--help', '-h'])('asset %s displays source record fields without resolving images', flag => {
+    const result = spawnSync(process.execPath, [path.join(__dirname, '..', 'bin/yida.js'), 'asset', flag], { encoding: 'utf8' });
+    expect(result.status).toBe(0);
+    for (const field of ['assetId', 'creator', 'sourcePage', 'licenseUrl', 'licenseCheckedAt', 'authorizationEvidence']) {
+      expect(result.stdout).toContain(field);
+    }
+  });
+
   test('resolve accepts a generic slot', () => {
     const parsed = parseAssetArgs([
       'resolve',

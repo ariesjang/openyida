@@ -13,11 +13,27 @@ module.exports = {
     invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
     readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
   },
+  design_document: {
+    update_conflict: "{0} ({1}) अपडेट नहीं हो सका: मौजूदा सामग्री पिछले जनरेट किए गए संस्करण से टकराती है। इस भाग के स्थानीय बदलावों को योजना के डेटा से मिलाएँ और फिर कोशिश करें। कोई फ़ाइल सेव नहीं हुई।",
+    theme_css_invalid: 'थीम CSS में पंक्ति {0} के पास कोई बंद न किया गया या बेमेल कोष्ठक, स्ट्रिंग या टिप्पणी है। सुधार कर फिर प्रयास करें।',
+    invalid: 'डिज़ाइन सत्यापन विफल: {0} ({1})',
+    yaml: 'डिज़ाइन दस्तावेज़ का frontmatter मान्य YAML नहीं है',
+    token_value: 'टोकन {0} का मान निर्धारित एकल-पंक्ति CSS मान होना चाहिए',
+    token_conflict: 'टोकन {0} में दोहराए गए या विरोधी मान हैं',
+    tokens_required: 'design.md में टोकन वाला frontmatter आवश्यक है',
+    brand_required: 'design.md में ब्रांड टोकन मौजूद नहीं हैं: {0}',
+    usage: 'उपयोग: openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]',
+    read_error: 'डिज़ाइन सत्यापन फ़ाइल नहीं पढ़ी जा सकती: {0}',
+    checked: 'डिज़ाइन सत्यापन सफल: {0}; {1} पृष्ठ, {2} टोकन',
+  },
   asset: {
+    sourceRecords: '--input के assets[] में assetId, creator, sourcePage, license, licenseUrl, licenseCheckedAt (YYYY-MM-DD) और authorizationEvidence (प्रमाण के URL या फ़ाइल पथ का ऐरे) दर्ज करें। सूची ये रिकॉर्ड सुरक्षित रखती है; अनुपलब्ध मान खाली रहते हैं। यह व्यावसायिक अनुमति का स्वतः प्रमाण नहीं है।',
+    executionReview: 'सामग्री निष्पादन के प्रमाण की समीक्षा करें: {0}। पृष्ठभूमि कार्य की पुष्टि, व्यावसायिक कार्य अवधि और समकालिक विकल्प के कारण जाँचें।',
     localFileUnavailable: "चित्र फ़ाइल नहीं मिली: {0}। कमांड की कार्य निर्देशिका जाँचें या पूर्ण पथ दें।",
     invalidStrategy: "चित्र आवश्यकताएँ एक ऑब्जेक्ट में दें, जिसमें हर पृष्ठ के चित्र स्थान हों।",
   },
   help: {
+    cmd_check_design: 'डिज़ाइन दस्तावेज़, थीम चर और PRD हस्तांतरण सत्यापित करें',
     subtitle: 'Yida के लिए AI-संचालित लो-कोड विकास उपकरण',
     usage: 'उपयोग:',
     alias: 'उपनाम:',
@@ -36,8 +52,8 @@ module.exports = {
     design_plan_preview_invalid: 'मसौदा अपडेट विफल; त्रुटि विवरण देखें',
     cmd_design_plan_catalog: 'योजना के लिए उपलब्ध थीम और पेज पैटर्न दिखाएँ',
     cmd_design_plan_init: 'पुष्टि की गई आवश्यकताओं से योजना का मसौदा बनाएँ',
-    cmd_design_plan_materialize: 'build-plan.json से योजना आउटपुट बनाएं और जाँचें',
-    cmd_design_plan_patch: 'फ़ील्ड पथ से योजना बदलें और पुरानी पुष्टि अमान्य करें',
+    cmd_design_plan_materialize: "योजना दस्तावेज़ और थीम बनाएँ या अपडेट करें और संगति जाँचें",
+    cmd_design_plan_patch: "योजना के फ़ील्ड बदलें और ज़रूरत पर दस्तावेज़ व थीम सिंक करें",
     cmd_update_app: 'ऐप जानकारी अपडेट करें',
     cmd_app_online: 'Yida ऐप सक्षम करें',
     cmd_app_offline: 'Yida ऐप अक्षम करें',
@@ -67,6 +83,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: 'डेटा & अनुमतियां',
     cmd_data: 'एकीकृत डेटा प्रबंधन (फॉर्म/प्रक्रिया/कार्य/उप-फॉर्म)',
+    data_notes: "DateField में मिलीसेकंड का संख्यात्मक Unix टाइमस्टैम्प और CascadeDateField में उनका ऐरे दें। व्यावसायिक समय क्षेत्र के अनुसार बदलें; तारीख की स्ट्रिंग और सेकंड मान स्वीकार नहीं हैं। --resolve-aliases केवल फ़ील्ड नाम बदलता है।",
     cmd_task_center: 'वैश्विक कार्य केंद्र (लंबित/संसाधित/CC आदि)',
     cmd_basic_info: 'संगठन की मूल जानकारी, क्षमता, कोटा और डोमेन देखें',
     cmd_read_dingtalk_doc: 'DingTalk दस्तावेज़ की Markdown सामग्री प्राप्त करें',
@@ -78,6 +95,7 @@ module.exports = {
     group_process: 'प्रक्रिया',
     cmd_configure_process: 'प्रक्रिया नियम कॉन्फ़िगर और प्रकाशित करें; JSON nodes[].actions.normalActions/appendActions से अनुमोदक जोड़ें और अग्रेषित करें',
     cmd_create_process: 'प्रक्रिया फॉर्म बनाएं (एकीकृत); JSON nodes[].actions.normalActions/appendActions से अनुमोदक जोड़ें और अग्रेषित करें',
+    create_process_notes: "formMode=create|reuse नए और पुनः उपयोग किए गए फ़ॉर्म में अंतर बताता है। पुनः उपयोग पर formTitle और fieldCount null (पूछे नहीं गए) होते हैं; नए फ़ॉर्म पर नाम और फ़ील्ड संख्या लौटती है। कॉन्फ़िगरेशन विफल होने पर भी यही नियम है। परिणाम के लिए success और verificationLevel देखें। --replace केवल स्पष्ट अनुमति से मौजूदा ड्राफ़्ट या प्रकाशित प्रक्रिया को पूरा बदलने के लिए है।",
     cmd_ai_form_setting: 'Manage process form AI approval prompts',
     cmd_process_preview: 'प्रक्रिया इंस्टेंस पूर्वावलोकन (फ्लोचार्ट)',
     group_share: 'पेज कॉन्फ़िगरेशन & शेयरिंग',
@@ -161,6 +179,10 @@ module.exports = {
   },
 
   cli: {
+    design_plan_entry_mode_required: 'उपयोग का तरीका चुनें: साझा कार्य पृष्ठ (unified), उपयोगकर्ता और कार्य प्रबंधन के अलग पृष्ठ (service-management), केवल उपयोगकर्ता पृष्ठ (frontend-only), या केवल कार्य प्रबंधन पृष्ठ (backend-only)।',
+    design_plan_backend_only_roles: 'backend-only में प्रत्येक प्रवेश बिंदु का role management होना चाहिए।',
+    design_plan_local_menu_binding: 'स्थानीय मेनू {0} को होस्ट पेज और viewKey चाहिए: प्रवेश {1} का sceneKey पेज के sceneKey से, resource पेज के name से मेल खाए और viewKey खाली न हो। यह सभी भूमिकाओं पर लागू है।',
+    design_plan_visual_object_required: '{0} एक ऑब्जेक्ट होना चाहिए, स्ट्रिंग या ऐरे नहीं। init द्वारा बनाई संरचना बनाए रखें और मान भरें। उदाहरण: {1}।',
     help: '\n' +
       'openyida - Yida CLI Tool\n' +
       '\n' +
@@ -205,7 +227,7 @@ module.exports = {
       '  get-permission <appType> <formUuid>                          Query form permission config\n' +
       '  save-permission <appType> <formUuid> [--data-permission <json>] [--action-permission <json>]  Save form permission config\n' +
       '  configure-process <appType> <formUuid> <processDefinitionFile> [processCode] [--replace]  Configure and publish process\n' +
-      '  create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>  Create process form (all-in-one)\n' +
+      '  create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]  Create process form (all-in-one)\n' +
       '  create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]         Reuse existing form for process\n' +
       '  connector list [options]                                     List HTTP connectors\n' +
       '  connector create "<name>" "<domain>" --operations <file> [options]  Create connector\n' +
@@ -297,7 +319,7 @@ module.exports = {
     integration_enable_example: 'उदाहरण: openyida integration enable APP_XXX FORM-XXX LPROC-XXX',
     integration_disable_usage: 'उपयोग: openyida integration disable <appType> <formUuid> <processCode>',
     integration_disable_example: 'उदाहरण: openyida integration disable APP_XXX FORM-XXX LPROC-XXX',
-    compile_usage: 'उपयोग: openyida compile <sourceFile>',
+    compile_usage: 'उपयोग: openyida compile <sourceFile> [--canvas] [--compat] [--skip-lint] [--json]',
     compile_example: 'उदाहरण: openyida compile pages/src/home.oyd.jsx',
     check_page_usage: 'Usage: openyida check-page <sourceFile> [--compat] [--json]',
     check_page_example: 'Example: openyida check-page pages/src/home.oyd.jsx --json',
@@ -305,7 +327,7 @@ module.exports = {
     generate_page_example: 'Example: openyida generate-page product-homepage --brand-name OpenKuma --brand-initials OK --theme-scope page --output pages/src/home.canvas.jsx --compile',
     build_page_usage: 'Usage: openyida build-page <sourceFile> [--output pages/build/page.yida.jsx|--write] [--json]',
     build_page_example: 'Example: openyida build-page pages/src/dashboard.oyd.jsx --output pages/build/dashboard.yida.jsx',
-    publish_usage: 'Usage: openyida publish <sourceFile> <appType> <formUuid> [--health-check] [--canvas] [--auto-nav-order]',
+    publish_usage: 'Usage: openyida publish <sourceFile> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]',
     publish_example: 'Example: openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
@@ -329,7 +351,7 @@ module.exports = {
     import_example2: '        openyida import ./yida-export.json "Quality System (Production)"',
     configure_process_usage: 'Usage: openyida configure-process <appType> <formUuid> <processDefinitionFile> [processCode] [--replace]',
     configure_process_example: 'Example: openyida configure-process "APP_XXX" "FORM-YYY" .cache/openyida/process/process-definition.json',
-    create_process_usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>\n' +
+    create_process_usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]\n' +
       '        openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]',
     create_process_example: 'Example: openyida create-process "APP_XXX" "Order Form" .cache/openyida/process/fields.json .cache/openyida/process/process-definition.json',
     process_usage: 'Usage: openyida process <subcommand>\n' +
@@ -697,7 +719,7 @@ module.exports = {
   },
   create_page: {
     title: '  create-page - Yida कस्टम पेज निर्माण टूल',
-    usage: 'उपयोग: openyida create-page <appType> <पेज नाम> [--mode dashboard] [--hide-nav]',
+    usage: 'उपयोग: openyida create-page <appType> <पेज नाम> [--mode dashboard] [--hide-nav] [--locale zh_CN|en_US|ja_JP] [--open|--no-open]',
     example: 'उदाहरण: openyida create-page APP_XXX "Dashboard" --mode dashboard',
     app_id: '\n  ऐप ID:    {0}',
     page_name: '  पेज नाम: {0}',
@@ -707,6 +729,7 @@ module.exports = {
     step_dashboard_config: '\n🖥️  Step 3: Configure hidden navigation',
     dashboard_config_ok: '  ✅ Navigation hidden by explicit request, chromeless custom URL enabled',
     dashboard_config_failed: '  ⚠️  Hidden navigation config failed: {0}',
+    navigation_unverified: 'पेज बन गया है, लेकिन सेटिंग दोबारा पढ़ने पर नेविगेशन छिपा होने की पुष्टि नहीं हुई। लौटाई गई pageId की सेटिंग सुधारें और जाँचें; दूसरा पेज न बनाएँ।',
     err_mode_invalid: 'Unsupported page mode: {0}',
     mode_hint: 'Available modes: default, dashboard. Navigation is visible by default; pass --hide-nav or --render-nav false to hide it.',
     page_id_label: '  pageId: {0}',
@@ -754,6 +777,7 @@ module.exports = {
     no_login: '  ❌ Unable to get valid login credentials'
   },
   create_form: {
+    divider_type_invalid: 'असमर्थित विभाजक शैली: {0}। समर्थित मान: {1}',
     batch_invalid: 'अमान्य फ़ॉर्म बैच; त्रुटि विवरण देखें',
     create_title: '  yida-create-form-page - Yida Form Page Creation Tool',
     update_title: '  yida-create-form-page - Yida Form Page Update Tool',
@@ -1029,6 +1053,7 @@ module.exports = {
     theme_preset_conflict: 'प्रीसेट colour को CSS या themeColor के साथ नहीं भेज सकते। --colour custom उपयोग करें या --colour छोड़ दें।',
     custom_theme_color_required: 'colour=custom के लिए थीम फ़ाइल या मान्य themeColor चाहिए। --theme-file या --theme-color दें।',
     theme_not_persisted: 'सहेजने के बाद ऐप की थीम सेटिंग की पुष्टि नहीं हो सकी। themeVerification जाँचें और update-app <appType> --theme-file <css> से पुनः प्रयास करें; ऐप दोबारा न बनाएँ।',
+    navigation_not_persisted: "नेविगेशन सेटिंग दोबारा पढ़ी नहीं जा सकीं या अनुरोधित मानों से मेल नहीं खातीं। navigationVerification में अपेक्षित मान, वास्तविक मान और पढ़ने की त्रुटियाँ देखें, फिर ऐप की वर्तमान सेटिंग जाँचें।",
     usage: 'Usage: openyida update-app <appType> [--name "New Name"] [--desc "Description"] [--layout slide|ver] [--theme deepBlue]',
     example: 'Example: openyida update-app APP_XXX --name "New App Name" --layout ver --theme deepBlue',
     options: 'Options:\n' +
@@ -1066,6 +1091,7 @@ module.exports = {
     offline_success: 'ऐप अक्षम किया गया',
   },
   create_process: {
+    invalid_argument: "तर्क {0} अनुपस्थित या अमान्य है। नीचे दिए सिंटैक्स के अनुसार सुधारें।",
     title: 'Yida Process Form Creation',
     app_id: 'App ID',
     mode: 'Mode',
@@ -1094,12 +1120,13 @@ module.exports = {
     manual_hint: 'Please configure the process manually in Yida admin. Form UUID: {0}',
     configuring_process: 'Configuring and publishing process',
     configure_failed: 'Failed to configure process',
+    preserve_existing_form: "मूल फ़ॉर्म मौजूद है। formUuid से उसकी स्थिति और विफलता का कारण केवल पढ़कर जाँचें और उसे बनाए रखें। पुनर्प्राप्ति के लिए --formUuid न हटाएँ, फ़ॉर्म दोबारा न बनाएँ और उसी नाम का नया फ़ॉर्म न बनाएँ। noWriteRetry=true होने पर लिखने का पुनः प्रयास न करें।",
     retry_hint: 'Process configuration failed, but the form was created. Fix the process definition and retry with this command:',
     fields_not_found: 'Fields definition file not found',
     process_def_not_found: 'Process definition file not found',
     done: 'Process form creation completed',
     url: 'URL',
-    usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile>',
+    usage: 'Usage: openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace]',
     usage2: '       openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]',
     example: 'Example: openyida create-process "APP_XXX" "Order Form" .cache/openyida/process/fields.json .cache/openyida/process/process-definition.json',
     example2: '         openyida create-process "APP_XXX" --formUuid FORM-YYY .cache/openyida/process/process-definition.json'
@@ -1264,6 +1291,11 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_path_missing_app_type: 'पंक्ति {0}: नेविगेशन में appType नहीं है। canvas-navigation और सत्यापित ID से /{appType}/{pageType}/{formUuid} बनाएँ; केवल /custom/ पथ न दें।',
+    canvas_theme_fixed_brand: 'पंक्ति {0}: ConfigProvider में ब्रांड रंग स्थिर है। canvas-theme से प्राप्त थीम रंग उपयोग करें; CSS var सीधे केवल DOM स्टाइल में दें।',
+    canvas_navigation_local_platform: 'पंक्ति {0}: स्थानीय व्यू प्लेटफ़ॉर्म मेनू से फ़िल्टर हो रहे हैं। mode=local या स्थानीय स्टेट उपयोग करें; वास्तविक पेजों को formUuid/navUuid से जोड़ें और घोषित अनुमतियाँ जाँचें।',
+    canvas_navigation_document_flex: 'पंक्ति {0}: document में शून्य आधार वाला flex है। canvas-nav-content अपडेट करें: document के लिए प्राकृतिक ऊँचाई और ब्लॉक, workspace के लिए निश्चित ऊँचाई वाला flex।',
+    canvas_theme_not_assembled: 'पंक्ति {0} का थीम मार्कर अभी तैयार नहीं हुआ है। build-canvas-theme.js चलाएँ और अलग आउटपुट फ़ाइल को कंपाइल/प्रकाशित करें। एकीकृत Provider वाले पेजों को इस मार्कर की आवश्यकता नहीं है।',
     canvas_theme_provider_missing: 'पंक्ति {0} के पास थीम प्रदाता जुड़ा नहीं है। YidaComp से <CanvasThemeProvider><PageContent /></CanvasThemeProvider> लौटाएँ।',
     canvas_theme_root_hook: 'पंक्ति {0} के पास प्रदाता सक्रिय होने से पहले थीम पढ़ी जा रही है। useCanvasThemeContext को PageContent में ले जाएँ और उसे CanvasThemeProvider के भीतर रेंडर करें।',
     canvas_theme_context_scope: 'पंक्ति {0} के पास CanvasThemeContext फ़ंक्शन के भीतर घोषित है। संदर्भ और प्रदाता को मॉड्यूल स्तर पर घोषित करें।',
@@ -1305,6 +1337,7 @@ module.exports = {
     lint_emoji_forbidden: 'Found emoji "{0}". OpenYida generated artifacts must not use emoji in UI copy, source comments, file paths, or code constants; use plain text, SVG, or icon components instead.',
     lint_searchformdata_http_post: 'searchFormDatas.json को सीधे call करते समय GET + query params ज़रूरी है (formUuid/appType को URL query में रखें)। POST में formUuid को body में डालने पर «参数校验失败formUuid» error आता है और dashboard/list सब 0 दिखते हैं',
     lint_searchformdata_http_pagenumber: 'searchFormDatas.json का pagination param currentPage है (pageNumber नहीं); pageNumber से pagination टूट जाता है',
+    lint_searchformdata_bridge_unwrap: 'Yida searchFormDatas में पंक्तियाँ payload.data और कुल संख्या payload.totalCount में होती हैं। केवल payload.data.data न पढ़ें; ऐरे को सामान्यीकृत करें और पृष्ठांकन के लिए currentPage का उपयोग करें। yida-canvas-data-binding देखें।',
     lint_searchformdata_http_unwrap: 'Browser की searchFormDatas.json response में list content.data में nested होती है ({ content: { data: [...] } }); सिर्फ json.data पढ़ने पर 0 rows मिलते हैं — (json.content && json.content.data) से unwrap करें',
     lint_searchformdata_dynamic_order_metadata: 'searchFormDatas.dynamicOrder रिकॉर्ड metadata field {0} का उपयोग नहीं कर सकता; get-schema से मिला वास्तविक business field ID इस्तेमाल करें। यदि sortable business date field नहीं है, तो dynamicOrder हटाएँ और केवल प्राप्त page को display के लिए row.createTime से sort करें',
     lint_setstate_non_timestamp: 'this.setState non-timestamp field लिखता है। Custom page business state _customState में होना चाहिए और forceUpdate()/setCustomState() से update होना चाहिए; this.setState में केवल timestamp contract field होना चाहिए',
@@ -1356,6 +1389,7 @@ module.exports = {
     canvas_compiling: '  🎨 कस्टम पेज स्रोत को स्थानीय रूप से संकलित किया जा रहा है...',
     canvas_compile_done: '  ✅ कस्टम पेज संकलित!',
     canvas_compile_failed: '  ❌ कस्टम पेज संकलन विफल: {0}',
+    canvas_icon_export_unavailable: 'पंक्ति {2}: Yida रनटाइम आइकन लाइब्रेरी {0}, {1} एक्सपोर्ट नहीं करती। समर्थित आइकन चुनें और फिर से कंपाइल करें। विकल्प: {3}।',
     canvas_unbound_identifiers: 'Code Canvas स्रोत में अघोषित पहचानकर्ता हैं: {0}। उसी फ़ाइल में छूटा हुआ import, फ़ंक्शन, Ref, state या स्थानीय चर घोषित करें और सभी संदर्भों में वही नाम रखें। यदि पहचानकर्ता किसी गैर-मानक runtime से मिलता है, तो window.<name> या parentWindow.<name> से स्पष्ट रूप से पहुँचें और पहले उसके मौजूद होने की जाँच करें।',
     canvas_instance_api_unavailable: 'Code Canvas कॉम्पोनेंट इन प्लेटफ़ॉर्म JSX इंस्टेंस API का उपयोग नहीं कर सकते: {0}। React hooks, props या window.__OPENYIDA_YIDA_API__ डेटा ब्रिज का उपयोग करें।',
     step_login: '\n🔑 Step 2: लॉगिन जानकारी पढ़ें',
@@ -1381,7 +1415,7 @@ module.exports = {
     error: '\n❌ Publish error: {0}',
     source_not_found: '❌ स्रोत फ़ाइल नहीं मिली: {0}',
     source_path_hint: '💡 इस स्रोत फ़ाइल पथ को आज़माएँ: {0}',
-    usage: 'उपयोग: openyida publish <स्रोतफ़ाइल> <appType> <formUuid> [--health-check] [--canvas] [--auto-nav-order]',
+    usage: 'उपयोग: openyida publish <स्रोतफ़ाइल> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]',
     example: 'उदाहरण: openyida publish pages/src/xxx.js APP_XXX FORM-XXX --health-check --auto-nav-order'
   },
   qr_login: {
@@ -1967,7 +2001,7 @@ Object.assign(module.exports.save_share_config || (module.exports.save_share_con
 
 Object.assign(module.exports.publish || (module.exports.publish = {}), {
   lint_jsx_text_identifier: 'JSX कॉपी {{0}} के रूप में लिखा नहीं जा सकता; इसे एक चर के रूप में माना जाता है और {0} परिभाषित नहीं है। साधारण टेक्स्ट {0} या उद्धृत शब्द {\'{0}\'} का उपयोग करें इसके बजाय।',
-  lint_form_open_container: 'कस्टम पेज से Yida फॉर्म सबमिशन/विस्तार पृष्ठ खोलने के लिए FormOpenContainer का उपयोग करना चाहिए: डेस्कटॉप पर एक 50vw ड्रायर iframe, और मोबाइल पर केवल पूरा/नया पृष्ठ। बटन हैंडल openForm({ type: "submission" | "detail", ... }) को कॉल करनी चाहिए।',
+  lint_form_open_container: 'फ़ॉर्म सबमिशन/विवरण के लिए पूरा ड्रॉअर टेम्पलेट आवश्यक है: openyida sample openyida-page-template form-open-container। CanvasDrawer, FormOpenContainer और useYidaFormOpen जोड़ें, openForm कॉल करें और formOpenContainer रेंडर करें। डेस्कटॉप पर iframe ड्रॉअर और मोबाइल पर टेम्पलेट का व्यवहार रखें; सामान्य लिंक या अपने पॉपअप से न बदलें।',
   lint_form_detail_link: 'Yida फॉर्म विस्तार पृष्ठ एक वास्तविक formInstId का उपयोग करना चाहिए: पहले row.formInstId पढ़ें, और instance id की कमी होने पर बंद या चेतावन दें, खाली formInstId के साथ एक formDetail लिंक खोलने के बजाय।',
   lint_searchformdata_http_path: 'एक सीधा searchFormDatas.json कॉल /dingtalk/web/<appType>/v1/form/searchFormDatas.json का उपयोग करना चाहिए; /query/form/searchFormDatas.json एक वैध फॉर्म डेटा एंडपॉइंट नहीं है',
   lint_searchformdata_http_query_params: 'सीधा searchFormDatas.json URL प्रश्न आवश्यक पैरामीटर्स की कमी रखता है: {0}। appType, formUuid, currentPage, pageSize और searchFieldJson के साथ URLSearchParams का उपयोग करें',
@@ -2032,7 +2066,8 @@ Object.assign(module.exports.create_process || (module.exports.create_process = 
   login_required: 'कोई मान्य Yida लॉगिन सत्र नहीं मिला। पहले openyida login चलाएँ।',
 });
 module.exports.connector_test = {
-  usage: 'Usage: openyida connector test --connector-id <id> --action <actionId> [structured JSON options] [--account-id <id>] [--json]',
+  usage: 'Usage: openyida connector test --connector-id <id> --action <actionId> [structured JSON options] [--account-id <id>] [--ignore-defaults] [--json]',
+  ignore_defaults_system_token_warning: '--ignore-defaults के माध्यम से सहेजे गए डिफ़ॉल्ट पैरामीटर मानों को अनदेखा किया गया है (उनमें गैर-रिक्त systemToken है और इस रन में उपयोग नहीं किया जाता); उत्पादन उपयोग से पहले डिज़ाइनर में कार्रवाई के डिफ़ॉल्ट साफ़ करें।',
   invalid_json: '{0} is not valid JSON: {1}', json_object_required: '{0} must be a JSON object',
   unknown_flat_param: 'Parameter {0} is not in the action schema; use structured JSON options', ambiguous_flat_param: 'Parameter {0} belongs to multiple locations; use structured JSON options',
   auth_account_required: 'This connector requires an owned auth account passed with --account-id', auth_account_not_owned: 'Account {0} does not belong to this connector',
@@ -2063,3 +2098,10 @@ module.exports.help.cmd_connector_update_action = connectorSafetyMessages.help.c
 Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
   action_config_invalid: 'नोड {0} के लिए अमान्य अनुमोदन कार्रवाई कॉन्फ़िगरेशन: {1}',
 });
+
+module.exports.cli_argument = { invalid: 'अमान्य तर्क या मान गायब है: {0}। कमांड की सहायता देखें।' };
+
+module.exports.sample_options = {
+  'theme_help': 'app-theme: --output एक CSS फ़ाइल है; --design-file पूर्ण डिज़ाइन पढ़ता है। इसे छोड़ने पर CSS रीसेट होता है। थीम के मान डिज़ाइन में भरें।',
+  'style_help': 'application-style: --style-id आवश्यक है और सभी कैटलॉग थीम स्वीकार करता है; --output तीन फ़ाइलों की डायरेक्टरी है। मौजूदा फ़ाइलों पर त्रुटि आती है।'
+};

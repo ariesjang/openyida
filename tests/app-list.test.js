@@ -85,11 +85,37 @@ describe('run() 正常查询', () => {
       appName: '测试应用',
       appType: 'APP_TEST001',
       systemLink: 'https://www.aliwork.com/APP_TEST001/workbench',
+      appUrl: 'https://www.aliwork.com/APP_TEST001/workbench',
+      workbenchUrl: 'https://www.aliwork.com/APP_TEST001/workbench',
+      adminUrl: 'https://www.aliwork.com/APP_TEST001/admin',
     });
     expect(output[1].appName).toBe('应用B');
 
     mockLog.mockRestore();
     mockError.mockRestore();
+  });
+
+  test('已登记的访问入口与主干的工作台、开发后台地址同时保留', async () => {
+    const accessEntries = {
+      frontend: { url: 'https://www.aliwork.com/o/public-home' },
+      management: { url: 'https://www.aliwork.com/APP_TEST001/workbench/FORM-TASKS?viewUuid=VIEW' },
+    };
+    utils.httpGet.mockResolvedValueOnce({
+      success: true,
+      content: { data: [makeApp({ accessEntries })], totalCount: 1 },
+    });
+    const mockLog = jest.spyOn(console, 'log').mockImplementation(() => {});
+    try {
+      await run([]);
+      expect(JSON.parse(mockLog.mock.calls[0][0])[0]).toEqual(expect.objectContaining({
+        accessEntries,
+        appUrl: 'https://www.aliwork.com/APP_TEST001/workbench',
+        workbenchUrl: 'https://www.aliwork.com/APP_TEST001/workbench',
+        adminUrl: 'https://www.aliwork.com/APP_TEST001/admin',
+      }));
+    } finally {
+      mockLog.mockRestore();
+    }
   });
 
   test('结果超过一页时仅返回当前页并提示下一页命令', async () => {
