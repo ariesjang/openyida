@@ -24,7 +24,8 @@ const path = require('path');
 const MAX_TARBALL_BYTES = 2128 * 1024;
 const MAX_UNPACKED_BYTES = 8000 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
-const MAX_ENTRY_COUNT = 602;
+// app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
+const MAX_ENTRY_COUNT = 605;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
