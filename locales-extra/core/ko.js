@@ -12,6 +12,9 @@ module.exports = {
     invalid_url: '현재 앱의 페이지, 공개 페이지 또는 단축 링크에 대한 완전한 http:// 또는 https:// URL을 입력하세요. 상대 경로, 디자이너 URL 및 임시 인증 매개변수는 지원하지 않습니다.',
     invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
     readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+    downgrade_workbench: 'The business backend entry was normalized to the /workbench root as required by the platform (page segment {0} was dropped).',
+    page_not_in_app: 'Page {0} does not belong to this application and cannot be registered as an entry; confirm ownership with list-forms.',
+    page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
     rebase_required: '최초 생성 전에는 business.json/visual.json을 수정하세요. 원본 계획이 변경되었다면 파일을 유지하고 기존 명령에 --rebase-parts를 추가하세요.',

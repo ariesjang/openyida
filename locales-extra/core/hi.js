@@ -12,6 +12,9 @@ module.exports = {
     invalid_url: 'वर्तमान ऐप के पेज, सार्वजनिक पेज या छोटे लिंक का पूरा http:// या https:// URL दें। सापेक्ष पथ, डिज़ाइनर URL और अस्थायी प्रमाणीकरण पैरामीटर समर्थित नहीं हैं।',
     invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
     readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+    downgrade_workbench: 'The business backend entry was normalized to the /workbench root as required by the platform (page segment {0} was dropped).',
+    page_not_in_app: 'Page {0} does not belong to this application and cannot be registered as an entry; confirm ownership with list-forms.',
+    page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
     rebase_required: 'पहली बार बनाने से पहले business.json/visual.json सुधारें। मुख्य योजना बदली हो तो फ़ाइलें सुरक्षित रखें और मूल कमांड में --rebase-parts जोड़ें।',

@@ -12,6 +12,9 @@ module.exports = {
     invalid_url: '現在のアプリのページ、公開ページ、短縮リンクの完全な http:// または https:// URL を入力してください。相対パス、デザイナー URL、一時認証パラメーターは使用できません。',
     invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
     readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+    downgrade_workbench: 'The business backend entry was normalized to the /workbench root as required by the platform (page segment {0} was dropped).',
+    page_not_in_app: 'Page {0} does not belong to this application and cannot be registered as an entry; confirm ownership with list-forms.',
+    page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
     rebase_required: '初回生成前は business.json/visual.json を修正してください。元計画が変わった場合はファイルを保持し、元コマンドに --rebase-parts を追加してください。',

@@ -12,6 +12,9 @@ module.exports = {
     invalid_url: '請提供目前組織、應用的完整訪問 URL（http:// 或 https://）；支援頁面地址、公開地址和短連結，不支援相對路徑、開發後台及臨時驗證參數。',
     invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
     readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+    downgrade_workbench: '業務後台入口按平台規範校正為 /workbench 根地址（已忽略頁面段 {0}）。',
+    page_not_in_app: '頁面 {0} 不屬於目前應用，無法登記為訪問入口；請用 list-forms 確認頁面歸屬。',
+    page_offline: '前台 custom 頁 {0} 尚未上線到獨立訪問地址，請先發布/上線後再登記。',
   },
   design_plan: {
     rebase_required: '首次物化前請修正 business.json/visual.json；主計劃已變更時，保留現有檔案並在原命令加入 --rebase-parts。',

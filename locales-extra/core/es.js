@@ -12,6 +12,9 @@ module.exports = {
     invalid_url: 'Indica una URL completa http:// o https:// de una página, página pública o enlace corto de la aplicación actual. No se admiten rutas relativas, URL del diseñador ni parámetros temporales de autenticación.',
     invalid_response: 'Incomplete entry response. Read the current entries before retrying and check that the server supports the entry configuration API.',
     readback_failed: 'Saved entries do not match the readback. Read and review the current entries; do not overwrite automatically.',
+    downgrade_workbench: 'The business backend entry was normalized to the /workbench root as required by the platform (page segment {0} was dropped).',
+    page_not_in_app: 'Page {0} does not belong to this application and cannot be registered as an entry; confirm ownership with list-forms.',
+    page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
     rebase_required: 'Antes de la primera generación, corrija business.json/visual.json. Si cambió el plan principal, conserve los archivos y añada --rebase-parts al comando original.',
