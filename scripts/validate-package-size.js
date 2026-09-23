@@ -28,7 +28,9 @@ const MAX_UNPACKED_BYTES = 8000 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
-const MAX_ENTRY_COUNT = 607;
+// Theme scope, brand-scale and palette validation add three runtime modules;
+// removing the application-styles/navigation-styles catalogs offsets two files.
+const MAX_ENTRY_COUNT = 608;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -57,6 +59,9 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-create-form-page/references/batch-forms.md',
   'lib/core/utils.js',
   'lib/core/source-repair.js',
+  'lib/app/theme-scope.js',
+  'lib/core/theme-brand-scale.js',
+  'lib/design/palette-contrast.js',
   'yida-skills/references/source-repair.md',
   'lib/asset/asset-plan.js',
   'lib/asset/attachment-upload.js',
