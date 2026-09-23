@@ -69,7 +69,7 @@ tokens:
       "--color-text1-5": "#FFFFFF" # neutral-gray；固定短 Tooltip 反色字
       "--color-text1-4": "#202020" # neutral-gray；标题、正文与数值
       "--color-text1-10": "#606060" # neutral-gray；表头、placeholder
-      "--color-text1-3": "#737373" # neutral-gray；二级说明和轴标签
+      "--color-text1-3": "#666666" # neutral-gray；二级说明和轴标签
       "--color-text1-2": "#ADADAD" # neutral-gray；仅禁用文字
       "--color-text1-1": "#D6D6D6" # neutral-gray；仅水印
     typography:

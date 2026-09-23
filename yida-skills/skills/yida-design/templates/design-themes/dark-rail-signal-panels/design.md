@@ -17,7 +17,7 @@ tokens:
         "--pod-shell-theme-bg-color": "#151515"
         "--pod-nav-item-text-color": "#AAAAAA"
         "--pod-nav-item-text-hover-color": "#E3E3E3"
-        "--pod-nav-item-text-selected-color": "var(--color-brand1-6)"
+        "--pod-nav-item-text-selected-color": "#F0F0F0"
         "--pod-nav-menu-bg-hover-color": "#1D1D1D"
         "--pod-nav-menu-bg-selected-color": "#242424"
         "--pod-nav-menu-item-height": "34px"
@@ -180,6 +180,8 @@ YAML 保存变量值，正文约定消费关系。局部尺寸及未展示的状
 `--color-white` 是全应用基础表面，当前跟随暗色卡片；白字使用独立前景 `--oyd-on-dark-color`，不借用基础表面或 Tooltip 前景。输入默认表面始终消费输入 Fill；汇总单元和输入当前同色，不代表二者共用语义。背景图不传递给卡片、输入或表格。
 
 ### 2.2 应用导航
+
+选中入口用近白文字承托炭灰底，不让可变主色承担正文可读性。
 
 近黑导航贴合技术面板，菜单以窄间距排列，品牌文字标出当前页面，分组与搜索沿用信号面板的细线。
 

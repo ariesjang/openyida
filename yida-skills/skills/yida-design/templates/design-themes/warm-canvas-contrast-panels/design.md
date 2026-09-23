@@ -69,7 +69,7 @@ tokens:
       "--color-text1-5": "#FFFFFF" # neutral-gray；短 Tooltip 固定反色文字
       "--color-text1-4": "<生成实际色值：--color-brand1-6 6% + #171717 94%，sRGB 逐通道混合>" # theme-gray；主题色微染主文字，保持深色可读性
       "--color-text1-10": "<生成实际色值：--color-brand1-6 6% + #666666 94%，sRGB 逐通道混合>" # theme-gray；主题色微染表头与必要说明
-      "--color-text1-3": "<生成实际色值：--color-brand1-6 5% + #808080 95%，sRGB 逐通道混合>" # theme-gray；主题色微染辅助文字
+      "--color-text1-3": "#666666" # theme-gray；主题色微染辅助文字
       "--color-text1-2": "<生成实际色值：--color-brand1-6 4% + #ADADAD 96%，sRGB 逐通道混合>" # theme-gray；仅禁用文字
       "--color-text1-1": "<生成实际色值：--color-brand1-6 4% + #D3D3D3 96%，sRGB 逐通道混合>" # theme-gray；仅水印文字
     typography:

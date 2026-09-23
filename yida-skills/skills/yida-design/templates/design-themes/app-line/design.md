@@ -35,7 +35,7 @@ tokens:
         "--input-focus-border-color": "var(--color-brand1-6)"
         "--input-hover-bg-color": "#ffffff"
         "--input-focus-bg-color": "#ffffff"
-        "--pod-form-label-color": "#242323"
+        "--pod-form-label-color": "var(--color-text1-4)"
         "--form-top-label-margin-b": "8px"
         "--yida-form-content-bgcolor": "#ffffff"
         "--pod-page-content-max-width": "680px"
@@ -56,7 +56,7 @@ tokens:
         "--pod-field-preview-border-radius": "0px"
         "--pod-field-preview-indicator-color": "var(--color-fill1-3)"
         "--pod-field-preview-shadow": "none"
-        "--pod-field-preview-text-color": "#242323"
+        "--pod-field-preview-text-color": "var(--color-text1-4)"
         "--pod-field-preview-line-height": "20px"
     colors:
       "--color-white": "var(--pod-card-bg-color)"
@@ -75,9 +75,9 @@ tokens:
       "--color-fill1-5": "#ffffff"
       "--color-fill1-10": "#262626"
       "--color-text1-5": "#FFFFFF"
-      "--color-text1-4": "#242323"
-      "--color-text1-10": "#242323"
-      "--color-text1-3": "#242323"
+      "--color-text1-4": "#30302E"
+      "--color-text1-10": "var(--color-text1-3)"
+      "--color-text1-3": "#64635E"
       "--color-text1-2": "#858781"
       "--color-text1-1": "#aaa5a0"
     typography:
@@ -158,6 +158,8 @@ themeProfile:
 ## 2. 页面视觉系统
 
 ### 2.1 表面、区块与层次
+
+正文、字段标签和详情值使用内容文字色，说明与占位文字使用辅助文字色；品牌色用于局部操作和数据强调，不把整页文字染成主色。
 
 窄幅单列、连续正文与留白章节。无浮起卡片、平面纸白、强调下划线。画布消费 --oyd-page-bg，内容消费 --oyd-surface，文字消费 --oyd-ink，边界消费 --oyd-border。内容最大宽度 --oyd-content-width，内距 --oyd-content-padding；宽屏不放大成空白 KPI 卡。
 

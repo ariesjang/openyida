@@ -6,19 +6,19 @@ tokens:
   application-global:
     appearance:
       surfaces:
-        "--pod-app-root-bg-color": "#ffde59"
+        "--pod-app-root-bg-color": "#F6F1E3"
         "--pod-app-root-bg-image": "none"
-        "--pod-page-bg-color": "#ffde59"
+        "--pod-page-bg-color": "#F6F1E3"
         "--pod-card-bg-color": "#fffdf6"
         "--pod-table-cell-color": "var(--pod-card-bg-color)"
       navigation:
         "--pod-nav-sub-divider-color": "#211C21"
-        "--pod-shell-theme-bg-color": "#FFDE59"
+        "--pod-shell-theme-bg-color": "#F4EEDB"
         "--pod-nav-item-text-color": "#211C21"
         "--pod-nav-item-text-hover-color": "#211C21"
-        "--pod-nav-item-text-selected-color": "#FFDE59"
-        "--pod-nav-menu-bg-hover-color": "#FFEFA1"
-        "--pod-nav-menu-bg-selected-color": "#211C21"
+        "--pod-nav-item-text-selected-color": "#282329"
+        "--pod-nav-menu-bg-hover-color": "#ECE3C4"
+        "--pod-nav-menu-bg-selected-color": "#E8DDB5"
         "--pod-nav-menu-item-height": "40px"
         "--pod-nav-menu-item-radius": "0px"
         "--pod-nav-menu-item-selected-font-weight": "700"
@@ -35,7 +35,7 @@ tokens:
         "--input-focus-border-color": "var(--color-brand1-6)"
         "--input-hover-bg-color": "#fffdf6"
         "--input-focus-bg-color": "#fffdf6"
-        "--pod-form-label-color": "#211c21"
+        "--pod-form-label-color": "var(--color-text1-4)"
         "--form-top-label-margin-b": "8px"
         "--yida-form-content-bgcolor": "#fffdf6"
         "--pod-page-content-max-width": "1000px"
@@ -43,7 +43,7 @@ tokens:
         "--pod-page-footer-bg-color": "#fffdf6"
         "--pod-page-footer-border-radius": "0px"
         "--pod-sticky-footer-box-shadow": "4px 4px 0 #211c21"
-        "--pod-formView-stickyFooter-bg-color": "#ffde59"
+        "--pod-formView-stickyFooter-bg-color": "#F6F1E3"
         "--pod-formView-stickyFooter-box-shadow": "none"
         "--pod-formView-stickyFooter-border": "none"
         "--pod-formView-stickyFooter-border-top": "1px solid #211c21"
@@ -56,7 +56,7 @@ tokens:
         "--pod-field-preview-border-radius": "0px"
         "--pod-field-preview-indicator-color": "var(--color-fill1-3)"
         "--pod-field-preview-shadow": "none"
-        "--pod-field-preview-text-color": "#211c21"
+        "--pod-field-preview-text-color": "var(--color-text1-4)"
         "--pod-field-preview-line-height": "20px"
     colors:
       "--color-white": "var(--pod-card-bg-color)"
@@ -69,15 +69,15 @@ tokens:
       "--color-brand1-10": "<生成实际色值：--color-brand1-6 26% + #202020 74%，sRGB 逐通道混合>"
       "--color-line1-1": "#211c21"
       "--color-line1-2": "#211c21"
-      "--color-fill1-1": "#ffde59"
-      "--color-fill1-2": "#ffde59"
+      "--color-fill1-1": "#F6F1E3"
+      "--color-fill1-2": "#ECE3C4"
       "--color-fill1-3": "#211c21"
       "--color-fill1-5": "#fffdf6"
       "--color-fill1-10": "#262626"
       "--color-text1-5": "#FFFFFF"
-      "--color-text1-4": "#211c21"
-      "--color-text1-10": "#211c21"
-      "--color-text1-3": "#211c21"
+      "--color-text1-4": "#282329"
+      "--color-text1-10": "var(--color-text1-3)"
+      "--color-text1-3": "#655C58"
       "--color-text1-2": "#858781"
       "--color-text1-1": "#211c21"
     typography:
@@ -159,11 +159,13 @@ themeProfile:
 
 ### 2.1 表面、区块与层次
 
+正文、字段标签和详情值使用内容文字色，说明与占位文字使用辅助文字色；品牌色用于局部操作和数据强调，不把整页文字染成主色。
+
 不对称二比一工作区与粗线信息带。方角、粗墨线、硬偏移阴影。画布消费 --oyd-page-bg，内容消费 --oyd-surface，文字消费 --oyd-ink，边界消费 --oyd-border。内容最大宽度 --oyd-content-width，内距 --oyd-content-padding；宽屏不放大成空白 KPI 卡。
 
 ### 2.2 应用导航
 
-明黄导航保留墨黑文字和黑底黄字选中态；方角菜单以平整色块组织入口，粉色偏移阴影和粗框留给内容焦点。
+暖白画布与淡纸色导航承托墨色文字，选中项使用柔和黄纸底。明黄、粉色与硬边图形只用于局部内容焦点，不铺满导航和业务画布。
 
 常驻导航优先沿用平台原始样式，通过主题文字、背景与字重区分状态。菜单 border、box-shadow 是可选覆盖，没有明确用途就不声明；不为了统一风格给每项加框或投影。普通入口融入同一侧栏，按连续目录组织；分组靠留白与文字层级，不把导航复制成输入框、独立按钮或卡片堆叠。内容卡片、主按钮和表单可以使用更强的形状与材质，同一主题不意味着所有组件装饰强度相同。业务确有触控或特殊展示需求时，在本 design.md 调整并验收，不在运行时限制项目自定义值。
 

@@ -14,11 +14,11 @@ tokens:
       navigation:
         "--pod-nav-sub-divider-color": "#356274"
         "--pod-shell-theme-bg-color": "#0B142B"
-        "--pod-nav-item-text-color": "#98CDCF"
+        "--pod-nav-item-text-color": "#B6C5D6"
         "--pod-nav-item-text-hover-color": "#B4F5F1"
-        "--pod-nav-item-text-selected-color": "#08121E"
+        "--pod-nav-item-text-selected-color": "#B4F5F1"
         "--pod-nav-menu-bg-hover-color": "#183149"
-        "--pod-nav-menu-bg-selected-color": "#B4F5F1"
+        "--pod-nav-menu-bg-selected-color": "#1B3542"
         "--pod-nav-menu-item-height": "40px"
         "--pod-nav-menu-item-radius": "8px"
         "--pod-nav-menu-item-selected-font-weight": "600"
@@ -35,7 +35,7 @@ tokens:
         "--input-focus-border-color": "var(--color-brand1-6)"
         "--input-hover-bg-color": "#111b31"
         "--input-focus-bg-color": "#111b31"
-        "--pod-form-label-color": "#b4f5f1"
+        "--pod-form-label-color": "#DCE6F2"
         "--form-top-label-margin-b": "8px"
         "--yida-form-content-bgcolor": "#111b31"
         "--pod-page-content-max-width": "1040px"
@@ -56,7 +56,7 @@ tokens:
         "--pod-field-preview-border-radius": "10px"
         "--pod-field-preview-indicator-color": "var(--color-fill1-3)"
         "--pod-field-preview-shadow": "none"
-        "--pod-field-preview-text-color": "#b4f5f1"
+        "--pod-field-preview-text-color": "#DCE6F2"
         "--pod-field-preview-line-height": "20px"
     colors:
       "--color-white": "var(--pod-card-bg-color)"
@@ -75,10 +75,10 @@ tokens:
       "--color-fill1-5": "#111b31"
       "--color-fill1-10": "#262626"
       "--color-text1-5": "#FFFFFF"
-      "--color-text1-4": "#b4f5f1"
-      "--color-text1-10": "#b4f5f1"
-      "--color-text1-3": "#b4f5f1"
-      "--color-text1-2": "#7f8986"
+      "--color-text1-4": "#DCE6F2"
+      "--color-text1-10": "#8798AE"
+      "--color-text1-3": "#A3B3C8"
+      "--color-text1-2": "#8798AE"
       "--color-text1-1": "#356274"
     typography:
       "--font-family-base": "Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
@@ -163,7 +163,7 @@ themeProfile:
 
 ### 2.2 应用导航
 
-深海蓝导航配青色文字，当前菜单以浅青底深字形成局部微光；搜索和弹层延续技术工作区的蓝色层次。
+深海蓝导航配灰蓝文字，当前菜单以低亮度青蓝底和浅青文字定位；正文使用分级灰白，青色只用于品牌和交互强调。搜索和弹层延续技术工作区的蓝色层次。
 
 常驻导航优先沿用平台原始样式，通过主题文字、背景与字重区分状态。菜单 border、box-shadow 是可选覆盖，没有明确用途就不声明；不为了统一风格给每项加框或投影。普通入口融入同一侧栏，按连续目录组织；分组靠留白与文字层级，不把导航复制成输入框、独立按钮或卡片堆叠。内容卡片、主按钮和表单可以使用更强的形状与材质，同一主题不意味着所有组件装饰强度相同。业务确有触控或特殊展示需求时，在本 design.md 调整并验收，不在运行时限制项目自定义值。
 

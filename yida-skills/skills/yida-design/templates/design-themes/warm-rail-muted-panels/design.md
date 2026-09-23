@@ -68,8 +68,8 @@ tokens:
       "--color-fill1-10": "#262626" # neutral-gray；短 Tooltip 固定深底
       "--color-text1-5": "#FFFFFF" # neutral-gray；短 Tooltip 固定反色文字
       "--color-text1-4": "#191919" # neutral-gray；主标题、正文、核心数值
-      "--color-text1-10": "<生成实际色值：--color-brand1-6 5% + #707070 95%，sRGB 逐通道混合>" # theme-gray；表头、placeholder 和必要说明
-      "--color-text1-3": "<生成实际色值：--color-brand1-6 5% + #878787 95%，sRGB 逐通道混合>" # theme-gray；次级说明、周期和坐标
+      "--color-text1-10": "var(--color-text1-3)" # theme-gray；表头、placeholder 和必要说明
+      "--color-text1-3": "#666666" # theme-gray；次级说明、周期和坐标
       "--color-text1-2": "<生成实际色值：--color-brand1-6 4% + #AAAAAA 96%，sRGB 逐通道混合>" # theme-gray；仅禁用文字
       "--color-text1-1": "<生成实际色值：--color-brand1-6 4% + #D7D7D7 96%，sRGB 逐通道混合>" # theme-gray；仅水印文字
     typography:

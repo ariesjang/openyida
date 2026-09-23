@@ -713,33 +713,8 @@ describe('application theme from design.md', () => {
     let withoutExtra = css.replace(rootPattern, root => root.replace(
       /^[ \t]*(--[\w-]+)\s*:[^;]+;\n/gm, (line, name) => originalNames.has(name) ? line : ''
     ));
-    const platformNavigationTokens = new Set([...template.matchAll(/(--pod-(?:nav-|shell-|page-header-)[\w-]+)\s*:/g)]
-      .map(match => match[1]));
-    const declarations = source => Object.fromEntries([...source.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)]
-      .map(([, name, value]) => [name, value.trim()]));
-    const rootDefaults = Object.assign({}, ...[...template.matchAll(/^:root\s*\{([^}]+)\}/gm)]
-      .map(match => declarations(match[1])));
     const designTokens = readDesignTokens(design);
-    const activeTone = plan.visualStyle.forUser.selectedTheme.navTheme;
-    for (const tone of ['light', 'dark']) {
-      const scopedDefaults = { ...rootDefaults };
-      const modeScopes = ['nav', 'is'].map(kind => new RegExp(`(\\.pod-premium\\.${kind}-${tone}\\s*\\{)([^}]*)(\\})`));
-      modeScopes.forEach(pattern => Object.assign(scopedDefaults, declarations(template.match(pattern)[2])));
-      for (const pattern of modeScopes) {
-        const originalNames = new Set(Object.keys(declarations(template.match(pattern)[2])));
-        withoutExtra = withoutExtra.replace(pattern, (block, start, body, end) => start + body.replace(
-          /^[ \t]*(--[\w-]+)\s*:\s*([^;]+);\n/gm, (line, name, value) => {
-            if (originalNames.has(name)) {return line;}
-            // Added mode declarations must be real platform navigation tokens;
-            // the inactive mode restores its own defaults instead of leaking the project palette.
-            expect(platformNavigationTokens.has(name)).toBe(true);
-            expect(designTokens[name]).toBeDefined();
-            expect(value.trim()).toBe(tone === activeTone ? designTokens[name] : scopedDefaults[name]);
-            return '';
-          }
-        ) + end);
-      }
-    }
+    expect(css).not.toMatch(/\.pod-premium\.(?:is|nav)-(?:light|dark|white|gray)\s*\{/);
     const recipe = plan.visualStyle.forUser.selectedTheme.collection === 'application-styles'
       ? fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/theme/application-style-recipes.css'), 'utf8') : '';
     const shape = /\/\* openyida-navigation-shape:start \*\/[\s\S]*?\/\* openyida-navigation-shape:end \*\//;

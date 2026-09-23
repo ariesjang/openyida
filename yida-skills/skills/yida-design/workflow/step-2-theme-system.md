@@ -67,6 +67,7 @@
 - 语义色：成功、警告、错误、信息保持稳定，不随意改成品牌色。
 - 界面明暗：默认浅色；用户选择暗色、黑色或夜间主题时，按 [暗色主题浮层适配](../references/theme/theme-token-presets.md#暗色主题浮层适配) 确定浮层 token 与必要的 class 覆盖。
 - 导航明暗：`themeProfile.navTheme` 从所选主题模板的 `navTheme` 派生；深色导航可以搭配浅色内容界面。用户明确要求另一种导航明暗时重新匹配主题，不在项目化阶段改写模板导航 Token。
+- 固定主题输出一套 token；light、dark、white、gray 只是同一声明块的覆盖入口，不根据模式生成另一套配色。同步应用设置时读取设计中的 `navTheme`，不能用主题 ID 前缀或写死名单判断。
 - 明暗双轴：按[主题明暗双轴](../references/application-style-library.md#主题明暗双轴)分别填写 `themeProfile.contentTone` 与 `themeProfile.navTheme`。`contentTone` 默认 `light`；自由创意的导航明暗由项目设计明确填写，并配套导航 Token。
 - `design.md` 的 `themeProfile.colorMode` 是宜搭配色模式，例如 `gradient`，不表示暗黑模式。
 

@@ -109,3 +109,5 @@ Context 返回 `token/status/source/revision`：
 其他缺失颜色使用 antd 默认值。`source` 是生成时提供的 URL，`revision` 是本地 CSS 的 SHA256；直接提取的应用主题片段中这两项为空。
 
 Provider 会监听祖先属性、head 样式、主题 link 加载和窗口尺寸变化。用 CSSOM 修改样式的代码需主动派发 `openyida:theme-change`；该事件由修改方负责。
+
+链接与实心按钮分开适配：Provider 保留品牌填充色，链接普通、hover、active 前景需在内容面上达到 4.5:1；原品牌档不足时沿用可读内容文字，不直接把深色按钮填充当成暗色页面链接。主题快照支持 `:root` 与平台模式选择器共用一个声明块。

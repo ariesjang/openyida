@@ -17,9 +17,9 @@ tokens:
         "--pod-shell-theme-bg-color": "#000000"
         "--pod-nav-item-text-color": "var(--color-brand1-2)"
         "--pod-nav-item-text-hover-color": "var(--color-brand1-3)"
-        "--pod-nav-item-text-selected-color": "#111111"
+        "--pod-nav-item-text-selected-color": "var(--color-text1-4)"
         "--pod-nav-menu-bg-hover-color": "var(--color-brand1-5)"
-        "--pod-nav-menu-bg-selected-color": "var(--color-brand1-6)"
+        "--pod-nav-menu-bg-selected-color": "#252525"
         "--pod-nav-menu-item-height": "40px"
         "--pod-nav-menu-item-radius": "8px"
         "--pod-nav-menu-item-selected-font-weight": "500"
@@ -172,6 +172,8 @@ YAML 维护变量值，正文维护角色关系。主题暗面、偏色灰和同
 边界建议 1 CSS px（推断），只在暗面边缘形成细弱轮廓。表面层次依靠色差与轮廓，不借助玻璃模糊、双重倒角或大面积光晕；`--shadow-3` 保留为平台档位，主题默认不启用。根背景不继承到卡片、表格和输入。
 
 ### 2.2 应用导航
+
+选中项用近白字与炭灰底表达，不把可变主色直接作为文字底色；更换深浅主色都保留清晰的当前入口。
 
 近黑导航与画布连为一体，当前菜单用品牌亮底和深字形成局部光点，弹层保持独立暗面。
 

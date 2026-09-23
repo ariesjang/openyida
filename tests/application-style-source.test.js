@@ -131,7 +131,7 @@ test('changing the primary updates explicit references but preserves independent
   }
   // Check the active navigation override, where a global color substitution used
   // to silently replace a value even though its own token had not changed.
-  const light = css.match(/\.pod-premium\.is-light\s*\{([^}]+)\}/)[1];
+  const light = css.match(/^:root\s*\{([^}]+)\}/m)[1];
   expect(light).toContain('--pod-nav-menu-bg-selected-color: #C2410C;');
   expect(css).toContain('--color-brand1-6: #245B57;');
   expect(applyDesignTokens(css, after, after)).toBe(css);

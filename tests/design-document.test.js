@@ -60,6 +60,25 @@ function expectIssue(action, issue) {
   try {action(); throw new Error('Expected validation error');} catch (error) {expect(error.details?.issue).toBe(issue);}
 }
 
+test('design validation rejects unreadable pairs and reports roles for source repair', () => {
+  const value = fixture();
+  value.metadata.tokens['application-global'].appearance.surfaces['--pod-page-bg-color'] = '#FFFFFF';
+  try {check(value); throw new Error('Expected contrast error');} catch (error) {
+    expect(error.code).toBe('DESIGN_THEME_CONTRAST_LOW');
+    expect(error.details.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ role: 'page.body', foreground: '--color-text1-4', background: '--pod-page-bg-color', minimum: 4.5 }),
+    ]));
+  }
+});
+
+test('design validation distinguishes uncomputed colors from verified pairs', () => {
+  const value = fixture();
+  value.metadata.tokens['application-global'].appearance.surfaces['--pod-card-bg-color'] = 'oklch(0.2 0.02 200)';
+  const result = check(value);
+  expect(result.paletteContrast.unresolved.map(pair => pair.role)).toContain('card.body');
+  expect(result.paletteContrast.checks.map(pair => pair.role)).not.toContain('card.body');
+});
+
 test('collects independent component anchors and page labels without lowering design requirements', () => {
   const value = fixture();
   value.body = value.body.replace('<a id="component-button"></a>', '')
@@ -84,7 +103,7 @@ test('platform basics are a minimum set and can consume declared project extensi
   const global = value.metadata.tokens['application-global'];
   global.spacing['--project-reading-width'] = 'min(100%, 72rem)';
   value.metadata.tokens['custom-page'].project = {
-    '--project-paper': '#F6F1E8',
+    '--project-paper': '#14171B',
     '--project-surface': 'var(--project-paper)',
     '--project-cover': 'linear-gradient(135deg, var(--project-paper), #FFFFFF)',
     '--project-motion': '180ms',

@@ -69,7 +69,7 @@ tokens:
       "--color-text1-5": "#FFFFFF" # neutral-gray；固定短 Tooltip 前景
       "--color-text1-4": "#303030" # neutral-gray；标题、正文重点与核心数字
       "--color-text1-10": "#606060" # neutral-gray；表头与输入占位文字
-      "--color-text1-3": "#767676" # neutral-gray；辅助说明与坐标标签
+      "--color-text1-3": "#666666" # neutral-gray；辅助说明与坐标标签
       "--color-text1-2": "#ADADAD" # neutral-gray；禁用文字
       "--color-text1-1": "#D6D6D6" # neutral-gray；水印
     typography:

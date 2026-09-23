@@ -6,9 +6,9 @@ tokens:
   application-global:
     appearance:
       surfaces:
-        "--pod-app-root-bg-color": "#b96b49"
+        "--pod-app-root-bg-color": "#EDE2CA"
         "--pod-app-root-bg-image": "none"
-        "--pod-page-bg-color": "#b96b49"
+        "--pod-page-bg-color": "#EDE2CA"
         "--pod-card-bg-color": "#fff2d5"
         "--pod-table-cell-color": "var(--pod-card-bg-color)"
       navigation:
@@ -35,7 +35,7 @@ tokens:
         "--input-focus-border-color": "var(--color-brand1-6)"
         "--input-hover-bg-color": "#fff2d5"
         "--input-focus-bg-color": "#fff2d5"
-        "--pod-form-label-color": "#733c26"
+        "--pod-form-label-color": "var(--color-text1-4)"
         "--form-top-label-margin-b": "8px"
         "--yida-form-content-bgcolor": "#fff2d5"
         "--pod-page-content-max-width": "660px"
@@ -43,7 +43,7 @@ tokens:
         "--pod-page-footer-bg-color": "#fff2d5"
         "--pod-page-footer-border-radius": "0px"
         "--pod-sticky-footer-box-shadow": "none"
-        "--pod-formView-stickyFooter-bg-color": "#b96b49"
+        "--pod-formView-stickyFooter-bg-color": "#EDE2CA"
         "--pod-formView-stickyFooter-box-shadow": "none"
         "--pod-formView-stickyFooter-border": "none"
         "--pod-formView-stickyFooter-border-top": "1px solid #a7744d"
@@ -56,7 +56,7 @@ tokens:
         "--pod-field-preview-border-radius": "0px"
         "--pod-field-preview-indicator-color": "var(--color-fill1-3)"
         "--pod-field-preview-shadow": "none"
-        "--pod-field-preview-text-color": "#733c26"
+        "--pod-field-preview-text-color": "var(--color-text1-4)"
         "--pod-field-preview-line-height": "20px"
     colors:
       "--color-white": "var(--pod-card-bg-color)"
@@ -69,15 +69,15 @@ tokens:
       "--color-brand1-10": "<生成实际色值：--color-brand1-6 26% + #202020 74%，sRGB 逐通道混合>"
       "--color-line1-1": "#a7744d"
       "--color-line1-2": "#a7744d"
-      "--color-fill1-1": "#b96b49"
-      "--color-fill1-2": "#b96b49"
+      "--color-fill1-1": "#F3EAD6"
+      "--color-fill1-2": "#EADDC0"
       "--color-fill1-3": "#a7744d"
       "--color-fill1-5": "#fff2d5"
       "--color-fill1-10": "#262626"
       "--color-text1-5": "#FFFFFF"
-      "--color-text1-4": "#733c26"
-      "--color-text1-10": "#733c26"
-      "--color-text1-3": "#733c26"
+      "--color-text1-4": "#4A382B"
+      "--color-text1-10": "var(--color-text1-3)"
+      "--color-text1-3": "#6B5643"
       "--color-text1-2": "#858781"
       "--color-text1-1": "#a7744d"
     typography:
@@ -158,6 +158,10 @@ themeProfile:
 ## 2. 页面视觉系统
 
 ### 2.1 表面、区块与层次
+
+页面外衬使用浅纸色，单据使用更亮的暖纸面；棕色用于文字、印章和细线，不作为正文背后的大面积橙棕底。
+
+正文、字段标签和详情值使用内容文字色，说明与占位文字使用辅助文字色；品牌色用于局部操作和数据强调，不把整页文字染成主色。
 
 窄单据纵向排布与对齐的键值清单。暖纸、双分割线、印章式操作。画布消费 --oyd-page-bg，内容消费 --oyd-surface，文字消费 --oyd-ink，边界消费 --oyd-border。内容最大宽度 --oyd-content-width，内距 --oyd-content-padding；宽屏不放大成空白 KPI 卡。
 

@@ -8,6 +8,8 @@ const { parseDesignDocument } = require('../lib/design/document');
 const { resolveThemeColors, loadThemeIndex, DESIGN_SKILL_ROOT } = require('../lib/design-plan/themes');
 const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-design');
 const { writeFiles } = require('../lib/design-plan/files');
+const { rootDeclarations } = require('../lib/core/theme-brand-scale');
+const { validatePalette } = require('../lib/design/palette-contrast');
 const platformCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'references/theme/app-custom-theme-template.css'), 'utf8');
 
 /** Serialize template metadata without inserting user text into token expressions. */
@@ -40,7 +42,10 @@ function cssTemplate(markdown) {
     '--color-brand-3': 'var(--color-brand1-6)', '--color-brand-4': 'var(--color-brand1-9)',
     '--color-group': [6, 1, 5, 2, 9, 3].map(slot => `var(--color-brand1-${slot})`).join(', '),
   };
-  return applyDesignTokens(platformCss, resolved)
+  const compiled = applyDesignTokens(platformCss, resolved);
+  const audit = validatePalette(rootDeclarations(compiled.replace(/\/\*[\s\S]*?\*\//g, '')));
+  if (audit.unresolved.length) {throw new Error(`Unresolved template palette: ${audit.unresolved.map(pair => pair.role).join(', ')}`);}
+  return compiled
     .replace(/^(\s*(--[\w-]+)\s*:\s*)([^;\n]+);/gm, (_, prefix, name, value) =>
       `${prefix}${value.trim() === after[name] && /\{\{|<生成实际色值：/.test(before[name] || '')
         ? before[name] : (!(name in before) && bridges[name]) || value};`)

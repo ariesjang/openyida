@@ -149,7 +149,7 @@ Fast 与 Plan 使用同一主题的颜色推导、组件规则和页面设计标
 `app-theme.css` 是当前应用的主题资源产物，承载品牌色阶、语义色、字体、间距、圆角、阴影，以及 Shell、导航、页面、表单、表格和浮层的主题 token 与必要样式覆盖。`app_theme.css` 等其他 `.css` 文件名同样可用；CLI 根据 `--theme-file` 路径读取内容，不靠固定文件名识别用途。Plan 使用 `outputs.theme`，其他流程使用已记录的产物路径，避免生成多份后上传错文件。
 
 - `design.md` 定义视觉意图、布局和交互；主题 CSS 把对应的平台样式契约落成可加载的资源。导航是否悬浮、侧栏如何折叠和拖拽、业务内容如何排布，仍由页面代码实现。
-- 平台组件与自定义页面通过对应 token 消费主题。保留原有变量名和明暗导航作用域；页面组件用 `var(--token, fallback)`，不在每页重新注入全局主题。只有实际引用该 token 或命中 CSS 选择器的内容才会改变外观。
+- 平台组件与自定义页面通过对应 token 消费主题。保留原有变量名；固定主题的全局及平台模式选择器共用一份变量声明，不按 is-light/is-dark 生成两套颜色；页面组件用 `var(--token, fallback)`，不在每页重新注入全局主题。只有实际引用该 token 或命中 CSS 选择器的内容才会改变外观。
 - 文件生成后，通过 `update-app --theme-file <实际路径>` 上传，再更新应用基础设置中的 `colour=custom`、`themeColor` 和 `customThemeStyle`；导航、Logo 来源与布局在同一次更新中同步。创建应用或仅修改本地 CSS 均不等于绑定了主题。
 - iframe 是独立文档，不能假定它继承父页面的 CSS 变量。原生表单页依靠该应用的平台主题加载链路；自绘抽屉外壳由所在页面消费 token，高度兜底由容器代码保证。
 - `themeVerification.verified=true` 证明应用设置已绑定资源，不证明所有页面视觉正确。发布后仍需检查实际页面及表单 iframe 的资源加载、计算样式与布局；CLI 无法仅凭 CSS 文件判断最终视觉效果。
@@ -173,7 +173,7 @@ Fast 与 Plan 按同一规则记录背景，先确定作用范围：
 
 Fast 或单独更新主题时，执行 `openyida sample yida-design app-theme --output .cache/openyida/<项目名>/app-theme.css --design-file prd/<项目名>/design.md`。首次从公共模板生成；已有 CSS 只更新设计中变化的 token，保留其他 token 和自定义样式。CLI 自动保存更新记录，内容相同时跳过写入，写入失败回滚。省略 `--design-file` 会用公共模板重置目标 CSS。
 
-主题生成前校验输入 CSS 的括号、字符串和注释闭合，生成后与上传前复用同一检查；纯模板导出也须通过。出现 `THEME_CSS_STRUCTURE_INVALID` 时按错误行修复源模板或已有 CSS，再重试；生成失败保留原 CSS 和 token 更新记录，不能靠重置模板覆盖已有定制。新增全局及页面语义 token 写入顶层 `:root`；白色、灰色导航保留公共模板中的背景变量及回退链，不要求改成固定色值。
+主题生成前校验输入 CSS 的括号、字符串和注释闭合，生成后与上传前复用同一检查；纯模板导出也须通过。出现 `THEME_CSS_STRUCTURE_INVALID` 时按错误行修复源模板或已有 CSS，再重试；生成失败保留原 CSS 和 token 更新记录，不能靠重置模板覆盖已有定制。新增全局及页面语义 token 写入包含顶层 `:root` 的统一声明块；light、dark、white、gray 选择器消费同一套项目颜色。
 
 品牌色阶 `--color-brand1-1/2/3/5/6/9/10` 必须完整且在顶层 `:root` 可用。`THEME_BRAND_SCALE_INCOMPLETE` 表示缺档或作用域不满足，`THEME_BRAND_SCALE_INVALID` 表示最终颜色值或引用不可用，`THEME_CSS_UNRESOLVED_TOKEN` 表示残留模板占位或生成说明；按 details 修复 design.md 后重新生成，不能只替换主色或追加另一套默认色盘。
 

@@ -16,8 +16,8 @@ tokens:
         "--pod-nav-sub-divider-color": "#DEDEDE"
         "--pod-shell-theme-bg-color": "#F5F5F5"
         "--pod-nav-item-text-color": "#181818"
-        "--pod-nav-item-text-hover-color": "var(--color-brand1-6)"
-        "--pod-nav-item-text-selected-color": "var(--color-brand1-6)"
+        "--pod-nav-item-text-hover-color": "var(--color-text1-4)"
+        "--pod-nav-item-text-selected-color": "var(--color-text1-4)"
         "--pod-nav-menu-bg-hover-color": "#EFEFEF"
         "--pod-nav-menu-bg-selected-color": "#FFFFFF"
         "--pod-nav-menu-item-height": "40px"
@@ -69,7 +69,7 @@ tokens:
       "--color-text1-5": "#FFFFFF" # neutral-gray；短 Tooltip 固定反色前景
       "--color-text1-4": "#111111" # neutral-gray；主标题、正文、重要数值
       "--color-text1-10": "<生成实际色值：--color-brand1-6 8% + #666666 92%，sRGB 逐通道混合>" # theme-gray；表头、placeholder 与必要辅助文字
-      "--color-text1-3": "<生成实际色值：--color-brand1-6 8% + #7C7C7C 92%，sRGB 逐通道混合>" # theme-gray；保留原稿次级说明、坐标与周期信息的明度
+      "--color-text1-3": "#666666" # theme-gray；保留原稿次级说明、坐标与周期信息的明度
       "--color-text1-2": "#ABABAB" # neutral-gray；仅用于禁用文字
       "--color-text1-1": "#CECECE" # neutral-gray；仅用于水印文字
     typography:
