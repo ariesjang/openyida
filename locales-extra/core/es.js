@@ -26,6 +26,7 @@ module.exports = {
   design_document: {
     update_conflict: "No se puede actualizar {0} ({1}): el contenido entra en conflicto con la última versión generada. Revise esta sección, concilie el cambio local con los datos del plan y vuelva a intentarlo. No se guardó ningún archivo.",
     theme_css_invalid: 'El CSS del tema contiene un delimitador, una cadena o un comentario sin cerrar o mal emparejado cerca de la línea {0}. Corrígelo e inténtalo de nuevo.',
+    theme_css_unresolved: 'El token CSS del tema {0} aún contiene un marcador de plantilla o una instrucción para generar colores. Complete design.md, ejecute openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css> y suba el archivo generado. No basta con reemplazar PRIMARY_COLOR.',
     invalid: 'Error de validación del diseño: {0} ({1})',
     yaml: 'El frontmatter del documento de diseño no es YAML válido',
     token_value: 'El token {0} debe ser un valor CSS resuelto de una sola línea',

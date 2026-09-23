@@ -26,6 +26,7 @@ module.exports = {
   design_document: {
     update_conflict: "{0} ({1}) kann nicht aktualisiert werden: Der Inhalt weicht von der letzten generierten Version ab. Gleichen Sie die lokale Änderung in diesem Abschnitt mit den Plandaten ab und versuchen Sie es erneut. Es wurden keine Dateien gespeichert.",
     theme_css_invalid: 'Das Theme-CSS enthält nahe Zeile {0} eine nicht geschlossene oder falsch gepaarte Klammer, Zeichenfolge oder einen Kommentar. Bitte korrigieren und erneut versuchen.',
+    theme_css_unresolved: 'Das Theme-CSS-Token {0} enthält noch einen Platzhalter oder eine Anweisung zur Farberzeugung. Vervollständigen Sie design.md, führen Sie openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css> aus und laden Sie die erzeugte Datei hoch. Nur PRIMARY_COLOR zu ersetzen reicht nicht aus.',
     invalid: 'Designprüfung fehlgeschlagen: {0} ({1})',
     yaml: 'Das Frontmatter des Designdokuments ist kein gültiges YAML',
     token_value: 'Token {0} muss ein aufgelöster einzeiliger CSS-Wert sein',

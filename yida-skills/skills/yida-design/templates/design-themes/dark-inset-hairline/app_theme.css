@@ -16,6 +16,7 @@
  * 3. 品牌值保留项目占位和派生说明；先完成 design.md，再生成实际主题 CSS。
  * 4. 应用品牌色阶只使用平台实际生成的 --color-brand1-1、2、3、5、6、9、10；
  *    CLI 同时生成 --color-brand-1 至 --color-brand-4 和 --color-group，不要补造 4、7、8。
+ *    这七档必须完整存在于顶层 :root；生成与上传均校验最终值、引用和循环，局部声明不能充数。
  * 5. 按 design.md 的 Token 名更新颜色、边框、状态、圆角与阴影；显式 var() 引用才建立联动。
  *    导航、表单、详情和自定义页面共同设计；辅助色、材质色与状态色不因换主色自动重染。
  * 6. 页面、卡片、抽屉和控件通过变量引用继承项目圆角，不强制所有主题使用大圆角。
@@ -42,6 +43,12 @@
   --color-brand1-6: {{PRIMARY_COLOR}};
   --color-brand1-9: <生成实际色值：--color-brand1-6 76% + #000000 24%，sRGB 逐通道混合>;
   --color-brand1-10: <生成实际色值：--color-brand1-6 26% + #202020 74%，sRGB 逐通道混合>;
+
+  /* mobile brand bridge */
+  --color-brand-1: var(--color-brand1-10);
+  --color-brand-2: var(--color-brand1-1);
+  --color-brand-3: var(--color-brand1-6);
+  --color-brand-4: var(--color-brand1-9);
 
   /* line */
   --color-line1-1: #202020;
@@ -329,9 +336,9 @@
   --pod-nav-menu-item-height: 38px;
   --pod-nav-menu-item-padding: 8px;
   --pod-nav-menu-item-radius: 6px;
-  --pod-nav-menu-item-border: 1px solid transparent;
-  --pod-nav-menu-item-hover-border: 1px solid #424242;
-  --pod-nav-menu-item-selected-border: 1px solid #626262;
+  --pod-nav-menu-item-border: none;
+  --pod-nav-menu-item-hover-border: var(--pod-nav-menu-item-border);
+  --pod-nav-menu-item-selected-border: var(--pod-nav-menu-item-border);
   --pod-nav-menu-font-size: 14px;
   --pod-nav-menu-item-selected-font-weight: 500;
   --pod-nav-menu-item-selected-shadow: none;
@@ -382,10 +389,6 @@
   --oyd-font-size-metric: 28px;
   --oyd-font-weight-metric: 500;
   --oyd-font-lineheight-metric: 1.2;
-  --color-brand-1: var(--color-brand1-10);
-  --color-brand-2: var(--color-brand1-1);
-  --color-brand-3: var(--color-brand1-6);
-  --color-brand-4: var(--color-brand1-9);
   --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 }
 
@@ -533,9 +536,6 @@ body.pod-premium.page-type-submit
   --pod-nav-menu-bg-hover-color: rgba(24, 28, 31, 0.05);
   --pod-nav-menu-item-height: 36px;
   --pod-nav-menu-item-radius: var(--pod-sm-border-radius, 8px);
-  --pod-nav-menu-item-border: none;
-  --pod-nav-menu-item-hover-border: var(--pod-nav-menu-item-border);
-  --pod-nav-menu-item-selected-border: var(--pod-nav-menu-item-border);
   --pod-nav-menu-item-selected-font-weight: 400;
 }
 
@@ -574,50 +574,7 @@ body.pod-premium.page-type-submit
   --pod-nav-action-bg-active-color: rgba(255, 255, 255, 0.16);
   --pod-nav-menu-item-height: 38px;
   --pod-nav-menu-item-radius: 6px;
-  --pod-nav-menu-item-border: 1px solid transparent;
-  --pod-nav-menu-item-hover-border: 1px solid #424242;
-  --pod-nav-menu-item-selected-border: 1px solid #626262;
   --pod-nav-menu-item-selected-font-weight: 500;
 }
 
-/* openyida-navigation-shape:start */
-/* Side/L navigation and top tabs share the same theme-defined menu shape.
- * Border widths stay constant between states; border-box keeps row height stable. */
-.pod-premium .deep-shell-nav-menu-content .next-nav-item,
-.pod-premium .deep-shell-nav-tab-list .next-nav-item {
-  box-sizing: border-box;
-  border-radius: var(--pod-nav-menu-item-radius, 8px);
-  border: var(--pod-nav-menu-item-border, none);
-}
-/* Native inner rows also have a fixed minimum height. Fit them inside the
- * bordered item instead of letting a thick outline push content below it. */
-.vc-shell.pod-premium .next-nav.next-line.next-ver.deep-shell-nav-menu-content:not(.next-icon-only) .next-nav-item.next-menu-item > .next-menu-item-inner,
-.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item > .next-menu-item-inner {
-  box-sizing: border-box;
-  height: 100% !important;
-  min-height: 0 !important;
-}
-.pod-premium .deep-shell-nav-menu-content .next-nav-item:hover,
-.pod-premium .deep-shell-nav-tab-list .next-nav-item:hover {
-  border: var(--pod-nav-menu-item-hover-border, var(--pod-nav-menu-item-border, none));
-}
-/* Platform top tabs use transparent backgrounds and zero margin !important.
- * Match the header scope so theme surfaces and spacing can reveal their shape. */
-.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item {
-  margin-inline: calc(var(--pod-nav-menu-gap, 8px) / 2) !important;
-}
-.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item:hover {
-  background: var(--pod-nav-menu-bg-hover-color) !important;
-  color: var(--pod-nav-item-text-hover-color) !important;
-}
-.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item.next-selected {
-  background: var(--pod-nav-menu-bg-selected-color) !important;
-  color: var(--pod-nav-item-text-selected-color) !important;
-}
-/* Selected state wins over hover, retaining the original inset-shadow marker. */
-.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
-.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
-  border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));
-  box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
-}
-/* openyida-navigation-shape:end */
+/* Extra navigation borders and shadows are emitted only when design.md opts in. */

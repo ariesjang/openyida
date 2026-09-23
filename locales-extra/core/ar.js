@@ -26,6 +26,7 @@ module.exports = {
   design_document: {
     update_conflict: "تعذر تحديث {0} ({1}): يتعارض المحتوى الحالي مع آخر نسخة مولدة. راجع هذا القسم ووفق التعديل المحلي مع بيانات الخطة ثم أعد المحاولة. لم يتم حفظ أي ملفات.",
     theme_css_invalid: 'يحتوي CSS للسمة قرب السطر {0} على قوس أو سلسلة نصية أو تعليق غير مغلق أو غير متطابق. أصلحه ثم أعد المحاولة.',
+    theme_css_unresolved: 'لا يزال رمز CSS للسمة {0} يحتوي على عنصر نائب أو تعليمات لإنشاء اللون. أكمل design.md، ثم نفّذ openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css> وارفع الملف الناتج. استبدال PRIMARY_COLOR وحده لا يكفي.',
     invalid: 'فشل التحقق من التصميم: {0} ({1})',
     yaml: 'بيانات frontmatter في مستند التصميم ليست YAML صالحًا',
     token_value: 'يجب أن يكون الرمز {0} قيمة CSS محددة في سطر واحد',

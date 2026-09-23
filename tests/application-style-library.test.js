@@ -78,8 +78,6 @@ test('every named theme has its own complete platform navigation design and read
   const platformCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'references/theme/app-custom-theme-template.css'), 'utf8');
   const supported = new Set([...platformCss.matchAll(/(--[\w-]+)\s*:/g)].map(match => match[1]));
   const palettes = new Set();
-  const radii = new Set();
-  const heights = new Set();
   themeIndex.filter(theme => theme.mode !== 'creative').forEach(theme => {
     const source = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
     const navigation = parseDesignDocument(source).metadata.tokens['application-global'].appearance.navigation;
@@ -97,14 +95,22 @@ test('every named theme has its own complete platform navigation design and read
     expect(css).toContain(`--pod-nav-sub-divider-color: ${navigation['--pod-nav-sub-divider-color']};`);
     NAVIGATION_COLOR_TOKENS.forEach(token => expect(css).toContain(`${token}:`));
     palettes.add(NAVIGATION_COLOR_TOKENS.map(token => navigation[token]).join('|'));
-    radii.add(navigation['--pod-nav-menu-item-radius']);
-    heights.add(navigation['--pod-nav-menu-item-height']);
+    // Stock menus remain scannable; project overrides may still use larger shapes.
+    expect(parseInt(navigation['--pod-nav-menu-item-height'] || '36', 10)).toBeLessThanOrEqual(40);
+    navigation['--pod-nav-menu-item-radius'].split(' ').forEach(value => expect(parseInt(value, 10)).toBeLessThanOrEqual(8));
+    const shadow = navigation['--pod-nav-menu-item-selected-shadow'] || 'none';
+    expect(shadow === 'none' || /^inset [1-3]px 0 0 /.test(shadow)).toBe(true);
+    expect(navigation).not.toHaveProperty('--pod-nav-menu-item-border');
+    for (const state of ['hover', 'selected']) {
+      expect(navigation).not.toHaveProperty(`--pod-nav-menu-item-${state}-border`);
+    }
+    expect(css).not.toMatch(/^\s*border: var\(--pod-nav-menu-item-/m);
+    expect(css).not.toContain('height: 100% !important;');
+    if (!navigation['--pod-nav-menu-item-selected-shadow']) {expect(css).not.toContain('openyida-navigation-shape:start');}
     // Navigation overlays have their own surface, including dark-nav/light-content themes.
     expect(navigation['--pod-nav-popup-bg-color']).toBe('var(--pod-shell-theme-bg-color)');
   });
   expect(palettes.size).toBe(33);
-  expect(radii.size).toBeGreaterThanOrEqual(8);
-  expect(heights.size).toBeGreaterThanOrEqual(6);
 });
 
 test('application preset navigation text is readable in ordinary, hover and selected states', () => {

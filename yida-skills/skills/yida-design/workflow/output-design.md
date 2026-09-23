@@ -175,6 +175,10 @@ Fast 或单独更新主题时，执行 `openyida sample yida-design app-theme --
 
 主题生成前校验输入 CSS 的括号、字符串和注释闭合，生成后与上传前复用同一检查；纯模板导出也须通过。出现 `THEME_CSS_STRUCTURE_INVALID` 时按错误行修复源模板或已有 CSS，再重试；生成失败保留原 CSS 和 token 更新记录，不能靠重置模板覆盖已有定制。新增全局及页面语义 token 写入顶层 `:root`；白色、灰色导航保留公共模板中的背景变量及回退链，不要求改成固定色值。
 
+品牌色阶 `--color-brand1-1/2/3/5/6/9/10` 必须完整且在顶层 `:root` 可用。`THEME_BRAND_SCALE_INCOMPLETE` 表示缺档或作用域不满足，`THEME_BRAND_SCALE_INVALID` 表示最终颜色值或引用不可用，`THEME_CSS_UNRESOLVED_TOKEN` 表示残留模板占位或生成说明；按 details 修复 design.md 后重新生成，不能只替换主色或追加另一套默认色盘。
+
+导航边框、box-shadow 与上述必需色阶不同，是按需覆盖：省略时不生成额外的平台菜单形状规则，显式 `none` 才表示有意关闭。删除声明后 CLI 移除对应生成规则，保留规则块外的项目样式；单独声明阴影不改变边框、内部高度或顶部间距。普通入口按连续目录组织，主题一致不要求复制表单输入框或卡片造型。
+
 主题文件只能由上述 OpenYida CLI 契约生成或更新。不得另写 Python、Node、Shell 或 `run_workspace_script` 临时脚本来生成、复制、整文件重写、正则替换或 retheme 主题 CSS；校验脚本只能读取并报告问题，不能改写主题文件。需要调整 CLI 未覆盖的精确 classname 覆盖时，只允许在现有文件末尾做小范围编辑，并重新通过 `update-app --theme-file` 上传完整文件。
 
 Plan 修改现有方案按 [局部调整](../../yida-app/workflow/plan/step-4-deliver.md#4-处理调整) 更新视觉字段与配色，使用返回的 `outputs.theme`。Fast 由 `yida-design` 直接维护 `design.md`。应用阶段由 `yida-app` 使用 `--theme-file` 应用同一份产物。
@@ -206,3 +210,5 @@ Plan 物化内部使用同一校验，不另维护宽松标准。校验覆盖格
 交接须满足：五章正文完整且项目化，frontmatter 可解析，所有引用可定位，真实页面八项要点齐备，主题变量和素材/图标记录一致，没有模板身份、未解析指令或重复维护的规则副本。页面实现按 `designRefs` 读取当前页及其共享规则；`page-spec.json` 仅派生业务输入、主题摘要和引用，保留 `sourceOfTruth.prdFile/designFile`，不复制完整设计。
 
 本地校验失败统一按[本地校验修复](../../../references/source-repair.md)处理：先修正并回读源文件，未变化不重跑，连续两次修复无进展时保留产物并报告阻塞。
+
+移动端 `--color-brand-1`、`--color-brand-2`、`--color-brand-3`、`--color-brand-4` 由 CLI 按应用色阶生成桥接；最终 CSS 也必须在顶层 `:root` 完整提供这四项。生成后和上传前同时校验 PC 七档与移动端四档的缺失、无效颜色及引用循环，不要求在 design.md 重复声明自动桥接。

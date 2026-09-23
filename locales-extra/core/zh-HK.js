@@ -26,6 +26,7 @@ module.exports = {
   design_document: {
     update_conflict: "無法更新 {0}（{1}）：現有內容與上次生成結果衝突。請讀取這部分，將本地修改與計劃來源對齊後重試；本次未儲存任何檔案。",
     theme_css_invalid: '主題 CSS 第 {0} 行附近存在未閉合或不匹配的括號、字串或註解，請修正後重試。',
+    theme_css_unresolved: '主題 CSS 的 {0} 仍含模板佔位或色值生成說明。請先完成 design.md，執行 openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css>，再上傳生成檔案；不能只替換 PRIMARY_COLOR。',
     invalid: '設計文件驗證失敗：{0}（{1}）',
     yaml: '設計文件 frontmatter 不是有效的 YAML',
     token_value: 'token {0} 必須是已確定的單行 CSS 值',

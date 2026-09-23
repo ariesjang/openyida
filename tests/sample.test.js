@@ -680,12 +680,12 @@ describe('application theme from design.md', () => {
     // Explicit brand references follow the new value; historical fallback colors
     // remain fallback-only and must not be globally replaced by equal color value.
     expect(css).toContain('--pod-nav-logo-bg: var(--color-brand1-6, rgba(155, 136, 121, 1));');
-    // The current base template omits derived brand aliases; generation adds them globally.
+    // Mobile aliases are present in the base template; generation also adds the chart palette.
     const root = css.match(/^:root\s*\{([^{}]*)\}/m)[1];
     for (const name of ['--color-brand-1', '--color-brand-2', '--color-brand-3', '--color-brand-4', '--color-group']) {
       expect(root).toContain(`${name}:`);
     }
-    const withoutAliases = css.replace(/^[ \t]*--(?:color-brand-[1-4]|color-group)\s*:[^;]+;\n/gm, '');
+    const withoutAliases = css.replace(/^[ \t]*--color-group\s*:[^;]+;\n/gm, '');
     expect(structure(withoutAliases)).toBe(structure(template));
     expect(css.match(/--color-error[^;]+;/g)).toEqual(template.match(/--color-error[^;]+;/g));
   });
@@ -742,6 +742,10 @@ describe('application theme from design.md', () => {
     }
     const recipe = plan.visualStyle.forUser.selectedTheme.collection === 'application-styles'
       ? fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/theme/application-style-recipes.css'), 'utf8') : '';
+    const shape = /\/\* openyida-navigation-shape:start \*\/[\s\S]*?\/\* openyida-navigation-shape:end \*\//;
+    const hasExtraShape = Object.keys(designTokens).some(name => /^--pod-nav-menu-item-(?:border|hover-border|selected-border|selected-shadow)$/.test(name));
+    expect(shape.test(withoutExtra)).toBe(hasExtraShape);
+    withoutExtra = withoutExtra.replace(shape, '');
     expect(structure(withoutExtra).trim()).toBe(structure(recipe ? template.trimEnd() + '\n\n' + recipe : template).trim());
   });
 

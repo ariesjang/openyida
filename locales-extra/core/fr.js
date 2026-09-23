@@ -26,6 +26,7 @@ module.exports = {
   design_document: {
     update_conflict: "Impossible de mettre à jour {0} ({1}) : le contenu est en conflit avec la dernière version générée. Alignez les modifications locales de cette section avec les données du plan, puis réessayez. Aucun fichier enregistré.",
     theme_css_invalid: 'Le CSS du thème contient un délimiteur, une chaîne ou un commentaire non fermé ou mal apparié près de la ligne {0}. Corrigez puis réessayez.',
+    theme_css_unresolved: 'Le token CSS du thème {0} contient encore un espace réservé ou une instruction de génération de couleur. Complétez design.md, exécutez openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css>, puis téléversez le fichier généré. Remplacer uniquement PRIMARY_COLOR ne suffit pas.',
     invalid: 'Échec de la validation du design : {0} ({1})',
     yaml: 'Le frontmatter du document de design n’est pas un YAML valide',
     token_value: 'Le jeton {0} doit être une valeur CSS résolue sur une seule ligne',

@@ -26,6 +26,7 @@ module.exports = {
   design_document: {
     update_conflict: "Không thể cập nhật {0} ({1}): nội dung hiện tại xung đột với phiên bản được tạo trước đó. Hãy đối chiếu thay đổi cục bộ trong phần này với dữ liệu kế hoạch rồi thử lại. Chưa lưu tệp nào.",
     theme_css_invalid: 'CSS giao diện gần dòng {0} có dấu ngoặc, chuỗi hoặc chú thích chưa đóng hoặc không khớp. Hãy sửa rồi thử lại.',
+    theme_css_unresolved: 'Token CSS chủ đề {0} vẫn chứa chỗ giữ chỗ hoặc hướng dẫn tạo màu. Hoàn thiện design.md, chạy openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css>, rồi tải tệp đã tạo lên. Chỉ thay PRIMARY_COLOR là chưa đủ.',
     invalid: 'Xác thực thiết kế thất bại: {0} ({1})',
     yaml: 'Frontmatter của tài liệu thiết kế không phải YAML hợp lệ',
     token_value: 'Token {0} phải là giá trị CSS đã xác định trên một dòng',

@@ -9,12 +9,25 @@ const { renderDesign } = require('../lib/design-plan/materialize');
 const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-design');
 const { catalog } = require('../lib/design-plan/init');
 const { exportApplicationStyle } = require('../lib/app/application-style');
+const { validateThemeCssContent } = require('../lib/app/custom-theme');
 const fixture = require('./fixtures/design-plan.json');
 const template = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'templates/design-themes/app-amber/design.md'), 'utf8');
 const platformCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'references/theme/app-custom-theme-template.css'), 'utf8');
 
 test('all bundled styles compile from their own complete design without another palette source', () => {
   expect(build({ check: true })).toEqual([]);
+});
+
+test.each(loadThemeIndex().themes)('$themeId rejects primary-only replacement and generates all usable color slots', theme => {
+  const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
+  expect(() => validateThemeCssContent(css.replaceAll('{{PRIMARY_COLOR}}', '#345B49')))
+    .toThrow(expect.objectContaining({ code: 'THEME_CSS_UNRESOLVED_TOKEN' }));
+  const source = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
+  const creative = theme.mode === 'creative' ? '\ncreativeDirection:\n  businessRationale: Daily operations\n  composition: Single workspace\n  typography: Clear labels\n  material: Flat surfaces\n  formLayout: Single column\n' : '';
+  const design = resolveThemeColors(source.replaceAll('{{PRIMARY_COLOR}}', '#345B49').replace(/\n---\n/, creative + '\n---\n'));
+  const resolved = applyDesignTokens(css, design);
+  expect(() => validateThemeCssContent(resolved)).not.toThrow();
+  expect(resolved).not.toMatch(/\{\{|<生成实际色值：/);
 });
 
 test('the CLI catalog covers every complete theme directory without separate navigation presets', () => {
@@ -84,7 +97,8 @@ test('editing one complete template updates all consumers without rewriting desi
 });
 
 test('the temporary compiler brand seed cannot capture independently authored colors', () => {
-  const edited = template.replaceAll('#754B13', '#2C73A9');
+  const edited = template.replaceAll('#754B13', '#2C73A9')
+    .replace('      navigation:\n', '      navigation:\n        "--pod-nav-menu-item-hover-border": "1px solid #2C73A9"\n');
   const css = cssTemplate(edited);
   expect(css).toContain('--pod-nav-menu-bg-selected-color: #2C73A9;');
   expect(css).toContain('--pod-nav-menu-item-hover-border: 1px solid #2C73A9;');

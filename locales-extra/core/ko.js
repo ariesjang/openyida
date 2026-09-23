@@ -26,6 +26,7 @@ module.exports = {
   design_document: {
     update_conflict: "{0}({1})을 업데이트할 수 없습니다. 현재 내용이 이전 생성 결과와 충돌합니다. 해당 부분의 로컬 변경 사항과 계획 데이터를 일치시킨 후 다시 시도하세요. 파일은 저장되지 않았습니다.",
     theme_css_invalid: '테마 CSS의 {0}행 근처에 닫히지 않았거나 짝이 맞지 않는 괄호, 문자열 또는 주석이 있습니다. 수정 후 다시 시도하세요.',
+    theme_css_unresolved: '테마 CSS의 {0}에 템플릿 자리 표시자 또는 색상 생성 지침이 남아 있습니다. design.md를 완성하고 openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css> 명령을 실행한 뒤 생성된 파일을 업로드하세요. PRIMARY_COLOR만 바꾸면 안 됩니다.',
     invalid: '디자인 검증 실패: {0} ({1})',
     yaml: '디자인 문서의 frontmatter가 올바른 YAML이 아닙니다',
     token_value: '토큰 {0}에는 확정된 한 줄 CSS 값이 필요합니다',

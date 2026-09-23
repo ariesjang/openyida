@@ -26,6 +26,7 @@ module.exports = {
   design_document: {
     update_conflict: "{0}（{1}）を更新できません。現在の内容が前回の生成結果と競合しています。該当箇所のローカル変更と計画データを合わせてから再試行してください。ファイルは保存されていません。",
     theme_css_invalid: 'テーマ CSS の {0} 行付近に、閉じられていないか対応しない括弧、文字列、コメントがあります。修正して再試行してください。',
+    theme_css_unresolved: 'テーマ CSS の {0} にテンプレートのプレースホルダーまたは色の生成指示が残っています。design.md を完成させ、openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css> を実行してから生成ファイルをアップロードしてください。PRIMARY_COLOR の置換だけでは不十分です。',
     invalid: 'デザイン検証に失敗しました：{0}（{1}）',
     yaml: 'デザイン文書の frontmatter は有効な YAML ではありません',
     token_value: 'トークン {0} には確定した1行の CSS 値が必要です',

@@ -12,7 +12,9 @@ description: >
 
 宜搭平台基础变量是平台提供的应用主题基础变量框架。项目主题在这套基础变量上按需扩展材质、布局、字体、动效和组件状态变量。先确定设计效果，再写入对应变量和消费位置；见 [主题扩展规则](references/application-theme-consistency.md#平台基础变量是应用主题基础框架)。
 
-设计导航时，把菜单圆角、三态边框、选中阴影、项高、内距和间距一起写入主题，并在访问态的数据管理页与业务页面检查效果，见 [导航形状与密度的案例经验](references/application-theme-consistency.md#导航形状与密度的案例经验)。
+设计导航时优先沿用平台绑定，在同一份主题中只覆盖必要差异；border、box-shadow 等按需启用，不要求每份模板单独设计菜单轮廓，按连续目录组织普通入口，避免把表单输入框、独立按钮或卡片造型复制进导航，并在访问态的数据管理页与业务页面检查效果，见 [导航形状与密度的案例经验](references/application-theme-consistency.md#导航形状与密度的案例经验)。
+
+品牌色阶属于必需基础契约：`--color-brand1-1/2/3/5/6/9/10` 七档必须完整生成在全局 `:root`，不能随可选导航样式一起省略，也不能用局部声明、空值或未解析说明充数。缺失或无效时修复 design.md 后重新生成，不临时补另一套默认配色。
 
 确定风格前，按[设计方向比较](references/theme-selection.md#设计方向比较)以第一直觉为参照，发展两个更有表现力的方向，在当前规划轮次内选定。已有明确视觉要求时，在其范围内完善设计。
 
@@ -103,3 +105,5 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 | [应用主题 CSS 模板](references/theme/app-custom-theme-template.css) | AI 可复制修改的品牌、Shell、页面、表格和导航 token | 生成自定义应用主题文件时必读 |
 | [yida-canvas-custom-page 样式实现指南](../yida-canvas-custom-page/references/canvas-style-implementation-guide.md) | 将 `design.md` 的 token、背景、圆角、密度和组件规则落到页面源码、antd、CSS、图表和控件状态 | 实现阶段 |
 | [字段与 URL 参考](../../references/field-and-url-reference.md) | `isRenderNav=false`、页面 URL、跨页跳转 | 拼接页面/表单 URL |
+
+移动端 `--color-brand-1`、`--color-brand-2`、`--color-brand-3`、`--color-brand-4` 由 CLI 按应用色阶生成桥接；最终 CSS 也必须在顶层 `:root` 完整提供这四项。生成后和上传前同时校验 PC 七档与移动端四档的缺失、无效颜色及引用循环，不要求在 design.md 重复声明自动桥接。

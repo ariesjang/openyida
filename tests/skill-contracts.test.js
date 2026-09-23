@@ -1437,7 +1437,8 @@ describe('OpenYida skill contracts', () => {
     expect(outputDesign).toContain('校验脚本只能读取并报告问题，不能改写主题文件');
     expect(outputDesign).toContain('`--pod-nav-menu-item-selected-shadow` 作为方向无关的基础外观 Token 独立透传');
     expect(navShellPatterns).toContain('| 菜单选中标记 | `--pod-nav-menu-item-selected-shadow`');
-    expect(navShellPatterns).toContain('`canvas-nav-side/top/mixed/dock` 共用上述菜单圆角、三种边框和选中阴影');
+    expect(navShellPatterns).toContain('不要求声明三种边框和选中阴影');
+    expect(navShellPatterns).toContain('普通项默认透明无框');
     expect(step2).toContain('导航选中态与按钮不同色不直接判为冲突');
     expect(styleSelection).toContain('沿用已确认主题，只补当前页面');
     expect(canvasStyleGuide).toContain('按本指南把 `design.md` 的布局、材质、密度、图表和控件样式写入 Canvas 页面');

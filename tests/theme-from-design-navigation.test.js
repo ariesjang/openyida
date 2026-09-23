@@ -96,6 +96,32 @@ test('a selected-border-only override upgrades an older CSS consumer without req
   expect(cascade(css, 'light')['--pod-nav-menu-item-selected-border']).toBe('2px solid #345678');
 });
 
+test('omitted shapes preserve native rules; explicit none and shadow-only designs remain supported', () => {
+  const native = '\n.project-native .next-nav-item { border: 2px solid red; box-shadow: 0 1px 2px black; }';
+  const original = template + native;
+  const plain = navigationOverrides({});
+  const shadowOnly = navigationOverrides({ '--pod-nav-menu-item-selected-shadow': 'none' });
+  const shaped = applyDesignTokens(original, shadowOnly);
+  expect(shaped).toContain('box-shadow: var(--pod-nav-menu-item-selected-shadow, none);');
+  expect(shaped).not.toMatch(/^\s*border: var\(--pod-nav-menu-item-/m);
+  expect(shaped).not.toContain('height: 100% !important;');
+  expect(shaped).not.toContain('margin-inline: calc(var(--pod-nav-menu-gap');
+  const restored = applyDesignTokens(shaped, plain, shadowOnly);
+  expect(restored).not.toContain('openyida-navigation-shape:start');
+  expect(restored).toContain(native);
+  expect(applyDesignTokens(restored, plain, plain)).toBe(restored);
+});
+
+test('removing borders drops the managed layout overrides and retains project CSS', () => {
+  const withBorder = navigationOverrides({ '--pod-nav-menu-item-border': '2px solid #345678' });
+  const plain = navigationOverrides({});
+  const css = applyDesignTokens(template, withBorder) + '\n.project-only { padding: 7px; }';
+  expect(css).toContain('height: 100% !important;');
+  const restored = applyDesignTokens(css, plain, withBorder);
+  expect(restored).not.toContain('openyida-navigation-shape:start');
+  expect(restored).toContain('.project-only { padding: 7px; }');
+});
+
 test.each([
   ['soft-inset-surfaces', 'light'],
   ['dark-inset-hairline', 'dark'],
@@ -228,11 +254,11 @@ test('older generated CSS gains menu shape consumers once and keeps project rule
   const oldCss = applyDesignTokens(template, previous)
     .replace(/\/\* openyida-navigation-shape:start \*\/[\s\S]*?\/\* openyida-navigation-shape:end \*\//, '')
     + '\n.project-only { border: 7px dotted red; }';
-  const next = design('app-ticket');
+  const next = navigationOverrides({ '--pod-nav-menu-item-selected-border': '1px solid #542B1B' });
   const css = applyDesignTokens(oldCss, next, previous);
-  expect(cascade(css, 'light')['--pod-nav-menu-item-selected-border']).toBe('5px double #542B1B');
+  expect(cascade(css, 'light')['--pod-nav-menu-item-selected-border']).toBe('1px solid #542B1B');
   expect(css).toContain('.deep-shell-nav-tab-list .next-nav-item.next-selected');
-  expect(css).toContain('border-radius: var(--pod-nav-menu-item-radius, 8px);');
+  expect(css).not.toContain('border-radius: var(--pod-nav-menu-item-radius, 8px);');
   expect(css).toContain('.project-only { border: 7px dotted red; }');
   const repeated = applyDesignTokens(css, next, next);
   expect(repeated.match(/openyida-navigation-shape:start/g)).toHaveLength(1);
@@ -240,26 +266,25 @@ test('older generated CSS gains menu shape consumers once and keeps project rule
 });
 
 test.each([
-  ['app-pop', 'light', '0px', '3px solid #211C21', '5px 5px 0 #F07098', '16px'],
-  ['app-nordic', 'light', '999px', '2px solid #355D4D', '0 5px 12px rgba(42,74,60,.16)', '14px'],
-  ['app-ticket', 'light', '0px', '5px double #542B1B', '4px 4px 0 #9D714C', '14px'],
-  ['app-terminal', 'dark', '0px', '1px dashed #9FE5AD', 'inset 5px 0 0 #9FE5AD, inset -5px 0 0 #9FE5AD', '4px'],
-])('%s retains the verified case shape in Plan, bundled CSS and Fast generation', (id, tone, radius, border, shadow, gap) => {
+  ['app-pop', 'light', '0px', '8px'],
+  ['app-nordic', 'light', '8px', '8px'],
+  ['app-ticket', 'light', '0px', '8px'],
+  ['app-terminal', 'dark', '0px', '4px'],
+])('%s retains the restrained menu shape in Plan, bundled CSS and Fast generation', (id, tone, radius, gap) => {
   const markdown = design(id);
   const expected = {
     '--pod-nav-sub-divider-color': readDesignTokens(markdown)['--pod-nav-sub-divider-color'],
     '--pod-nav-menu-item-radius': radius,
-    '--pod-nav-menu-item-selected-border': border,
-    '--pod-nav-menu-item-selected-shadow': shadow,
     '--pod-nav-menu-gap': gap,
   };
   expect(readDesignTokens(markdown)).toMatchObject(expected);
   const bundle = fs.readFileSync(path.join(__dirname, `../yida-skills/skills/yida-design/templates/design-themes/${id}/app_theme.css`), 'utf8');
-  // Placeholders are authoring values, not CSS block delimiters.
-  expect(cascade(bundle.replace(/\{\{PRIMARY_COLOR\}\}/g, '#6F4E37'), tone)).toMatchObject(expected);
+  // Authoring CSS must be instantiated before it is valid for upload.
+  expect(() => validateThemeCssContent(bundle)).toThrow(expect.objectContaining({ code: 'THEME_CSS_UNRESOLVED_TOKEN' }));
   expect(cascade(applyDesignTokens(template, markdown), tone)).toMatchObject(expected);
   expect(cascade(applyDesignTokens(bundle, markdown), tone)).toMatchObject(expected);
-  expect(markdown).toContain(`| 选中边框 | --pod-nav-menu-item-selected-border | ${border} |`);
+  expect(readDesignTokens(markdown)).not.toHaveProperty('--pod-nav-menu-item-selected-border');
+  expect(bundle).not.toContain('openyida-navigation-shape:start');
 });
 
 test('project overrides replace case measurements in the navigation prose and generated CSS', () => {
