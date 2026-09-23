@@ -14,7 +14,7 @@ const path = require('path');
 // (57 design/CSS/layout assets), their catalog, recipe and runtime consumer. Complete
 // content/navigation tone and detail-field tokens are retained in every standalone preset.
 // Complete navigation designs add navigation tokens to each template, paired
-// CSS mode overrides, one navigation-styles.json source, and matching guidance.
+// CSS mode overrides and matching guidance in each complete design.md source.
 // Paired CSS also retains scoped detail-canvas and toolbar contrast corrections.
 // Restored selected-item shadows include the common CSS rule and template guidance.
 // All 34 themes now ship three-file bundles; 15 migrated themes add CSS and layout assets.
@@ -27,7 +27,10 @@ const MAX_TARBALL_BYTES = 2144 * 1024;
 const MAX_UNPACKED_BYTES = 8000 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
-const MAX_ENTRY_COUNT = 605;
+// Shared source-repair diagnostics and their skill contract add two packaged files.
+// Theme scope, brand-scale and palette validation add three runtime modules;
+// removing the application-styles/navigation-styles catalogs offsets two files.
+const MAX_ENTRY_COUNT = 608;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -55,6 +58,11 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-app/workflow/incremental-preview.md',
   'yida-skills/skills/yida-create-form-page/references/batch-forms.md',
   'lib/core/utils.js',
+  'lib/core/source-repair.js',
+  'lib/app/theme-scope.js',
+  'lib/core/theme-brand-scale.js',
+  'lib/design/palette-contrast.js',
+  'yida-skills/references/source-repair.md',
   'lib/asset/asset-plan.js',
   'lib/asset/attachment-upload.js',
   'lib/process/services/process-actions.js',
@@ -67,7 +75,6 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-design/references/navigation-decision.md',
   'yida-skills/skills/yida-design/templates/design-themes/index.json',
   'yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json',
-  'yida-skills/skills/yida-design/templates/navigation-styles.json',
   'lib/app/application-style.js',
   'yida-skills/skills/yida-design/references/application-style-library.md',
   'yida-skills/skills/yida-design/references/theme/application-style-recipes.css',

@@ -60,12 +60,50 @@ function expectIssue(action, issue) {
   try {action(); throw new Error('Expected validation error');} catch (error) {expect(error.details?.issue).toBe(issue);}
 }
 
+test('design validation rejects unreadable pairs and reports roles for source repair', () => {
+  const value = fixture();
+  value.metadata.tokens['application-global'].appearance.surfaces['--pod-page-bg-color'] = '#FFFFFF';
+  try {check(value); throw new Error('Expected contrast error');} catch (error) {
+    expect(error.code).toBe('DESIGN_THEME_CONTRAST_LOW');
+    expect(error.details.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ role: 'page.body', foreground: '--color-text1-4', background: '--pod-page-bg-color', minimum: 4.5 }),
+    ]));
+  }
+});
+
+test('design validation distinguishes uncomputed colors from verified pairs', () => {
+  const value = fixture();
+  value.metadata.tokens['application-global'].appearance.surfaces['--pod-card-bg-color'] = 'oklch(0.2 0.02 200)';
+  const result = check(value);
+  expect(result.paletteContrast.unresolved.map(pair => pair.role)).toContain('card.body');
+  expect(result.paletteContrast.checks.map(pair => pair.role)).not.toContain('card.body');
+});
+
+test('collects independent component anchors and page labels without lowering design requirements', () => {
+  const value = fixture();
+  value.body = value.body.replace('<a id="component-button"></a>', '')
+    .replace('<a id="state-empty"></a>', '')
+    .replace('- **首屏焦点：** 逾期队列优先', '')
+    .replace('- **主操作：** 完成任务', '');
+  let error;
+  try { check(value, { designFile: '/project/design.md' }); } catch (caught) { error = caught; }
+  expect(error.code).toBe('DESIGN_DOCUMENT_INVALID');
+  expect(error.details.issues).toEqual(expect.arrayContaining([
+    expect.objectContaining({ path: 'components.button', code: 'EXISTING_ANCHOR_REQUIRED' }),
+    expect.objectContaining({ path: 'states.empty', code: 'EXISTING_ANCHOR_REQUIRED' }),
+    expect.objectContaining({ label: '首屏焦点', code: 'PAGE_LABEL_REQUIRED' }),
+    expect.objectContaining({ label: '主操作', code: 'PAGE_LABEL_REQUIRED' }),
+  ]));
+  expect(error.details.issues).toHaveLength(4);
+  expect(error.details.issues.every(issue => issue.sourcePath === '/project/design.md')).toBe(true);
+});
+
 test('platform basics are a minimum set and can consume declared project extensions', () => {
   const value = fixture();
   const global = value.metadata.tokens['application-global'];
   global.spacing['--project-reading-width'] = 'min(100%, 72rem)';
   value.metadata.tokens['custom-page'].project = {
-    '--project-paper': '#F6F1E8',
+    '--project-paper': '#14171B',
     '--project-surface': 'var(--project-paper)',
     '--project-cover': 'linear-gradient(135deg, var(--project-paper), #FFFFFF)',
     '--project-motion': '180ms',
@@ -170,6 +208,15 @@ test('legacy token extraction reads only tokens, converts numbers and preserves 
   expect(() => extractDesignTokens({ tokens: { '--only-one': '1px' } })).toThrow();
 });
 
+test('strict designs can reference inherited platform navigation tokens without copying declarations', () => {
+  const { metadata } = fixture();
+  metadata.tokens['application-global'].appearance.navigation = {};
+  metadata.tokens['custom-page']['--oyd-search-ink'] = 'var(--pod-nav-search-text-color)';
+  const tokens = extractDesignTokens(metadata, { strict: true });
+  expect(tokens['--oyd-search-ink']).toBe('var(--pod-nav-search-text-color)');
+  expect(tokens).not.toHaveProperty('--pod-nav-search-text-color');
+});
+
 test.each(['red; color: blue', 'var(--x', '{{PRIMARY_COLOR}}', 'url(javascript:alert(1))', 'x\ny'])('token extraction rejects unresolved or unsafe value %s', value => {
   const metadata = fixture().metadata;
   metadata.tokens['custom-page']['--bad-value'] = value;
@@ -182,6 +229,11 @@ test.each([
   ['missing standard variable', v => { delete v.metadata.tokens['application-global'].spacing['--s-5']; }, 'GLOBAL_TOKEN_SET_MISMATCH'],
   ['wrong token group', v => { v.metadata.tokens['application-global'].colors['--s-5'] = '20px'; }, 'GLOBAL_TOKEN_SET_MISMATCH'],
   ['undefined reference', v => { v.metadata.tokens['custom-page']['--a'] = 'var(--missing)'; }, 'UNDECLARED_TOKEN_REFERENCE'],
+  ['cycle through inherited platform binding', v => {
+    delete v.metadata.tokens['application-global'].appearance.navigation['--pod-nav-search-text-color'];
+    v.metadata.themeProfile.navTheme = 'light';
+    v.metadata.tokens['application-global'].colors['--color-text1-4'] = 'var(--pod-nav-search-text-color)';
+  }, 'TOKEN_REFERENCE_CYCLE'],
   ['platform references missing extension', v => { v.metadata.tokens['application-global'].appearance.surfaces['--pod-page-bg-color'] = 'var(--page-only-paper)'; }, 'UNDECLARED_TOKEN_REFERENCE'],
   ['cycle', v => { Object.assign(v.metadata.tokens['custom-page'], { '--a': 'var(--b)', '--b': 'var(--a)' }); }, 'TOKEN_REFERENCE_CYCLE'],
   ['cross-group cycle', v => {
