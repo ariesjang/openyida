@@ -40,7 +40,7 @@ test.each(loadThemeIndex().themes)('$themeId exports the complete authored desig
     const design = fs.readFileSync(path.join(root, 'design.md'), 'utf8');
     expect(design).toContain('导航外观属于这份完整应用主题');
     const tokens = readDesignTokens(resolveThemeColors(design.replaceAll('{{PRIMARY_COLOR}}', '#C2410C')));
-    for (const name of ['--pod-shell-theme-bg-color', '--pod-nav-menu-item-hover-border', '--pod-nav-menu-item-radius', '--pod-nav-menu-item-selected-shadow', '--pod-page-bg-color', '--input-bg-color', '--pod-field-preview-bg-color']) {
+    for (const name of ['--pod-shell-theme-bg-color', '--pod-nav-menu-item-radius', '--pod-page-bg-color', '--input-bg-color', '--pod-field-preview-bg-color']) {
       expect(tokens[name]).toEqual(expect.any(String));
     }
     expect(Object.keys(tokens).some(name => name.startsWith('--oyd-'))).toBe(true);
@@ -58,7 +58,7 @@ test('editing one complete template updates all consumers without rewriting desi
   const edited = template.replaceAll('#FFF0CD', '#EDF4F2').replaceAll('#754B13', '#245B57')
     .replaceAll('#fffefa', '#FCFAF5').replaceAll('#805c26', '#343C3A')
     .replace('"--pod-nav-menu-item-radius": "3px"', '"--pod-nav-menu-item-radius": "12px"')
-    .replace('"--pod-nav-menu-item-selected-shadow": "none"', '"--pod-nav-menu-item-selected-shadow": "inset 3px 0 0 #C2410C"')
+    .replace('      navigation:\n', '      navigation:\n        "--pod-nav-menu-item-selected-shadow": "inset 3px 0 0 #C2410C"\n')
     + '\n项目说明：橙红操作与低饱和青绿导航，页面与详情使用暖白表面。\n';
   fs.writeFileSync(designFile, edited);
   fs.writeFileSync(layoutFile, '[{"type":"Divider","title":"项目专属布局"}]\n');

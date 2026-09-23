@@ -643,7 +643,8 @@ describe('design-plan materialize', () => {
     expect(section).toContain(`导航明暗：${tone === 'dark' ? '深色' : '浅色'}`);
     expect(section).not.toMatch(/模板默认|默认近白|生成项目时|项目生成时/);
     expect(design.match(/本项目导航与应用框架/g)).toHaveLength(1);
-    expect(section).toContain('| 选中项阴影 | --pod-nav-menu-item-selected-shadow | none |');
+    expect(section).not.toContain('| 选中项阴影 |');
+    expect(section).toContain('未声明项沿用平台绑定与默认值');
     expect(validateDesignDocument(design).success).toBe(true);
   });
 
@@ -909,8 +910,8 @@ describe('design-plan materialize', () => {
         : scope(template, mode).match(/--pod-shell-theme-bg-color:\s*([^;]+);/)[1];
       const scoped = scope(css, mode);
       expect(scoped).toContain(`--pod-shell-theme-bg-color: ${background};`);
-      const headerBackground = mode === tone ? (tokens['--pod-page-header-bg-color'] || background)
-        : scope(template, mode).match(/--pod-page-header-bg-color:\s*([^;]+);/)[1];
+      const headerBackground = (mode === tone && tokens['--pod-page-header-bg-color'])
+        || scope(template, mode).match(/--pod-page-header-bg-color:\s*([^;]+);/)[1];
       expect(scoped).toContain(`--pod-page-header-bg-color: ${headerBackground};`);
     }
     // Changing the primary color updates the selected theme palette and keeps other modes.

@@ -84,7 +84,7 @@ Plan 将下列对象写入 `visualStyle.creativeDirection`；Fast 写入最终�
 
 Plan 的 `visualStyle.tokens` 必须显式提供：画布 `--pod-page-bg-color`、表面 `--pod-card-bg-color`、文字 `--color-text1-4`、控件 `--form-element-medium-corner` / `--form-element-medium-height`、底栏 `--pod-page-footer-bg-color` / `--pod-sticky-footer-box-shadow`，以及自定义页面 `--oyd-content-width` / `--oyd-content-padding` / `--oyd-field-gap` / `--oyd-heading-font` / `--oyd-heading-size` / `--oyd-rule-style`。其余角色同样按完整设计配套，数据管理外层底栏与按钮内层分别决定。Fast 将这些值写入设计的 Token 分组。缺少决策或关键值时生成器报错，不自动选一套模板。
 
-自由创意还需显式写入 [六个基础导航色](application-theme-consistency.md#导航与应用框架) 与 `navTheme`，并按业务布局设计框架、菜单形状、文字、间距及状态。Fast 与 Plan 使用同一完整主题文件。
+自由创意显式选择 `navTheme`，按业务布局设计框架与菜单，仅填写[必要的导航覆盖项](application-theme-consistency.md#导航与应用框架)，其余沿用平台绑定。Fast 与 Plan 使用同一完整主题文件。
 
 ## 验收与维护
 

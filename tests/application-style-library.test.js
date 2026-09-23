@@ -88,15 +88,19 @@ test('every named theme has its own complete platform navigation design and read
     expect(source).toContain('导航与应用框架、表单、自定义页面和详情页共用设计语言');
     expect(source).not.toContain('原生导航仅配置上述开放颜色');
     Object.keys(navigation).forEach(token => expect(supported.has(token)).toBe(true));
-    expect(Object.keys(navigation).length).toBeGreaterThanOrEqual(40);
-    NAVIGATION_COLOR_TOKENS.forEach(token => expect(navigation[token]).toEqual(expect.any(String)));
+    expect(navigation).not.toHaveProperty('--pod-nav-search-text-color');
+    expect(navigation).not.toHaveProperty('--pod-nav-search-border-active-color');
+    expect(navigation).not.toHaveProperty('--pod-page-header-bg-color');
+    // Expanded hierarchy lines are an intentional per-theme design choice.
+    expect(navigation['--pod-nav-sub-divider-color']).toEqual(expect.any(String));
+    const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
+    expect(css).toContain(`--pod-nav-sub-divider-color: ${navigation['--pod-nav-sub-divider-color']};`);
+    NAVIGATION_COLOR_TOKENS.forEach(token => expect(css).toContain(`${token}:`));
     palettes.add(NAVIGATION_COLOR_TOKENS.map(token => navigation[token]).join('|'));
     radii.add(navigation['--pod-nav-menu-item-radius']);
     heights.add(navigation['--pod-nav-menu-item-height']);
     // Navigation overlays have their own surface, including dark-nav/light-content themes.
     expect(navigation['--pod-nav-popup-bg-color']).toBe('var(--pod-shell-theme-bg-color)');
-    expect(navigation['--pod-nav-search-text-color']).toBe('var(--pod-nav-item-text-hover-color)');
-    expect(navigation['--pod-nav-logo-icon']).toBe('var(--pod-nav-item-text-selected-color)');
   });
   expect(palettes.size).toBe(33);
   expect(radii.size).toBeGreaterThanOrEqual(8);

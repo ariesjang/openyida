@@ -47,6 +47,55 @@ function cascade(css, navigation, tone = navigation) {
   return values;
 }
 
+function navigationOverrides(overrides, tone = 'light') {
+  const metadata = parseDesignDocument(design('soft-inset-surfaces')).metadata;
+  metadata.themeProfile.navTheme = tone;
+  metadata.tokens['application-global'].appearance.navigation = overrides;
+  return `---\n${JSON.stringify(metadata)}\n---\n`;
+}
+
+test.each(['light', 'dark'])('a single %s navigation override leaves platform bindings intact', tone => {
+  const markdown = navigationOverrides({ '--pod-nav-menu-item-radius': '19px' }, tone);
+  const css = applyDesignTokens(template, markdown);
+  const defaults = cascade(template, tone);
+  const active = cascade(css, tone);
+  expect(active['--pod-nav-menu-item-radius']).toBe('19px');
+  for (const name of ['--pod-nav-search-text-color', '--pod-nav-search-border-active-color', '--pod-nav-logo-bg', '--pod-page-header-bg-color', ...navigationColorNames]) {
+    expect(active[name]).toBe(defaults[name]);
+  }
+  expect(css).not.toContain(': undefined;');
+});
+
+test('removing authored navigation overrides restores platform references and default shapes', () => {
+  const previous = navigationOverrides({
+    '--pod-nav-search-text-color': '#765432', '--pod-nav-logo-bg': '#234567',
+    '--pod-nav-menu-item-selected-shadow': 'inset 4px 0 0 #234567',
+    '--pod-nav-menu-item-hover-border': '2px dotted #234567',
+  });
+  const next = navigationOverrides({});
+  const css = applyDesignTokens(applyDesignTokens(template, previous), next, previous);
+  const defaults = cascade(template, 'light');
+  for (const name of Object.keys(parseDesignDocument(previous).metadata.tokens['application-global'].appearance.navigation)) {
+    expect(cascade(css, 'light')[name]).toBe(defaults[name]);
+  }
+  expect(css).toContain('--pod-nav-search-text-color: var(--color-text1-4, #202020);');
+  expect(applyDesignTokens(css, next, next)).toBe(css);
+});
+
+test('removing a generated navigation override preserves a later manual customization', () => {
+  const previous = navigationOverrides({ '--pod-nav-search-text-color': '#765432' });
+  const generated = applyDesignTokens(template, previous).replaceAll('--pod-nav-search-text-color: #765432;', '--pod-nav-search-text-color: #123456;');
+  const css = applyDesignTokens(generated, navigationOverrides({}), previous);
+  expect(cascade(css, 'light')['--pod-nav-search-text-color']).toBe('#123456');
+});
+
+test('a selected-border-only override upgrades an older CSS consumer without requiring other borders', () => {
+  const legacy = template.replace(/\/\* openyida-navigation-shape:start \*\/[\s\S]*?\/\* openyida-navigation-shape:end \*\//, '');
+  const css = applyDesignTokens(legacy, navigationOverrides({ '--pod-nav-menu-item-selected-border': '2px solid #345678' }));
+  expect(css).toContain('border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));');
+  expect(cascade(css, 'light')['--pod-nav-menu-item-selected-border']).toBe('2px solid #345678');
+});
+
 test.each([
   ['soft-inset-surfaces', 'light'],
   ['dark-inset-hairline', 'dark'],
@@ -56,7 +105,7 @@ test.each([
   const css = applyDesignTokens(template, markdown);
   const active = cascade(css, tone);
   for (const name of navigationColorNames) {expect(active[name]).toBe(tokens[name]);}
-  expect(active['--pod-page-header-bg-color']).toBe(tokens['--pod-page-header-bg-color'] || tokens['--pod-shell-theme-bg-color']);
+  expect(active['--pod-page-header-bg-color']).toBe(tokens['--pod-page-header-bg-color'] || cascade(template, tone)['--pod-page-header-bg-color']);
   const other = tone === 'dark' ? 'light' : 'dark';
   const inactive = cascade(css, other);
   const defaults = cascade(template, other);
@@ -170,7 +219,7 @@ test('theme-selected navigation shadow flows into CSS and resets to none', () =>
 
   const next = design('soft-inset-surfaces');
   const nextCss = applyDesignTokens(previousCss, next, previous);
-  expect(readDesignTokens(next)[selectedShadowToken]).toBe('none');
+  expect(readDesignTokens(next)[selectedShadowToken]).toBeUndefined();
   expect(cascade(nextCss, 'light')[selectedShadowToken]).toBe('none');
 });
 
@@ -198,6 +247,7 @@ test.each([
 ])('%s retains the verified case shape in Plan, bundled CSS and Fast generation', (id, tone, radius, border, shadow, gap) => {
   const markdown = design(id);
   const expected = {
+    '--pod-nav-sub-divider-color': readDesignTokens(markdown)['--pod-nav-sub-divider-color'],
     '--pod-nav-menu-item-radius': radius,
     '--pod-nav-menu-item-selected-border': border,
     '--pod-nav-menu-item-selected-shadow': shadow,

@@ -189,6 +189,15 @@ test('legacy token extraction reads only tokens, converts numbers and preserves 
   expect(() => extractDesignTokens({ tokens: { '--only-one': '1px' } })).toThrow();
 });
 
+test('strict designs can reference inherited platform navigation tokens without copying declarations', () => {
+  const { metadata } = fixture();
+  metadata.tokens['application-global'].appearance.navigation = {};
+  metadata.tokens['custom-page']['--oyd-search-ink'] = 'var(--pod-nav-search-text-color)';
+  const tokens = extractDesignTokens(metadata, { strict: true });
+  expect(tokens['--oyd-search-ink']).toBe('var(--pod-nav-search-text-color)');
+  expect(tokens).not.toHaveProperty('--pod-nav-search-text-color');
+});
+
 test.each(['red; color: blue', 'var(--x', '{{PRIMARY_COLOR}}', 'url(javascript:alert(1))', 'x\ny'])('token extraction rejects unresolved or unsafe value %s', value => {
   const metadata = fixture().metadata;
   metadata.tokens['custom-page']['--bad-value'] = value;
@@ -201,6 +210,11 @@ test.each([
   ['missing standard variable', v => { delete v.metadata.tokens['application-global'].spacing['--s-5']; }, 'GLOBAL_TOKEN_SET_MISMATCH'],
   ['wrong token group', v => { v.metadata.tokens['application-global'].colors['--s-5'] = '20px'; }, 'GLOBAL_TOKEN_SET_MISMATCH'],
   ['undefined reference', v => { v.metadata.tokens['custom-page']['--a'] = 'var(--missing)'; }, 'UNDECLARED_TOKEN_REFERENCE'],
+  ['cycle through inherited platform binding', v => {
+    delete v.metadata.tokens['application-global'].appearance.navigation['--pod-nav-search-text-color'];
+    v.metadata.themeProfile.navTheme = 'light';
+    v.metadata.tokens['application-global'].colors['--color-text1-4'] = 'var(--pod-nav-search-text-color)';
+  }, 'TOKEN_REFERENCE_CYCLE'],
   ['platform references missing extension', v => { v.metadata.tokens['application-global'].appearance.surfaces['--pod-page-bg-color'] = 'var(--page-only-paper)'; }, 'UNDECLARED_TOKEN_REFERENCE'],
   ['cycle', v => { Object.assign(v.metadata.tokens['custom-page'], { '--a': 'var(--b)', '--b': 'var(--a)' }); }, 'TOKEN_REFERENCE_CYCLE'],
   ['cross-group cycle', v => {
