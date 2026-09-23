@@ -1,20 +1,20 @@
 ---
 name: yida-design
 description: >
-  当用户要做完整应用视觉设计、单页 UI 改造、主页面视觉设计、应用主题色或全局换肤时使用。
-  完整应用读取共享需求：Fast 并行输出 design.md，Plan 维护视觉事实后由 CLI 生成 design.md。
-  将导航、应用框架、表单、记录详情和自定义页面一起设计，在 design.md 写入统一的主题 token、布局、材质、形状、间距与状态规则。
+  设计应用外观、美化页面、调整主题色，或解决导航与页面风格不一致时使用。
+  读取已有需求和设计，创建或更新 design.md，让导航、应用框架、表单、详情和自定义页面使用同一套主题。
+  调整现有导航的颜色和样式也用本技能；需要自己编写导航菜单时才用 yida-nav-shell。本技能不写 PRD 或页面源码。
 ---
 
 # yida-design
 
-宜搭应用和页面视觉设计技能，输出 `design.md`。
+宜搭应用和页面视觉设计技能，输出 `design.md`。后续主题生成和页面开发都按这份设计实现。
 
-宜搭平台基础变量是平台提供的应用主题基础变量框架。项目主题在这套基础变量上按需扩展材质、布局、字体、动效和组件状态变量。先确定设计效果，再写入对应变量和消费位置；见 [主题扩展规则](references/application-theme-consistency.md#平台基础变量是应用主题基础框架)。
+先读已有需求、设计和应用主题，确定哪些地方需要调整。优先使用平台已有的主题变量，只在表达不了所需效果时新增变量，并写清哪些组件使用它；见 [主题扩展规则](references/application-theme-consistency.md#平台基础变量是应用主题基础框架)。
 
-设计导航时优先沿用平台绑定，在同一份主题中只覆盖必要差异；border、box-shadow 等按需启用，不要求每份模板单独设计菜单轮廓，按连续目录组织普通入口，避免把表单输入框、独立按钮或卡片造型复制进导航，并在访问态的数据管理页与业务页面检查效果，见 [导航形状与密度的案例经验](references/application-theme-consistency.md#导航形状与密度的案例经验)。
+导航默认沿用平台样式，像连续目录一样排列。只调整需要改变的颜色、尺寸和状态；边框、阴影可不设置，不要把每个菜单项做成输入框、按钮或卡片。改完后打开实际的数据管理页和业务页面检查，见 [导航形状与密度的案例经验](references/application-theme-consistency.md#导航形状与密度的案例经验)。
 
-品牌色阶属于必需基础契约：`--color-brand1-1/2/3/5/6/9/10` 七档必须完整生成在全局 `:root`，不能随可选导航样式一起省略，也不能用局部声明、空值或未解析说明充数。缺失或无效时修复 design.md 后重新生成，不临时补另一套默认配色。
+**品牌变量必须完整，导航装饰可以省略。** `design.md` 提供 PC 品牌色阶 `--color-brand1-1/2/3/5/6/9/10`，CLI 同时生成移动端 `--color-brand-1`、`--color-brand-2`、`--color-brand-3`、`--color-brand-4`。最终 CSS 必须在全局 `:root` 中提供这 11 个可用颜色；移动端映射不必在 design.md 重复填写。生成和上传都会检查缺失、无效颜色及循环引用。报错时修复设计后重新生成，不能只替换主色后上传模板。
 
 确定风格前，按[设计方向比较](references/theme-selection.md#设计方向比较)以第一直觉为参照，发展两个更有表现力的方向，在当前规划轮次内选定。已有明确视觉要求时，在其范围内完善设计。
 
@@ -105,5 +105,3 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 | [应用主题 CSS 模板](references/theme/app-custom-theme-template.css) | AI 可复制修改的品牌、Shell、页面、表格和导航 token | 生成自定义应用主题文件时必读 |
 | [yida-canvas-custom-page 样式实现指南](../yida-canvas-custom-page/references/canvas-style-implementation-guide.md) | 将 `design.md` 的 token、背景、圆角、密度和组件规则落到页面源码、antd、CSS、图表和控件状态 | 实现阶段 |
 | [字段与 URL 参考](../../references/field-and-url-reference.md) | `isRenderNav=false`、页面 URL、跨页跳转 | 拼接页面/表单 URL |
-
-移动端 `--color-brand-1`、`--color-brand-2`、`--color-brand-3`、`--color-brand-4` 由 CLI 按应用色阶生成桥接；最终 CSS 也必须在顶层 `:root` 完整提供这四项。生成后和上传前同时校验 PC 七档与移动端四档的缺失、无效颜色及引用循环，不要求在 design.md 重复声明自动桥接。
