@@ -1,6 +1,6 @@
 ---
 name: yida-publish-page
-description: 自定义页面编译发布技能；发布 YidaCodeCanvas 页面时会写入 runtimeCode/importedModules，并自动注入 yida/utils window 桥。
+description: 将已编写的宜搭自定义页面源码发布或更新到指定页面。提供源码路径、应用 ID 和自定义页面 ID 后，执行编译、发布和内容回读；原生表单不使用本技能。
 ---
 
 # 发布自定义页面
@@ -71,7 +71,7 @@ description: 自定义页面编译发布技能；发布 YidaCodeCanvas 页面时
 ## Canvas 主题处理
 
 - `compile` 和 `publish` 默认保留固定品牌色覆盖，在结果 `warnings` 中返回源码位置、字段、色值与影响；即使使用 `--json` 也保留告警。告警不表示品牌色已跟随应用主题。
-- `--strict-theme` 将固定品牌色作为错误；`--allow-fixed-brand` 明确保留覆盖，两者互斥。环境变量分别为 `OPENYIDA_CANVAS_STRICT_THEME=1` 和 `OPENYIDA_CANVAS_ALLOW_FIXED_BRAND=1`。
+- 三个主题参数仅用于 Canvas 页面，按下方参数表选择；普通发布无需添加主题参数。`OPENYIDA_CANVAS_STRICT_THEME=1` 启用严格检查，`OPENYIDA_CANVAS_ALLOW_FIXED_BRAND=1` 明确保留固定色覆盖。
 - `publish --fix-theme` 显式迁移固定品牌色覆盖，可与 `--strict-theme` 合用，不能与 `--allow-fixed-brand` 合用。待迁移控件须位于已装配、已挂载的 `CanvasThemeProvider` 内；旁侧无关 Provider 不算主题来源。无法静态确认的动态渲染路径保留原文件，按主题开发技能手动接入；CLI 在内存中完成迁移和全部 Canvas 编译检查，通过后才写回。没有主题来源时先按主题开发技能接入，不能靠删除颜色回退到默认主题。
 - 发布不等待 stdin，不自动弹出迁移询问；未指定 `--fix-theme` 不改写品牌色。编译错误时保留原源码。
 - 迁移范围为品牌交互色覆盖；标准动态 Provider、抽屉背景/文字/圆角/阴影和 iframe 实现保持不变。迁移后检查主操作、链接、Tabs，以及实际使用的明暗主题和抽屉内外页面。
@@ -79,7 +79,7 @@ description: 自定义页面编译发布技能；发布 YidaCodeCanvas 页面时
 ## 命令
 
 ```bash
-openyida publish <源文件路径> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--auto-nav-order] [--open|--no-open] [--json]
+openyida publish <源文件路径> <appType> <formUuid> [--health-check] [--force] [--canvas] [--compat] [--skip-lint] [--fix-theme] [--strict-theme] [--allow-fixed-brand] [--auto-nav-order] [--open|--no-open] [--json]
 ```
 
 路径口径：从仓库根执行时，源文件用 `project/pages/src/...`；如果 Bash cwd 已经是 `<workspace>/project`，源文件用 `pages/src/...`，不要传 `project/pages/src/...` 导致查找 `project/project/pages/src/...`。发布失败提示源文件不存在时，先按该规则切换路径，不要自动发布另一份文件。
@@ -94,6 +94,9 @@ openyida publish <源文件路径> <appType> <formUuid> [--health-check] [--forc
 | `formUuid` | 是 | 自定义页面 ID，必须是 `openyida list-forms <appType>` 返回的 `formType=display` 目标，不要使用数据底表或流程表单 ID |
 | `--compat` / `--modern` | 否 | 兼容构建开关；仅在确认源文件属于平台 JSX 组件页面且扩展名不规范时使用；`.oyd.jsx` 默认自动启用 |
 | `--canvas` | 否 | 显式写入 `YidaCodeCanvas` Schema；`.canvas.jsx` / `.canvas.tsx` 扩展名已自动启用，仅当扩展名不规范但确认为 `YidaCodeCanvas` 组件源码时需要 |
+| `--fix-theme` | 否 | 仅 Canvas：需要将固定品牌色改为跟随应用主题时使用。确认控件位于主题 Provider 内、编译通过后才写回源码；可与 `--strict-theme` 合用，不能与 `--allow-fixed-brand` 合用 |
+| `--strict-theme` | 否 | 仅 Canvas：需要阻止固定品牌色覆盖时使用；发现覆盖即报错，不修改源码。不能与 `--allow-fixed-brand` 合用 |
+| `--allow-fixed-brand` | 否 | 仅 Canvas：明确保留固定品牌色覆盖，仍返回告警；不修改源码。不能与 `--strict-theme` 或 `--fix-theme` 合用 |
 | `--health-check` | 否 | 发布成功后用 token 读回目标页面 Schema，校验 `YidaCodeCanvas.runtimeCode` 或平台 `Jsx + actions.module.compiled` 与本次发布内容匹配；不请求页面 HTML，不依赖 Cookie |
 | `--auto-nav-order` | 否 | 仅在 PRD 缺少明确导航清单时使用；完整应用逐页发布不传此参数，全部页面开发并发布完成后由主流程单独执行 `nav-group auto-order`；PRD 已写明顺序时不要传本参数，发布后只执行一次 `openyida nav-group order <appType> <页面/表单...>`。排序失败不回滚页面，结果保留在结构化 `navOrder` 中 |
 | `--force` | 否 | 显式绕过发布目标类型保护；只有确认目标是自定义页面但导航接口暂时无法识别时才使用 |

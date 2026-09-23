@@ -31,11 +31,18 @@
    ```bash
    openyida design-plan init .cache/openyida/<项目名>/requirement-brief.json --theme-id <已选主题> --json
    ```
-   `requirement-brief.json` 必须复用 `yida-requirement-analysis` 的输出结构，不要自行发明字段层级；`projectName` 位于 JSON 根级，`businessGoals` 等集合字段保持数组，命令第一次就传入 `visualSelection.themeId`。若 CLI 返回字段路径诊断，按 `expectedPath` 集中修正原文件后最多重试一次，不要通过反复更换项目名规避结构错误。
+   `requirement-brief.json` 必须复用 `yida-requirement-analysis` 的输出结构：`projectName` 位于 JSON 根级，`businessGoals` 等集合字段保持数组。命令第一次就传入 `visualSelection.themeId` 对应的 `--theme-id` 值。
 
-4. 按 init 返回的 `parallelTasks` 和 `dependsOn` 完成待补内容。CLI 预填业务骨架与已选主题；自定义页仍须补齐焦点、布局、主操作、响应式和验收，写入 `visual.json`。业务页面确定后完成视觉任务，可在同一轮中顺序填写两个文件。纯原生资源且两个片段均已就绪时，直接生成方案。
-5. init 已创建并预填 `business.json` 骨架；读取该文件及 `context` 中的类型示例，按 `authoring.pendingFields` 的文件和字段路径补齐内容，保留 `base` 与已有事实。复核需求覆盖后，将已完成片段设为 `ready=true`。`business.json` 的 facts 填写 overview、dataModels、businessFlows、pages 和可选 execution；`visual.json` 的 facts 填写 visualStyle。同一次补齐所有普通表单的 sampleDataPlan（窄范围不造数时写 skipReason）及所有自定义页面的 permissionSummary，然后直接执行 init 返回的 `materialize.command`。`maxSuccessfulCalls: 1` 表示首版成功后不重复物化；失败按 `repairPolicy` 修复，不能重复提交未修改的输入。标准首版禁止先试 `--from-preview`、`preview`、`--check` 或无参数 materialize；成功 JSON 已返回 HTML 路径和 revision，不再用 Glob、Read 或帮助命令检查产物。只有存在品牌稿、参考图、页面级特殊风格或用户明确要求精修时，才执行 `optionalTasks.visual-refinement` 后再物化。
-6. 读取精确路径 `workflow/plan/step-4-deliver.md`，按其中契约直接展示并确认当前方案。超大需求需要展示中间进展或用户明确要求边生成边查看时，才使用 [按模块更新方案](../incremental-preview.md)；普通首版不逐模块预览和重复渲染。
+   初始化失败时，按 `expectedPath` 修正 `requirement-brief.json`，再按[本地校验修复](../../../../references/source-repair.md)重试。初始化和后续物化使用同一停止规则；不要更换项目名规避错误。初始化成功后进入下一步，不重复 init。
+
+4. **确定待补字段。** 按 init 返回的 `parallelTasks`、`dependsOn` 和 `authoring.pendingFields` 安排工作。保留两个片段中的 `base` 与已有事实；业务页面确定后再补视觉内容，可在同一轮中顺序填写两个文件。
+5. **补齐业务事实。** init 已预填 `business.json`；读取该文件及 `context` 中的类型示例，在 facts 中补齐 overview、dataModels、businessFlows、pages 和可选 execution。一次补齐所有普通表单的 sampleDataPlan（窄范围不造数时写 skipReason）及所有自定义页面的 permissionSummary。
+6. **补齐视觉事实。** 在 `visual.json` 的 facts.visualStyle 中补齐自定义页的焦点、布局、主操作、响应式和验收。仅在存在品牌稿、参考图、页面级特殊风格或用户明确要求精修时，执行 `optionalTasks.visual-refinement`。纯原生资源没有这些待补项时沿用 init 的视觉内容。
+7. **标记片段就绪。** 复核两个片段覆盖已确认需求且必填内容齐全，将已完成片段设为 `ready=true`。两个片段均已就绪后进入生成步骤。
+8. **生成首版产物。** 直接执行 init 返回的 `materialize.command`。成功后进入展示步骤；`maxSuccessfulCalls: 1` 表示首版成功后不重复物化。失败按 `repairPolicy` 修复，不能重复提交未修改的输入，具体停止条件见[本地校验修复](../../../../references/source-repair.md)。标准首版不先试 `--from-preview`、`preview`、`--check` 或无参数 materialize。
+9. **展示并确认。** 成功 JSON 已返回 HTML 路径和 revision，直接按 `workflow/plan/step-4-deliver.md` 展示并确认当前方案；不再用 Glob、Read 或帮助命令检查产物。
+
+超大需求需要展示中间进展或用户明确要求边生成边查看时，使用[按模块更新方案](../incremental-preview.md)。普通首版按上述步骤完成，不逐模块预览和重复渲染。
 
 明确范围的方案以 `explicitScope` 作为完整执行清单。确认后的每个写操作都对应清单中的一个资源或交付项；清单资源全部回读且真实链接完成交付时，本轮达到完成态。
 
