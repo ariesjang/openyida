@@ -64,6 +64,32 @@ tokens:
         "--pod-nav-menu-line-height": "20px"
         "--pod-nav-menu-gap": "8px"
         "--pod-shell-lshape-border-radius": "8px"
+      native-form:
+        "--form-element-medium-corner": "var(--corner-2)"
+        "--form-element-medium-height": "var(--s-8)"
+        "--form-element-medium-font-size": "var(--font-size-body-1)"
+        "--input-bg-color": "var(--color-fill1-1)"
+        "--input-border-width": "1px"
+        "--input-border-color": "var(--color-line1-2)"
+        "--input-hover-border-color": "var(--color-brand1-6)"
+        "--input-focus-border-color": "var(--color-brand1-6)"
+        "--input-hover-bg-color": "var(--input-bg-color)"
+        "--input-focus-bg-color": "var(--input-bg-color)"
+        "--pod-form-label-color": "var(--color-text1-4)"
+        "--form-top-label-margin-b": "var(--s-2)"
+        "--yida-form-content-bgcolor": "var(--pod-page-bg-color)"
+        "--pod-page-footer-bg-color": "var(--pod-card-bg-color)"
+        "--pod-page-footer-border-radius": "var(--corner-5)"
+        "--pod-sticky-footer-box-shadow": "none"
+        "--pod-field-preview-min-height": "var(--form-element-medium-height)"
+        "--pod-field-preview-padding": "0 8px"
+        "--pod-field-preview-gap": "var(--s-1)"
+        "--pod-field-preview-bg-color": "var(--color-fill1-1)"
+        "--pod-field-preview-border-radius": "var(--corner-2)"
+        "--pod-field-preview-indicator-color": "var(--color-fill1-3)"
+        "--pod-field-preview-shadow": "none"
+        "--pod-field-preview-text-color": "var(--color-text1-4)"
+        "--pod-field-preview-line-height": "20px"
     colors: # 品牌色、内容区语义色与固定色；不随导航深浅切换
       "--color-white": "var(--pod-card-bg-color)" # 全应用基础表面，跟随内容明暗；不承担反色文字或固定亮面职责
       "--color-brand1-1": "<生成实际色值：--color-brand1-6 88% + #FFFFFF 12%，sRGB 逐通道混合>" # 品牌交互元素悬停
@@ -199,7 +225,7 @@ YAML 是数值事实源，正文定义消费关系。未能直接确定的尺寸
 
 菜单轮廓使用 --pod-nav-menu-item-radius、--pod-nav-menu-item-border、--pod-nav-menu-item-hover-border、--pod-nav-menu-item-selected-border。侧栏和顶部菜单共用轮廓，各状态保持相同边框宽度，文字位置稳定；具体数值以本项目 Token 为准。
 
-导航与应用框架、表单、自定义页面和详情页共用设计语言。先按业务入口安排菜单、分组、搜索、品牌区与常用操作，再一起确定导航与正文的明暗、表面、字体、边界、圆角和密度。平台导航使用真实页面菜单；自绘导航按同一套导航 Token 实现。命名模板沿用自身 navTheme，换主色保持导航明暗与内容画布；需要另一导航明暗时改选主题，自由创意按项目明确设计。
+导航与应用框架、表单、自定义页面和详情页共用设计语言。先按业务入口安排菜单、分组、搜索、品牌区与常用操作，再一起确定导航与正文的明暗、表面、字体、边界、圆角和密度。平台导航使用真实页面菜单；自绘导航按同一套导航 Token 实现。导航外观属于这份完整应用主题，颜色、三态边框、圆角、阴影与表单、详情和自定义页面一起设计。业务决定入口组织、操作频率与交互需求；主题决定这些需求的视觉表达。主色只是颜色角色之一，辅助色和材质色可以独立存在；仅显式 var 引用建立联动，不按主色批量染色。项目更换配色时，回到同一份 design.md 成组调整实际受影响的 Token，并核对五类界面的整体搭配。
 
 导航底色使用 --pod-shell-theme-bg-color；普通、悬停和选中文字分别使用 --pod-nav-item-text-color、--pod-nav-item-text-hover-color、--pod-nav-item-text-selected-color；悬停和选中背景使用 --pod-nav-menu-bg-hover-color、--pod-nav-menu-bg-selected-color。图标跟随对应文字状态，当前入口同时用背景或字重表达。
 
@@ -309,6 +335,8 @@ YAML 是数值事实源，正文定义消费关系。未能直接确定的尺寸
 浮层中的输入与菜单仍分别消费基础、悬停和选中角色。微过渡建议 120–180 ms（推断）；普通卡片无悬浮放大，纹理保持静止，不采用扫描动画。
 
 ### 表单组件与版式结构
+
+原生表单与详情通过 appearance.native-form明确接入本主题：输入基础面使用 --color-fill1-1，边界使用 --color-line1-2，控件和只读数据框使用 --corner-2；焦点使用品牌交互角色。表单主面延续页面画布，操作底栏使用卡片表面与 --corner-5，详情保持正文前景与控件密度，不额外添加默认胶囊底栏或数据框阴影。项目有其他材质与状态需求时，在同一份 design.md 中调整对应 Token。
 
 表单使用与自定义页面相同的应用全局样式，字体、色彩、表面、边界、圆角、密度和状态延续本主题。表单支持在顶部、左侧、主体、右侧和字段之间组合 Tab/切换、按钮组/操作入口、图片/图形、状态区、标题与 `Divider`、`ColumnContainer`、辅助内容和业务字段。各组件承担导航、操作、视觉焦点、反馈、层级、节奏、装饰或采集作用。普通业务分组和章节分隔使用 `Divider`，横向字段组合使用 `ColumnContainer`。每张表单在项目 `design.md` 写清组件位置与作用、列比例、标签位置、字段与章节间距、底栏、详情延续和窄屏重排。
 

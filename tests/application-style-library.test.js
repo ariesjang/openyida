@@ -61,8 +61,6 @@ test('theme catalog separates content tone from navigation tone', () => {
   });
   expect(themeIndex.find(theme => theme.themeId === 'free-creative')).not.toHaveProperty('contentTone');
   expect(themeIndex.find(theme => theme.themeId === 'free-creative')).not.toHaveProperty('navTheme');
-  const sourceProfiles = require('../yida-skills/skills/yida-design/templates/application-styles.json');
-  expect(sourceProfiles.every(profile => !Object.prototype.hasOwnProperty.call(profile, 'dark'))).toBe(true);
 
   applicationStyles.filter(theme => theme.mode === 'template').forEach(theme => {
     const design = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');

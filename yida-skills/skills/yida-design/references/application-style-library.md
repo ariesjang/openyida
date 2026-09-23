@@ -90,4 +90,4 @@ Plan 的 `visualStyle.tokens` 必须显式提供：画布 `--pod-page-bg-color`�
 
 看应用整体，覆盖导航、自定义页、提交、编辑、详情、数据管理内嵌、抽屉和移动端，核对正文/底栏对齐、背景连续、hover/focus、禁用/错误和窄屏布局。应用主题与表单组件树共同作为验收基线。
 
-维护既有主题时修改对应目录的 `design.md` 与 `form-layout.json`；维护导航时修改 `templates/navigation-styles.json`，维护应用风格预设时修改 `templates/application-styles.json` 与共用配方，再运行 `node scripts/build-application-styles.js`；随后运行模板、Plan/Fast、原生布局测试及 `check:skills`。该脚本仅用于仓库维护，应用搭建使用上述 CLI。
+每个主题目录的 `design.md` 是完整视觉设计的唯一维护源：导航、应用框架、自定义页面、表单和详情的颜色、边框、hover、圆角、阴影、字体与密度在同一文件中定义。`form-layout.json` 维护表单结构，`app_theme.css` 是配对生成物；不另建导航配色库或应用风格配置覆盖它们。修改设计后运行 `node scripts/build-application-styles.js`，脚本只编译 CSS，不改写设计正文、Token、表单结构或索引。`npm run check:themes`（即 `node scripts/build-application-styles.js --check`）检查所有配对 CSS 是否同步，已接入 `check:quick` 和 CI。新增模板时添加三文件目录和索引项。随后运行模板、Plan/Fast、原生布局测试及 `check:skills`。该脚本仅用于仓库维护，应用搭建使用上述 CLI。

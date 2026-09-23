@@ -9,15 +9,15 @@
  * 布局、导航交互和 iframe 高度仍由页面/容器实现，iframe 不自动继承父文档变量。
  *
  * AI 使用说明：
- * 1. 先在 design.md 确定主题色，再执行 openyida sample yida-design app-theme
+ * 1. 先在 design.md 确定完整应用主题，再执行 openyida sample yida-design app-theme
  *    --design-file <design.md> --output <app-theme.css> 生成主题。
  * 2. 修改 design.md 后重跑同一命令，CLI 增量更新 token 并保留其他定制。
  *    省略 --design-file 会重置模板，不用于保留已有定制的更新。
  * 3. 品牌值保留项目占位和派生说明；先完成 design.md，再生成实际主题 CSS。
  * 4. 应用品牌色阶只使用平台实际生成的 --color-brand1-1、2、3、5、6、9、10；
  *    CLI 同时生成 --color-brand-1 至 --color-brand-4 和 --color-group，不要补造 4、7、8。
- * 5. 若 design.md 选择其他主色，必须同步替换品牌色阶、基础色阶、图表色组，以及模板中按钮、
- *    表单、选中态、导航、日期组件等品牌相关直接色值；成功、警告、错误、通知等语义色保持独立。
+ * 5. 按 design.md 的 Token 名更新颜色、边框、状态、圆角与阴影；显式 var() 引用才建立联动。
+ *    导航、表单、详情和自定义页面共同设计；辅助色、材质色与状态色不因换主色自动重染。
  * 6. 页面、卡片、抽屉和控件通过变量引用继承项目圆角，不强制所有主题使用大圆角。
  * 7. 保留变量名、顶层 :root 及导航明暗作用域；白色、灰色模式保留背景回退链。
  *    CLI 在生成前后和上传前检查 CSS 结构闭合，失败时修复源文件后重试。
@@ -167,10 +167,10 @@
 
   /* 新主题下变量 */
   /* shell 背景 padding 圆角 */
-  --pod-shell-bg-color-light: var(--color-brand1-2, var(--color-brand1-2));
+  --pod-shell-bg-color-light: var(--color-brand1-2, rgba(243, 240, 239, 1));
   --pod-shell-bg-color-white: #fff;
   --pod-shell-bg-color-gray: var(--pod-common-bg-color, #f0f2f5);
-  --pod-shell-bg-color-dark: var(--color-brand1-5, var(--color-brand1-5));
+  --pod-shell-bg-color-dark: var(--color-brand1-5, rgba(52, 50, 44, 1));
   --pod-shell-padding: 4px;
   --pod-shell-lshape-border-radius: 20px;
   /* 新版主题shell main 容器相关 暂时不需要这个变量，写死用户不可配置 */
@@ -302,9 +302,9 @@
     radial-gradient(64px 24px at 31% 0%, transparent, rgba(0, 0, 0, 0.6)),
     linear-gradient(
       161deg,
-      var(--color-brand1-1, #4584B3) 5.22%,
-      var(--color-brand1-5, #1F3A4E) 50.54%,
-      var(--color-brand1-9, #215780) 89.61%
+      var(--color-brand1-1, rgba(155, 136, 121, 0.8)) 5.22%,
+      var(--color-brand1-5, rgba(52, 50, 44, 1)) 50.54%,
+      var(--color-brand1-9, rgba(58, 55, 49, 1)) 89.61%
     );
   --pod-nav-ai-wenban-text-color: var(--color-text1-5, #fff);
   --pod-nav-logo-gap: 8px;

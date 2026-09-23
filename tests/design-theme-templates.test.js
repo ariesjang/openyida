@@ -17,14 +17,14 @@ const PYTHON = [['python3', []], ['python', []], ['py', ['-3']]].find(([command,
 
 test('shipped themes inherit project color and declare the selected-item shadow contract', () => {
   const index = JSON.parse(fs.readFileSync(path.join(THEMES, 'index.json'), 'utf8'));
-  const navigation = require('../yida-skills/skills/yida-design/templates/navigation-styles.json');
   for (const theme of index.themes) {
     const source = fs.readFileSync(path.join(SKILL, theme.templatePath), 'utf8');
     expect(source).not.toMatch(/(?:无品牌色|没有品牌色)[^。\n]*(?:默认[^。\n]*(?:蓝色|冷色|纯黑)|(?:蓝色|冷色|纯黑)[^。\n]*默认)/);
     expect(source).toContain('{{PRIMARY_COLOR}}');
     const shadow = /"--pod-nav-menu-item-selected-shadow":\s*"([^"]+)"/.exec(source);
     expect(shadow).not.toBeNull();
-    expect(shadow[1]).toBe(navigation[theme.themeId]?.selectedShadow || 'none');
+    const css = fs.readFileSync(path.join(SKILL, theme.cssTemplatePath), 'utf8');
+    expect(css).toContain(`--pod-nav-menu-item-selected-shadow: ${shadow[1]};`);
   }
 });
 

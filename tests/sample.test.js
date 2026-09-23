@@ -677,7 +677,9 @@ describe('application theme from design.md', () => {
     const css = applyDesignTokens(template, fastDesign);
     expect(css).toContain('--color-brand1-6: #315BCC;');
     expect(css).toContain('--pod-card-border-radius: 16px;');
-    expect(css).not.toContain('rgba(155, 136, 121, 1)');
+    // Explicit brand references follow the new value; historical fallback colors
+    // remain fallback-only and must not be globally replaced by equal color value.
+    expect(css).toContain('--pod-nav-logo-bg: var(--color-brand1-6, rgba(155, 136, 121, 1));');
     // The current base template omits derived brand aliases; generation adds them globally.
     const root = css.match(/^:root\s*\{([^{}]*)\}/m)[1];
     for (const name of ['--color-brand-1', '--color-brand-2', '--color-brand-3', '--color-brand-4', '--color-group']) {
