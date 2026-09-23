@@ -60,6 +60,25 @@ function expectIssue(action, issue) {
   try {action(); throw new Error('Expected validation error');} catch (error) {expect(error.details?.issue).toBe(issue);}
 }
 
+test('collects independent component anchors and page labels without lowering design requirements', () => {
+  const value = fixture();
+  value.body = value.body.replace('<a id="component-button"></a>', '')
+    .replace('<a id="state-empty"></a>', '')
+    .replace('- **首屏焦点：** 逾期队列优先', '')
+    .replace('- **主操作：** 完成任务', '');
+  let error;
+  try { check(value, { designFile: '/project/design.md' }); } catch (caught) { error = caught; }
+  expect(error.code).toBe('DESIGN_DOCUMENT_INVALID');
+  expect(error.details.issues).toEqual(expect.arrayContaining([
+    expect.objectContaining({ path: 'components.button', code: 'EXISTING_ANCHOR_REQUIRED' }),
+    expect.objectContaining({ path: 'states.empty', code: 'EXISTING_ANCHOR_REQUIRED' }),
+    expect.objectContaining({ label: '首屏焦点', code: 'PAGE_LABEL_REQUIRED' }),
+    expect.objectContaining({ label: '主操作', code: 'PAGE_LABEL_REQUIRED' }),
+  ]));
+  expect(error.details.issues).toHaveLength(4);
+  expect(error.details.issues.every(issue => issue.sourcePath === '/project/design.md')).toBe(true);
+});
+
 test('platform basics are a minimum set and can consume declared project extensions', () => {
   const value = fixture();
   const global = value.metadata.tokens['application-global'];

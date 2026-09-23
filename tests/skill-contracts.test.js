@@ -48,7 +48,7 @@ describe('OpenYida skill contracts', () => {
     expect(step7).toContain('Fast 也明确同样边界');
     expect(step7).not.toContain('页面导航隐藏应由独立配置任务立即执行');
     const decision = readSkill('yida-skills/skills/yida-design/references/navigation-decision.md');
-    expect(decision).toContain('## 方案讨论与确认');
+    expect(decision).toContain('## 导航交付与确认');
     expect(decision).toContain('不新增导航审批环节');
     const parallel = readSkill('yida-skills/skills/yida-app/workflow/parallel-work.md');
     expect(parallel).toContain('平台导航管理页保留导航，不加入隐藏队列');
@@ -137,7 +137,9 @@ describe('OpenYida skill contracts', () => {
     expect(compactSchema).toContain('按优先顺序填写 `{name,purpose}`');
     expect(compactSchema).toContain('与按资源生成的通用检查合并并去重');
     expect(planBusiness).toContain('功能范围、数据与规则、页面组织、关键交互、业务验收');
-    expect(planWorkflow).toContain('只物化一次');
+    expect(planWorkflow).toContain('`maxSuccessfulCalls: 1`');
+    expect(planWorkflow).toContain('失败按 `repairPolicy` 修复');
+    expect(planWorkflow).toContain('不能重复提交未修改的输入');
     expect(parallel).toContain('业务任务必须先读后写');
     expect(planBusiness).toContain('普通表单的 sampleDataPlan 用 skipReason');
     expect(compactSchema).toContain('避免用多轮 materialize 探测必填字段');

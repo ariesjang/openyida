@@ -11,7 +11,7 @@ jest.mock('../lib/core/yida-client', () => ({
 const { createAuthRef, createYidaClient } = require('../lib/core/yida-client');
 jest.mock('../lib/app/form-navigation', () => ({ fetchFormPageList: jest.fn() }));
 const { fetchFormPageList } = require('../lib/app/form-navigation');
-const { run, parseArgs, normalizeUrl, canonicalizeManagementUrl } = require('../lib/app/app-entry');
+const { run, parseArgs, normalizeUrl } = require('../lib/app/app-entry');
 const origin = 'https://tenant.example.com';
 const response = (accessEntries, revision = 'v1') => ({ success: true, content: { accessEntries, revision } });
 let client;
@@ -144,22 +144,17 @@ test('rejects relative input before any request', async () => {
 });
 
 test.each([
-  [`${origin}/APP/workbench/FORM-XYZ`, `${origin}/APP/workbench`],
-  [`${origin}/APP/workbench/FORM?corpid=ding123#tab`, `${origin}/APP/workbench?corpid=ding123#tab`],
-  [`${origin}/APP/workbench`, `${origin}/APP/workbench`],
-  [`${origin}/APP/manage/FORM`, `${origin}/APP/manage/FORM`],
-])('canonicalizes the management workbench URL %s', (input, expected) => {
-  jest.spyOn(console, 'error').mockImplementation(() => {});
-  expect(canonicalizeManagementUrl(input, 'APP')).toBe(expected);
-});
-
-test('management workbench page segment is normalized to the root before write', async () => {
-  jest.spyOn(console, 'error').mockImplementation(() => {});
-  const entries = { management: { url: `${origin}/APP/workbench` } };
+  `${origin}/APP/workbench/FORM-XYZ`,
+  `${origin}/APP/workbench/FORM?corpid=ding123#tab`,
+  `${origin}/APP/workbench`,
+  `${origin}/APP/manage/FORM`,
+])('preserves the exact management URL through write and readback: %s', url => {
+  const entries = { management: { url } };
   client.get.mockResolvedValueOnce(response({})).mockResolvedValueOnce(response(entries, 'v2'));
-  await run(['set', 'APP', '--management', `${origin}/APP/workbench/FORM-XYZ`]);
-  expect(JSON.parse(client.postForm.mock.calls[0][1].accessEntries)).toEqual(entries);
-  expect(fetchFormPageList).not.toHaveBeenCalled();
+  return run(['set', 'APP', '--management', url]).then(() => {
+    expect(JSON.parse(client.postForm.mock.calls[0][1].accessEntries)).toEqual(entries);
+    expect(fetchFormPageList).not.toHaveBeenCalled();
+  });
 });
 
 test('--frontend-page builds the canonical custom URL for an online page', async () => {
@@ -184,10 +179,16 @@ test('--frontend-page rejects a page from another application', async () => {
   expect(client.postForm).not.toHaveBeenCalled();
 });
 
-test('--management-page registers the workbench root after verifying ownership', async () => {
+test('--management-page keeps the requested workbench page after verifying ownership', async () => {
   fetchFormPageList.mockResolvedValue([{ formUuid: 'FORM-A', pathName: '', formType: 'receipt' }]);
-  const entries = { management: { url: `${origin}/APP/workbench` } };
+  const entries = { management: { url: `${origin}/APP/workbench/FORM-A` } };
   client.get.mockResolvedValueOnce(response({})).mockResolvedValueOnce(response(entries, 'v2'));
   await run(['set', 'APP', '--management-page', 'FORM-A']);
   expect(JSON.parse(client.postForm.mock.calls[0][1].accessEntries)).toEqual(entries);
+});
+
+test.each(['receipt', 'process', ''])('--frontend-page refuses non-display type %s before writing', async formType => {
+  fetchFormPageList.mockResolvedValue([{ formUuid: 'FORM-A', pathName: 'online', formType }]);
+  await expect(run(['set', 'APP', '--frontend-page', 'FORM-A'])).rejects.toThrow();
+  expect(client.postForm).not.toHaveBeenCalled();
 });
