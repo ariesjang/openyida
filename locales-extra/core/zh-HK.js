@@ -429,13 +429,14 @@ module.exports = {
     excel_exported: 'Excel 已匯出：{0}'
   },
   integration_detail_log: {
-    usage: "Usage: openyida integration detail-log <appType> <procInstId> [--json] [--include-params] (both options required for full parameters, which may contain sensitive data)",
+    usage: "Usage: openyida integration detail-log <appType> <procInstId> [--json] [--include-params] (known secrets are always masked; max 100 pages / 10,000 nodes; business parameters may still be sensitive)",
     missing_args: "Run log details require appType and procInstId",
     unknown_option: "Unsupported run log detail option: {0}",
-    params_require_json: "--include-params requires --json; full parameters may contain sensitive data",
+    params_require_json: "--include-params requires --json; known secrets are always masked, but business parameters may still be sensitive",
     api_failed: "Failed to query run log details: {0}",
     invalid_response: "Run log detail response has no valid node list or total count",
     pagination_failed: "Run log detail pages are inconsistent; incomplete data was not printed",
+    pagination_limit: "Run log details exceed the pagination limit ({0} pages / {1} nodes); incomplete data was not printed",
     summary: "Run log details: {0} nodes (parameter keys only by default)",
   },
 
